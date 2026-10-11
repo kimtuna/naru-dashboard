@@ -2390,7 +2390,7 @@
   - 이름을 바꾸면 **부르는 쪽을 전부** 같이 고친다 — grep 으로 하나도 빠뜨리지 않았음을 report 에 적는다 (검사 파일까지)
   - 한 단계에 **한 가지만** 바꾼다 (이름 하나 · 겹침 하나) — 여럿을 묶으면 떨어졌을 때 무엇이 깼는지 모른다
   - **갚을 것이 없으면 없다고 적고 통과한다** — 억지로 만들지 않는다
-- [ ] 1. 경계를 넘는 것을 모으고, 가장 값나가는 하나를 갚는다
+- [x] 1. 경계를 넘는 것을 모으고, 가장 값나가는 하나를 갚는다
   - 기준: `git log --all --grep='경계를 넘는 것'` 과 G-950 단계를 훑어 **표로 모은다** —
     무엇이 · 어느 두 파일에 걸쳐 있나 · 부르는 쪽이 몇 파일인가 (report 에)
   - 기준: 그중 **하나**를 골라 그 자리에서 갚는다. 왜 그것을 먼저 골랐는지 적는다
@@ -2403,6 +2403,8 @@
   - 기준: 한 곳으로 모은다. `Buildings._pieces` 는 안쪽 이름이니, 밖에 내놓을 이름이 필요하면 하나만 만든다
   - 기준: `build_piece.gd` 81 · 385 줄 주석의 `Buildings.link_counts` 를 실제 이름으로 고친다 (G-992 단계 6 에서 안 됐으면)
   - 기준: 전체 테스트 통과 개수가 줄지 않았다 (앞뒤 숫자)
+  - 기준: (앞 단계 QA) 손 닿는 거리 4.0 을 Aim.REACH 하나로 — G-994 다음 단계(report 표 3번). Stations.REACH · Harvest.REACH 가 각자 4.0 을 적었다(부르는 쪽 Stations.REACH 10 · Aim.REACH 12 · Harvest.REACH 4 파일). 두 상수를 지우거나 `const REACH := Aim.REACH` 로 잇고, 부르는 쪽을 grep 으로 전부 고친 뒤 report 에 빠짐 없음을 적어라. tests/world/storage/test_reach_temporary_notes.gd 가 「임시」 주석을 보니 그 주석이 Aim.REACH 한 곳에 남는지 같이 고쳐라
+  - 기준: (앞 단계 QA) 낚시 · 마시기의 수면 찾기 겹침 — G-994 그 다음 단계(표 5번). life/fishing/fishing.gd 의 aimed_water 와 player/hunger_thirst/drinking.gd 가 광선 → STEP 걸음 수면 찾기를 각자 적었다. 거리(CAST_RANGE ↔ Aim.REACH)만 인자로 받는 한 함수로 모으고, 두 거리에서 같은 수면을 찾는 테스트를 더해라
 - [ ] 3. 남은 것을 갚는다
   - 기준: 단계 1 의 표에서 아직 안 갚은 것을 **하나** 갚는다
   - 기준: 남은 것이 없으면 **없다고 적고 통과한다**
@@ -2420,6 +2422,17 @@
   - 기준: villagers.gd set_home 의 halt 세 줄이 villager._halt_work 와 겹친다 — set_home 안 `var w := v.work(); if w != null: w.halt()` 는 villager.gd 의 _halt_work 와 같은 일이다. 모으려면 villager 에 공개 이름이 하나 필요하다 (부르는 쪽이 이 묶음 파일뿐인지 보고, 아니면 G-994 로)
 - [x] 2. 테스트가 TMPDIR 에 naru_dev_box_open_* 를 남긴다 (G-992 단계 6)
   - 기준: 테스트가 TMPDIR 에 naru_dev_box_open_* 를 남긴다 — test.log 끝에 naru_dev_box_open_2099798754 가 남았다고 나온다. dev box 를 여는 테스트(tests/core/debug/test_dev_box_everything.gd 쪽)가 만든 임시 폴더를 TempDir.clean 으로 지우게 고쳐라
+
+## [ ] G-950 루프가 찾은 것 — 스스로 갚는다
+- QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
+  루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
+- 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
+- [ ] 1. 창 위 여백 TOP_MARGIN 을 창 셋이 각자 (G-994 단계 1)
+  - 기준: 창 위 여백 TOP_MARGIN 을 창 셋이 각자 — G-994 그 다음 단계(표 9번). chest_window · villager_window 등 ui 창이 같은 여백을 따로 적는다. ui 쪽 한 곳(레이아웃 상수)으로 모으고 test_window_layout 류에서 셋이 같은 값을 쓰는지 단언해라
+- [ ] 2. tools/test.sh 가 두 차선에서 같은 TMPDIR (G-994 단계 1)
+  - 기준: tools/test.sh 가 두 차선에서 같은 TMPDIR — G-994 그 다음 단계(표 10번, G-950.2). 차선 1 · 2 가 동시에 돌면 임시 경로가 겹친다. .loop/lane 값으로 TMPDIR 아래 차선별 하위 폴더를 쓰게 고쳐라
+- [ ] 3. 차선 1 합친 뒤 남은 경계 다섯 (G-994 단계 1)
+  - 기준: 차선 1 합친 뒤 남은 경계 다섯 — G-994 맨 뒤 단계들(표 2 · 4 · 6 · 7 · 8). sync_lanes 가 G-992 · G-995 를 이 줄기에 합쳐 온 뒤 하나씩 단계로: 2 놓는 곳 뼈대 → Placeable · 4 Buildings._pieces_of/_edge_plates 공개 이름 · 6 hands.gd 상자 칸 베끼기 ↔ Chest.store · 7 gather_work/field_care → JobWork · 8 ButcherPanel._holds_gun ↔ Attack.holds_gun
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
