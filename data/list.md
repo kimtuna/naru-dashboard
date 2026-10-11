@@ -2321,7 +2321,7 @@
   - 기준: 이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
   - 기준: (앞 단계 QA) Stations._aim_hit 이 Aim.at 을 베꼈다 — game/craft/stations/stations.gd 의 _aim_hit 이 Aim.at(core 쪽 Aim) 과 줄마다 같은 광선을 다시 적는다. 이 단계 파일이 아니라 report 에 「경계를 넘는 것」으로 남겼다. DockBuilder._aim_hit 처럼 `if player == null or not is_inside_tree(): return {}` 뒤 `return Aim.at(player, get_world_3d().direct_space_state, REACH)` 로 줄이고 tests/craft/stations 를 돌려라
   - 기준: (앞 단계 QA) report 의 테스트 개수 「뒤」가 일부만 적혔다 — G-995.4 report 는 뒤 숫자를 바뀐 곳 그물 33 파일 293/293 으로만 적었다. 다음 단계부터는 루프의 전체 그물이 돌았다면 test.log 의 「Passing Tests」 숫자(이번에는 2099)를 앞 숫자와 나란히 적어라
-- [ ] 6. 저장 (590줄) 을 다듬는다
+- [x] 6. 저장 (590줄) 을 다듬는다
   - 보는 곳: `game/settings/save/` 의 round_trip · save_store · world_data · character_data · old_items 와 `game/settings/world_settings/world_settings.gd`
   - 기준: 이 파일들에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
     report 에 표로 적고, **그 자리에서 고친다** (찾아만 두지 않는다)
