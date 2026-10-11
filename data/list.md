@@ -2017,7 +2017,7 @@
   - 기준: (앞 단계 QA) ground_ready 가 매 물리 프레임 길을 묻는다 — Villager._physics_process 가 주민마다 매 프레임 Villagers.ground_ready 를 부르고, 그 안에서 자식 훑기 + NavigationServer3D.map_get_path + map_get_closest_point_owner 를 한다. 한 번 참이 되면 굽기가 바뀔 때까지 참이니, 걸을 땅(AnimalNav) 노드별로 「들었다」를 기억해 두고 새로 구울 때만 지우는 식으로 줄여라. 주민이 늘면 비용이 쌓인다
   - 기준: (앞 단계 QA) 게이트 테스트가 「길이 막혔다」 재현은 못 본다 — test_the_farmer_waits_for_the_walk_ground_before_working 은 게이트를 빼도 막힌 까닭이 [] 로 남고 움직인 거리(0.25m)로만 떨어졌다. report 가 말한 「벽에 처박혀 STUCK」까지는 이 테스트 안에서 안 일어난다. 게이트를 뺐을 때 why_still 이 WHY_CANT_GET_THERE 가 되는 판(예: 더 오래 · 다시 굽기 직후 곧장 일을 시키기)을 찾아 단언을 더하거나, 주석을 실제로 재는 것(기다림)에 맞춰라
 
-## [ ] G-992 자동화와 건축을 다듬는다 — 파일 하나씩 (사람 결정 2026-10-11)
+## [x] G-992 자동화와 건축을 다듬는다 — 파일 하나씩 (사람 결정 2026-10-11)
 - 차선: 3d-start
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다 — 깨끗해질 때까지
 - **G-991 의 틀을 그대로 쓴다** (buildings.gd 하나로 해 봤고 통했다 2026-09-27).
