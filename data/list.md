@@ -2255,7 +2255,7 @@
 - [x] 12. (앞 단계 QA) hands.gd 상자 칸 베끼기 네 줄 겹침
   - 기준: hands.gd 상자 칸 베끼기 네 줄 겹침 — game/automation/villagers/hands.gd 의 fits_into 와 takes_some 이 상자 칸을 VillagerHands 로 베끼는 같은 네 줄을 각자 적었다. 그 네 줄을 _ 로 시작하는 안쪽 함수 하나(예: _copy_of(chest))로 올리고 두 곳에서 부르게 하라. 밖 이름은 그대로 두고, tests/automation/villagers 가 그대로 통과하는지 본다 (G-993 마지막 단계의 기준에 실려 왔지만 이 묶음 밖 파일이라 못 했다)
   - 기준: (앞 단계 QA) round_trip 의 임시 폴더 검사 비켜가기 — game/tests/settings/save/test_round_trip.gd _sweep_stale 이 `var root := OS.get_temp_dir()` 를 `_dir.get_base_dir()` 로 바꿔 test_temp_dir 검사기의 눈을 피했다(주석에 그렇게 적혀 있다). 행동은 같고 root 는 만든 자리가 아니라 오해(검사기의 헛짚음)였지만, 글자만 바꿔 피한 것이라 다음에 같은 꼴(임시 폴더를 둘러보며 TempDir.clean 으로 지우는 자리)이 또 걸린다. tests/test_temp_dir.gd 의 _unerased 가 「그 변수 아래를 TempDir.clean/erase 로 지우는 자리」(root.path_join(..) 을 TempDir.clean 에 넘김)를 지운 것으로 치게 하고, 그 경우를 test_checker_* 에 하나 더해 검사기 자체를 고쳐라 — 단, 기존 단언의 값·개수는 바꾸지 않는다
-- [ ] 13. (앞 단계 QA) naru_file_logs 가 TMPDIR 에 또 남는다
+- [x] 13. (앞 단계 QA) naru_file_logs 가 TMPDIR 에 또 남는다
   - 기준: naru_file_logs 가 TMPDIR 에 또 남는다 — test.log 끝에 「TMPDIR 에 새로 남은 naru_* 1 개: naru_file_logs」가 떴고 full_test_G993_5_after.log 에도 같은 줄이 있다. game/tests/core/tools/test_test_sh_keeps_file_logs.gd 는 _dir 을 OS.get_temp_dir().path_join("naru_file_logs") 로 이름을 고정해 두었고(test.sh 의 걸린 시간 기록 때문) after_each 에서 TempDir.clean 한다 — 그런데도 남는 것은 두 차선이 같은 이름을 같이 쓰다 겹치거나, 판 도중에 남은 것을 test.sh 가 세는 것으로 보인다. 어느 쪽인지 test.sh 의 「새로 남은」 셈과 이 파일의 before_each/after_each 를 보고 가려라 — 차선마다 다른 이름(예: 프로젝트 경로 해시를 붙임)으로 하거나 before_each 에서 남은 것을 먼저 지우게 하고, 그 뒤 전체 돌림 끝에 이 줄이 안 뜨는지 확인하라. 이번 기준과는 상관없다
 
 ## [ ] G-995 아직 안 본 나머지를 다듬는다 — 차선 1 (사람 물음 2026-10-12)
