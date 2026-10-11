@@ -2114,7 +2114,7 @@
   - 기준: 이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
   - 기준: (앞 단계 QA) buildings.gd:1116 주석이 낡았다 — 「(BuildPiece.roof_plates 가 제 변에 같은 셈을 한다)」인데 G-992.6 이후 roof_plates 는 이 _edge_plates 를 부른다. 「BuildPiece.roof_plates 도 이것을 쓴다」로 고쳐라 (buildings.gd 를 다루는 단계 몫)
   - 기준: (앞 단계 QA) Buildings 의 _ 이름이 밖에서 불린다 — build_piece.gd 가 Buildings._pieces_of(356·377줄) · _edge_plates(392줄)를 부른다. 밖에서 쓰니 _ 를 뗀 공개 이름이 맞다. 두 파일과 부르는 쪽을 같이 고쳐야 하니 G-994 에서 이름을 바꿔라
-- [ ] 8. placeable.gd · rooms.gd · beds.gd (600줄) 를 다듬는다
+- [x] 8. placeable.gd · rooms.gd · beds.gd (600줄) 를 다듬는다
   - 보는 곳: `game/build/placeable.gd` · `game/build/rooms.gd` · `game/build/beds/beds.gd`. **이 단계의 몫은 여기뿐이다** — 부르는 쪽과 무는 테스트는 읽기만 한다
   - `rooms.gd` 는 NPC 가 방을 보는 길이다 (`find` · `holds` · `id_at` · `_key`)
   - 기준: 이 파일에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
@@ -2122,6 +2122,8 @@
   - 기준: **고칠 것이 없으면 없다고 적는다** — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
+- [ ] 9. (앞 단계 QA) 놓는 곳 뼈대가 네 파일에 겹쳤다
+  - 기준: 놓는 곳 뼈대가 네 파일에 겹쳤다 — Beds · Torches · Chests · Stations(build/beds/beds.gd · world/lighting/torches.gd · world/storage/chests.gd · craft/stations/stations.gd)가 미리보기 _ready · refresh_preview · preview · preview_color · aimed_* · plan_spot · aimed_spot · standing/restore 를 거의 줄마다 같이 적었다 (G-992.8 report 「경계를 넘는 것」). 차선을 넘으니 G-994 에서 Placeable 쪽(또는 공통 놓는 곳 뼈대)으로 모으고, 네 파일의 기존 검사가 단언 그대로 통과하는지 본다
 
 ## [ ] G-993 생활과 화면을 다듬는다 — 파일 하나씩 (사람 결정 2026-10-11)
 - 차선: 3d-lane2
