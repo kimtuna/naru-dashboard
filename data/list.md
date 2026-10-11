@@ -2290,7 +2290,7 @@
   - 기준: 이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
   - 기준: (앞 단계 QA) 테스트가 TMPDIR 에 naru_move_* 를 남긴다 — test.log 끝에 naru_move_376950170 이 TempDir.clean 없이 남았다고 나온다(이번 단계 변경과는 무관). game/tests/ui/hud/test_bag_move_slots.gd 가 naru_move_ 임시 폴더를 만든다 — after_each 에서 TempDir.clean 을 부르게 하라
   - 기준: (앞 단계 QA) NeedGauge.sweep() 가 그리기와 따로 논다 — _draw 가 draw_ring 안에서 TAU*ratio 를 다시 셈하고 sweep() 은 이제 테스트만 부른다. test_needs_gauges 의 sweep 단언이 실제 그린 호를 지키지 않는다. draw_ring 에 각도를 넘기거나(sweep() 을 _draw 에서 쓰기) sweep 의 주석에 「테스트용 · 그리기와 같은 셈」이라 적어 어긋남을 막아라
-- [ ] 3. 등반 (732줄) 을 다듬는다
+- [x] 3. 등반 (732줄) 을 다듬는다
   - 보는 곳: `game/life/climbing/` 의 climbing.gd(321) · climb_gear · stamina · anchor · grapple
   - 기준: 이 파일들에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
     report 에 표로 적고, **그 자리에서 고친다** (찾아만 두지 않는다)
@@ -2306,6 +2306,7 @@
   - 기준: **고칠 것이 없으면 없다고 적는다** — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
+  - 기준: (앞 단계 QA) test_dev_box 가 TMPDIR 에 naru_dev_box_* 를 남긴다 — 이번 전체 그물 test.log 끝에 naru_dev_box_3829645723 이 남았다고 나온다. game/tests/core/debug/test_dev_box.gd 는 after_all 에서 g.free() 뒤 TempDir.clean(self, _dir) 를 부르지만, G-950.2 의 test_dev_box_open 처럼 지운 뒤 게임이 내려가며 다시 저장해 폴더가 되살아나는 것으로 보인다(다른 차선 것일 수도 있으나 이름이 이 테스트 꼴이다). test_dev_box_open.gd 45줄 근처에서 고친 방법과 같이, 게임을 내린 뒤 프레임을 기다리고 나서 TempDir.clean 을 부르거나 지운 뒤 폴더가 없는지 단언하라
 - [ ] 5. 제작대 · 레시피 (901줄) 을 다듬는다
   - 보는 곳: `game/craft/stations/` 의 stations.gd(382) · crafting_station · station_catalog 와 `game/craft/recipes/` 의 recipe_catalog · hand_craft
   - 기준: 이 파일들에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
