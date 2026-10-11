@@ -2095,7 +2095,7 @@
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
   - 기준: (앞 단계 QA) villagers.gd:118 주석이 없는 HerbWork 를 가리킨다 — 「섬이 넣어 준다 (HarvestWork · HerbWork)」인데 HerbWork 라는 클래스는 villagers.gd 그 줄 말고 어디에도 없다. villagers.gd 는 G-992.1 단계 몫이라 이번엔 못 고쳤다. 지금 gathering 을 쓰는 실제 일거리(grep Gathering / island.gathering)로 이름을 바꾸거나 HerbWork 를 지워라
-- [ ] 6. build_piece.gd (472줄) 를 다듬는다
+- [x] 6. build_piece.gd (472줄) 를 다듬는다
   - 보는 곳: `game/build/build_piece.gd`. **이 단계의 몫은 여기뿐이다** — 부르는 쪽과 무는 테스트는 읽기만 한다
   - **G-991 이 여기에 둘을 남겨 뒀다**: 81 · 385 줄 주석이 `Buildings.link_counts` 라 하는데 실제 이름은 `_link_counts` ·
   - `stairs_host` 가 제 손으로 BuildPiece 목록을 또 만든다 (`Buildings._pieces` 와 같은 일)
@@ -2112,6 +2112,8 @@
   - 기준: **고칠 것이 없으면 없다고 적는다** — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
+  - 기준: (앞 단계 QA) buildings.gd:1116 주석이 낡았다 — 「(BuildPiece.roof_plates 가 제 변에 같은 셈을 한다)」인데 G-992.6 이후 roof_plates 는 이 _edge_plates 를 부른다. 「BuildPiece.roof_plates 도 이것을 쓴다」로 고쳐라 (buildings.gd 를 다루는 단계 몫)
+  - 기준: (앞 단계 QA) Buildings 의 _ 이름이 밖에서 불린다 — build_piece.gd 가 Buildings._pieces_of(356·377줄) · _edge_plates(392줄)를 부른다. 밖에서 쓰니 _ 를 뗀 공개 이름이 맞다. 두 파일과 부르는 쪽을 같이 고쳐야 하니 G-994 에서 이름을 바꿔라
 - [ ] 8. placeable.gd · rooms.gd · beds.gd (600줄) 를 다듬는다
   - 보는 곳: `game/build/placeable.gd` · `game/build/rooms.gd` · `game/build/beds/beds.gd`. **이 단계의 몫은 여기뿐이다** — 부르는 쪽과 무는 테스트는 읽기만 한다
   - `rooms.gd` 는 NPC 가 방을 보는 길이다 (`find` · `holds` · `id_at` · `_key`)
@@ -2287,6 +2289,8 @@
   결정 대기로 넘어가는 것이 더 나쁘다
 - [ ] 1. villagers.gd set_home 의 halt 세 줄이 villager._halt_work 와 겹… (G-992 단계 2)
   - 기준: villagers.gd set_home 의 halt 세 줄이 villager._halt_work 와 겹친다 — set_home 안 `var w := v.work(); if w != null: w.halt()` 는 villager.gd 의 _halt_work 와 같은 일이다. 모으려면 villager 에 공개 이름이 하나 필요하다 (부르는 쪽이 이 묶음 파일뿐인지 보고, 아니면 G-994 로)
+- [ ] 2. 테스트가 TMPDIR 에 naru_dev_box_open_* 를 남긴다 (G-992 단계 6)
+  - 기준: 테스트가 TMPDIR 에 naru_dev_box_open_* 를 남긴다 — test.log 끝에 naru_dev_box_open_2099798754 가 남았다고 나온다. dev box 를 여는 테스트(tests/core/debug/test_dev_box_everything.gd 쪽)가 만든 임시 폴더를 TempDir.clean 으로 지우게 고쳐라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
