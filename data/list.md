@@ -2076,7 +2076,7 @@
   - 기준: 이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
   - 기준: (앞 단계 QA) 문을 곧장 지나는 길을 지키는 테스트가 없다 — QA 가 thread_path 의 `out.append_array(_straight_crossings(doors, through, a, b))` 줄을 `pass` 로 바꿔 TEST_DIR=res://tests/automation/villagers 를 돌렸더니 175/175 가 그대로 통과했다 (되돌렸다). 모서리 없이 문구멍을 가로지르는 길(a·b 가 둘 다 DOOR_LANE 밖, 선분이 문 폭/2+0.5 안을 지남)에 thread_path 가 _door_points 두 점을 넣는지 보는 테스트를 tests/automation/villagers/ 에 짜라 — 문 하나를 놓고 path=[문 앞 2m, 문 뒤 2m] 을 넣어 결과가 4점이고 가운데 둘이 문 한가운데 줄(_door_lane x≈0)에 있는지 단언
   - 기준: (앞 단계 QA) villagers.gd ground_ready 가 매 물리 프레임 불린다 — villager.gd _physics_process 가 _fit 인 주민마다 매 틱 _island.ground_ready(self) 를 부르고, 그때마다 home_room · room_center · _navs_at(자식 훑기)를 한 뒤 GROUND_IN 메타를 본다 (구현 report 의 옆 파일 지적 1). villagers.gd 쪽에서 땅이 들었음을 주민마다 기억해 두고 바로 true 를 돌려주게 다듬어라 — 겉 행동은 같아야 한다
-- [ ] 4. 일거리 여섯 (463줄) 을 다듬는다 — 한 집안이라 같이 본다
+- [x] 4. 일거리 여섯 (463줄) 을 다듬는다 — 한 집안이라 같이 본다
   - 보는 곳: `game/automation/villagers/` 의 `gather_work.gd` · `harvest_work.gd` · `job_work.gd` · `mining_work.gd` · `woodcutting.gd` · `stroll.gd`. **이 단계의 몫은 여기뿐이다** — 부르는 쪽과 무는 테스트는 읽기만 한다
   - 같은 틀을 여섯이 나눠 쓴다 — **같은 일을 여섯 번 적은 데**가 있으면 `job_work.gd` 로 올린다
   - mining_work.gd(8줄) · woodcutting.gd(7줄) 은 껍데기다. 아직 비어 있는 것이면 **지우지 말고** 왜 비었나 적는다
@@ -2094,6 +2094,7 @@
   - 기준: **고칠 것이 없으면 없다고 적는다** — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
+  - 기준: (앞 단계 QA) villagers.gd:118 주석이 없는 HerbWork 를 가리킨다 — 「섬이 넣어 준다 (HarvestWork · HerbWork)」인데 HerbWork 라는 클래스는 villagers.gd 그 줄 말고 어디에도 없다. villagers.gd 는 G-992.1 단계 몫이라 이번엔 못 고쳤다. 지금 gathering 을 쓰는 실제 일거리(grep Gathering / island.gathering)로 이름을 바꾸거나 HerbWork 를 지워라
 - [ ] 6. build_piece.gd (472줄) 를 다듬는다
   - 보는 곳: `game/build/build_piece.gd`. **이 단계의 몫은 여기뿐이다** — 부르는 쪽과 무는 테스트는 읽기만 한다
   - **G-991 이 여기에 둘을 남겨 뒀다**: 81 · 385 줄 주석이 `Buildings.link_counts` 라 하는데 실제 이름은 `_link_counts` ·
