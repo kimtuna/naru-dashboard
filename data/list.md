@@ -2057,7 +2057,7 @@
   - 기준: **고칠 것이 없으면 없다고 적는다** — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
-- [ ] 2. villager.gd (629줄) 를 다듬는다
+- [x] 2. villager.gd (629줄) 를 다듬는다
   - 보는 곳: `game/automation/villagers/villager.gd`. **이 단계의 몫은 여기뿐이다** — 부르는 쪽과 무는 테스트는 읽기만 한다
   - `in_reach` · `_mind_doors` · `_physics_process` 가 매 프레임 하는 일이 겹치지 않나 본다
   - 기준: 이 파일에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
@@ -2073,6 +2073,8 @@
   - 기준: **고칠 것이 없으면 없다고 적는다** — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
+  - 기준: (앞 단계 QA) 문을 곧장 지나는 길을 지키는 테스트가 없다 — QA 가 thread_path 의 `out.append_array(_straight_crossings(doors, through, a, b))` 줄을 `pass` 로 바꿔 TEST_DIR=res://tests/automation/villagers 를 돌렸더니 175/175 가 그대로 통과했다 (되돌렸다). 모서리 없이 문구멍을 가로지르는 길(a·b 가 둘 다 DOOR_LANE 밖, 선분이 문 폭/2+0.5 안을 지남)에 thread_path 가 _door_points 두 점을 넣는지 보는 테스트를 tests/automation/villagers/ 에 짜라 — 문 하나를 놓고 path=[문 앞 2m, 문 뒤 2m] 을 넣어 결과가 4점이고 가운데 둘이 문 한가운데 줄(_door_lane x≈0)에 있는지 단언
+  - 기준: (앞 단계 QA) villagers.gd ground_ready 가 매 물리 프레임 불린다 — villager.gd _physics_process 가 _fit 인 주민마다 매 틱 _island.ground_ready(self) 를 부르고, 그때마다 home_room · room_center · _navs_at(자식 훑기)를 한 뒤 GROUND_IN 메타를 본다 (구현 report 의 옆 파일 지적 1). villagers.gd 쪽에서 땅이 들었음을 주민마다 기억해 두고 바로 true 를 돌려주게 다듬어라 — 겉 행동은 같아야 한다
 - [ ] 4. 일거리 여섯 (463줄) 을 다듬는다 — 한 집안이라 같이 본다
   - 보는 곳: `game/automation/villagers/` 의 `gather_work.gd` · `harvest_work.gd` · `job_work.gd` · `mining_work.gd` · `woodcutting.gd` · `stroll.gd`. **이 단계의 몫은 여기뿐이다** — 부르는 쪽과 무는 테스트는 읽기만 한다
   - 같은 틀을 여섯이 나눠 쓴다 — **같은 일을 여섯 번 적은 데**가 있으면 `job_work.gd` 로 올린다
@@ -2246,6 +2248,13 @@
   - 이름을 바꾸면 **부르는 쪽을 전부** 같이 고친다 — grep 으로 하나도 빠뜨리지 않았음을 report 에 적는다 (검사 파일까지)
   - 한 단계에 **한 가지만** 바꾼다 (이름 하나 · 겹침 하나) — 여럿을 묶으면 떨어졌을 때 무엇이 깼는지 모른다
   - 기준: 전체 테스트 통과 개수가 줄지 않았다 — 앞뒤 숫자를 report 에 적는다
+
+## [ ] G-950 루프가 찾은 것 — 스스로 갚는다
+- QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
+  루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
+- 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
+- [ ] 1. villagers.gd set_home 의 halt 세 줄이 villager._halt_work 와 겹… (G-992 단계 2)
+  - 기준: villagers.gd set_home 의 halt 세 줄이 villager._halt_work 와 겹친다 — set_home 안 `var w := v.work(); if w != null: w.halt()` 는 villager.gd 의 _halt_work 와 같은 일이다. 모으려면 villager 에 공개 이름이 하나 필요하다 (부르는 쪽이 이 묶음 파일뿐인지 보고, 아니면 G-994 로)
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
