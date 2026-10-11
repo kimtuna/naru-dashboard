@@ -2407,12 +2407,15 @@
   - 기준: 전체 테스트 통과 개수가 줄지 않았다 (앞뒤 숫자)
   - 기준: (앞 단계 QA) 손 닿는 거리 4.0 을 Aim.REACH 하나로 — G-994 다음 단계(report 표 3번). Stations.REACH · Harvest.REACH 가 각자 4.0 을 적었다(부르는 쪽 Stations.REACH 10 · Aim.REACH 12 · Harvest.REACH 4 파일). 두 상수를 지우거나 `const REACH := Aim.REACH` 로 잇고, 부르는 쪽을 grep 으로 전부 고친 뒤 report 에 빠짐 없음을 적어라. tests/world/storage/test_reach_temporary_notes.gd 가 「임시」 주석을 보니 그 주석이 Aim.REACH 한 곳에 남는지 같이 고쳐라
   - 기준: (앞 단계 QA) 낚시 · 마시기의 수면 찾기 겹침 — G-994 그 다음 단계(표 5번). life/fishing/fishing.gd 의 aimed_water 와 player/hunger_thirst/drinking.gd 가 광선 → STEP 걸음 수면 찾기를 각자 적었다. 거리(CAST_RANGE ↔ Aim.REACH)만 인자로 받는 한 함수로 모으고, 두 거리에서 같은 수면을 찾는 테스트를 더해라
-- [ ] 3. 남은 것을 갚는다
+- [x] 3. 남은 것을 갚는다
   - 기준: 단계 1 의 표에서 아직 안 갚은 것을 **하나** 갚는다
   - 기준: 남은 것이 없으면 **없다고 적고 통과한다**
   - 기준: 전체 테스트 통과 개수가 줄지 않았다 (앞뒤 숫자)
   - 기준: (앞 단계 QA) test_from_empty_hands 가 부하 아래 들쭉날쭉하다 — 앞 시도 기계 검사에서 5-2 「물가 가까이 걸어왔다」 중 사람이 섬 밖 (-171.6, -197.3) 으로 걸어 나가 y=-63879 까지 떨어진 뒤 game/tests/craft/test_from_empty_hands.gd 909줄에서 research == null 로 스크립트 오류가 났다(이번 회차 · 전체 그물 · 단독 재실행에선 통과). 물가로 걷는 도우미가 목표를 못 찾으면 섬 밖으로 걷지 않게 멈추거나 섬 안 거리로 막고, 909줄 앞에 research 가 null 이면 assert 로 떨어지게(스크립트 오류 대신) 고쳐라
   - 기준: (앞 단계 QA) TMPDIR 에 naru_villager_* 가 남아 있다 — /var/folders/13/.../T/naru_villager_3480380615. 어느 주민 테스트가 TempDir.clean 을 안 부르는지 찾아 지우게 하라(앞 시도엔 naru_dead_save_* 도 남았다)
+- [ ] 4. (앞 단계 QA) 걷기 도우미의 멈춤을 지키는 검사가 없다
+  - 기준: 걷기 도우미의 멈춤을 지키는 검사가 없다 — test_from_empty_hands.gd _walk_to 의 WALK_ASTRAY 멈춤은 이번에 들쭉날쭉함을 다시 일으켜 보지 못해 실제로 걸린 적이 없다. 다음에 이 파일이 떨어지면 「물가 가까이 걸어왔다」 단언의 _walked 글(선 자리)을 보고 돌아서기가 덜 먹은 것인지 확인하라. 돌아서기(_face 류)가 끝난 뒤 바라보는 방향을 단언하면 원인 쪽을 바로 막을 수 있다
+
 ## [x] G-950 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-start (루프가 가져갔다 2026-10-12 02:47)
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
