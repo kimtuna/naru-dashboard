@@ -2293,7 +2293,7 @@
   같이 건드려야 하는 것이면, **고치지 말고 report 에 「경계를 넘는 것」으로 적고 통과한다** — 그것으로 이 단계는 끝이다.
   G-994(차선 2 가 맨 뒤에 한다)가 두 차선이 합쳐진 뒤에 갚는다. 억지로 고치려다 아홉 번 떨어져
   결정 대기로 넘어가는 것이 더 나쁘다
-- [ ] 1. villagers.gd set_home 의 halt 세 줄이 villager._halt_work 와 겹… (G-992 단계 2)
+- [x] 1. villagers.gd set_home 의 halt 세 줄이 villager._halt_work 와 겹… (G-992 단계 2)
   - 기준: villagers.gd set_home 의 halt 세 줄이 villager._halt_work 와 겹친다 — set_home 안 `var w := v.work(); if w != null: w.halt()` 는 villager.gd 의 _halt_work 와 같은 일이다. 모으려면 villager 에 공개 이름이 하나 필요하다 (부르는 쪽이 이 묶음 파일뿐인지 보고, 아니면 G-994 로)
 - [ ] 2. 테스트가 TMPDIR 에 naru_dev_box_open_* 를 남긴다 (G-992 단계 6)
   - 기준: 테스트가 TMPDIR 에 naru_dev_box_open_* 를 남긴다 — test.log 끝에 naru_dev_box_open_2099798754 가 남았다고 나온다. dev box 를 여는 테스트(tests/core/debug/test_dev_box_everything.gd 쪽)가 만든 임시 폴더를 TempDir.clean 으로 지우게 고쳐라
