@@ -2271,7 +2271,7 @@
 - **파일 밖과 이어져 있으면** G-992 와 똑같이 한다: 안쪽 이름(`_`)은 마음대로 · 밖에서 부르는 이름은
   **부르는 쪽이 전부 이 단계의 파일일 때만** 같이 고친다. 아니면 **고치지 말고 report 에 「경계를 넘는 것」으로
   적고 통과한다** — G-994 가 갚는다
-- [ ] 1. HUD 나머지 19 파일 (1,350줄) 을 다듬는다
+- [x] 1. HUD 나머지 19 파일 (1,350줄) 을 다듬는다
   - 보는 곳: `game/ui/hud/` 에서 G-993 이 안 본 것 전부 — butcher_panel · fishing_window · alert_log · target_bars · hotbar · ammo_picker · blueprint_picker · skill_check_ring · need_gauge · equip_slot · stamina_bar · ammo_label · notice · hand_view · health_bar · needs_gauges · chest_timer_label · clock_label · loading_screen. **막대 · 눈금이 여럿인데 같은 일을 각자 적고 있나**를 특히 본다
   - 기준: 이 파일들에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
     report 에 표로 적고, **그 자리에서 고친다** (찾아만 두지 않는다)
@@ -2285,6 +2285,8 @@
   - 기준: **고칠 것이 없으면 없다고 적는다** — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
+  - 기준: (앞 단계 QA) 테스트가 TMPDIR 에 naru_move_* 를 남긴다 — test.log 끝에 naru_move_376950170 이 TempDir.clean 없이 남았다고 나온다(이번 단계 변경과는 무관). game/tests/ui/hud/test_bag_move_slots.gd 가 naru_move_ 임시 폴더를 만든다 — after_each 에서 TempDir.clean 을 부르게 하라
+  - 기준: (앞 단계 QA) NeedGauge.sweep() 가 그리기와 따로 논다 — _draw 가 draw_ring 안에서 TAU*ratio 를 다시 셈하고 sweep() 은 이제 테스트만 부른다. test_needs_gauges 의 sweep 단언이 실제 그린 호를 지키지 않는다. draw_ring 에 각도를 넘기거나(sweep() 을 _draw 에서 쓰기) sweep 의 주석에 「테스트용 · 그리기와 같은 셈」이라 적어 어긋남을 막아라
 - [ ] 3. 등반 (732줄) 을 다듬는다
   - 보는 곳: `game/life/climbing/` 의 climbing.gd(321) · climb_gear · stamina · anchor · grapple
   - 기준: 이 파일들에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
