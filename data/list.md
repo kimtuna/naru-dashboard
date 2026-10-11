@@ -2190,7 +2190,7 @@
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
   - 기준: (앞 단계 QA) test_wanders_around_home 이 흔들린다 — game/tests/life/hunting/test_animal_walk.gd:144 의 검사는 짐승의 _rng 가 _ready 에서 randomize() 라(game/life/hunting/animal.gd:151) 돌 때마다 길이 달라, 앞 시도에서 22.61 < 22.5 로 한 번 떨어졌다가 같은 코드로 다시 통과했다. 검사 쪽에서 _put 뒤 animal._rng.seed 를 고정값으로 박아(그 값으로 통과하는지 확인) 결과가 늘 같게 하라. 단언의 값(WANDER_RADIUS + DETOUR) · 개수는 바꾸지 않는다. 같은 파일의 다른 검사도 _rng 에 기대는지 함께 본다
-- [ ] 5. fishing.gd (495줄) 를 다듬는다
+- [x] 5. fishing.gd (495줄) 를 다듬는다
   - 보는 곳: `game/life/fishing/fishing.gd`. **이 단계의 몫은 여기뿐이다** — 부르는 쪽과 무는 테스트는 읽기만 한다
   - G-158 에서 떡밥 · 영역 · 작은 놀이가 한꺼번에 들어왔다 — 셋이 한 함수에 섞여 있나 본다
   - 기준: 이 파일에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
