@@ -2242,7 +2242,7 @@
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
   - 기준: (앞 단계 QA) round_trip 검사가 임시 폴더를 남긴다 — test.log 끝에 TMPDIR 에 naru_round_trip_* 가 하나 남았다고 나온다. game/tests/settings/save/test_round_trip.gd 에서 만든 임시 폴더를 after_each/after_all 에서 TempDir.clean 으로 지우게 고쳐라 (이번 단계 파일과는 상관없다)
-- [ ] 11. 전투 (1,196줄) 를 다듬는다
+- [x] 11. 전투 (1,196줄) 를 다듬는다
   - 보는 곳: `game/combat/tools_as_weapons/` 의 `attack.gd` · `tool_catalog.gd` · `bullet_trace.gd` · `magazine.gd`. **이 단계의 몫은 여기뿐이다** — 부르는 쪽과 무는 테스트는 읽기만 한다
   - **맨 뒤에 둔 까닭**: 지금 하는 일(자동화 · 생활)이 이 파일을 안 지나간다. 위가 다 끝난 뒤에 한다
   - 기준: 이 파일에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
@@ -2252,6 +2252,9 @@
   - 기준: 이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
   - 기준: (앞 단계 QA) 상자의 「제 상태 칸」 경로를 지키는 검사가 없다 — 이번에 하나로 합친 chest.gd _take_in 의 SlotMove.plain 이 아닌 갈래(빈 칸 하나에 entry 를 그대로 넣는 곳)를 `return count` 로 바꿔(넣지 않게) tests/world/storage 11파일 106개와 tests/life/hunting 101개를 돌렸더니 전부 통과했다 (되돌렸다). 행동은 줄마다 맞대 같음을 확인했지만 다음에 누가 건드리면 못 잡는다. tests/world/storage/test_chest_shift_click.gd 에 테스트 둘을 더하라: (1) 가방 칸에 제 상태를 안은 것(케이지에 든 짐승처럼 item·count 밖의 키가 있는 칸)을 두고 quick_from_bag → 상자의 첫 빈 칸이 그 사전과 같고(assert_eq 전체 사전) 가방 칸이 비었는지, 같은 item 이 든 칸에 겹치지 않았는지 (2) 상자에 빈 칸이 없을 때 quick_from_bag 은 0, store 는 count 를 돌려주고 아무것도 안 바뀌는지. store(entry) 로도 (1)을 한 번 본다
   - 기준: (앞 단계 QA) 주민 손의 상자 칸 베끼기가 겹친다 — automation/villagers/hands.gd 의 fits_into · takes_some 이 상자 칸을 VillagerHands 로 베끼는 같은 네 줄을 각자 적었다(구현 세션이 report 에 적음). 이 묶음 밖 파일이니 hands.gd 를 맡는 단계에서 안쪽 함수 하나로 올려라 — 이름이 _ 로 시작하면 밖에 안 보인다
+- [ ] 12. (앞 단계 QA) hands.gd 상자 칸 베끼기 네 줄 겹침
+  - 기준: hands.gd 상자 칸 베끼기 네 줄 겹침 — game/automation/villagers/hands.gd 의 fits_into 와 takes_some 이 상자 칸을 VillagerHands 로 베끼는 같은 네 줄을 각자 적었다. 그 네 줄을 _ 로 시작하는 안쪽 함수 하나(예: _copy_of(chest))로 올리고 두 곳에서 부르게 하라. 밖 이름은 그대로 두고, tests/automation/villagers 가 그대로 통과하는지 본다 (G-993 마지막 단계의 기준에 실려 왔지만 이 묶음 밖 파일이라 못 했다)
+  - 기준: (앞 단계 QA) round_trip 의 임시 폴더 검사 비켜가기 — game/tests/settings/save/test_round_trip.gd _sweep_stale 이 `var root := OS.get_temp_dir()` 를 `_dir.get_base_dir()` 로 바꿔 test_temp_dir 검사기의 눈을 피했다(주석에 그렇게 적혀 있다). 행동은 같고 root 는 만든 자리가 아니라 오해(검사기의 헛짚음)였지만, 글자만 바꿔 피한 것이라 다음에 같은 꼴(임시 폴더를 둘러보며 TempDir.clean 으로 지우는 자리)이 또 걸린다. tests/test_temp_dir.gd 의 _unerased 가 「그 변수 아래를 TempDir.clean/erase 로 지우는 자리」(root.path_join(..) 을 TempDir.clean 에 넘김)를 지운 것으로 치게 하고, 그 경우를 test_checker_* 에 하나 더해 검사기 자체를 고쳐라 — 단, 기존 단언의 값·개수는 바꾸지 않는다
 
 ## [ ] G-995 아직 안 본 나머지를 다듬는다 — 차선 1 (사람 물음 2026-10-12)
 - 차선: 3d-start
