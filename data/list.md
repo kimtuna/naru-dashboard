@@ -2329,7 +2329,7 @@
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
   - 기준: (앞 단계 QA) 트리 밖 테스트가 Aim 길을 안 지난다 — game/tests/craft/stations/test_stations_aim_one_path.gd 의 test_aimed_station_is_empty_handed_without_a_player_or_tree 는 player 가 null 이라 새로 넣은 `not is_inside_tree()` 갈래를 따로 보지 않는다(막는 것은 아니다). player 를 넣고 트리 밖에 둔 Stations 로 aimed_station() 이 null 이고 에러가 없는지 보는 단언을 하나 더 넣어라
-- [ ] 7. 다치고 죽기 (488줄) 을 다듬는다
+- [x] 7. 다치고 죽기 (488줄) 을 다듬는다
   - 보는 곳: `game/combat/damage_death/` 의 death · death_chest · health · mob · fall_damage
   - 기준: 이 파일들에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
     report 에 표로 적고, **그 자리에서 고친다** (찾아만 두지 않는다)
