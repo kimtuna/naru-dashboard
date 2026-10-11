@@ -2161,7 +2161,7 @@
   - 기준: **고칠 것이 없으면 없다고 적는다** — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
-- [ ] 2. farmland.gd (438줄) 를 다듬는다
+- [x] 2. farmland.gd (438줄) 를 다듬는다
   - 보는 곳: `game/life/farming/farmland.gd`. **이 단계의 몫은 여기뿐이다** — 부르는 쪽과 무는 테스트는 읽기만 한다
   - 기준: 이 파일에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
     report 에 표로 적고, **그 자리에서 고친다** (찾아만 두지 않는다)
@@ -2175,6 +2175,8 @@
   - 기준: **고칠 것이 없으면 없다고 적는다** — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
+  - 기준: (앞 단계 QA) report 의 바뀐 곳 개수가 test.log 와 다르다 — report.how 에는 '43 파일 · 312개'라고 적었지만 루프의 .loop/out/test.log 에는 48 파일 · 357개다. 세션이 따로 돌린 changed_G993_2.log 숫자를 옮긴 것으로 보인다. 다음부터는 report 에 루프가 남긴 test.log 숫자를 적어라(막는 것은 아니다)
+  - 기준: (앞 단계 QA) Stations.REACH 주석이 Farmland 를 안 적는다 — 이제 Farmland.REACH 가 game/craft/stations/stations.gd:32 의 Stations.REACH 를 그대로 쓰는데, stations.gd:31 주석은 'Harvest.REACH 와 같은 값'만 적었다. 이 값이 밭의 손 닿는 거리도 정한다고 한 줄 더하라. Aim.REACH · Harvest.REACH 와 4.0 을 따로 적은 겹침은 report 대로 G-994 몫
 - [ ] 4. animal_nav.gd 와 사냥 나머지 (약 900줄) 를 다듬는다
   - 보는 곳: `game/life/hunting/` 의 `animal_nav.gd` · `animal_kinds.gd` · `captives.gd` · `island_animals.gd` · `butchery.gd` · `body_parts.gd` · `sound.gd` · `cage.gd` · `tranq.gd`. **이 단계의 몫은 여기뿐이다** — 부르는 쪽과 무는 테스트는 읽기만 한다
   - `animal_nav.gd` 는 주민도 같이 쓴다 (G-165~G-168) — **밖에서 부르는 이름을 바꾸면 차선 1 이 깨진다**
