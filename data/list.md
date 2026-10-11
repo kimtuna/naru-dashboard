@@ -2125,7 +2125,7 @@
 - [x] 9. (앞 단계 QA) 놓는 곳 뼈대가 네 파일에 겹쳤다
   - 기준: 놓는 곳 뼈대가 네 파일에 겹쳤다 — Beds · Torches · Chests · Stations(build/beds/beds.gd · world/lighting/torches.gd · world/storage/chests.gd · craft/stations/stations.gd)가 미리보기 _ready · refresh_preview · preview · preview_color · aimed_* · plan_spot · aimed_spot · standing/restore 를 거의 줄마다 같이 적었다 (G-992.8 report 「경계를 넘는 것」). 차선을 넘으니 G-994 에서 Placeable 쪽(또는 공통 놓는 곳 뼈대)으로 모으고, 네 파일의 기존 검사가 단언 그대로 통과하는지 본다
 
-## [ ] G-993 생활과 화면을 다듬는다 — 파일 하나씩 (사람 결정 2026-10-11)
+## [x] G-993 생활과 화면을 다듬는다 — 파일 하나씩 (사람 결정 2026-10-11)
 - 차선: 3d-lane2
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다 — 깨끗해질 때까지
 - **G-991 의 틀을 그대로 쓴다** (buildings.gd 하나로 해 봤고 통했다 2026-09-27).
