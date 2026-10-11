@@ -2351,7 +2351,7 @@
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
   - 기준: (앞 단계 QA) report 의 「뒤」 숫자가 부분 그물이다 — how 에 뒤를 362/362(바뀐 곳 37 파일)로 적었지만 이번 test.log 는 전체 2103/2103 였다. 다음 단계부터는 test.log 맨 윗줄이 「전체」면 그 숫자를 「뒤」로 적어라 (앞뒤를 같은 그물로 견준다)
-- [ ] 10. 플레이어 나머지 (1,128줄) 을 다듬는다
+- [x] 10. 플레이어 나머지 (1,128줄) 을 다듬는다
   - 보는 곳: `game/player/` 에서 G-993 이 안 본 것 — inventory_hotbar 의 slot_move · held_item · item_weights · slot_hand · hunger_thirst 의 drinking · hunger_thirst · cup · pickup 의 pickup · dropped_item · equipment · movement_controls 의 player_config · aim · player_state
   - 기준: 이 파일들에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
     report 에 표로 적고, **그 자리에서 고친다** (찾아만 두지 않는다)
@@ -2365,6 +2365,7 @@
   - 기준: **고칠 것이 없으면 없다고 적는다** — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
+  - 기준: (앞 단계 QA) report 의 「뒤」 숫자를 같은 그물로 적어라 — 이번에도 앞은 전체 2103, 뒤는 부분 559 로 적었다. 단계 9 QA 지적과 같다. 묶음 마지막 단계처럼 test.log 가 「전체」로 돌 때는 뒤에 그 숫자를 적고, 부분만 돌렸으면 「뒤: 루프 전체 그물로 확인」이라고만 적어 앞뒤를 다른 그물로 견주지 마라 (이번엔 test.log 전체가 2103/2103 이라 기준은 통과)
 - [ ] 12. 뼈대 나머지 (594줄) 을 다듬는다
   - 보는 곳: `game/core/` 의 path_walk · grid · input(input_actions · pointer) · `game/ui/theme/ui_theme.gd` · `game/life/fishing/fishing_gauge.gd` · `game/life/farming/` 의 field_patch · watering_can · `game/combat/tools_as_weapons/` 의 projectile · aiming
   - 기준: 이 파일들에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아

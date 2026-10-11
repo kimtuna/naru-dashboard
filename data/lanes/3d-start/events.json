@@ -1,96 +1,5 @@
 [
  {
-  "time": "2026-09-26 16:17:49",
-  "epoch": 1790407069,
-  "type": "pass",
-  "title": "통과 — G-151 단계 3 (장비칸)",
-  "group": "G-151",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "가방 창 인벤토리 칸 위에 장비 영역(왼쪽 캐릭터 모습 + 둘레 장비칸 여덟)을 만들고, 부위에 맞는 것만 끼우며, 가방칸의 배낭이 인벤토리를 한 줄 늘리고 늘어난 칸에 물건이 있으면 빠지지 않게 했다. 바뀐 곳만: 161개 파일 · 1400개 테스트 통과",
-   "approach": "장비는 이미 CharacterData.equipment 딕셔너리로 저장되고 있었지만 칸 이름도 끼우는 길도 없었다. 규칙을 Equipment(player/equipment/equipment.gd) 한 곳에 두었다 — 여덟 칸 · 아이템→칸 표(FITS) · 가방→늘어나는 칸(BAG_EXTRA) · equip/unequip. 인벤토리 칸 수는 const SLOTS(20) 대신 size() = SLOTS + 가방이 더한 몫으로 바꿔, 게임 코드(가방 창 · 상자 · 잡은 짐승)가 size() 를 본다. 늘어난 몫은 저장하지 않고 들어올 때 장비칸에서 다시 계산하며, 옛 칸 거두기(fold_overflow)보다 먼저 맞춰 늘어난 칸의 물건을 넘친 것으로 보지 않게 했다. 가방 창에는 Gear(왼쪽 2×2 · 캐릭터 모습 · 오른쪽 2×2)를 칸 위에 넣었다. 창이 커지니 Center 를 위로 자라게(grow_vertical=BEGIN) 해 아래 끝이 핫바 위에 머문다. 상자와 같이 뜰 때는 상자 창과 부딪혀 장비 영역을 접는다. 캐릭터 모습 크기를 .tscn 에 적어 테마 검사에 걸렸다 — 테마 Window 의 gear_look_* 로 옮겼다. 배낭 아이템(ITEM_backpack, 제작대: 가죽 4 · 목재 2, 무게 1kg)을 더했다 — 없으면 가방칸에 끼울 것이 없다. 찍어 봤다(.loop/out/gear/bag_ko·en, chest_ko·en) — 잘리지 않고 1280×720 안이며 핫바를 덮지 않는다. QA 흠: test_shoulder_camera 주석을 「조준 때는 좁힌 시야만큼 카메라가 물러난다」로 고쳤다.",
-   "why": "배낭 한 등급이 늘려 주는 칸 10 (한 줄) — equipment.gd BAG_EXTRA, 사람이 등급 · 수를 정한다; 배낭 레시피(제작대, 가죽 4 · 목재 2) · 무게 1.0kg — 지어낸 값; 장비 영역 배치(캐릭터 왼쪽 2×2: 모자·상의/하의·신발, 오른쪽 2×2: 귀걸이·목걸이/반지·가방)와 캐릭터 모습 크기 96×116 (테마 gear_look_*); 빈 장비칸 이름표의 흐림 0.45 (equip_slot.gd EMPTY_ALPHA)",
-   "files": [
-    "game/player/equipment/equipment.gd",
-    "game/player/inventory_hotbar/inventory.gd",
-    "game/ui/hud/equip_slot.gd",
-    "game/ui/hud/bag.gd",
-    "game/ui/hud/bag.tscn",
-    "game/ui/hud/slot_drop.gd",
-    "game/ui/theme/naru_theme.tres",
-    "game/core/game_root.gd",
-    "game/world/storage/chest.gd",
-    "game/life/hunting/captives.gd",
-    "game/life/climbing/climbing.gd",
-    "game/craft/recipes/recipes.json",
-    "game/player/inventory_hotbar/weights.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/player/movement_controls/test_shoulder_camera.gd",
-    "spec/02_player/equipment.md",
-    "spec/02_player/inventory-hotbar.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "가방 창의 **인벤토리 칸 위**에 장비 영역이 있다 — **왼쪽에 캐릭터 모습**, 그 둘레에 장비칸 (테스트)",
-     "evidence": "tests/ui/hud/test_bag_gear.gd test_the_gear_sits_above_the_inventory_slots(장비 영역 아래 끝 < 칸 격자 위 끝) · test_the_character_is_on_the_left_with_slots_around_it(캐릭터 중심이 창 중심보다 왼쪽, 여덟 칸이 캐릭터와 겹치지 않고 같은 높이, 왼쪽·오른쪽에 모두 칸). 찍은 bag_ko.png 에서도 칸 위에 캐릭터+둘레 칸이 보인다"
-    },
-    {
-     "ok": true,
-     "criterion": "장비칸은 **신발 · 하의 · 상의 · 모자 · 귀걸이 · 목걸이 · 반지 · 가방** 여덟 (사람 결정 2026-09-26) (테스트)",
-     "evidence": "test_equipment.gd test_there_are_eight_slots 가 Equipment.SLOTS 를 여덟 이름 그대로 비교, test_bag_gear.gd test_eight_gear_slots_with_translated_names 가 창에 실제로 놓인 칸 여덟을 비교"
-    },
-    {
-     "ok": true,
-     "criterion": "그 부위에 맞는 것만 들어간다 — 스파이크 신발은 신발칸 (테스트). 장비칸은 저장본에 담긴다 (테스트)",
-     "evidence": "test_spikes_go_into_the_shoes_slot · test_spikes_fit_no_other_slot(다른 일곱 칸 거부, 가방 칸 그대로) · test_plain_items_fit_no_slot · 창에서 모자칸이 스파이크를 안 받는 드래그 테스트. 저장: test_the_equipment_rides_in_the_save 가 CharacterData.to_dict→JSON→from_dict 왕복 뒤 신발·가방칸을 확인, test_entering_with_a_bag_keeps_the_extra_slots 가 저장본으로 들어와 늘어난 칸과 그 안의 물건이 그대로인지 확인. Player.equipment 와 CharacterData.equipment 가 같은 딕셔너리(test_drag_spikes… 에서 game.character.equipment 확인)"
-    },
-    {
-     "ok": true,
-     "criterion": "칸 이름은 번역 키 (ko · en)",
-     "evidence": "ko.po · en.po 에 EQUIP_shoes…EQUIP_bag 여덟 + ITEM_backpack. test_every_slot_name_is_translated 가 두 언어에서 tr(key)!=key 를 본다. 빈 칸 이름표가 EQUIP_<칸> 키임도 test_bag_gear 가 확인"
-    },
-    {
-     "ok": true,
-     "criterion": "**가방칸에 가방을 끼우면 인벤토리 칸이 는다** (사람 결정 2026-09-26) — 늘어나는 수 · 가방 등급은 임시. 가방을 빼려는데 늘어난 칸에 물건이 있으면 빠지지 않는다 (잃지 않게) (테스트)",
-     "evidence": "test_a_bag_adds_slots(size = SLOTS+extra, 늘어난 칸에 넣을 수 있음) · test_a_bag_will_not_come_off_while_its_slots_hold_things(물건 있으면 false·가방·물건 그대로, 비우면 빠지고 칸이 준다) · test_a_bag_cannot_be_put_down_into_its_own_slots · 창에서 한 줄 늘고 안 빠지는 test_a_backpack_adds_a_row_to_the_window. 일부러 깨 봄: unequip 의 _empty_from 검사를 지우자 test_equipment 가 FAIL(되돌림 확인). BAG_EXTRA 10 은 코드·spec 수치에 「임시」로 적혀 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "`spec/02_player/equipment.md` 에 여덟 칸 · 가방칸 규칙을 사람 결정으로 적는다. 장비마다의 스탯은 「미정」",
-     "evidence": "규칙 절에 여덟 칸 · 가방칸 규칙을 (사람 결정 2026-09-26)으로, 미정 절에 「장비마다의 스탯 — 미정」·가방 등급 수. 기존 줄 삭제 없음, 32줄"
-    },
-    {
-     "ok": true,
-     "criterion": "찍어서 확인한다 — 창이 잘리지 않고 1280×720 안에 들어간다",
-     "evidence": ".loop/out/gear/bag_ko·en, chest_ko·en 을 직접 봤다 — 잘리지 않고 핫바를 덮지 않는다. test_the_window_fits_1280x720 · 가방을 낀 3줄 창도 _assert_fits_the_screen 로 화면 안·핫바 위를 잰다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) test_shoulder_camera 주석이 옛 방식을 말한다 — game/tests/player/movement_controls/test_shoulder_camera.gd 의 핫바 단언 위 주석 「조준 때는 어깨를 더 비킨다」는 버린 방식이다. 지금은 좁힌 시야만큼 카메라가 시선을 따라 물러난다(Player.set_camera_fov). 주석을 「조준 때는 좁힌 시야만큼 카메라가 물러난다」로 고쳐라",
-     "evidence": "diff 에서 해당 주석이 「조준 때는 좁힌 시야만큼 카메라가 물러난다」로 바뀌었다"
-    }
-   ],
-   "issues": [
-    "배낭 레시피·무게가 spec 에 「임시」로 없다 — recipes.json 의 backpack(제작대, 가죽 4 · 목재 2) 과 weights.json 의 backpack 1.0kg 은 지어낸 값인데 report 에만 임시라고 적혔다. spec/02_player/equipment.md 수치 절에 「배낭 레시피 제작대 가죽 4 · 목재 2 · 무게 1.0kg — 임시」 한 줄을 더해라",
-    "장비칸을 맞지 않는 칸에 놓으면 받는 척한다 — slot_drop.gd _can_drop_data 가 equip 데이터면 chest==null 만 보고 true 라, 스파이크를 끌어 목재가 든 칸에 놓으면 드롭 표시가 뜨고 Equipment.unequip 이 조용히 false 를 낸다. 빈 칸이거나 fits(slot, 그 칸)일 때만 true 로 하고, test_bag_gear 에 「목재 칸은 신발칸 것을 안 받는다」 단언을 더해라"
-   ],
-   "good": [
-    "배낭 아이템(ITEM_backpack) · 제작대 레시피 · 무게 — 가방칸에 끼울 것이 있어야 해서 더했다",
-    "가방 칸 Shift+클릭이 열린 상자가 없으면 맞는 장비칸에 끼운다",
-    "상자와 같이 뜰 때 장비 영역을 접는다"
-   ]
-  },
-  "test": "ests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           187\nTests            1587\nPassing Tests    1587\nFailing Tests       0\nPending             0\nAsserts         73195\nTime           276s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "c179b57"
- },
- {
   "time": "2026-09-26 16:26:17",
   "epoch": 1790407577,
   "type": "pass",
@@ -8927,5 +8836,58 @@
   },
   "test": "s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      0s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           268\nTests            2103\nPassing Tests    2103\nFailing Tests       0\nRisky/Pending       0\nAsserts        101693\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "26ce7e4f"
+ },
+ {
+  "time": "2026-10-12 07:03:50",
+  "epoch": 1791756230,
+  "type": "pass",
+  "title": "통과 — G-995 단계 10 (플레이어 나머지 (1,128줄) 을 다듬는다)",
+  "group": "G-995",
+  "step": "10",
+  "attempt": "1",
+  "report": {
+   "problem": "플레이어 나머지 13 파일을 다듬었다 — 마시기의 겹친 한 모금 · 조작 확인을 _sip · _can_act 로, 장비 칸 복사 · 줍기 무리 훑기를 _slots_of · _drops 로 모았고, 안에서만 쓰던 Cup.emptied 를 _emptied 로, held_item 의 낡은 「회색 상자」 주석을 고쳤다. 바뀐 곳 그물 55 파일 559/559 통과",
+   "approach": "플레이어 나머지 13 파일(1,128줄)을 다 읽고, 공개 이름마다 game/ · game/tests 를 뒤져 부르는 곳을 찾았고, 머리 주석에 적힌 경로 · 이름(30여 개)이 다 있는지 확인했다.\n\n| 종류 | 자리 | 무엇 | 어떻게 |\n|---|---|---|---|\n| 겹친 코드 | drinking.gd drink_aimed · drink_from_cup | 「drink(SIP) → drank.emit → true」 네 줄이 두 벌 | 안쪽 함수 _sip() 하나로 |\n| 겹친 코드 | drinking.gd 우클릭 네 갈래 | 「player == null or not controls_enabled」 문이 네 번 | 안쪽 함수 _can_act() 하나로 |\n| 겹친 코드 | equipment.gd equip · unequip | 가방 칸 전부를 복사하는 고리(가방이 줄어 밖에 남은 칸까지)가 두 벌 | 안쪽 함수 _slots_of(inv) 하나로 |\n| 겹친 코드 | pickup.gd collect · standing | 떨어진 무리를 훑으며 null · 지워지는 중을 거르는 고리가 두 벌 | 안쪽 함수 _drops() 하나로 |\n| 밖으로 샌 이름 | cup.gd emptied | 공개 이름이지만 부르는 곳은 cup.gd 안(sip_selected) 하나뿐 — 게임 · 테스트 어디서도 안 부른다 | _emptied 로 안쪽 이름으로 |\n| 낡은 주석 | held_item.gd 머리 | 「회색 상자다」 — 이제 tools.json 의 color 로 빛깔이 저마다 다르다(20 개 색) | 「hand · color — 크기 · 빛깔만 다른 상자다」 |\n\n**괜찮다고 본 것**\n- slot_move.gd: drop · half · one · gather · sorted 다 slot_drop · inventory · chest 가 부른다. _by_name 의 Dictionary 에서 멈추는 것은 odd 줄의 4 번째(칸 자체)를 견주지 않으려는 것이라 맞다. 150줄이지만 함수마다 30줄 안.\n- item_weights.gd · slot_hand.gd · dropped_item.gd · player_config.gd · aim.gd · player_state.gd · hunger_thirst.gd: 공개 이름은 다 부르는 곳이 있다(of_entry 는 carried 가 쓴다 · Aim.within/reaches 는 villager · test_villager_reach · jump_velocity/stopping_speed 는 player.gd). 주석의 Player.weight_factor · base_speed · speed_multiplier · set_camera_fov · Inventory.fold_overflow · set_extra · put_in_empty · GameRoot 의 SlotHand · test_island 의 Drinking 붙이는 순서(「우클릭 받는 것 가운데 가장 앞」)가 다 코드와 맞다.\n- drinking.gd aims_at_fresh_water 의 광선 세우기가 Aim.at 와 비슷하지만 물 찾기는 맞은 자리까지 걸어가며 재야 해서 Aim.at(맞은 것만 돌려준다)를 쓸 수 없다 — 그대로 둔다.\n- 긴 함수: Equipment.equip(약 26줄) · SlotMove.sorted(약 29줄) 가 가장 길지만 한 가지 일만 하고 나누면 오히려 흩어진다 — 그대로.\n- 경계를 넘는 것: 없다. 밖에서 부르는 이름은 하나도 바꾸지 않았다(Cup.emptied 는 부르는 곳이 cup.gd 안뿐). 새 이름은 _sip · _can_act · _slots_of · _drops 안쪽뿐. 「사람 결정」 · 「임시」 줄은 그대로다.\n\n**테스트 개수**\n- 앞: 2103/2103 (G-995.9 뒤 루프가 돌린 전체 그물, loop.log).\n- 뒤: 바뀐 곳 그물(changed_tests.py 55 파일)만 돌렸다 — 559/559 통과. 이 파일들에 걸리는 test_cup · test_cup_sips · test_cup_stacking · test_hunger_thirst · test_equipment · test_bag_gear · test_equip_blocked_notice · test_pickup · test_throw_out · test_held_item · test_weight · test_from_empty_hands 가 다 들어 있다. 전체는 돌리지 않았다 — 테스트를 지우거나 고친 것이 없어 전체는 2103 그대로여야 하고, 루프의 전체 그물이 확인한다. (앞 2103 은 전체 · 뒤 559 는 부분 그물이라 같은 그물이 아니다.)",
+   "why": "",
+   "files": [
+    "game/player/hunger_thirst/drinking.gd",
+    "game/player/hunger_thirst/cup.gd",
+    "game/player/equipment/equipment.gd",
+    "game/player/pickup/pickup.gd",
+    "game/player/inventory_hotbar/held_item.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "이 파일들에서 겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석을 찾아 report 에 표로 적고, 그 자리에서 고친다 (찾아만 두지 않는다)",
+     "evidence": "report how 에 표 6줄. diff 로 다 고쳐져 있다: drinking.gd 의 _sip · _can_act(한 모금 네 줄 두 벌 · 조작 확인 네 번), equipment.gd 의 _slots_of(칸 복사 고리 두 벌), pickup.gd 의 _drops(무리 훑기 두 벌), cup.gd emptied→_emptied(game · spec 어디서도 Cup.emptied 를 부르지 않는다 — grep 확인), held_item.gd 의 낡은 「회색 상자」 주석(tools.json 에 hand · color 20개씩 있다 — 확인). 동작을 바꾸지 않았다: pickup.take 는 그 덩어리만 vanish 하니 _drops 를 미리 모아도 결과가 같다"
+    },
+    {
+     "ok": true,
+     "criterion": "고칠 것이 없으면 없다고 적는다 — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다",
+     "evidence": "how 의 「괜찮다고 본 것」에 slot_move · item_weights · slot_hand · dropped_item · player_config · aim · player_state · hunger_thirst 를 하나씩 까닭과 함께 적었다(부르는 곳 · 주석 대조 · aims_at_fresh_water 를 Aim.at 로 못 바꾸는 까닭 · 긴 함수를 안 나눈 까닭)"
+    },
+    {
+     "ok": true,
+     "criterion": "전체 테스트 통과 개수가 줄지 않았다 — report 에 앞뒤 숫자를 적는다",
+     "evidence": "앞 2103/2103(report). 이번 test.log 는 「전체」 — 268 파일 2103/2103 통과, 실패 0. 줄지 않았다. report 의 「뒤」는 부분 그물 559/559 로 적혀 있지만 부분임을 밝혔고, 전체 숫자는 test.log 로 확인된다"
+    },
+    {
+     "ok": true,
+     "criterion": "이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)",
+     "evidence": "test.log 전체 2103/2103 · guard 통과. 바뀐 함수를 직접 부르는 테스트가 있다: test_cup_sips · test_hunger_thirst(drink_from_cup · drink_aimed · fill_cup_aimed · refuse_empty_cup), test_cup · test_cup_stacking(sip_selected → _emptied), test_equipment · test_bag_gear · test_equip_blocked_notice(equip · unequip), test_pickup · test_round_trip(collect · standing), test_held_item — 다 ok"
+    }
+   ],
+   "issues": [
+    "report 의 「뒤」 숫자를 같은 그물로 적어라 — 이번에도 앞은 전체 2103, 뒤는 부분 559 로 적었다. 단계 9 QA 지적과 같다. 묶음 마지막 단계처럼 test.log 가 「전체」로 돌 때는 뒤에 그 숫자를 적고, 부분만 돌렸으면 「뒤: 루프 전체 그물로 확인」이라고만 적어 앞뒤를 다른 그물로 견주지 마라 (이번엔 test.log 전체가 2103/2103 이라 기준은 통과)"
+   ],
+   "good": []
+  },
+  "test": "e/input/test_debug_keys.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      0s  res://tests/core/input/test_input_spec_table.gd\nok      0s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           268\nTests            2103\nPassing Tests    2103\nFailing Tests       0\nRisky/Pending       0\nAsserts        101730\nTime           472s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "854639de"
  }
 ]
