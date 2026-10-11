@@ -2299,7 +2299,7 @@
   - 기준: 이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
   - 기준: (앞 단계 QA) report 가 test.sh 에 적었다는 말이 없다 — report.how 는 「test.sh 도 그렇게 섞일 수 있다고 적어 둔다」(두 차선이 같은 TMPDIR 을 같이 쓴다)라고 하지만 tools/test.sh 는 바뀌지 않았다. tools/test.sh 의 임시 폴더 검사 근처에 「다른 차선(naru-lane2)이 같은 TMPDIR 에서 돌면 남의 naru_* 가 섞여 보일 수 있다」는 주석을 달거나, 차선마다 TMPDIR 을 따로 주게 하라. 하네스 쪽이라면 사람에게 보낼 일이다
   - 기준: (앞 단계 QA) SavedList 는 delete_id 가 비면 Delete 단추를 안 단다 — 전에는 WorldSelect 가 월드마다 Delete 를 늘 달았다. 지금은 w.id 가 빈 월드에는 Delete 가 없다. WorldData.id 가 늘 차 있으면 상관없지만, 그렇다면 saved_list.gd 의 _make_row 주석에 「빈 칸(새 캐릭터)만 id 가 비어 있다」고 적어 뜻을 못박아 두라
-- [ ] 4. 개척 섬 · 선착장 (725줄) 을 다듬는다
+- [x] 4. 개척 섬 · 선착장 (725줄) 을 다듬는다
   - 보는 곳: `game/world/frontier_islands/` 의 dock_builder · dock · island_state · islands
   - 기준: 이 파일들에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
     report 에 표로 적고, **그 자리에서 고친다** (찾아만 두지 않는다)
@@ -2314,6 +2314,8 @@
   - 기준: **고칠 것이 없으면 없다고 적는다** — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
+  - 기준: (앞 단계 QA) Stations._aim_hit 이 Aim.at 을 베꼈다 — game/craft/stations/stations.gd 의 _aim_hit 이 Aim.at(core 쪽 Aim) 과 줄마다 같은 광선을 다시 적는다. 이 단계 파일이 아니라 report 에 「경계를 넘는 것」으로 남겼다. DockBuilder._aim_hit 처럼 `if player == null or not is_inside_tree(): return {}` 뒤 `return Aim.at(player, get_world_3d().direct_space_state, REACH)` 로 줄이고 tests/craft/stations 를 돌려라
+  - 기준: (앞 단계 QA) report 의 테스트 개수 「뒤」가 일부만 적혔다 — G-995.4 report 는 뒤 숫자를 바뀐 곳 그물 33 파일 293/293 으로만 적었다. 다음 단계부터는 루프의 전체 그물이 돌았다면 test.log 의 「Passing Tests」 숫자(이번에는 2099)를 앞 숫자와 나란히 적어라
 - [ ] 6. 저장 (590줄) 을 다듬는다
   - 보는 곳: `game/settings/save/` 의 round_trip · save_store · world_data · character_data · old_items 와 `game/settings/world_settings/world_settings.gd`
   - 기준: 이 파일들에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
