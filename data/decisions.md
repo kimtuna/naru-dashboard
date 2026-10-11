@@ -18,3 +18,9 @@
 - 어디서: G-993 단계 6
 - 무엇: 전체 테스트 중 6 파일이 밖에서 SIGTERM 을 맞았다 — .loop/out/full_test_G993_6_after.log 에서 0~1초짜리 6 파일이 Terminated: 15 로 한꺼번에 죽었다. 두 차선이 같이 돌 때 한쪽이 godot 을 거두는 것으로 보인다. tools/test.sh 나 하네스 쪽에서 다른 차선의 godot 을 죽이는 곳(pkill · killall 등)을 찾아 제 차선 것만 거두게 하라 — 거두는 곳이 harness 쪽이면 세션 손이 안 닿고, 하네스 수정은 합칠 줄기에서 해야 하니 사람에게 보낸다
 - **사람이 답할 것**: 
+
+## 물음 — 차선 3d-start(f2ebbedb) 을 3d-lane2 에 합치지 못했다
+- 물은 때: 2026-10-12 05:19:19
+- 어디서: 차선 합치기 (3d-lane2)
+- 무엇: 부딪힌다: game/automation/villagers/hands.gd — 이 줄기(3d-lane2)에서 `git merge 3d-start` 을 손으로 풀어 커밋해 달라. 풀릴 때까지 이 차선은 3d-start 없이 돈다
+- **사람이 답할 것**: 
