@@ -2086,7 +2086,7 @@
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
   - 기준: (앞 단계 QA) tick 에서 _needs 를 두 번 부른다 — field_care.gd tick 의 `elif doing == TO_FIELD and not _needs(...)` 를 지난 뒤 _do_in_reach 의 TO_FIELD 갈래가 _needs(_cell, _deed) 를 또 부른다. 행동은 같고 가볍지만, 하나로 줄이려면 _do_in_reach 의 _needs 검사를 stuck 일 때만 하게(`(not stuck or _needs(...))`) 하거나 주석으로 두 번인 까닭을 적어라
-- [ ] 5. hands.gd · persona.gd · jobs.gd (385줄) 를 다듬는다
+- [x] 5. hands.gd · persona.gd · jobs.gd (385줄) 를 다듬는다
   - 보는 곳: `game/automation/villagers/` 의 `hands.gd` · `persona.gd` · `jobs.gd`. **이 단계의 몫은 여기뿐이다** — 부르는 쪽과 무는 테스트는 읽기만 한다
   - `hands.gd` 는 G-170 에서 칸 수 · 겹치기 · 빈 칸 규칙이 한꺼번에 들어왔다 — 규칙이 한 곳에 모여 있나 본다
   - 기준: 이 파일에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
