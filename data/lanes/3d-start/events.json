@@ -1,65 +1,5 @@
 [
  {
-  "time": "2026-09-26 08:40:58",
-  "epoch": 1790379658,
-  "type": "pass",
-  "title": "통과 — G-146 단계 4 (R 꾹 — 없는 탄은 안 보인다)",
-  "group": "G-146",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "R 꾹 탄 고르기에 가방에 있는 탄만 뜨고, 쓸 탄이 없으면 뜨지 않는다 · shots.gd 밤 판정이 틀리면 push_error + 종료 코드 1 · 단계 번호 주석 G-146.3 으로. 바뀐 곳만: 58개 파일 525개 테스트 통과",
-   "approach": "탄 고르기는 ToolCatalog.loadable(제 탄 + 마취탄 셋)을 그대로 띄워 0발인 탄도 떴다. Attack.usable_rounds() 로 그 가운데 가방에 한 발이라도 있는 것만 추려 _open_picker 가 쓰고, 비면 고르기를 열지 않는다(숫자키는 그대로 핫바로 간다 — 진짜 핫바로 확인). 탄창에 든 탄이라도 가방에 없으면 안 뜬다. 옛 테스트들은 가방에 제 탄 없이 고르기를 열었으므로 제 탄을 넣도록 고쳤다. (앞 단계 QA) shots.gd 는 TIME_ORDER · TORCH_NIGHT 의 틀림을 _wrong 에 모아 push_error 로 남기고 quit(1) — TORCH_NIGHT 는 전엔 판정 자체가 없어 둘레가 먼 땅의 2배 이상인지 보는 판정을 더했다. 실제로 찍어 보니 둘레 0.159 · 먼 땅 0.005 로 맞다 · exit 0, 기준을 100배로 올려 찍으면 ERROR 줄과 exit 1 이 shot.sh 로 돌아오는 것을 확인했다(되돌려 둠). test_torch.gd 머리 · torch_night 주석의 단계 번호를 G-146.3 으로 고쳤다.",
-   "why": "shots.gd TORCH_LEAST_RATIO = 2.0 — 횃불 둘레가 먼 땅보다 이만큼 배 밝아야 맞다로 친다. 지금 사진은 약 30배라 넉넉하다. 사람이 사진을 보고 정한다",
-   "files": [
-    "game/combat/tools_as_weapons/attack.gd",
-    "game/ui/hud/ammo_picker.gd",
-    "game/core/debug/shots.gd",
-    "game/tests/combat/tools_as_weapons/test_tranq_ammo.gd",
-    "game/tests/world/lighting/test_torch.gd",
-    "spec/08_combat/tools-as-weapons.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "탄 고르기에 **가방에 있는 탄만** 뜬다 (테스트)",
-     "evidence": "test_tranq_ammo.gd::test_only_rounds_in_the_bag_are_shown — 제 탄 5 · 마취탄 하나 3 만 넣고 R 꾹, pick_options 가 [own, tranq] 이고 화면 줄 글자도 그 둘뿐인지 본다. test_a_round_missing_from_the_bag_is_hidden_even_if_it_is_loaded 는 탄창에 든 제 탄이라도 가방에 없으면 안 뜨는지 본다. 일부러 깨 봤다 — attack.gd usable_rounds 의 count_of(item) > 0 을 >= 0 으로 바꾸자 test_tranq_ammo.gd 가 떨어졌다(되돌림 확인)"
-    },
-    {
-     "ok": true,
-     "criterion": "들고 있는 총이 쓰는 계통의 탄만 뜬다 — 지금 규칙 그대로다 (테스트)",
-     "evidence": "test_holding_r_shows_only_the_rounds_that_fit_this_gun — 이제 가방에 모든 탄(ammo_kinds + tranq_kinds)을 넣은 뒤 총마다 R 꾹, 제 탄+마취탄 셋만 뜨고 남의 탄은 가방에 있어도 안 뜨는지 단언한다. 필터가 loadable 위에 얹혀 계통 규칙이 그대로다"
-    },
-    {
-     "ok": true,
-     "criterion": "쓸 탄이 하나도 없으면 고르기가 뜨지 않는다 (테스트)",
-     "evidence": "test_no_usable_rounds_means_no_picker — 남의 계통 탄만 가득한 가방에서 R 꾹, picking false · 창 invisible · 숫자키 2 가 진짜 핫바 selected()==1 로 가고 든 탄이 그대로인지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) shots.gd 의 밤 판정이 단언이 아니라 출력뿐이다 — TIME_ORDER · TORCH_NIGHT 가 틀리면 push_error 로 남기거나 quit(1) 로 끝내라",
-     "evidence": "game/core/debug/shots.gd — bad · TORCH_NIGHT 틀림을 _wrong 에 모아 push_error 하고 get_tree().quit(1 if 틀림 else 0). TORCH_NIGHT 에 전엔 없던 판정(둘레 ≥ 먼 땅×TORCH_LEAST_RATIO, 주석에 **임시**)을 더했다. 구현 세션이 기준을 100배로 올려 exit 1 이 shot.sh 로 돌아옴을 확인했다고 적었다(코드상 경로가 맞다)"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) test_torch.gd 머리 주석 · shots.gd torch_night 주석의 단계 번호를 G-146.3 으로 고쳐라",
-     "evidence": "diff 에서 두 곳 다 G-146.2 → G-146.3 으로 바뀌었다"
-    }
-   ],
-   "issues": [
-    "[결정] current.md 기준 줄이 둘 붙어 나왔다 — harness/step.py 가 만든 current.md 에서 「쓸 탄이 하나도 없으면 고르기가 뜨지 않는다 (테스트)」 뒤에 「  - 기준: (앞 단계 QA) shots.gd …」 가 같은 줄에 이어 붙었다. 앞 단계 QA 기준을 덧붙일 때 줄바꿈이 빠지는 듯하다. 세션 손이 닿지 않는 하네스 쪽이라 사람이 step.py 의 덧붙이는 곳을 봐야 한다",
-    "ammo_picker.gd 머리 주석 한 줄이 너무 길다 — game/ui/hud/ammo_picker.gd 7줄에 「가방에 없는 탄도 뜨지 않는다 (Attack.usable_rounds).」 를 앞줄에 이어 붙여 다른 줄보다 훨씬 길어졌다. 옆 줄들처럼 두 줄로 나눠라"
-   ],
-   "good": []
-  },
-  "test": "/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_placeable.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      0s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      0s  res://tests/core/test_guard.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok    420s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           174\nTests            1496\nPassing Tests    1496\nFailing Tests       0\nPending             0\nAsserts         69284\nTime           421s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "62c0038"
- },
- {
   "time": "2026-09-26 08:49:54",
   "epoch": 1790380194,
   "type": "pass",
@@ -8955,5 +8895,26 @@
    "decision": null
   },
   "test": "island.gd:103)\n         [2] before_all (res://tests/life/hunting/test_animal_walk.gd:25)\n         [3] _call_before_all (res://addons/gut/gut.gd:684)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:813)\n         [5] test_scripts (res://addons/gut/gut.gd:1047)\n         [6] run_tests (res://addons/gut/gui/GutRunner.gd:198)\n         [7] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n         [8] main (res://addons/gut/cli/gut_cli.gd:297)\n         [9] _init (res://addons/gut/gut_cmdln.gd:39)\n* test_wanders_around_home\n* test_picked_spots_stay_within_the_wander_radius\n    집 (-370.0, 200.0) — 고른 곳 가장 멀리 19.93m\n    집 (-251.0, -240.0) — 고른 곳 가장 멀리 19.84m\n    집 (120.7662, 21.05808) — 고른 곳 가장 멀리 19.74m\n* test_picks_again_where_a_single_pick_lands_outside\n    집 (130.0, 27.39642) — 한 번 고르기 200번 중 7번 반경 밖 · 가장 멀리 23.17m\n* test_never_steps_into_water_even_when_sent_there\n    [Failed]:  ARRAY([(-256.0367, 21.78207, -245.923), (-256.0839, 21.78258, -246.0524), (-256.2309, 21.6...246.211)]) != ARRAY([]).\n    [(-256.0367, 21.78207, -245.923), (-256....-246.211)] != []  5 of 5 indexes do not match.  연못 가운데로 보내도 물에 들어가지 않는다\n      at line 226\n* test_does_not_fall_off_cliff_even_when_sent_below\n* test_nav_mesh_has_no_water_or_cliff\n* test_goes_around_trees_not_stuck\n* test_walk_values_live_in_one_place_marked_temporary\n7/8 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/life/hunting/test_animal_walk.gd\n- test_never_steps_into_water_even_when_sent_there\n    [Failed]:  ARRAY([(-256.0367, 21.78207, -245.923), (-256.0839, 21.78258, -246.0524), (-256.2309, 21.6...246.211)]) != ARRAY([]).\n    [(-256.0367, 21.78207, -245.923), (-256....-246.211)] != []  5 of 5 indexes do not match.  연못 가운데로 보내도 물에 들어가지 않는다\n          at line 226\n\nTotals\n------\nScripts               1\nTests                 8\nPassing Tests         7\nFailing Tests         1\nAsserts           258/259\nTime              56.955s\n\n\n---- 1 failing tests ----\n\n\n================ 떨어진 파일: res://tests/core/tools/test_no_triple_blank_lines.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/core/tools/test_no_triple_blank_lines.gd\n* test_no_script_under_game_has_three_blank_lines_in_a_row\n    [Failed]:  ARRAY([\"craft/stations/stations.gd:321\"]) != ARRAY([]).\n    [\"craft/stations/stations.gd:321\"] != []  1 of 1 indexes do not match.  빈 줄이 셋 이상 이어진다 — 함수 사이는 둘, 파일 끝은 줄바꿈 하나:\n    craft/stations/stations.gd:321\n      at line 46\n* test_the_check_catches_three_blank_lines\n* test_the_check_passes_two_blank_lines\n2/3 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/core/tools/test_no_triple_blank_lines.gd\n- test_no_script_under_game_has_three_blank_lines_in_a_row\n    [Failed]:  ARRAY([\"craft/stations/stations.gd:321\"]) != ARRAY([]).\n    [\"craft/stations/stations.gd:321\"] != []  1 of 1 indexes do not match.  빈 줄이 셋 이상 이어진다 — 함수 사이는 둘, 파일 끝은 줄바꿈 하나:\n    craft/stations/stations.gd:321\n          at line 46\n\nTotals\n------\nScripts               1\nTests                 3\nPassing Tests         2\nFailing Tests         1\nAsserts             7/8\nTime              0.472s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           268\nTests            2102\nPassing Tests    2100\nFailing Tests       2\nRisky/Pending       0\nAsserts        101685\nTime           476s  (godot 6 개)\n\n떨어진 파일 2 개:\n  res://tests/life/hunting/test_animal_walk.gd\n  res://tests/core/tools/test_no_triple_blank_lines.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-12 05:10:52",
+  "epoch": 1791749452,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-995 단계 5 (시도 2)",
+  "group": "G-995",
+  "step": "5",
+  "attempt": "2",
+  "report": {
+   "problem": "제작대 · 레시피 5 파일(897줄)을 다듬었다 — Stations._aim_hit 을 Aim.at 한 줄로 · REACH=Aim.REACH · 놓기/되돌리기 겹친 세우기를 _stand 로 · 낡은 주석 둘 · 앞 시도의 빈 줄 셋을 둘로",
+   "approach": "| 무엇 | 어디 | 종류 | 고친 것 |\n|---|---|---|---|\n| _aim_hit 이 Aim.at 의 광선을 줄마다 다시 적었다 (앞 단계 QA) | stations.gd _aim_hit | 겹친 코드 | DockBuilder 처럼 `if player == null or not is_inside_tree(): return {}` 뒤 `return Aim.at(player, get_world_3d().direct_space_state, REACH)` |\n| REACH := 4.0 을 Harvest 와 따로 적었다 | stations.gd REACH | 겹친 값 | `const REACH := Aim.REACH` (Harvest.REACH 와 같은 길) |\n| place_held · restore 가 make → add_child → global_position 세 줄을 똑같이 적었다 | stations.gd | 겹친 코드 | `_stand(kind, at)` 하나로 |\n| 「채취와 같은 방식이다 (life/harvest/harvest.gd)」 — 지금 광선은 aim.gd 에 있다 | stations.gd 머리 주석 | 낡은 주석 | aim.gd 를 가리킨다 |\n| GROUP 주석 「방 판정 · 저장이 나중에」 — 이미 Buildings.rooms · 밭이 훑는다 | crafting_station.gd GROUP | 낡은 주석 | 지금 훑는 쪽을 적었다 |\n| 앞 시도가 남긴 빈 줄 셋 (기계 검사 test_no_triple_blank_lines 가 떨어뜨림) | stations.gd:321 | 꼴 | 둘로 줄였다 |\n\n**고칠 것이 없다고 본 것**: station_catalog.gd(78) · recipe_catalog.gd(107) · hand_craft.gd(82) — 함수가 모두 20줄 안쪽이고, 공개 함수(keys · has · of · for_station · for_hand · HandCraft.of …)는 모두 stations.gd · bag.gd · dev_box.gd · ui_shots.gd 나 테스트가 부른다(죽은 코드 없음). load_from 두 벌(StationCatalog · RecipeCatalog)이 비슷하지만 읽는 줄의 꼴이 달라(_read 로 정규화 vs 그대로) 합치면 두 클래스를 잇는 새 틀이 생긴다 — 기능을 더하지 않는 선에서 두었다. 주석의 「임시」 · 「사람 결정」 표시는 하나도 지우지 않았다.\n\n**테스트 개수**: 앞 = G-995.4 뒤 루프 전체 그물 Passing 2099. 이 단계의 앞 시도 뒤 루프 전체 그물 = 2102 중 2100 통과 — 떨어진 둘은 test_no_triple_blank_lines(앞 시도의 빈 줄, 이번에 고쳤다)와 test_animal_walk(물가 걸음 — 이 단계 파일과 무관, 이번에 따로 돌리니 통과). 이번 회차에는 전체를 돌리지 않았다: 바뀐 곳 그물(changed_tests 52 파일) + 위 둘 = 54 파일 509/509 통과. 그러므로 전체 통과는 2100 + 고친 1 = 2101 이상으로 예상되며 2099 보다 줄지 않는다 — 확정 숫자는 루프의 전체 그물이 낸다.\n\n**경계를 넘는 것**: 없다 — 밖에서 부르는 이름은 바꾸지 않았다.",
+   "why": "",
+   "files": [
+    "game/craft/stations/stations.gd",
+    "game/craft/stations/crafting_station.gd",
+    "game/tests/craft/stations/test_stations_aim_one_path.gd"
+   ],
+   "decision": null
+  },
+  "test": "//tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\n\n================ 떨어진 파일: res://tests/life/hunting/test_animal_walk.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/life/hunting/test_animal_walk.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:176)\n         [1] _ready (res://world/terrain/test_island.gd:103)\n         [2] before_all (res://tests/life/hunting/test_animal_walk.gd:25)\n         [3] _call_before_all (res://addons/gut/gut.gd:684)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:813)\n         [5] test_scripts (res://addons/gut/gut.gd:1047)\n         [6] run_tests (res://addons/gut/gui/GutRunner.gd:198)\n         [7] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n         [8] main (res://addons/gut/cli/gut_cli.gd:297)\n         [9] _init (res://addons/gut/gut_cmdln.gd:39)\n* test_wanders_around_home\n* test_picked_spots_stay_within_the_wander_radius\n    집 (-370.0, 200.0) — 고른 곳 가장 멀리 19.95m\n    집 (-251.0, -240.0) — 고른 곳 가장 멀리 19.98m\n    집 (120.7662, 21.05808) — 고른 곳 가장 멀리 19.58m\n* test_picks_again_where_a_single_pick_lands_outside\n    집 (130.0, 27.39642) — 한 번 고르기 200번 중 7번 반경 밖 · 가장 멀리 23.17m\n* test_never_steps_into_water_even_when_sent_there\n    [Failed]:  ARRAY([(-256.0577, 21.78995, -246.0363), (-256.3357, 21.6653, -246.0346), (-256.4866, 21.5...46.1749)]) != ARRAY([]).\n    [(-256.0577, 21.78995, -246.0363), (-256...246.1749)] != []  3 of 3 indexes do not match.  연못 가운데로 보내도 물에 들어가지 않는다\n      at line 226\n    [Failed]:  ARRAY([(-257.7411, 21.55754, -247.3369)]) != ARRAY([]).\n    [(-257.7411, 21.55754, -247.3369)] != []  1 of 1 indexes do not match.  물가에서 놀아도 물에 들어가지 않는다\n      at line 234\n* test_does_not_fall_off_cliff_even_when_sent_below\n* test_nav_mesh_has_no_water_or_cliff\n* test_goes_around_trees_not_stuck\n* test_walk_values_live_in_one_place_marked_temporary\n7/8 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/life/hunting/test_animal_walk.gd\n- test_never_steps_into_water_even_when_sent_there\n    [Failed]:  ARRAY([(-256.0577, 21.78995, -246.0363), (-256.3357, 21.6653, -246.0346), (-256.4866, 21.5...46.1749)]) != ARRAY([]).\n    [(-256.0577, 21.78995, -246.0363), (-256...246.1749)] != []  3 of 3 indexes do not match.  연못 가운데로 보내도 물에 들어가지 않는다\n          at line 226\n    [Failed]:  ARRAY([(-257.7411, 21.55754, -247.3369)]) != ARRAY([]).\n    [(-257.7411, 21.55754, -247.3369)] != []  1 of 1 indexes do not match.  물가에서 놀아도 물에 들어가지 않는다\n          at line 234\n\nTotals\n------\nScripts               1\nTests                 8\nPassing Tests         7\nFailing Tests         1\nAsserts           257/259\nTime              56.55s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           268\nTests            2102\nPassing Tests    2101\nFailing Tests       1\nRisky/Pending       0\nAsserts        101679\nTime           477s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/life/hunting/test_animal_walk.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
