@@ -2312,7 +2312,7 @@
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
   - 기준: (앞 단계 QA) test_dev_box 가 TMPDIR 에 naru_dev_box_* 를 남긴다 — 이번 전체 그물 test.log 끝에 naru_dev_box_3829645723 이 남았다고 나온다. game/tests/core/debug/test_dev_box.gd 는 after_all 에서 g.free() 뒤 TempDir.clean(self, _dir) 를 부르지만, G-950.2 의 test_dev_box_open 처럼 지운 뒤 게임이 내려가며 다시 저장해 폴더가 되살아나는 것으로 보인다(다른 차선 것일 수도 있으나 이름이 이 테스트 꼴이다). test_dev_box_open.gd 45줄 근처에서 고친 방법과 같이, 게임을 내린 뒤 프레임을 기다리고 나서 TempDir.clean 을 부르거나 지운 뒤 폴더가 없는지 단언하라
-- [ ] 5. 제작대 · 레시피 (901줄) 을 다듬는다
+- [x] 5. 제작대 · 레시피 (901줄) 을 다듬는다
   - 보는 곳: `game/craft/stations/` 의 stations.gd(382) · crafting_station · station_catalog 와 `game/craft/recipes/` 의 recipe_catalog · hand_craft
   - 기준: 이 파일들에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
     report 에 표로 적고, **그 자리에서 고친다** (찾아만 두지 않는다)
@@ -2328,6 +2328,7 @@
   - 기준: **고칠 것이 없으면 없다고 적는다** — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
+  - 기준: (앞 단계 QA) 트리 밖 테스트가 Aim 길을 안 지난다 — game/tests/craft/stations/test_stations_aim_one_path.gd 의 test_aimed_station_is_empty_handed_without_a_player_or_tree 는 player 가 null 이라 새로 넣은 `not is_inside_tree()` 갈래를 따로 보지 않는다(막는 것은 아니다). player 를 넣고 트리 밖에 둔 Stations 로 aimed_station() 이 null 이고 에러가 없는지 보는 단언을 하나 더 넣어라
 - [ ] 7. 다치고 죽기 (488줄) 을 다듬는다
   - 보는 곳: `game/combat/damage_death/` 의 death · death_chest · health · mob · fall_damage
   - 기준: 이 파일들에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아
