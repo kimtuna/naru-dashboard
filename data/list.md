@@ -2531,7 +2531,7 @@
   - 기준: 석회 레시피가 지워질 파일에 들어갔다 — game/craft/recipes/recipes.json 에 {"key": "lime", station smelter, limestone 2 → lime 2} 한 줄을 더했는데, 차선 1(G-200.2)이 이 파일을 시설별 파일로 갈라 지웠다. 합칠 때 이 줄(과 _temporary 의 석회 문장)을 용광로/제련로 쪽 시설 파일(smelter.json 등)로 옮겨야 비료 사슬이 안 끊긴다 — 합친 뒤 test_fertilizer_farm_plot.gd test_limestone_becomes_lime_becomes_fertilizer 가 그것을 지킨다
   - 기준: (앞 단계 QA) 시설 이름이 용광로 · 제련로로 섞였다 — game/life/harvest/harvest.gd DROPS 위 주석 · island_resources.gd 주석은 「용광로」, 레시피 _temporary · 테스트 · spec/04_life/mining.md 는 「제련로(smelter)」라 한다. spec/05_craft/facilities.md 의 표 이름은 용광로다. 한쪽으로 맞춰라(코드 주석을 facilities.md 와 같게, 혹은 「용광로(smelter)」로 둘 다 적기)
 
-## [ ] G-202 용광로 · 제재소 (사람 결정 2026-10-12)
+## [x] G-202 용광로 · 제재소 (사람 결정 2026-10-12)
 - 차선: 3d-start
 - spec: spec/05_craft/facilities.md
 - [x] 1. 용광로 — 주괴 · 숯 · 석재 · 유리
