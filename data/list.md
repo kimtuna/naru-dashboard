@@ -2447,7 +2447,7 @@
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
 - [x] 1. 창 위 여백 TOP_MARGIN 을 창 셋이 각자 (G-994 단계 1)
   - 기준: 창 위 여백 TOP_MARGIN 을 창 셋이 각자 — G-994 그 다음 단계(표 9번). chest_window · villager_window 등 ui 창이 같은 여백을 따로 적는다. ui 쪽 한 곳(레이아웃 상수)으로 모으고 test_window_layout 류에서 셋이 같은 값을 쓰는지 단언해라
-- [ ] 2. tools/test.sh 가 두 차선에서 같은 TMPDIR (G-994 단계 1)
+- [x] 2. tools/test.sh 가 두 차선에서 같은 TMPDIR (G-994 단계 1)
   - 기준: tools/test.sh 가 두 차선에서 같은 TMPDIR — G-994 그 다음 단계(표 10번, G-950.2). 차선 1 · 2 가 동시에 돌면 임시 경로가 겹친다. .loop/lane 값으로 TMPDIR 아래 차선별 하위 폴더를 쓰게 고쳐라
 - [ ] 3. 차선 1 합친 뒤 남은 경계 다섯 (G-994 단계 1)
   - 기준: 차선 1 합친 뒤 남은 경계 다섯 — G-994 맨 뒤 단계들(표 2 · 4 · 6 · 7 · 8). sync_lanes 가 G-992 · G-995 를 이 줄기에 합쳐 온 뒤 하나씩 단계로: 2 놓는 곳 뼈대 → Placeable · 4 Buildings._pieces_of/_edge_plates 공개 이름 · 6 hands.gd 상자 칸 베끼기 ↔ Chest.store · 7 gather_work/field_care → JobWork · 8 ButcherPanel._holds_gun ↔ Attack.holds_gun
