@@ -1,43 +1,5 @@
 [
  {
-  "time": "2026-09-27 02:39:48",
-  "epoch": 1790444388,
-  "type": "pass",
-  "title": "통과 — G-920 단계 2 (웅크림 · 시선 방향이 저장되지 않는다 (G-990 단계 1))",
-  "group": "G-920",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "웅크림 · 시선(yaw/pitch) · 벽 · 갈고리줄에 붙은 상태를 캐릭터 저장본에 담고 되돌린다 — 바뀐 곳만: 139개 파일 1325개 통과",
-   "approach": "웅크림(Player._crouching) · 시선(_yaw/_pitch) · 절벽에 붙은 상태(Climbing._normal/_hook/_flying/_fly_left)가 저장본에 없어, 불러오면 선 채 · 기본 시선으로 들어오고 벽 한가운데서 저장했으면 떨어졌다. 안 담을 까닭이 없어 담았다. Player 에 set_crouching · set_look 을, Climbing 에 hold() → {normal, hook, flying, fly_left} · restore_hold(d) 를 달았다. PlayerState 는 웅크림을 body.crouching 에, 시선 · 붙은 것을 places[월드] 의 yaw · pitch · hold 에 적는다 — 자리에 딸리므로 배로 건너 선착장에 내릴 때(with_place 거짓)는 쓰지 않는다. 되돌린 벽은 다음 물리 프레임에 step 이 다시 찾아 없으면 손을 놓는다. 왕복 테스트의 _play 에서 Ctrl 을 한 번 누르고 Pointer 로 고개를 돌린 뒤, _crouching · _yaw · _pitch 가 바뀌었고 그대로 돌아오는지 · 저장본에 적혔는지 본다. 벽에 붙은 채 · 갈고리줄에 매달린 채는 게임 섬 스폰 곁에 절벽이 없어 test_climbing 과 같은 벽 하나 섬에서 PlayerState.remember → 디스크 형식(var_to_bytes) → 캐릭터를 버리고 새로 세워 restore 로 확인한다. 되돌리기 세 줄을 잠깐 끄면 두 테스트 파일이 모두 떨어지는 것을 확인했다. save.md 캐릭터 저장 목록에 시선 · 붙은 채 · 웅크림을 더했다.",
-   "why": "",
-   "files": [
-    "game/player/movement_controls/player.gd",
-    "game/life/climbing/climbing.gd",
-    "game/player/player_state.gd",
-    "game/settings/save/character_data.gd",
-    "game/tests/settings/save/test_round_trip.gd",
-    "game/tests/life/climbing/test_climb_hold_save.gd",
-    "spec/01_settings/save.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "웅크림 · 시선 방향이 저장되지 않는다 — Player._crouching/_yaw/_pitch 와 절벽에 붙은 상태가 저장본에 없다. 담거나, 담지 않을 거라면 save.md 「안 담는다」 목록에 까닭을 적어라. 담는다면 왕복 테스트의 _play() 에서 웅크리고 고개를 돌린 뒤 비교하라",
-     "evidence": "담는 쪽을 골랐다. PlayerState.remember/restore 가 body.crouching 과 places[월드] 의 yaw · pitch · hold(Climbing.hold/restore_hold)를 적고 되돌린다. save.md 캐릭터 목록에도 더했다. test_round_trip._play() 가 CROUCH 액션을 입력하고 Pointer.simulate_motion 으로 고개를 돌린다. test_crouch_and_look_come_back 은 세 값이 새 캐릭터와 다르고 저장 전후가 같은지, 저장본에 적혔는지 본다. 일부러 깨 봤다 — restore 의 set_crouching · set_look 을 끄자 test_round_trip 이 _crouching · _yaw · _pitch 를 짚으며 떨어졌다(되돌려 두었다). 절벽에 붙은 상태는 test_climb_hold_save.gd 가 본다. 실제로 벽에 붙기 · 갈고리줄에 매달리기 → remember → var_to_bytes 왕복 → 새 캐릭터 → restore → 20 프레임 뒤에도 붙어 있고 자리가 0.1 안인지 보고, 배로 건넌 경우와 벽이 없는 경우도 넣었다. test.log(바뀐 곳만 150개 파일)에서 두 파일 모두 ok, 1406개 전부 통과, guard 통과"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "ts.gd\nok      3s  res://tests/build/test_building_link_count.gd\nok      3s  res://tests/build/test_building_collapse.gd\nok      1s  res://tests/core/test_open_chest_window.gd\nok      2s  res://tests/combat/damage_death/test_death_chest_look.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      1s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           150\nTests            1406\nPassing Tests    1406\nFailing Tests       0\nRisky/Pending       0\nAsserts         67459\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "5b69de2"
- },
- {
   "time": "2026-09-27 02:53:24",
   "epoch": 1790445204,
   "type": "stop",
@@ -9368,5 +9330,53 @@
    "good": []
   },
   "test": "ests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      0s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      0s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok    498s  res://tests/craft/test_from_empty_hands.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           289\nTests            2265\nPassing Tests    2265\nFailing Tests       0\nRisky/Pending       0\nAsserts        110928\nTime           499s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-13 04:39:16",
+  "epoch": 1791833956,
+  "type": "pass",
+  "title": "통과 — G-204 단계 1 (태그에 새 재료를 담는다 — 태그 파일은 이 차선 것이다)",
+  "group": "G-204",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "tags.json 에 @fruit(사과 · 포도) 갈래를 더하고, G-201 재료 열여덟의 갈래 · 태그 레시피가 갈래 아이템 하나하나로 만들어지는지를 테스트로 묶었다 — 줄기에 없는 열둘은 빼고 적었다",
+   "approach": "G-201(작물 열넷 · 약초 넷)은 3d-lane2 에만 있고 이 줄기(g/G-204, 3d-start 기반)에는 아직 안 들어왔다 (git merge-base 로 확인). 이 줄기에 무게(weights.json)와 한국어 이름(ITEM_)이 둘 다 있는 것을 「있는 아이템」으로 보았다. 열여덟 중 있는 것은 쌀(이미 @grain) · 사과 · 포도 · 사탕수수 · 목화 · 아마(이미 @textile) 여섯뿐이라, 새로 @fruit 갈래(사과 · 포도, TAG_fruit 「아무 과일」/「Any fruit」)를 만들었다. 빠진 것(줄기에 없어 태그에 안 적음): 보리 · 옥수수(→@grain) · 감자 · 토마토 · 생강(→@vegetable) · 알로에 · 인삼 · 쑥 · 박하(→@herb) · 카카오 · 찻잎 · 원두(갈래 없음). @vegetable 은 든 것이 하나도 없어 빈 갈래로 두지 않았다. 사탕수수 · 카카오 · 찻잎 · 원두는 곡물 · 채소 · 과일 어디에도 넣지 않았다 — spec 이 정하지 않았다(사탕수수는 럼에 이름 그대로 쓴다). 테스트는 열여덟 → 갈래 표를 들고, 있는 것은 제 갈래에 들어야 하고 없는 것은 어느 갈래에도 없어야 한다고 본다 — 그래서 G-201 이 이 줄기에 합쳐지면 그 자리에서 떨어져 「이제 더하라」고 알린다. 레시피 쪽은 게임의 태그 레시피 전부를 그 갈래 아이템 하나하나로 빈 가방에서 시설 타이머를 끝까지 돌려 받는지 본다(쌀로 보드카 · 쌀로 미끼 · 석탄으로 주괴 · 각 술로 알코올 …). 아직 @fruit 를 쓰는 레시피는 없다(덤으로 만들지 않았다). 돌린 것: craft/recipes 10개 파일 89개 통과, 바뀐 곳만(changed_tests.py) 18개 파일 156개 통과 — 전체는 돌리지 않았다.",
+   "why": "@fruit 갈래 구성(사과 · 포도) — 지금 줄기에 있는 과일뿐이다. G-201 이 들어오면 갈래 표가 늘어난다",
+   "files": [
+    "game/craft/recipes/tags.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "spec/05_craft/facilities.md",
+    "game/tests/craft/recipes/test_tag_new_materials.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "G-201 이 낸 작물 열넷 · 약초 넷을 `@곡물` · `@채소` · `@과일` · `@약초` 에 담는다 (테스트)",
+     "evidence": "G-201(47ef6bbb)이 HEAD · 3d-start 의 조상이 아님을 git merge-base 로 확인했다 — 이 줄기에 있는 것은 쌀 · 사과 · 포도 · 사탕수수 · 목화 · 아마뿐(weights.json · ko.po 대조). 쌀은 @grain, 목화 · 아마는 @textile, 사과 · 포도는 새 @fruit(TAG_fruit ko/en 있음)에 들었다. test_present_new_materials_are_in_their_group 이 18개 표대로 있는 것은 제 갈래에 있는지 보고, test_new_materials_stay_out_of_other_food_groups 가 엉뚱한 갈래를 막는다. 일부러 apple 을 @fruit 에서 빼 보니 떨어졌다(되돌림 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "담은 뒤 그 태그를 쓰는 레시피가 **새 재료로도** 만들어진다 (예: 보리로 맥주 · 쌀로 청주) (테스트)",
+     "evidence": "test_every_tag_recipe_is_made_from_each_member_of_its_group 가 태그를 쓰는 모든 시설 레시피를 갈래 아이템 하나하나로 빈 가방에서 시설 타이머를 끝까지 돌려 받는 개수를 단언한다 — 쌀로 보드카(@grain) · 쌀+각 약초로 약주 등. test_vodka_is_brewed_from_rice 가 쌀 3 소모 · 보드카 1 수령을 따로 본다. 맥주 · 청주는 밀 · 쌀을 이름 그대로 받아 태그 레시피가 아니고, @fruit 를 쓰는 레시피는 아직 없다. 보리는 줄기에 없다"
+    },
+    {
+     "ok": true,
+     "criterion": "아직 줄기에 안 들어온 재료는 **빼고 적고**, 무엇을 뺐는지 report 에 적는다 — 없는 이름을 태그에 적지 않는다",
+     "evidence": "report.how 에 빠진 열둘(보리 · 옥수수 · 감자 · 토마토 · 생강 · 알로에 · 인삼 · 쑥 · 박하 · 카카오 · 찻잎 · 원두)을 적었고 tags.json _temporary · facilities.md 에도 적었다. test_missing_materials_are_not_written_in_any_group · test_every_group_member_is_a_real_item 이 지킨다 — 일부러 barley 를 @grain 에 넣어 보니 떨어졌다(되돌림 확인)"
+    }
+   ],
+   "issues": [
+    "차선을 합치면 태그 테스트가 떨어진다 — G-201(3d-lane2)이 3d-start 에 합쳐지면 보리 · 옥수수 · 감자 · 토마토 · 생강 · 알로에 · 인삼 · 쑥 · 박하가 「있는 아이템」이 되어 test_tag_new_materials.gd 의 test_present_new_materials_are_in_their_group 이 일부러 떨어진다(설계대로). 합친 직후 단계로 game/craft/recipes/tags.json 에 grain += barley, corn · 새 vegetable 갈래 = potato, tomato, ginger(TAG_vegetable ko「아무 채소」/en「Any vegetable」) · herb += aloe, ginseng, mugwort, mint 를 더하고 _temporary 문구와 spec/05_craft/facilities.md 44행 아래 「줄기에 들어오면 더한다」 줄을 지워라. 같은 단계에서 축사 먹이 @grain 이 보리도 받는지 테스트에 더하라"
+   ],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 20 개 ---\ntest.sh: 파일 20 개를 6 개씩 한꺼번에 돌린다\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      3s  res://tests/life/food/test_food.gd\nok      3s  res://tests/craft/recipes/test_recipes.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_recipe_tags.gd\nok      1s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      4s  res://tests/craft/stations/test_salt_pan.gd\nok      1s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/craft/recipes/test_smelter_recipes.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      6s  res://tests/craft/stations/test_twelve_facilities.gd\nok      2s  res://tests/craft/stations/test_loom.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok     11s  res://tests/player/inventory_hotbar/test_weight.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            20\nTests             179\nPassing Tests     179\nFailing Tests       0\nRisky/Pending       0\nAsserts         37749\nTime           11s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "ede2ae79"
  }
 ]
