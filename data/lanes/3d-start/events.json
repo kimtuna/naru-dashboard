@@ -1,46 +1,5 @@
 [
  {
-  "time": "2026-09-27 16:54:48",
-  "epoch": 1790495688,
-  "type": "pass",
-  "title": "통과 — G-920 단계 5 (사망 상자를 아무나 연다 (G-990 단계 1))",
-  "group": "G-920",
-  "step": "5",
-  "attempt": "1",
-  "report": {
-   "problem": "사망 상자에 주인 캐릭터 id 를 담고(저장본에도) 다른 캐릭터는 열지 못하게 했다 — 바뀐 곳만 돌린 97 파일 888개 통과",
-   "approach": "Death.open 이 어떤 상자든 열었다. DeathChest 에 owner_id 를 두고 Death 에 character_id(GameRoot 가 character.id 로 넣는다)를 두어, 죽을 때 떨어지는 상자에 주인을 적는다. Death.open 은 DeathChest.can_open(character_id) 가 거짓이면 열지 않는다 — 꺼내는 것은 연 창에서만 되므로 꺼내기도 같이 막힌다. 남의 상자를 우클릭하면 입력은 삼킨다(상자 자리에 제작대가 놓이지 않게). standing()/restore() 가 owner 를 담고 되돌린다. 주인이 비어 있는 상자(주인을 담기 전 옛 저장본)는 누구나 연다 — 아무도 못 열면 안의 것이 그냥 사라진다. 테스트: 보리로 죽어 떨어진 상자를 미르로는 open·우클릭 모두 거절, 보리로는 열림 · 디스크 저장 뒤 되돌려도 주인이 남아 미르를 거절. 바뀐 곳 그물(changed_tests) 97 파일 888개 통과.",
-   "why": "",
-   "files": [
-    "game/combat/damage_death/death_chest.gd",
-    "game/combat/damage_death/death.gd",
-    "game/core/game_root.gd",
-    "game/tests/combat/damage_death/test_death_chest_owner.gd",
-    "game/tests/settings/save/test_death_chest_save.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "사망 상자를 아무나 연다 — damage-death.md:15,33 「죽은 본인만 열고 꺼낼 수 있다」가 코드에 없다. 사망 상자에 주인 캐릭터 id 를 담고(저장본에도), 다른 id 는 열기를 거부하게 하고, 두 캐릭터로 여는 테스트를 짜라",
-     "evidence": "DeathChest.owner_id + can_open(), Death.open 이 남의 데스 상자를 거절, Death._drop_chest 가 character_id 를 주인으로 적고 GameRoot 가 character.id 를 넣는다. standing()/restore() 가 owner 를 담고 되돌린다. 테스트 tests/combat/damage_death/test_death_chest_owner.gd — 진짜로 죽어 떨어진 상자를 보리(주인)/미르(남)로 open·interact(우클릭) 둘 다 확인, GameRoot 가 id 를 넘기는지도 확인. tests/settings/save/test_death_chest_save.gd::test_the_owner_comes_back_and_still_keeps_others_out 가 디스크 저장→되돌림 뒤 주인 유지와 미르 거절을 본다. 일부러 깨 봤다: can_open 을 `return true` 로 두니 owner 테스트 2개가 떨어졌고, standing() 에서 owner 를 빼니 저장 테스트가 떨어졌다(둘 다 되돌렸다). test.log: 바뀐 곳 180 파일 1610개 통과 · guard 통과"
-    }
-   ],
-   "issues": [
-    "남의 상자를 우클릭해도 아무 알림이 없다 — Death.interact 가 남의 데스 상자에서 입력을 삼키고 조용히 끝난다(game/combat/damage_death/death.gd interact/open). 플레이어는 왜 안 열리는지 모른다. G-920.3(막힌 장착 알림)처럼 거절 때 번역 키 알림(한국어·영어)을 띄우고, 미르로 우클릭하면 알림이 뜨는지 단언하는 테스트를 붙여라",
-    "조준 시간 표시 주석이 낡았다 — game/ui/hud/chest_timer_label.gd:10 「열리는 상자에만 뜬다」인데 이제 남의 데스 상자는 조준은 되지만 열리지 않는다. 남의 상자에도 시간이 뜨는 것이 맞는지 주석을 지금 동작에 맞춰 고쳐라"
-   ],
-   "good": [
-    "주인이 빈 상자(주인을 담기 전 옛 저장본)는 누구나 연다 — DeathChest.can_open 의 owner_id == \"\" 갈래. 기준에 없던 옛 저장본 호환이지만 까닭(안 열리면 안의 것이 사라진다)이 주석과 테스트(test_a_chest_from_before_owners_were_saved_opens_for_anyone)에 있다"
-   ]
-  },
-  "test": "ts/settings/save/test_close_window_save.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      0s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      0s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           180\nTests            1610\nPassing Tests    1610\nFailing Tests       0\nRisky/Pending       0\nAsserts         76189\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "24fd82d"
- },
- {
   "time": "2026-09-27 17:06:58",
   "epoch": 1790496418,
   "type": "fail",
@@ -9469,6 +9428,63 @@
  {
   "time": "2026-10-13 06:00:55",
   "epoch": 1791838855,
+  "type": "fail",
+  "title": "차선 합치기 실패 — 3d-lane2(dff125dc) → 3d-start",
+  "group": "G-204",
+  "step": "4",
+  "attempt": "1",
+  "report": {
+   "problem": "합친 뒤 태그 넷 더하기를 미리 해 둔다 — tags.json 에 보리 · 옥수수 · 채소 갈래 · 약초 넷을 pending 으로 적어 줄기에 들어오는 순간 갈래에 든다. hunting.md 사슴 예 · animal_kinds.gd 주석을 표로 · ranching-breeding.md 미정에 가축 여덟 스폰 한 줄. 바뀐 곳에 걸리는 90 파일 798 테스트 통과",
+   "approach": "3d-lane2 는 아직 이 줄기에 안 합쳐졌다(git merge-base --is-ancestor 거짓) — 보리 등을 갈래에 그냥 적으면 test_every_group_member_is_a_real_item · test_missing_materials 가 지금 떨어지고, 안 적으면 합칠 때 두 검사가 떨어져 sync_lanes 가 합치기를 되돌린다. 그래서 tags.json 에 grain += barley, corn · vegetable = potato, tomato, ginger(TAG_vegetable 아무 채소/Any vegetable) · herb += aloe, ginseng, mugwort, mint 를 적고, 그 아홉을 새 목록 \"pending\" 에 둬 RecipeTags.load_from 이 무게표에 없는 pending 이름만 뺀다 — 합쳐지는 순간 손대지 않아도 갈래에 든다. _temporary 의 해당 문구와 facilities.md 「줄기에 들어오면 더한다」 줄은 지우고 pending 설명으로 바꿨다. 확인: 3d-lane2 의 weights.json · ko.po · en.po 를 git merge-file 로 이 줄기에 임시로 합쳐(작업 트리만, 뒤에 되돌림) test_tag_new_materials · test_barn 을 돌렸더니 23/23 통과 — test_present_new_materials_are_in_their_group 와 test_barley_is_feed_once_it_is_in_the_trunk 가 보리를 실제로 먹였다. 합친 뒤 빠진 재료가 없으면 test_missing_materials 가 assert 없이 risky 가 되던 것을 pass_test 로 막았다. hunting.md 수치 줄의 사슴 예 괄호를 「개수는 위 도축 산출표」로, animal_kinds.gd 12~14행 주석을 표를 가리키게 고쳤다. ranching-breeding.md 미정에 '가축 여덟이 어디서 나는가 — 스폰 자리 · 수 미정' 한 줄. 바뀐 곳 그물(changed_tests.py, 90 파일): 798 통과 · 0 실패",
+   "why": "",
+   "files": [
+    "game/craft/recipes/tags.json",
+    "game/craft/recipes/recipe_tags.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/life/hunting/animal_kinds.gd",
+    "game/tests/craft/recipes/test_recipe_tags.gd",
+    "game/tests/craft/recipes/test_tag_new_materials.gd",
+    "game/tests/craft/stations/test_barn.gd",
+    "spec/05_craft/facilities.md",
+    "spec/04_life/hunting.md",
+    "spec/04_life/ranching-breeding.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "합친 뒤 태그 넷 더하기가 갈 단계가 없다 — G-204 마지막 단계라 옮길 '다음 단계'가 없다. 3d-lane2(G-201)가 3d-start 에 합쳐진 직후 첫 단계 기준으로: game/craft/recipes/tags.json 에 grain += barley, corn · 새 vegetable 갈래 = potato, tomato, ginger(TAG_vegetable ko「아무 채소」/en「Any vegetable」) · herb += aloe, ginseng, mugwort, mint 를 더하고 tags.json _temporary 의 해당 문구와 spec/05_craft/facilities.md 의 「줄기에 들어오면 더한다」 줄을 지운다. 그러면 test_tag_new_materials.gd test_present_new_materials_are_in_their_group 와 test_barn.gd test_barley_is_feed_once_it_is_in_the_trunk 가 같이 풀린다",
+     "evidence": "tags.json 에 grain/vegetable/herb 아홉이 다 적혔고 ko/en.po 에 TAG_vegetable(아무 채소/Any vegetable)이 있다. _temporary 의 G-201 문구와 facilities.md 「줄기에 들어오면 더한다」 줄이 지워졌다. 3d-lane2 가 아직 안 합쳐져 있어 아홉을 pending 에 두고 RecipeTags.load_from 이 무게표에 없는 pending 이름만 뺀다 — test_recipe_tags.gd test_pending_name_joins_its_group_only_when_the_item_exists(없는 이름은 @grain 에서 빠지고 있는 밀은 남는다, pending 밖 이름은 그대로)와 test_game_tag_file_lists_the_lane2_materials_as_pending 이 지킨다. QA 가 임시 worktree 에 3d-lane2 의 weights.json 아홉 항목과 ko/en ITEM_ 키를 넣어 합친 뒤를 흉내 냈더니 craft/recipes 91/91 · craft/stations 122/122 통과, test_barn 은 '보리가 아직' 분기를 타지 않고 보리를 실제로 먹였고 test_tag_new_materials 의 빠진 재료는 cacao·tea_leaf·coffee_bean 뿐이었다(worktree 는 지웠다). 현 줄기 전체 테스트 2308/2308 · guard 통과(test.log 전체)"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) hunting.md 사슴 예 줄이 낡았다 — spec/04_life/hunting.md 수치의 「부위 산출물 예(사슴: … 몸통 고기 4 · 가죽 2, 다리 없음)」 줄이 바로 위 새 「도축 산출표」(사슴 몸통 고기 4 · 가죽 2 · 뼈 2 · 내장 1)와 어긋난다. 그 줄에서 사슴 예 괄호를 지우고 「개수는 위 표 · 한 부위에 체력 가득만큼 들어가면 …」 규칙만 남겨라. animal_kinds.gd 12~14행 주석(「사슴만 예가 적혀 있다: … 몸통 고기 · 가죽」 · 「동물 목록 · 부위 산출물이 미정」)도 같은 까닭으로 표를 가리키게 고쳐라",
+     "evidence": "hunting.md 69행이 「부위 산출물 개수는 위 「도축 산출표」 — 개수 임시. 한 부위에 체력 가득만큼…」으로 바뀌어 사슴 괄호가 없다. animal_kinds.gd 의 두 주석 줄이 「spec/04_life/hunting.md 「도축 산출표」(G-204.3)를 따른다 — 개수는 전부 임시」 한 줄로 바뀌었다(문서 기준이라 테스트 대상 아님, diff 로 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 축사 가축 여덟을 게임 안에서 얻을 길이 좁다 — 닭 · 오리 · 염소 · 양 · 돼지 · 소 · 물소 · 말이 들판에 나지 않아 축사 단추와 깃털 산출이 실제 플레이에서는 닿지 않는다. spec/04_life/ranching-breeding.md 또는 hunting.md 「미정」에 '가축 여덟이 어디서 나는가(스폰 자리 · 수)' 한 줄을 적어 두어라 — 값을 지금 고르라는 것이 아니다",
+     "evidence": "ranching-breeding.md 「미정」 첫 줄에 「가축 여덟(닭 · 오리 · 염소 · 양 · 돼지 · 소 · 물소 · 말)이 어디서 나는가 — 스폰 자리 · 수 미정 …(G-204.4)」이 들어갔다. 값은 고르지 않았다"
+    }
+   ],
+   "issues": [
+    "pending 목록을 합친 뒤 지울 길이 없다 — tags.json 의 \"pending\" · \"_pending\" 은 3d-lane2 가 합쳐지면 쓸모가 없어지지만(「다 들어온 뒤에는 지워도 된다」) 누가 지울지 정해진 곳이 없다. 3d-lane2 가 3d-start 에 합쳐진 뒤 tags.json 에서 pending · _pending 두 키를 지우고, test_recipe_tags.gd test_game_tag_file_lists_the_lane2_materials_as_pending 의 pending 단언을 「pending 이 없거나 비었다」로 바꿔라 (RecipeTags 의 pending 읽기 기능과 test_pending_name_joins_its_group_only_when_the_item_exists 는 남겨도 된다)",
+    "pending 판정이 무게표만 본다 — RecipeTags.load_from 은 ItemWeights.table() 만으로 '있는 아이템'을 가르지만 test_tag_new_materials.gd 의 _exists 는 무게표와 ko.po ITEM_<이름> 둘을 본다. 무게만 먼저 들어온 이름이 갈래에 드는 틈이 있다 — 기준을 하나로 맞추거나(주석에 까닭을 적거나) 두 정의가 같은 함수를 쓰게 하라"
+   ],
+   "good": [
+    "RecipeTags 에 pending 기능(무게표에 없는 pending 이름을 갈래에서 뺀다)을 새로 만들었다 — 기준은 합친 직후에 이름을 더하라는 것이었지만, 아직 합쳐지지 않아 미리 적어 두려고 만든 받침이다. 테스트 둘이 붙어 있다",
+    "test_tag_new_materials.gd test_missing_materials_are_not_written_in_any_group 에 빠진 재료가 없을 때 pass_test 로 risky 를 막는 분기를 더했다"
+   ]
+  },
+  "test": "sts.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_rooms.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok    498s  res://tests/craft/test_from_empty_hands.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      0s  res://tests/ui/hud/test_hud_label_readable.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           294\nTests            2308\nPassing Tests    2308\nFailing Tests       0\nRisky/Pending       0\nAsserts        113192\nTime           501s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-13 06:00:58",
+  "epoch": 1791838858,
   "type": "fail",
   "title": "차선 합치기 실패 — 3d-lane2(dff125dc) → 3d-start",
   "group": "G-204",
