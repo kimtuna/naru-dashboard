@@ -2606,7 +2606,7 @@
   - 기준: 뼈 도구는 **만들지 않는다** (사람이 뺐다). 뼈 · 뿔 · 이빨 · 밀랍 · 가죽끈은 **산출물로만** 둔다 — 쓰임은 사람이 나중에
   - 기준: (앞 단계 QA) 합친 뒤 태그 일을 맡을 단계가 아직 없다 — 3d-lane2 가 3d-start 에 합쳐진 직후 tags.json 에 보리 · 옥수수 · 채소 갈래 · 약초 넷을 더하는 일이 이 묶음 안에서는 일어나지 않았다(조건이 안 섰다). 합친 직후 test_tag_new_materials.gd 와 test_barn.gd test_barley_is_feed_once_it_is_in_the_trunk 가 같이 떨어진다 — 그때 앞 단계 QA 줄 그대로(grain += barley, corn · vegetable = potato, tomato, ginger + TAG_vegetable ko/en · herb += aloe, ginseng, mugwort, mint · tags.json _temporary 와 facilities.md 44행 아래 '줄기에 들어오면 더한다' 줄 삭제) 고치면 둘 다 풀린다. G-204 의 다음 단계나 합친 뒤 첫 단계 기준으로 옮겨 두어라
   - 기준: (앞 단계 QA) 축사 창에 가축 · 먹이를 넣는 길이 없다 — Stations.put_animal · put_feed 는 있으나 station_window.gd 에 단추가 없어 사람이 게임 안에서 축사에 가축을 들이거나 먹이를 넣을 수 없다(이번 기준 밖, report 에도 적혀 있다). 여덟 가축이 들판에 나지 않는 것과 함께 다음 단계에 축사 창의 '가축 들이기 · 먹이 넣기' 단추와 그 테스트를 더하라
-- [ ] 4. (앞 단계 QA) 합친 뒤 태그 넷 더하기가 갈 단계가 없다
+- [x] 4. (앞 단계 QA) 합친 뒤 태그 넷 더하기가 갈 단계가 없다
   - 기준: 합친 뒤 태그 넷 더하기가 갈 단계가 없다 — G-204 마지막 단계라 옮길 '다음 단계'가 없다. 3d-lane2(G-201)가 3d-start 에 합쳐진 직후 첫 단계 기준으로: game/craft/recipes/tags.json 에 grain += barley, corn · 새 vegetable 갈래 = potato, tomato, ginger(TAG_vegetable ko「아무 채소」/en「Any vegetable」) · herb += aloe, ginseng, mugwort, mint 를 더하고 tags.json _temporary 의 해당 문구와 spec/05_craft/facilities.md 의 「줄기에 들어오면 더한다」 줄을 지운다. 그러면 test_tag_new_materials.gd test_present_new_materials_are_in_their_group 와 test_barn.gd test_barley_is_feed_once_it_is_in_the_trunk 가 같이 풀린다
   - 기준: (앞 단계 QA) hunting.md 사슴 예 줄이 낡았다 — spec/04_life/hunting.md 수치의 「부위 산출물 예(사슴: … 몸통 고기 4 · 가죽 2, 다리 없음)」 줄이 바로 위 새 「도축 산출표」(사슴 몸통 고기 4 · 가죽 2 · 뼈 2 · 내장 1)와 어긋난다. 그 줄에서 사슴 예 괄호를 지우고 「개수는 위 표 · 한 부위에 체력 가득만큼 들어가면 …」 규칙만 남겨라. animal_kinds.gd 12~14행 주석(「사슴만 예가 적혀 있다: … 몸통 고기 · 가죽」 · 「동물 목록 · 부위 산출물이 미정」)도 같은 까닭으로 표를 가리키게 고쳐라
   - 기준: (앞 단계 QA) 축사 가축 여덟을 게임 안에서 얻을 길이 좁다 — 닭 · 오리 · 염소 · 양 · 돼지 · 소 · 물소 · 말이 들판에 나지 않아 축사 단추와 깃털 산출이 실제 플레이에서는 닿지 않는다. spec/04_life/ranching-breeding.md 또는 hunting.md 「미정」에 '가축 여덟이 어디서 나는가(스폰 자리 · 수)' 한 줄을 적어 두어라 — 값을 지금 고르라는 것이 아니다
@@ -2659,6 +2659,10 @@
   - 기준: 새 원자재의 얻을 길이 없다 — 석탄 · 모래 · 구리/주석/금/은 광석이 섬 어디에도 안 나서 지금 게임에서는 강철괴 · 유리 · 주괴 넷을 만들 수 없다. 자원 배치는 사람이 정하지만(facilities.md 미정) 이 아이템들이 「얻을 길 없음」임을 미정 줄에 이름으로 적어 두어라 (막는 것은 아니다)
 - [ ] 3. spec 사냥 문서에 창자가 없다 (G-203 단계 4)
   - 기준: spec 사냥 문서에 창자가 없다 — spec/04_life/hunting.md 의 부위 산출 예(사슴 몸통 고기·가죽)에 이번에 더한 창자(임시)를 적어 두어라 (facilities.md 에만 적혀 있다)
+- [ ] 4. pending 목록을 합친 뒤 지울 길이 없다 (G-204 단계 4)
+  - 기준: pending 목록을 합친 뒤 지울 길이 없다 — tags.json 의 "pending" · "_pending" 은 3d-lane2 가 합쳐지면 쓸모가 없어지지만(「다 들어온 뒤에는 지워도 된다」) 누가 지울지 정해진 곳이 없다. 3d-lane2 가 3d-start 에 합쳐진 뒤 tags.json 에서 pending · _pending 두 키를 지우고, test_recipe_tags.gd test_game_tag_file_lists_the_lane2_materials_as_pending 의 pending 단언을 「pending 이 없거나 비었다」로 바꿔라 (RecipeTags 의 pending 읽기 기능과 test_pending_name_joins_its_group_only_when_the_item_exists 는 남겨도 된다)
+- [ ] 5. pending 판정이 무게표만 본다 (G-204 단계 4)
+  - 기준: pending 판정이 무게표만 본다 — RecipeTags.load_from 은 ItemWeights.table() 만으로 '있는 아이템'을 가르지만 test_tag_new_materials.gd 의 _exists 는 무게표와 ko.po ITEM_<이름> 둘을 본다. 무게만 먼저 들어온 이름이 갈래에 드는 틈이 있다 — 기준을 하나로 맞추거나(주석에 까닭을 적거나) 두 정의가 같은 함수를 쓰게 하라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
