@@ -2579,7 +2579,7 @@
   - 기준: 고기 · 생선 + 소금 → **훈제 음식** (테스트). 배고픔만 채운다 — **버프는 없다** (사람 결정 2026-10-12)
   - 기준: 창자 + 고기 → **소시지**, 소시지 → 훈제 소시지 (테스트) — 표에서 끊겨 있던 자리다
   - 기준: 부산물 **기름**이 나온다 (약제의 연고가 쓴다)
-- [ ] 5. (앞 단계 QA) 창자를 사슴에서 바로 낸다
+- [x] 5. (앞 단계 QA) 창자를 사슴에서 바로 낸다
   - 기준: 창자를 사슴에서 바로 낸다 — G-204 와 어긋난다: plan/list.md G-204 기준은 「도축 → 내장, 작업대에서 내장 → 창자」인데 이번에 game/life/hunting/animal_kinds.gd 사슴 BODY 에 gut 1 을 바로 넣었다. G-204 단계에서 사슴 몸통 산출을 gut → 내장(offal 등)으로 바꾸고 작업대 레시피 내장 → 창자를 더한 뒤 test_smoker.gd test_butchering_a_deer_gives_gut 를 「도축 → 내장 → 작업대 → 창자」로 고쳐라
   - 기준: (앞 단계 QA) 기름 이름 테스트가 무게만 본다 — test_smoker.gd test_oil_has_names_and_weight 는 이름에 names 를 걸었지만 ItemWeights 만 확인한다. ko.po · en.po 에 ITEM_oil · ITEM_gut · ITEM_sausage · ITEM_smoked_* 가 있는지 TranslationServer 로 확인하는 단언을 더하거나 테스트 이름을 test_oil_has_weight 로 고쳐라
   - 기준: (앞 단계 QA) 훈제 소시지가 소시지보다 가볍다 — weights.json 에서 sausage 0.4 · smoked_sausage 0.3 이다. 훈제 고기·생선(0.4)과 맞추든 소시지와 같게 두든, 임시 값이라도 뒤집혀 있지 않게 고쳐라
