@@ -2525,7 +2525,7 @@
     을 **캔다** (테스트). 석회는 이제 석회석에서 나온다
   - 기준: 캐는 바위가 다시 자란다 (03_world/resources-regrowth.md 의 약속)
   - 기준: 석회를 쓰던 곳(비료)이 끊기지 않는다 — 석회석 → 석회 길이 이어진다 (테스트)
-- [ ] 4. (앞 단계 QA) 석회 레시피가 지워질 파일에 들어갔다
+- [x] 4. (앞 단계 QA) 석회 레시피가 지워질 파일에 들어갔다
   - 기준: 석회 레시피가 지워질 파일에 들어갔다 — game/craft/recipes/recipes.json 에 {"key": "lime", station smelter, limestone 2 → lime 2} 한 줄을 더했는데, 차선 1(G-200.2)이 이 파일을 시설별 파일로 갈라 지웠다. 합칠 때 이 줄(과 _temporary 의 석회 문장)을 용광로/제련로 쪽 시설 파일(smelter.json 등)로 옮겨야 비료 사슬이 안 끊긴다 — 합친 뒤 test_fertilizer_farm_plot.gd test_limestone_becomes_lime_becomes_fertilizer 가 그것을 지킨다
   - 기준: (앞 단계 QA) 시설 이름이 용광로 · 제련로로 섞였다 — game/life/harvest/harvest.gd DROPS 위 주석 · island_resources.gd 주석은 「용광로」, 레시피 _temporary · 테스트 · spec/04_life/mining.md 는 「제련로(smelter)」라 한다. spec/05_craft/facilities.md 의 표 이름은 용광로다. 한쪽으로 맞춰라(코드 주석을 facilities.md 와 같게, 혹은 「용광로(smelter)」로 둘 다 적기)
 
@@ -2625,6 +2625,13 @@
   - 기준: **맨손 상자는 그대로 둔다** (맨손 레시피는 셋 — 사람 결정 2026-09-21). 판자 상자를 더하려면 그 결정을 먼저 뒤집어야 하니 **건드리지 않는다**
   - 기준: 사다리로 오를 수 있다 (04_life/climbing.md 와 어긋나지 않는다) (테스트)
 
+
+## [ ] G-904 루프가 찾은 것 — 스스로 갚는다
+- QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
+  루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
+- 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
+- [ ] 1. G-201 앞부터 있던 「제련로」가 남았다 (G-201 단계 4)
+  - 기준: G-201 앞부터 있던 「제련로」가 남았다 — 시설 이름이 facilities.md 와 다르다. G-201 이전부터 있던 주석·단언 문구에 「제련로」가 남아 있다: game/ui/hud/station_window.gd 13·27행, game/craft/stations/stations.json _recipes, game/core/debug/ui_shots.gd 545행, game/tests/ui/layout/test_window_layout.gd 358~390행, game/tests/ui/hud/test_station_window.gd 11~106행, game/tests/craft/test_from_empty_hands.gd 11·20·64·87·89·115·146·895·911~998행. 이번 기준 밖이고, 차선 1 이 쥔 파일과 부딪히지 않게 두 차선이 합친 뒤에 「용광로(smelter)」로 바꿔라. 글자만 바꾸면 된다
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
