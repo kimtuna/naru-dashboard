@@ -1,43 +1,5 @@
 [
  {
-  "time": "2026-09-26 18:11:03",
-  "epoch": 1790413863,
-  "type": "pass",
-  "title": "통과 — G-910 단계 21 (test.sh 합계의 Pending 이 늘 0 으로 찍힌다 (G-910 단계 14))",
-  "group": "G-910",
-  "step": "21",
-  "attempt": "1",
-  "report": {
-   "problem": "test.sh 합계가 GUT 의 「Risky/Pending N」 줄을 읽는지 test.sh 를 진짜로 돌려 지킨다 — pending() 하나뿐인 임시 파일의 합계가 Risky/Pending 1 로 찍힌다",
-   "approach": "합계는 이미 tools/test_totals.awk 로 옮겨져 G-910.14 때 '^Risky/Pending' 을 $2 로 읽고 있었다. 기준대로 패턴을 '^(Risky\\/)?Pending +[0-9]' · $NF 로 바꿔 옛 꼴 「Pending N」 도 읽게 했다. 빠져 있던 것은 GUT 가 실제로 찍는 줄을 awk 가 읽는지 보는 끝에서 끝까지의 검사였다(기존 테스트는 손으로 만든 로그만 썼다). 새 GD 테스트는 temp 폴더에 pending() 하나만 있는 테스트 파일을 쓰고 지금 도는 godot 으로 TESTS=그 파일 로 tools/test.sh 를 돌려 합계의 Risky/Pending 이 1 · Tests 1 · Passing 0 인지 본다(harness/ 는 못 고치므로 셸 테스트 대신 tests/ 아래 GD 로). 임시 파일 자리는 고정해 .godot/ 의 시간 기록이 쌓이지 않게 했다. awk 를 옛 '^Pending' 으로 되돌리면 이 테스트가 [0] ≠ [1] 로 떨어지는 것을 확인했다. changed_tests.py 가 빈 목록을 내 전체를 돌렸다: test.log 는 Scripts 195 · Tests 1660 · Passing 1660 · Failing 0 · Risky/Pending 0.",
-   "why": "",
-   "files": [
-    "tools/test_totals.awk",
-    "game/tests/core/tools/test_test_sh_counts_pending.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "test.sh 합계의 Pending 이 늘 0 으로 찍힌다 — tools/test.sh 끝의 awk 가 '^Pending +[0-9]' 를 찾는데 GUT(addons/gut/summary.gd:64) 는 그 줄을 'Risky/Pending N' 으로 찍고 0 이면 아예 안 찍는다. 그래서 pending·risky 가 있어도 합계에 안 보이고 Tests 와 Passing 만 어긋나 보인다 — 이번 기준의 「하나가 어느 쪽에도 안 든다」가 바로 그것이었다. awk 패턴을 '^(Risky\\/)?Pending +[0-9]' 로 바꾸고 $NF 를 더하라. 테스트: pending() 하나만 있는 임시 테스트 파일로 test.sh 를 돌려 합계의 Pending 이 1 로 찍히는지 보는 셸 테스트(tests/ 아래 GD 로 어렵다면 harness/ 의 python 테스트)를 짜라",
-     "evidence": "tools/test_totals.awk:23 이 '/^(Risky\\/)?Pending +[0-9]/ { r += $NF; cr = $NF }' 로 바뀌었다. game/tests/core/tools/test_test_sh_counts_pending.gd 의 test_pending_only_file_shows_pending_1_in_the_totals 가 임시 폴더에 pending() 하나뿐인 파일을 쓰고 지금 도는 godot 으로 TESTS=그 파일 로 tools/test.sh 를 진짜로 돌려 합계의 Risky/Pending 1 · Tests 1 · Passing 0 을 단언한다. 일부러 깨 봤다 — awk 줄을 옛 '/^Pending +[0-9]/ { r += $2 }' 로 되돌리니 '[0] expected to equal [1]' 로 떨어졌고, 되돌린 뒤 다시 통과한다(2/2). test.log 전체 실행 195 파일 · 1660 통과 · 실패 0 · guard 통과"
-    }
-   ],
-   "issues": [
-    "테스트가 매번 사용자 휴지통에 폴더를 버린다 — test_test_sh_counts_pending.gd 의 after_each 가 OS.move_to_trash(_dir) 를 불러 테스트가 돌 때마다 macOS ~/.Trash 에 naru_pending_only 폴더가 하나씩 쌓인다(사람 환경을 건드린다). 임시 파일은 DirAccess.remove_absolute(_file) 뒤 DirAccess.remove_absolute(_dir) 로 바로 지워라",
-    "안쪽 test.sh 가 --import 를 다시 부른다 — 이 테스트는 전체 실행 도중 test.sh 를 한 번 더 띄우므로 안쪽 test.sh 머리의 godot --import 가 다른 godot 들이 같은 game/.godot/ 를 쓰는 동안 돈다. 지금은 통과했지만 겹치면 흔들릴 수 있다. 안쪽 실행에서 import 를 건너뛰는 환경 변수(예: TEST_SKIP_IMPORT=1)를 test.sh 에 두고 이 테스트가 그것을 넘기게 하라"
-   ],
-   "good": [
-    "기준에 없는 test_awk_reads_gut_risky_pending_line_by_last_field — awk 파일에 그 패턴 문자열이 있는지만 보는 글자 검사다. 해는 없고 진짜 지킴은 끝에서 끝까지 테스트가 한다"
-   ]
-  },
-  "test": ".gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_ammo_label.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      1s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           195\nTests            1660\nPassing Tests    1660\nFailing Tests       0\nRisky/Pending       0\nAsserts         75512\nTime           308s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "a5c4e12"
- },
- {
   "time": "2026-09-26 18:23:52",
   "epoch": 1790414632,
   "type": "pass",
@@ -8936,5 +8898,46 @@
    "good": []
   },
   "test": "put/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           268\nTests            2105\nPassing Tests    2105\nFailing Tests       0\nRisky/Pending       0\nAsserts        101870\nTime           476s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-12 10:10:09",
+  "epoch": 1791767409,
+  "type": "pass",
+  "title": "통과 — G-950 단계 1 (창 위 여백 TOP_MARGIN 을 창 셋이 각자 (G-994 단계 1))",
+  "group": "G-950",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "창 위 여백을 UiTheme.WINDOW_TOP 하나로 모으고 상자 · 주민 · 방 · 제작대 창이 그것만 쓴다 — 바뀐 곳만(55개 파일) 507개 통과",
+   "approach": "상자 · 주민 · 방 창이 각자 static var TOP_MARGIN = UiTheme.window(&\"chest_top\") 를 두었고 제작대 창은 테마를 직접 읽었다. UiTheme 에 레이아웃 상수 WINDOW_TOP 하나를 두고 네 창의 TOP_MARGIN 을 지워 그 값을 쓰게 했다. test_window_layout 에 새 테스트: 네 창의 $Center offset_top 이 WINDOW_TOP 과 같은지 재고, 창 스크립트에 TOP_MARGIN · chest_top 이 다시 적히지 않는지 본다. test_chest_window_scroll 은 지워진 ChestWindow.TOP_MARGIN 대신 UiTheme.WINDOW_TOP 을 읽는다(단언 값은 그대로). changed_tests 그물(55개 파일) 507개 통과 — 전체는 안 돌렸다.",
+   "why": "",
+   "files": [
+    "game/ui/theme/ui_theme.gd",
+    "game/ui/hud/chest_window.gd",
+    "game/ui/hud/villager_window.gd",
+    "game/ui/hud/room_window.gd",
+    "game/ui/hud/station_window.gd",
+    "game/tests/ui/layout/test_window_layout.gd",
+    "game/tests/ui/hud/test_chest_window_scroll.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "창 위 여백 TOP_MARGIN 을 창 셋이 각자 — G-994 그 다음 단계(표 9번). chest_window · villager_window 등 ui 창이 같은 여백을 따로 적는다. ui 쪽 한 곳(레이아웃 상수)으로 모으고 test_window_layout 류에서 셋이 같은 값을 쓰는지 단언해라",
+     "evidence": "UiTheme.WINDOW_TOP(ui_theme.gd:57, Window chest_top 에서 읽음, 「임시」 표시 있음) 하나로 모였고 chest · villager · room · station 창 넷이 모두 그것만 쓴다 — game/ 아래 TOP_MARGIN · chest_top 을 읽는 창 스크립트가 더 없음을 grep 으로 확인. test_window_layout.gd::test_windows_share_one_top_margin 이 네 창의 실제 $Center.offset_top == WINDOW_TOP 을 재고, 창 스크립트에 TOP_MARGIN · chest_top 이 다시 적히지 않는지 본다. 일부러 깨 봄: villager_window 의 offset_top 을 WINDOW_TOP + 8 로 바꾸자 그 테스트가 떨어졌다(23 중 1 실패) — 되돌린 뒤 diff 원래대로. test.log(바뀐 곳만 55개 파일) 507/507 통과 · guard 통과"
+    }
+   ],
+   "issues": [
+    "숫자로 베낀 여백은 못 잡는다 — test_windows_share_one_top_margin 은 offset_top 값이 같은지와 TOP_MARGIN · chest_top 글자만 본다. 창 스크립트가 center.offset_top = 44.0 처럼 숫자를 직접 적어도 지금 값이 같으면 통과한다. test_window_layout.gd 의 그 테스트에서 네 창 스크립트의 offset_top 대입 줄이 UiTheme.WINDOW_TOP 을 쓰는지(예: 'offset_top =' 가 든 줄마다 'WINDOW_TOP' 포함) 단언을 더하라",
+    "알림 기록 위 여백 44 가 따로 있다 — game/ui/hud/alert_log.tscn:9 의 offset_top = 44.0 이 Window chest_top(44) 과 같은 값을 손으로 적었다. 같은 안내 줄 자리를 비우는 것이면 UiTheme.WINDOW_TOP 으로 이어 주거나, 다른 까닭이면 그 까닭을 주석으로 적어라"
+   ],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 55 개 ---\ntest.sh: 파일 55 개를 6 개씩 한꺼번에 돌린다\nok     16s  res://tests/craft/stations/test_stations.gd\nok     17s  res://tests/automation/villagers/test_villager_many_fields.gd\nok     17s  res://tests/automation/villagers/test_villager_jobs.gd\nok     23s  res://tests/automation/villagers/test_villager_can_churn.gd\nok      9s  res://tests/automation/villagers/test_villager_home.gd\nok     10s  res://tests/core/debug/test_ui_shots.gd\nok     11s  res://tests/world/storage/test_chest_place.gd\nok      5s  res://tests/ui/hud/test_target_bars.gd\nok      5s  res://tests/ui/layout/test_window_layout.gd\nok     10s  res://tests/core/debug/test_dev_box_open.gd\nok     34s  res://tests/automation/villagers/test_villager_watering.gd\nok     34s  res://tests/automation/villagers/test_villager_chests_full.gd\nok      9s  res://tests/world/storage/test_chest_break.gd\nok      3s  res://tests/ui/hud/test_bag.gd\nok      2s  res://tests/ui/hud/test_map_window.gd\nok      2s  res://tests/core/test_game_root_tidy.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      5s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      3s  res://tests/ui/hud/test_map_pin.gd\nok      3s  res://tests/ui/hud/test_room_names.gd\nok      3s  res://tests/ui/hud/test_room_window.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      3s  res://tests/ui/hud/test_station_output.gd\nok      4s  res://tests/ui/hud/test_station_window.gd\nok      2s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      0s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            55\nTests             507\nPassing Tests     507\nFailing Tests       0\nRisky/Pending       0\nAsserts         12141\nTime           49s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "7f1b2594"
  }
 ]

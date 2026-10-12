@@ -2445,12 +2445,16 @@
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
-- [ ] 1. 창 위 여백 TOP_MARGIN 을 창 셋이 각자 (G-994 단계 1)
+- [x] 1. 창 위 여백 TOP_MARGIN 을 창 셋이 각자 (G-994 단계 1)
   - 기준: 창 위 여백 TOP_MARGIN 을 창 셋이 각자 — G-994 그 다음 단계(표 9번). chest_window · villager_window 등 ui 창이 같은 여백을 따로 적는다. ui 쪽 한 곳(레이아웃 상수)으로 모으고 test_window_layout 류에서 셋이 같은 값을 쓰는지 단언해라
 - [ ] 2. tools/test.sh 가 두 차선에서 같은 TMPDIR (G-994 단계 1)
   - 기준: tools/test.sh 가 두 차선에서 같은 TMPDIR — G-994 그 다음 단계(표 10번, G-950.2). 차선 1 · 2 가 동시에 돌면 임시 경로가 겹친다. .loop/lane 값으로 TMPDIR 아래 차선별 하위 폴더를 쓰게 고쳐라
 - [ ] 3. 차선 1 합친 뒤 남은 경계 다섯 (G-994 단계 1)
   - 기준: 차선 1 합친 뒤 남은 경계 다섯 — G-994 맨 뒤 단계들(표 2 · 4 · 6 · 7 · 8). sync_lanes 가 G-992 · G-995 를 이 줄기에 합쳐 온 뒤 하나씩 단계로: 2 놓는 곳 뼈대 → Placeable · 4 Buildings._pieces_of/_edge_plates 공개 이름 · 6 hands.gd 상자 칸 베끼기 ↔ Chest.store · 7 gather_work/field_care → JobWork · 8 ButcherPanel._holds_gun ↔ Attack.holds_gun
+- [ ] 3. 숫자로 베낀 여백은 못 잡는다 (G-950 단계 1)
+  - 기준: 숫자로 베낀 여백은 못 잡는다 — test_windows_share_one_top_margin 은 offset_top 값이 같은지와 TOP_MARGIN · chest_top 글자만 본다. 창 스크립트가 center.offset_top = 44.0 처럼 숫자를 직접 적어도 지금 값이 같으면 통과한다. test_window_layout.gd 의 그 테스트에서 네 창 스크립트의 offset_top 대입 줄이 UiTheme.WINDOW_TOP 을 쓰는지(예: 'offset_top =' 가 든 줄마다 'WINDOW_TOP' 포함) 단언을 더하라
+- [ ] 4. 알림 기록 위 여백 44 가 따로 있다 (G-950 단계 1)
+  - 기준: 알림 기록 위 여백 44 가 따로 있다 — game/ui/hud/alert_log.tscn:9 의 offset_top = 44.0 이 Window chest_top(44) 과 같은 값을 손으로 적었다. 같은 안내 줄 자리를 비우는 것이면 UiTheme.WINDOW_TOP 으로 이어 주거나, 다른 까닭이면 그 까닭을 주석으로 적어라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
