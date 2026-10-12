@@ -2575,10 +2575,14 @@
   - 기준: 염전을 **물가에 놓으면** 시간이 지나 **소금**이 나온다 (테스트). 바닷물은 아이템이 아니다
   - 기준: 물가가 아니면 아무것도 내지 않고, **왜 안 되는지 보인다** (테스트)
   - 참고: 물 영역을 재는 길은 낚시에 이미 있다 (`game/life/fishing/`)
-- [ ] 4. 훈연기 — 초반을 넘기는 음식
+- [x] 4. 훈연기 — 초반을 넘기는 음식
   - 기준: 고기 · 생선 + 소금 → **훈제 음식** (테스트). 배고픔만 채운다 — **버프는 없다** (사람 결정 2026-10-12)
   - 기준: 창자 + 고기 → **소시지**, 소시지 → 훈제 소시지 (테스트) — 표에서 끊겨 있던 자리다
   - 기준: 부산물 **기름**이 나온다 (약제의 연고가 쓴다)
+- [ ] 5. (앞 단계 QA) 창자를 사슴에서 바로 낸다
+  - 기준: 창자를 사슴에서 바로 낸다 — G-204 와 어긋난다: plan/list.md G-204 기준은 「도축 → 내장, 작업대에서 내장 → 창자」인데 이번에 game/life/hunting/animal_kinds.gd 사슴 BODY 에 gut 1 을 바로 넣었다. G-204 단계에서 사슴 몸통 산출을 gut → 내장(offal 등)으로 바꾸고 작업대 레시피 내장 → 창자를 더한 뒤 test_smoker.gd test_butchering_a_deer_gives_gut 를 「도축 → 내장 → 작업대 → 창자」로 고쳐라
+  - 기준: (앞 단계 QA) 기름 이름 테스트가 무게만 본다 — test_smoker.gd test_oil_has_names_and_weight 는 이름에 names 를 걸었지만 ItemWeights 만 확인한다. ko.po · en.po 에 ITEM_oil · ITEM_gut · ITEM_sausage · ITEM_smoked_* 가 있는지 TranslationServer 로 확인하는 단언을 더하거나 테스트 이름을 test_oil_has_weight 로 고쳐라
+  - 기준: (앞 단계 QA) 훈제 소시지가 소시지보다 가볍다 — weights.json 에서 sausage 0.4 · smoked_sausage 0.3 이다. 훈제 고기·생선(0.4)과 맞추든 소시지와 같게 두든, 임시 값이라도 뒤집혀 있지 않게 고쳐라
 
 ## [ ] G-204 축사 · 도축 산출 (사람 결정 2026-10-12)
 - 차선: 3d-start
@@ -2646,6 +2650,8 @@
   - 기준: G-201 앞부터 있던 「제련로」가 남았다 — 시설 이름이 facilities.md 와 다르다. G-201 이전부터 있던 주석·단언 문구에 「제련로」가 남아 있다: game/ui/hud/station_window.gd 13·27행, game/craft/stations/stations.json _recipes, game/core/debug/ui_shots.gd 545행, game/tests/ui/layout/test_window_layout.gd 358~390행, game/tests/ui/hud/test_station_window.gd 11~106행, game/tests/craft/test_from_empty_hands.gd 11·20·64·87·89·115·146·895·911~998행. 이번 기준 밖이고, 차선 1 이 쥔 파일과 부딪히지 않게 두 차선이 합친 뒤에 「용광로(smelter)」로 바꿔라. 글자만 바꾸면 된다
 - [ ] 2. 새 원자재의 얻을 길이 없다 (G-202 단계 1)
   - 기준: 새 원자재의 얻을 길이 없다 — 석탄 · 모래 · 구리/주석/금/은 광석이 섬 어디에도 안 나서 지금 게임에서는 강철괴 · 유리 · 주괴 넷을 만들 수 없다. 자원 배치는 사람이 정하지만(facilities.md 미정) 이 아이템들이 「얻을 길 없음」임을 미정 줄에 이름으로 적어 두어라 (막는 것은 아니다)
+- [ ] 3. spec 사냥 문서에 창자가 없다 (G-203 단계 4)
+  - 기준: spec 사냥 문서에 창자가 없다 — spec/04_life/hunting.md 의 부위 산출 예(사슴 몸통 고기·가죽)에 이번에 더한 창자(임시)를 적어 두어라 (facilities.md 에만 적혀 있다)
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
