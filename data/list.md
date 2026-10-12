@@ -2467,7 +2467,7 @@
   - 기준: _is_skeleton 이 매번 res:// 를 다시 훑는다 — game/tests/build/test_placers_comment.gd 의 _is_skeleton 은 부를 때마다 _scan(res://) 과 _joiners()(또 _scan) 를 돈다. test_comment_lists_every_placer 의 for 안에서 클래스마다 두 번씩 훑는다. 루프 밖에서 extends_of 를 한 번 모아 뼈대 집합을 만들고 그것을 쓰게 줄여라
 - [x] 3. Stations.REACH 주석이 「기록용」이라며 쓰인다고 한다 (G-950 단계 5)
   - 기준: Stations.REACH 주석이 「기록용」이라며 쓰인다고 한다 — game/craft/stations/stations.gd:33 은 「이 값은 기록용이다 (건물 · 도축 · 선착장 짓기가 이 값을 따라 쓴다)」라고 적었다. 실제로 Buildings.REACH(build/buildings.gd:70 → 770줄 Aim.at) · Butchery.REACH(life/hunting/butchery.gd:21, Captives 도 따른다) · DockBuilder.REACH(world/frontier_islands/dock_builder.gd:29 → 202줄 Aim.at)가 이 값을 진짜 조준 거리로 쓰니 「기록용」은 제작대를 놓는 조준에만 참이다. 문구를 「제작대를 놓는 조준은 Placer(Aim.REACH) 가 한다 — 이 값은 건물 · 도축 · 선착장 짓기가 거리로 쓴다」처럼 고치고, test_placer.gd 의 문구 단언은 stations.gd 만 그 문구로 따로 보게 바꿔라 (넷 다 같은 문구를 요구하는 지금 단언을 갈라야 한다)
-- [ ] 1. test_placer 의 함수 이름이 이제 반만 맞다 (G-950 단계 3)
+- [x] 1. test_placer 의 함수 이름이 이제 반만 맞다 (G-950 단계 3)
   - 기준: test_placer 의 함수 이름이 이제 반만 맞다 — game/tests/build/test_placer.gd 의 test_every_placer_reach_says_it_is_only_a_record 는 이제 Stations.REACH 가 「기록용이 아니다」를 단언하는데 이름은 넷 다 기록용이라고 한다. test_every_placer_reach_doc_says_who_aims 처럼 둘을 다 담는 이름으로 바꿔라 (막는 것은 아니다)
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
