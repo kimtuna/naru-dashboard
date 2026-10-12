@@ -2584,7 +2584,7 @@
   - 기준: (앞 단계 QA) 기름 이름 테스트가 무게만 본다 — test_smoker.gd test_oil_has_names_and_weight 는 이름에 names 를 걸었지만 ItemWeights 만 확인한다. ko.po · en.po 에 ITEM_oil · ITEM_gut · ITEM_sausage · ITEM_smoked_* 가 있는지 TranslationServer 로 확인하는 단언을 더하거나 테스트 이름을 test_oil_has_weight 로 고쳐라
   - 기준: (앞 단계 QA) 훈제 소시지가 소시지보다 가볍다 — weights.json 에서 sausage 0.4 · smoked_sausage 0.3 이다. 훈제 고기·생선(0.4)과 맞추든 소시지와 같게 두든, 임시 값이라도 뒤집혀 있지 않게 고쳐라
 
-## [ ] G-204 축사 · 도축 산출 (사람 결정 2026-10-12)
+## [x] G-204 축사 · 도축 산출 (사람 결정 2026-10-12)
 - 차선: 3d-start
 - spec: spec/05_craft/facilities.md · 04_life/ranching-breeding.md · hunting.md
 - [x] 1. 태그에 새 재료를 담는다 — 태그 파일은 이 차선 것이다
