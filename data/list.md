@@ -2453,7 +2453,7 @@
   - 기준: 차선 1 합친 뒤 남은 경계 다섯 — G-994 맨 뒤 단계들(표 2 · 4 · 6 · 7 · 8). sync_lanes 가 G-992 · G-995 를 이 줄기에 합쳐 온 뒤 하나씩 단계로: 2 놓는 곳 뼈대 → Placeable · 4 Buildings._pieces_of/_edge_plates 공개 이름 · 6 hands.gd 상자 칸 베끼기 ↔ Chest.store · 7 gather_work/field_care → JobWork · 8 ButcherPanel._holds_gun ↔ Attack.holds_gun
 - [x] 3. 숫자로 베낀 여백은 못 잡는다 (G-950 단계 1)
   - 기준: 숫자로 베낀 여백은 못 잡는다 — test_windows_share_one_top_margin 은 offset_top 값이 같은지와 TOP_MARGIN · chest_top 글자만 본다. 창 스크립트가 center.offset_top = 44.0 처럼 숫자를 직접 적어도 지금 값이 같으면 통과한다. test_window_layout.gd 의 그 테스트에서 네 창 스크립트의 offset_top 대입 줄이 UiTheme.WINDOW_TOP 을 쓰는지(예: 'offset_top =' 가 든 줄마다 'WINDOW_TOP' 포함) 단언을 더하라
-- [ ] 4. 알림 기록 위 여백 44 가 따로 있다 (G-950 단계 1)
+- [x] 4. 알림 기록 위 여백 44 가 따로 있다 (G-950 단계 1)
   - 기준: 알림 기록 위 여백 44 가 따로 있다 — game/ui/hud/alert_log.tscn:9 의 offset_top = 44.0 이 Window chest_top(44) 과 같은 값을 손으로 적었다. 같은 안내 줄 자리를 비우는 것이면 UiTheme.WINDOW_TOP 으로 이어 주거나, 다른 까닭이면 그 까닭을 주석으로 적어라
 - [ ] 3. 놓는 곳 넷의 파일 끝에 빈 줄이 둘 남았다 (G-950 단계 3)
   - 기준: 놓는 곳 넷의 파일 끝에 빈 줄이 둘 남았다 — beds.gd · torches.gd · chests.gd · stations.gd 끝이 \n\n\n 이다. 맨 끝 함수를 지우고 남은 빈 줄이다. 각 파일 끝을 줄바꿈 하나로 줄여라
