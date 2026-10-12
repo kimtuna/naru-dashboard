@@ -2629,7 +2629,7 @@
   - 기준: 약의 효과가 실제로 듣는다 — 적어도 **HP · 스트레스 · 독**은 (테스트)
   - 기준: (앞 단계 QA) 합친 뒤 조리대를 채소 끼움 없이 다시 봐야 한다 — 이 줄기에서는 @vegetable 이 비어 구운 채소 · 스튜 · 볶음밥 · 잔치 요리 · 절임 채소 다섯이 게임 안에서는 아직 못 만들어진다. test_cook_table.gd before_each 가 갈래가 비면 VEGETABLES 를 넣고, test_tag_new_materials.gd 는 빈 갈래 레시피를 건너뛴다. 3d-lane2 합친 직후 단계(G-204.4 앞 단계 QA 줄)에서 tags.json 에 vegetable 을 더할 때, test_cook_table.gd 의 VEGETABLES 끼움과 test_tag_new_materials.gd 의 _has_empty_tag 건너뛰기를 지우고 그대로 통과하는지 본다
   - 기준: (앞 단계 QA) test_cook_table 의 MENU 가 foods.json 을 그대로 베꼈다 — 사람 표가 없어 「표대로」의 기준이 테스트 상수뿐이다. 사람이 조리대 음식표를 주면 facilities.md · foods.json · cook_table.json · MENU 를 한꺼번에 바꿔야 한다. MENU 위 주석에 「사람 표가 오면 이 상수도 바꾼다」 한 줄을 더해 두어라
-- [ ] 3. (앞 단계 QA) 주민이 약을 먹는 곳이 게임에 없다
+- [x] 3. (앞 단계 QA) 주민이 약을 먹는 곳이 게임에 없다
   - 기준: 주민이 약을 먹는 곳이 게임에 없다 — Villager.take_medicine 은 테스트에서만 불린다(eat · drink 도 같다). 스트레스 효과는 함수로는 듣지만 게임 안에서 주민이 스스로 약 · 음식을 먹는 길은 없다. spec/07_automation/npc-villagers.md 에 「주민이 언제 먹나」가 미정으로 적혀 있지 않으면 미정 줄에 한 줄 적어 두어라 (값을 지금 고르라는 것이 아님)
   - 기준: (앞 단계 QA) 독의 자투리 피해가 저장되지 않는다 — Medicine._poison_carry(1 HP 미만 몫)는 저장본에 안 담기는데 spec/01_settings/save.md 의 「안 담는다」 목록에는 없다(코드 주석에만 까닭이 있다). save.md 안 담는다 목록에 「독 자투리 피해(1 HP 미만) — 1초도 안 되는 몫」 한 줄을 더하라
 
