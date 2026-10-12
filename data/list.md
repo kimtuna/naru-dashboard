@@ -2463,7 +2463,7 @@
   - 기준: 넷의 REACH 상수가 이제 쓰이지 않는다 — Chests/Torches/Beds.REACH(:= Stations.REACH)와 Stations.REACH 는 조준에 안 쓰이고 Placer 가 Aim.REACH 로 겨눈다. test_reach_temporary_notes 가 그 주석을 읽어서 남겼다. 차선 2 와 합친 뒤 그 검사를 Placer 쪽으로 옮기고 네 상수를 지우든지, 주석에 「겨누는 거리는 Placer(Aim.REACH) — 이 값은 기록용」이라고 적어라
 - [x] 6. 총 잣대가 아직 한 곳 더 있다 (G-950 단계 3)
   - 기준: 총 잣대가 아직 한 곳 더 있다 — game/life/harvest/harvest.gd:82 가 _tools().shoots(held) 로 손에 든 것이 총인지 제 손으로 본다. Attack.gun_in_hand 와 같은 잣대인지 보고, 같으면 그것을 부르게 하고 test_butchery 처럼 소스 검사를 하나 더하라
-- [ ] 3. _is_skeleton 이 매번 res:// 를 다시 훑는다 (G-950 단계 4)
+- [x] 3. _is_skeleton 이 매번 res:// 를 다시 훑는다 (G-950 단계 4)
   - 기준: _is_skeleton 이 매번 res:// 를 다시 훑는다 — game/tests/build/test_placers_comment.gd 의 _is_skeleton 은 부를 때마다 _scan(res://) 과 _joiners()(또 _scan) 를 돈다. test_comment_lists_every_placer 의 for 안에서 클래스마다 두 번씩 훑는다. 루프 밖에서 extends_of 를 한 번 모아 뼈대 집합을 만들고 그것을 쓰게 줄여라
 - [ ] 3. Stations.REACH 주석이 「기록용」이라며 쓰인다고 한다 (G-950 단계 5)
   - 기준: Stations.REACH 주석이 「기록용」이라며 쓰인다고 한다 — game/craft/stations/stations.gd:33 은 「이 값은 기록용이다 (건물 · 도축 · 선착장 짓기가 이 값을 따라 쓴다)」라고 적었다. 실제로 Buildings.REACH(build/buildings.gd:70 → 770줄 Aim.at) · Butchery.REACH(life/hunting/butchery.gd:21, Captives 도 따른다) · DockBuilder.REACH(world/frontier_islands/dock_builder.gd:29 → 202줄 Aim.at)가 이 값을 진짜 조준 거리로 쓰니 「기록용」은 제작대를 놓는 조준에만 참이다. 문구를 「제작대를 놓는 조준은 Placer(Aim.REACH) 가 한다 — 이 값은 건물 · 도축 · 선착장 짓기가 거리로 쓴다」처럼 고치고, test_placer.gd 의 문구 단언은 stations.gd 만 그 문구로 따로 보게 바꿔라 (넷 다 같은 문구를 요구하는 지금 단언을 갈라야 한다)
