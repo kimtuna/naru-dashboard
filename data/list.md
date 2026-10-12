@@ -2520,11 +2520,14 @@
   - 기준: 씨앗을 얻는 길이 **있다** — 지금 임시 규칙(제작대에서 목재로)을 그대로 늘린다
 - [x] 2. 약초 넷
   - 기준: 알로에 · 인삼 · 쑥 · 박하가 **야생으로 나고 캔다** (테스트) — 지금 벨라도나 · 만드라고라 · 투구꽃과 같은 식
-- [ ] 3. 광석 여덟
+- [x] 3. 광석 여덟
   - 기준: 구리광석 · 주석광석 · 금광석 · 은광석 · 석탄 · 모래 · 석회석 · (점토는 **없다** — 사람이 뺐다)
     을 **캔다** (테스트). 석회는 이제 석회석에서 나온다
   - 기준: 캐는 바위가 다시 자란다 (03_world/resources-regrowth.md 의 약속)
   - 기준: 석회를 쓰던 곳(비료)이 끊기지 않는다 — 석회석 → 석회 길이 이어진다 (테스트)
+- [ ] 4. (앞 단계 QA) 석회 레시피가 지워질 파일에 들어갔다
+  - 기준: 석회 레시피가 지워질 파일에 들어갔다 — game/craft/recipes/recipes.json 에 {"key": "lime", station smelter, limestone 2 → lime 2} 한 줄을 더했는데, 차선 1(G-200.2)이 이 파일을 시설별 파일로 갈라 지웠다. 합칠 때 이 줄(과 _temporary 의 석회 문장)을 용광로/제련로 쪽 시설 파일(smelter.json 등)로 옮겨야 비료 사슬이 안 끊긴다 — 합친 뒤 test_fertilizer_farm_plot.gd test_limestone_becomes_lime_becomes_fertilizer 가 그것을 지킨다
+  - 기준: (앞 단계 QA) 시설 이름이 용광로 · 제련로로 섞였다 — game/life/harvest/harvest.gd DROPS 위 주석 · island_resources.gd 주석은 「용광로」, 레시피 _temporary · 테스트 · spec/04_life/mining.md 는 「제련로(smelter)」라 한다. spec/05_craft/facilities.md 의 표 이름은 용광로다. 한쪽으로 맞춰라(코드 주석을 facilities.md 와 같게, 혹은 「용광로(smelter)」로 둘 다 적기)
 
 ## [ ] G-202 용광로 · 제재소 (사람 결정 2026-10-12)
 - 차선: 3d-start
