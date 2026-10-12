@@ -2375,9 +2375,13 @@
   - 기준: 이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
 - [x] 13. (앞 단계 QA) report 의 뒤 숫자가 바뀐 곳 그물뿐이다
   - 기준: report 의 뒤 숫자가 바뀐 곳 그물뿐이다 — 「뒤」 칸에 1089/1089 (바뀐 곳) 만 적고 전체 숫자는 루프에 맡겼다. 이번엔 루프 전체 그물이 2103/2103 이라 문제없지만, 다음 단계부터는 test.log 의 전체 숫자를 받은 뒤 report 에 「뒤: 2103/2103」처럼 같은 단위로 적어라 (막는 것은 아니다)
-- [ ] 14. (앞 단계 QA) 씨앗 고정이 물 들어감을 가렸을 수 있다
+- [x] 14. (앞 단계 QA) 씨앗 고정이 물 들어감을 가렸을 수 있다
   - 기준: 씨앗 고정이 물 들어감을 가렸을 수 있다 — 시도 2 · 3 의 전체 그물에서 test_animal_walk.gd:234 test_never_steps_into_water_even_when_sent_there 가 (-256, -246) 근처 물 칸 4~5 개를 밟아 떨어졌다. 이번 단계는 RNG_SEED 993 으로 길을 고정해 통과시켰지만(단언은 그대로), 이는 animal.gd/animal_nav.gd 가 어떤 씨앗에서는 실제로 물에 발을 들인다는 뜻이다. 씨앗을 여러 개(예: 993 외 20 개) 돌려 물 칸을 밟는 씨앗이 있는지 보는 테스트를 test_animal_walk.gd 에 더하고, 밟으면 animal_nav 의 물 막기를 고쳐라 (G-994 쪽 · 사냥 파일)
   - 기준: (앞 단계 QA) 테스트가 짐승 안쪽 이름을 직접 만진다 — test_animal_walk.gd _put 이 animal._rng.seed · animal._rest 를 바로 쓴다. 차선 2 G-993.4 와 똑같은 내용이라 합칠 때 겹치진 않지만, Animal 에 씨앗을 받는 자리(예: spawn 인자나 set_seed())를 두고 테스트가 그것을 부르게 하면 _rest 다시 뽑기를 테스트가 흉내 낼 필요가 없다
+- [ ] 15. (앞 단계 QA) 다른 짐승 테스트는 옛 땅을 깐다
+  - 기준: 다른 짐승 테스트는 옛 땅을 깐다 — test_animal_sound.gd:80 · test_leg_slow.gd:18 이 아직 AnimalNav.around 로 짐승 땅을 굽는다. 게임의 짐승은 이제 AnimalNav.wild 를 쓰니 두 테스트도 AnimalNav.wild(shape, at, ...) 로 바꿔 게임과 같은 땅에서 재게 하라 (단언은 건드리지 말 것)
+  - 기준: (앞 단계 QA) spec 사냥 문서에 짐승 땅 대각선이 없다 — spec/04_life/hunting.md 10줄 근처 내비메시 설명에 「짐승의 땅(AnimalNav.wild)은 지형 충돌과 같은 대각선으로 깐다 · 주민 땅(around)은 옛 대각선 그대로 — 사람의 저장본 판이 그 면으로 땅 몸을 세운다」를 한 줄 더하라
+  - 기준: (앞 단계 QA) 주민 땅은 실제 충돌과 대각선이 다르다 — report 의 「경계를 넘는 것」: 진짜 섬에서 주민도 Terrain3D 위를 걷는데 AnimalNav.around 는 b–c 대각선이라 47° 둔덕 반쪽을 걸을 땅으로 본다. as_played_room.gd 의 땅 몸을 Terrain3D 대각선(_surface)으로 맞추고 주민도 on_terrain 으로 굽게 하는 일을 G-994 에서 갚아라 (test_villager_as_played 가 지켜볼 것)
 
 ## [x] G-994 파일 경계를 넘는 것 — 차선 2 가 맨 뒤에 갚는다 (사람 결정 2026-10-12)
 - 차선: 3d-lane2
