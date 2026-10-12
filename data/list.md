@@ -2258,7 +2258,7 @@
 - [x] 13. (앞 단계 QA) naru_file_logs 가 TMPDIR 에 또 남는다
   - 기준: naru_file_logs 가 TMPDIR 에 또 남는다 — test.log 끝에 「TMPDIR 에 새로 남은 naru_* 1 개: naru_file_logs」가 떴고 full_test_G993_5_after.log 에도 같은 줄이 있다. game/tests/core/tools/test_test_sh_keeps_file_logs.gd 는 _dir 을 OS.get_temp_dir().path_join("naru_file_logs") 로 이름을 고정해 두었고(test.sh 의 걸린 시간 기록 때문) after_each 에서 TempDir.clean 한다 — 그런데도 남는 것은 두 차선이 같은 이름을 같이 쓰다 겹치거나, 판 도중에 남은 것을 test.sh 가 세는 것으로 보인다. 어느 쪽인지 test.sh 의 「새로 남은」 셈과 이 파일의 before_each/after_each 를 보고 가려라 — 차선마다 다른 이름(예: 프로젝트 경로 해시를 붙임)으로 하거나 before_each 에서 남은 것을 먼저 지우게 하고, 그 뒤 전체 돌림 끝에 이 줄이 안 뜨는지 확인하라. 이번 기준과는 상관없다
 
-## [ ] G-995 아직 안 본 나머지를 다듬는다 — 차선 1 (사람 물음 2026-10-12)
+## [x] G-995 아직 안 본 나머지를 다듬는다 — 차선 1 (사람 물음 2026-10-12)
 - 차선: 3d-start
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다 — 깨끗해질 때까지
 - 왜 생겼나: 차선 1 이 **G-992 · G-950 을 끝내고 할 일이 없어 멈췄다** (2026-10-12 03:08). 차선 2 는 아직
