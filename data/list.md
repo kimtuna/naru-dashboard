@@ -2441,7 +2441,7 @@
 - [x] 2. 테스트가 TMPDIR 에 naru_dev_box_open_* 를 남긴다 (G-992 단계 6)
   - 기준: 테스트가 TMPDIR 에 naru_dev_box_open_* 를 남긴다 — test.log 끝에 naru_dev_box_open_2099798754 가 남았다고 나온다. dev box 를 여는 테스트(tests/core/debug/test_dev_box_everything.gd 쪽)가 만든 임시 폴더를 TempDir.clean 으로 지우게 고쳐라
 
-## [ ] G-950 루프가 찾은 것 — 스스로 갚는다
+## [x] G-950 루프가 찾은 것 — 스스로 갚는다
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
