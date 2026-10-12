@@ -2470,7 +2470,7 @@
 - [x] 1. test_placer 의 함수 이름이 이제 반만 맞다 (G-950 단계 3)
   - 기준: test_placer 의 함수 이름이 이제 반만 맞다 — game/tests/build/test_placer.gd 의 test_every_placer_reach_says_it_is_only_a_record 는 이제 Stations.REACH 가 「기록용이 아니다」를 단언하는데 이름은 넷 다 기록용이라고 한다. test_every_placer_reach_doc_says_who_aims 처럼 둘을 다 담는 이름으로 바꿔라 (막는 것은 아니다)
 
-## [ ] G-200 시설 열둘로 가른다 — 뼈대 (사람 결정 2026-10-12)
+## [x] G-200 시설 열둘로 가른다 — 뼈대 (사람 결정 2026-10-12)
 - 차선: 3d-start
 - spec: spec/05_craft/facilities.md (사람이 표로 준 것 · 픽스) · crafting-stations.md · recipes.md
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다
