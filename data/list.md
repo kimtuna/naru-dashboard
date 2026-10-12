@@ -2455,7 +2455,7 @@
   - 기준: 숫자로 베낀 여백은 못 잡는다 — test_windows_share_one_top_margin 은 offset_top 값이 같은지와 TOP_MARGIN · chest_top 글자만 본다. 창 스크립트가 center.offset_top = 44.0 처럼 숫자를 직접 적어도 지금 값이 같으면 통과한다. test_window_layout.gd 의 그 테스트에서 네 창 스크립트의 offset_top 대입 줄이 UiTheme.WINDOW_TOP 을 쓰는지(예: 'offset_top =' 가 든 줄마다 'WINDOW_TOP' 포함) 단언을 더하라
 - [x] 4. 알림 기록 위 여백 44 가 따로 있다 (G-950 단계 1)
   - 기준: 알림 기록 위 여백 44 가 따로 있다 — game/ui/hud/alert_log.tscn:9 의 offset_top = 44.0 이 Window chest_top(44) 과 같은 값을 손으로 적었다. 같은 안내 줄 자리를 비우는 것이면 UiTheme.WINDOW_TOP 으로 이어 주거나, 다른 까닭이면 그 까닭을 주석으로 적어라
-- [ ] 3. 놓는 곳 넷의 파일 끝에 빈 줄이 둘 남았다 (G-950 단계 3)
+- [x] 3. 놓는 곳 넷의 파일 끝에 빈 줄이 둘 남았다 (G-950 단계 3)
   - 기준: 놓는 곳 넷의 파일 끝에 빈 줄이 둘 남았다 — beds.gd · torches.gd · chests.gd · stations.gd 끝이 \n\n\n 이다. 맨 끝 함수를 지우고 남은 빈 줄이다. 각 파일 끝을 줄바꿈 하나로 줄여라
 - [ ] 4. placeable.gd PLACERS 주석에 같은 말이 두 번 있다 (G-950 단계 3)
   - 기준: placeable.gd PLACERS 주석에 같은 말이 두 번 있다 — game/build/placeable.gd 26~27줄. 「(넷은 뼈대 Placer 를 잇는다)」와 바로 아랫줄 「1칸짜리 설치물을 놓는 넷…은 뼈대(build/placer.gd)가 무리에 넣는다」가 겹친다. 26줄 끝의 괄호를 지워라
