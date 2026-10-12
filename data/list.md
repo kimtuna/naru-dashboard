@@ -2457,12 +2457,14 @@
   - 기준: 알림 기록 위 여백 44 가 따로 있다 — game/ui/hud/alert_log.tscn:9 의 offset_top = 44.0 이 Window chest_top(44) 과 같은 값을 손으로 적었다. 같은 안내 줄 자리를 비우는 것이면 UiTheme.WINDOW_TOP 으로 이어 주거나, 다른 까닭이면 그 까닭을 주석으로 적어라
 - [x] 3. 놓는 곳 넷의 파일 끝에 빈 줄이 둘 남았다 (G-950 단계 3)
   - 기준: 놓는 곳 넷의 파일 끝에 빈 줄이 둘 남았다 — beds.gd · torches.gd · chests.gd · stations.gd 끝이 \n\n\n 이다. 맨 끝 함수를 지우고 남은 빈 줄이다. 각 파일 끝을 줄바꿈 하나로 줄여라
-- [ ] 4. placeable.gd PLACERS 주석에 같은 말이 두 번 있다 (G-950 단계 3)
+- [x] 4. placeable.gd PLACERS 주석에 같은 말이 두 번 있다 (G-950 단계 3)
   - 기준: placeable.gd PLACERS 주석에 같은 말이 두 번 있다 — game/build/placeable.gd 26~27줄. 「(넷은 뼈대 Placer 를 잇는다)」와 바로 아랫줄 「1칸짜리 설치물을 놓는 넷…은 뼈대(build/placer.gd)가 무리에 넣는다」가 겹친다. 26줄 끝의 괄호를 지워라
 - [ ] 5. 넷의 REACH 상수가 이제 쓰이지 않는다 (G-950 단계 3)
   - 기준: 넷의 REACH 상수가 이제 쓰이지 않는다 — Chests/Torches/Beds.REACH(:= Stations.REACH)와 Stations.REACH 는 조준에 안 쓰이고 Placer 가 Aim.REACH 로 겨눈다. test_reach_temporary_notes 가 그 주석을 읽어서 남겼다. 차선 2 와 합친 뒤 그 검사를 Placer 쪽으로 옮기고 네 상수를 지우든지, 주석에 「겨누는 거리는 Placer(Aim.REACH) — 이 값은 기록용」이라고 적어라
 - [ ] 6. 총 잣대가 아직 한 곳 더 있다 (G-950 단계 3)
   - 기준: 총 잣대가 아직 한 곳 더 있다 — game/life/harvest/harvest.gd:82 가 _tools().shoots(held) 로 손에 든 것이 총인지 제 손으로 본다. Attack.gun_in_hand 와 같은 잣대인지 보고, 같으면 그것을 부르게 하고 test_butchery 처럼 소스 검사를 하나 더하라
+- [ ] 3. _is_skeleton 이 매번 res:// 를 다시 훑는다 (G-950 단계 4)
+  - 기준: _is_skeleton 이 매번 res:// 를 다시 훑는다 — game/tests/build/test_placers_comment.gd 의 _is_skeleton 은 부를 때마다 _scan(res://) 과 _joiners()(또 _scan) 를 돈다. test_comment_lists_every_placer 의 for 안에서 클래스마다 두 번씩 훑는다. 루프 밖에서 extends_of 를 한 번 모아 뼈대 집합을 만들고 그것을 쓰게 줄여라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
