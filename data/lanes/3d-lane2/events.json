@@ -6769,5 +6769,66 @@
     "question": "decisions.md 의 「차선 3d-start(0be43bab) 을 3d-lane2 에 합치지 못했다」가 풀려야 G-213 을 할 수 있다 — 3d-lane2 에서 git merge 3d-start 의 ko.po · en.po 부딪힘을 손으로 풀어 커밋해 달라"
    }
   }
+ },
+ {
+  "time": "2026-10-13 23:03:44",
+  "epoch": 1791900224,
+  "type": "pass",
+  "title": "통과 — G-213 단계 1 (두 창이 같은 검색 칸을 쓴다)",
+  "group": "G-213",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "시설 창의 검색 칸을 상자 창과 같은 ItemSearch 로 바꾸고 안내 글자를 「이름으로 찾기」(SEARCH_HINT) 하나로 맞췄다 — STATION_SEARCH 키 삭제. 바뀐 곳만 돌린 테스트 68개 파일 · 579개 통과",
+   "approach": "시설 창의 Search 노드가 맨 LineEdit(안내 STATION_SEARCH)이었다. tscn 에서 그 노드에 ui/hud/item_search.gd 를 붙여 ItemSearch 로 바꾸고(안내 · × 단추 · 우클릭 끄기는 ItemSearch._init 이 정한다), station_window 의 _filter_rows 는 따로 짠 이름 맞추기 대신 ItemSearch.matches 를 쓴다 — 줄 숨기기는 그대로. SEARCH_HINT 의 한국어를 「이름 검색」→「이름으로 찾기」로 바꾸고 ko.po · en.po 에서 STATION_SEARCH 를 지웠다. grep 결과 STATION_SEARCH 는 current.md 와, 그 키가 번역에 없다는 것을 보는 새 테스트 한 줄에만 남았다 (game · spec 다른 곳에는 없다). 새 테스트는 한 게임 안에서 두 창의 검색 칸이 같은 스크립트 · 같은 안내 키 · tr 이 「이름으로 찾기」인지, 상자는 흐리기만(칸이 숨지 않음) · 시설은 숨기기만 하는지, 시설 창 검색이 G-207 의 가벼운 갱신(counted_rows)과 맨 위로 스크롤을 지키는지 본다. 원래 있던 test_station_search 의 안내 키 확인은 SEARCH_HINT 로 고쳤다. 찍기: ui_shots 에 chest_search · workbench_search 자리를 더해(말마다 「목재/wood」 · 「씨앗/seed」를 친다) harness/shot.sh --ui 로 찍어 열어 봤다 — 상자 창은 목재 칸만 밝고 돌 · 철광석은 흐리며, 제작대는 씨앗 줄만 남고, 빈 칸에는 「이름으로 찾기」/「Search by name」이 보인다. 잘림 · 가림 없음. (shot.sh 는 8장을 다 찍은 뒤 godot 이 종료 코드 2 · '\"\": No such file' 를 냈다 — 사진에는 영향이 없었다.) 테스트: TESTS=$(changed_tests.py) 로 68개 파일 · 579개 통과.",
+   "why": "",
+   "files": [
+    "game/ui/hud/station_window.tscn",
+    "game/ui/hud/station_window.gd",
+    "game/ui/hud/item_search.gd",
+    "game/ui/hud/chest_window.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "game/tests/ui/hud/test_search_field_shared.gd",
+    "game/tests/ui/hud/test_station_search.gd",
+    "game/tests/ui/hud/test_chest_window_search.gd",
+    "spec/12_ui/hud.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "시설 창의 검색 칸을 `ItemSearch` 로 바꾸고 `STATION_SEARCH` 번역 키를 지운다 — 남은 곳이 없는지 grep 으로 확인해 report 에 적는다",
+     "evidence": "station_window.tscn 의 Search 노드에 item_search.gd 가 붙었고 @onready 타입도 ItemSearch, _filter_rows 는 ItemSearch.matches 를 쓴다. ko.po · en.po 에서 STATION_SEARCH 를 지웠다. grep -rIn STATION_SEARCH game spec harness plan → 새 테스트의 '번역이 없다' 단언 한 줄에만 남는다. report.how 에 grep 결과가 적혀 있다. test_the_old_station_hint_key_is_gone 이 ko · en 둘 다에서 tr(STATION_SEARCH) 가 키 그대로인지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "두 창의 검색 칸이 **같은 클래스 · 같은 안내 글자(「이름으로 찾기」)**인지 보는 테스트를 `game/tests/ui/hud/` 에 둔다 (테스트)",
+     "evidence": "tests/ui/hud/test_search_field_shared.gd::test_both_windows_use_the_same_class_and_the_same_hint — 한 게임에서 상자 창 · 시설 창을 열어 둘 다 is ItemSearch, get_script() 가 같음, placeholder 가 같은 SEARCH_HINT, ko 에서 tr 이 「이름으로 찾기」, × 단추 · 우클릭 차림까지 같은지 본다. ko.po 의 SEARCH_HINT 가 「이름으로 찾기」로 바뀌었고 en 은 'Search by name'"
+    },
+    {
+     "ok": true,
+     "criterion": "상자는 칸 흐리기 · 시설은 줄 숨기기가 **그대로** 된다 — G-207 의 가벼운 갱신 · 스크롤을 깨지 않는다 (테스트)",
+     "evidence": "test_the_chest_dims_and_the_station_hides — 상자는 목재 칸만 is_lit, 돌 칸은 흐림, 모든 칸 visible; 시설은 「의자」로 한 줄만 남고 나머지는 visible=false, 지우면 다 돌아온다. test_the_station_search_keeps_the_light_refresh_and_scroll — 걸러지면 scroll_vertical 0, counted_rows 가 남은 1줄 · 지운 뒤 틀에 든 줄만. 일부러 깨 봤다: 시설 _filter_rows 를 숨기기 대신 흐리기(modulate.a)로 바꾸자 test_search_field_shared 2개 · test_station_search 5개가 떨어졌다 (되돌렸고 cmp 로 원본 확인). 전체 테스트(test.log 맨 윗줄 '전체') 324파일 · 2509개 통과, guard 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 상자 창 · 시설 창에 검색 글자가 든 모습",
+     "evidence": "ui_shots 에 chest_search · workbench_search 자리를 더했다. /tmp/g213shots/ 의 사진을 열어 봤다: chest_search_ko 는 「목재」를 쳐 목재 칸 둘만 밝고 돌 · 철광석 · 빈 칸이 흐리다. workbench_search_ko 는 「씨앗」을 쳐 씨앗 줄만 남고 × 단추가 보인다. workbench_en 의 빈 칸에는 'Search by name' 안내가 보인다. 잘림 · 가림 없음"
+    }
+   ],
+   "issues": [
+    "spec 검색 칸 줄이 시설 창 자리를 틀리게 말한다 — spec/12_ui/hud.md 「검색 칸」 줄은 두 창 모두를 말하면서 「단추 줄 맨 앞에 서고」라고 한다. 시설 창에는 단추 줄이 없고 검색 칸이 제목 아래 · 줄 목록 위에 선다 (station_window.tscn, test_station_search::test_the_search_field_sits_above_the_rows). 「상자 창은 단추 줄 맨 앞, 시설 창은 줄 목록 위에 선다」로 고쳐라",
+    "shot.sh 가 끝에 종료 코드 2를 낸다 — report 에 따르면 harness/shot.sh --ui 가 8장을 다 찍은 뒤 godot 이 '\"\": No such file' 와 종료 코드 2를 냈다. 이 QA 세션 셸에서도 명령마다 같은 '\"\": No such file or directory (os error 2)' 가 찍혀, shot.sh 가 아니라 셸 환경(프로필이 빈 경로를 부르는 것) 탓일 수 있다. 어느 쪽인지 가려 shot.sh 탓이면 고쳐라 — 사진에는 영향이 없었다"
+   ],
+   "good": []
+  },
+  "test": "  res://tests/core/test_path_walk.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           324\nTests            2509\nPassing Tests    2509\nFailing Tests       0\nRisky/Pending       0\nAsserts         95858\nTime           535s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "3459ec97"
  }
 ]
