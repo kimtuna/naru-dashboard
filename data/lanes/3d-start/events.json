@@ -1,66 +1,5 @@
 [
  {
-  "time": "2026-09-28 22:19:55",
-  "epoch": 1790601595,
-  "type": "pass",
-  "title": "통과 — G-160 단계 1 (새 설계를 spec 에 고정하고 낡은 것을 지운다)",
-  "group": "G-160",
-  "step": "1",
-  "attempt": "2",
-  "report": {
-   "problem": "rooms.md 의 낡은 「배치 단위」 줄을 지우고 「주민의 직무」를 「주민의 직업」으로 맞췄다 — 새 설계(방 = 구조물을 쓰게 하고 버프를 줌)는 그대로 남았다",
-   "approach": "QA 지적대로 rooms.md 28행 「방은 나중에 NPC 주민 배치 단위가 된다」를 지웠다 (grep '배치 단위' spec/ 0건). 29행 「주민의 직무」를 npc-villagers.md 의 말에 맞춰 「주민의 직업」으로 바꿨다. 약초꾼 grep 은 spec/ 에서 0건. npc-villagers.md(110줄) · rooms.md(46줄) 모두 150줄 이하. 이 단계는 spec 만 고치므로 코드 · 테스트는 없다. npc-villagers.md 의 「채집 직무가 코드에 아직 남아 있다」 줄은 코드가 아직 그 상태라 맞는 말이다 — QA 말대로 단계 2 에서 코드와 함께 지운다.",
-   "why": "",
-   "files": [
-    "spec/06_build/rooms.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "`spec/07_automation/npc-villagers.md` 를 위 규칙으로 다시 쓴다 — 새 설계와 어긋나는 낡은 줄은 지운다",
-     "evidence": "규칙(자동화=직무 부여 · 방=구조물+버프) · 수면/스트레스(30 · 0 · 100 · 경고 50/80 오른쪽 위 로그 · 70 부터 느림) · 특성(불변 · 부정 4 · 긍정 8 표) · 직업 9 표 · 재고 관리(작업대 우선순위는 관리인만) · 스텟 5 표(5레벨마다 +n% · 최대 100 · 무슨 일로든 오름 · 직업 레벨과 따로)가 current.md 규칙과 한 줄씩 맞는다. 옛 「직무」 절 · 「[노동] 담당은 NPC」 · 「가장 작은 한 명」 줄은 지워졌고 뜻은 새 절로 옮겨졌다 (git diff 750bbbc4 으로 대조)"
-    },
-    {
-     "ok": true,
-     "criterion": "약초꾼이 spec 어디에도 없다 (grep)",
-     "evidence": "grep -rn '약초꾼' spec/ → 0건. save.md 의 저장 목록에서도 빠졌다"
-    },
-    {
-     "ok": true,
-     "criterion": "「지금 만든 것 (G-157 · G-159)」 절들은 무엇이 실제로 도는가만 남기고 줄인다",
-     "evidence": "npc-villagers.md 75~87행이 한 절로 줄었고, 도는 것(F4 · 이름표 · J 로 직업 · 농사/나무꾼/광부 · 길 찾기 · 저장)만 적었다. 83행 채집 직무 줄은 코드 상태를 적은 것이라 맞다 (단계 2 에서 지울 것이 앞 QA 지적으로 넘어가 있다)"
-    },
-    {
-     "ok": true,
-     "criterion": "미정으로 남길 것 — 방마다 무엇이 들어가나 · 버프가 무엇인가 · 스텟이 어떤 일로 얼마나 오르나 · 직업 레벨이 무엇을 여나 · 특성을 어떻게 얻나",
-     "evidence": "npc-villagers.md 미정 104~107행에 다섯 가지가 다 있다. rooms.md 미정 45행에도 방마다 무엇 · 버프가 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "`spec/06_build/rooms.md` 에 방이 구조물을 쓰게 하고 버프를 준다가 적혀 있다 (없으면 적는다)",
-     "evidence": "rooms.md 28행 「방은 특정 구조물을 쓸 수 있게 하고 버프를 준다 (사람 결정 2026-09-28) — 주민의 직업이 방 안의 구조물을 쓰고, 방이 버프를 얹는다」. 앞 QA 가 짚은 낡은 「배치 단위」 줄은 지워졌다 — grep -rn '배치 단위' spec/ 0건"
-    },
-    {
-     "ok": true,
-     "criterion": "md 가 150줄을 넘지 않는다 · 이 단계는 코드를 만들지 않는다",
-     "evidence": "npc-villagers.md 110 · rooms.md 46 · save.md 52 · level-skills.md 22줄. 이번 작업(워킹 트리 diff)은 spec 만 바꿨다 — game/ 변경 없음. test.log 바뀐 곳 56개 453 통과 · guard 통과"
-    }
-   ],
-   "issues": [
-    "spec 몇 곳에 옛 말 「직무」가 남았다 — npc-villagers.md 는 「직업」으로 맞췄는데, spec/01_settings/input.md 22행 「그 주민의 직무를 다음 것으로 — 없음 → 농부 → …」와 spec/01_settings/save.md 13행 「주민(이름 · 나이 · 자리 · 직무 · …)」이 아직 「직무」 · 「농부」다. 「직업」 · 「농사」로 바꿔라. npc-villagers.md 83행의 「채집 직무」 줄은 앞 QA 말대로 G-160.2 에서 코드를 걷어낼 때 함께 지운다. 끝나면 grep -rn '직무' spec/ 에 12행(자동화는 직무를 부여) 말고는 없어야 한다"
-   ],
-   "good": [
-    "spec/02_player/level-skills.md 미정에 「주민은 힘 스텟이 채광 속도를 정한다」를 더했다 — 사람이 준 스텟 표(힘 → 채광 속도)를 옮긴 것이라 어긋나지 않는다"
-   ]
-  },
-  "test": "--- 바뀐 곳만: 56 개 ---\ntest.sh: 파일 56 개를 6 개씩 한꺼번에 돌린다\nok     18s  res://tests/automation/villagers/test_villager_watering.gd\nok     18s  res://tests/player/hunger_thirst/test_hunger_thirst.gd\nok     31s  res://tests/combat/tools_as_weapons/test_fire_rate.gd\nok     14s  res://tests/core/debug/test_dev_box.gd\nok     15s  res://tests/world/terrain/test_island_shape_marks_note.gd\nok     35s  res://tests/life/hunting/test_animal_sound.gd\nok     12s  res://tests/automation/villagers/test_villager_jobs.gd\nok     11s  res://tests/player/inventory_hotbar/test_weight.gd\nok     12s  res://tests/combat/tools_as_weapons/test_per_gun_magazine.gd\nok      9s  res://tests/life/hunting/test_sedation_capture.gd\nok     45s  res://tests/combat/tools_as_weapons/test_tranq_ammo.gd\nok      6s  res://tests/build/test_building_chain_grade.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      5s  res://tests/life/climbing/test_climb_face_aim.gd\nok     50s  res://tests/life/hunting/test_animal_walk.gd\nok      8s  res://tests/player/movement_controls/test_crouch.gd\nok      9s  res://tests/core/debug/test_ui_shots.gd\nok      3s  res://tests/craft/recipes/test_recipes.gd\nok      3s  res://tests/life/climbing/test_grapple_ammo.gd\nok      5s  res://tests/ui/layout/test_window_layout.gd\nok      5s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      3s  res://tests/life/food/test_food.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      3s  res://tests/life/hunting/test_body_parts.gd\nok      3s  res://tests/build/test_building_link_count.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      0s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            56\nTests             453\nPassing Tests     453\nFailing Tests       0\nRisky/Pending       0\nAsserts         63553\nTime           62s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "b4a9e52e"
- },
- {
   "time": "2026-09-28 22:46:48",
   "epoch": 1790603208,
   "type": "pass",
@@ -9883,5 +9822,62 @@
   },
   "test": "//tests/ui/hud/test_bag_move_slots.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_chest_window_search.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      3s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_station_queue_window.gd\nok      3s  res://tests/ui/hud/test_map_window.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      0s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      0s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok    445s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           203\nTests            1574\nPassing Tests    1574\nFailing Tests       0\nRisky/Pending       0\nAsserts         81735\nTime           445s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "7282bd19"
+ },
+ {
+  "time": "2026-10-14 01:45:41",
+  "epoch": 1791909941,
+  "type": "pass",
+  "title": "통과 — G-211 단계 3 (spec 에 적는다)",
+  "group": "G-211",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "제작자 · 「N개 유지」를 사람 결정으로 spec 에 적고, 주민 사람 설계(G-160)를 villager-persona.md 로 옮기고, 제작자가 붙어 만들고 상자에 넣는 그림 자리(villager_crafter · villager_crafter_done)를 더했다",
+   "approach": "직업 표 제작자 줄 · crafting-stations 「N개 유지」 절은 G-211.1·2 에서 이미 반쯤 적혀 있어, 하는 일 · 쓰는 것을 나누고 사람 결정 2026-10-13 의 말(「제작 시설 안에서」 · 「같은 방 상자에서 센다」 · 「제작자가 그걸 토대로 움직이는 거고」)을 줄마다 붙였다. G-160 의 사람 규칙(수면 · 스트레스 · 경고 · 70 부터 느리게 · 특성 열둘 · 특성 불변 · 직업 레벨 · 재고 관리 · 스텟)은 spec 어디에도 없어 plan/list.md 원문 그대로 villager-persona.md 로 옮기고 「지금 게임에 있는 것」을 함께 적었다. npc-villagers.md 6줄 · Villager.pace · Persona.STRESS_SLOW 주석이 그 파일을 가리킨다(본문은 125줄 그대로). 그림은 shots.gd 에 villager_crafter(붙어 만드는 중 — 로그 「붙었나 true」) · villager_crafter_done(의자 둘이 상자에 들고 결과 칸이 빔 — 로그 「의자 상자 2 · 결과 칸 []」)을 더해 harness/shot.sh 로 찍어 PNG 를 열어 봤다. 바뀐 곳 그물(test.log: 파일 127개 · 992 테스트) 전부 통과.",
+   "why": "",
+   "files": [
+    "spec/07_automation/villager-persona.md",
+    "spec/07_automation/npc-villagers.md",
+    "spec/07_automation/npc-villagers-history.md",
+    "spec/05_craft/crafting-stations.md",
+    "game/automation/villagers/persona.gd",
+    "game/automation/villagers/villager.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/automation/villagers/test_crafter_spec.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "spec/07_automation/npc-villagers.md 직업 표에 **제작자** 줄을 사람 결정으로 더한다 — 하는 일 · 쓰는 것",
+     "evidence": "직업 표 제작자 줄이 하는 일(제 방 시설에 붙어 만들고 같은 방 상자로 옮긴다) · 쓰는 것(대기열 · 「N개 유지」 · 같은 방 상자 재료)으로 나뉘고 「사람 결정 2026-10-13 「제작자로 해서 따로 만들자」」를 단다. test_crafter_spec.gd test_the_job_table_has_the_crafter_by_human_decision 이 그 줄을 찾아 칸 셋 · 사람 결정 · 붙어/상자/N개 유지를 칸별로 단언한다. 본문 125줄 그대로"
+    },
+    {
+     "ok": true,
+     "criterion": "spec/05_craft/crafting-stations.md 에 「N개 유지」 규칙 · 재고는 같은 방 상자에서 센다 · 제작자가 그것을 보고 움직인다를 사람 결정으로 적는다",
+     "evidence": "「N개 유지」 절이 시설 창에서 정한다 · 재고는 같은 방 상자에서 센다 · 제작자가 그것을 보고 움직인다 세 줄을 각각 「사람 결정 2026-10-13」과 사람 말 그대로 적었다(앞에 있던 유지 규칙 문장은 그대로 남았다). test_the_station_spec_has_the_keep_rule_by_human_decision 이 세 줄마다 사람 결정 표시를 단언한다. 56줄"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 제작자가 시설에 붙어 만들고 상자에 넣는 모습",
+     "evidence": "shots.gd 에 villager_crafter · villager_crafter_done 자리를 더했다. /tmp/crafter_shot/ 의 두 PNG 를 열어 보니 판 둘짜리 방 안에 「하람 · 53살 제작자」가 제작대 곁에 서 있고 상자가 있다. /tmp/crafter_shot.log 에 「CRAFTER making … 붙었나 true」 · 「CRAFTER done 의자 상자 2 · 결과 칸 []」 — 붙어 만들고 의자 둘이 상자로 들어간 것이 찍는 코드의 기다림 조건(attendants · crafting · chest.count_of)으로 확인된다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 주민 사람 설계(G-160)가 spec 에 없다 — … villager-persona.md 같은 짝 파일을 만들어 … npc-villagers.md 6줄의 「아래 규칙」을 그 파일로 가리키게 고쳐라. 이번 단계의 Villager.pace · Persona.STRESS_SLOW 도 거기서 가리키게 하라",
+     "evidence": "spec/07_automation/villager-persona.md(41줄)에 plan/list.md G-160 의 수면 · 스트레스 · 경고 · 70 부터 느리게 · 부정 넷 · 긍정 여덟과 효과 · 특성 불변 · 직업 레벨 · 재고 관리 · 스텟을 원문과 대조해 그대로 옮기고 사람 결정 2026-09-28 를 달았다. npc-villagers.md 6줄이 villager-persona.md 를 가리키고 「아래 규칙」은 사라졌다. villager.gd pace() 주석 · persona.gd STRESS_SLOW 주석이 그 파일을 가리킨다. test_the_villager_persona_rules_moved_into_spec(규칙 문장 14개 · 150줄 · 6줄) · test_the_code_points_to_the_persona_spec(바로 위 주석 블록만 잘라 본다)이 확인한다. 전체 330 파일 2552 테스트 통과 · guard 통과"
+    }
+   ],
+   "issues": [
+    "제작자 방 바닥에 풀이 솟는다 — /tmp/crafter_shot/villager_crafter.png · villager_crafter_done.png 에서 토대 위 방 안 바닥을 풀잎이 뚫고 올라와 있다(화면 아래쪽). 토대가 놓인 칸의 풀(잔디 인스턴스)을 걷지 않는 것으로 보인다. 토대를 놓을 때 그 발자국 안의 풀을 지우거나 숨기고, 토대 발자국 안에 풀 인스턴스가 0 인지 단언하는 테스트를 더하라",
+    "두 그림이 거의 같아 「상자에 넣었다」가 눈으로 안 보인다 — villager_crafter 와 villager_crafter_done 은 같은 카메라 · 같은 구도라 차이가 주민 위치 조금뿐이고, 상자 안 의자는 로그로만 확인된다. shots.gd _set_up_crafter 의 done 장면에서 상자 내용(또는 제작대 결과 칸)을 화면 글로 띄우거나 카메라를 상자 쪽으로 돌려, 그림만 보고도 의자가 상자에 든 것을 알 수 있게 하라"
+   ],
+   "good": []
+  },
+  "test": "gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      0s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           330\nTests            2552\nPassing Tests    2552\nFailing Tests       0\nRisky/Pending       0\nAsserts         97306\nTime           540s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "e4b84246"
  }
 ]

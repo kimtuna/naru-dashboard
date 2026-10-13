@@ -2908,11 +2908,14 @@
   - 기준: 할 일이 없으면 다른 주민처럼 쉰다 — 시설 앞에 계속 서 있지 않는다 (테스트)
   - 기준: 스트레스 · 특성이 다른 직업과 같이 듣는다 (70 부터 느리게 — npc-villagers.md) (테스트)
   - 기준: (앞 단계 QA) 유지 줄이 매 프레임 방을 다시 잰다 — Stations.tick_crafts 가 시설마다 has_work(s) 를 부르는데, 「N개 유지」 줄이 있으면 chests 없이 불려 room_chests(Rooms.find — 놓인 것 전부 훑기)를 프레임마다 돈다. 곁에 있고 놀고 있을 때도 advance_queue 가 또 한 번 잰다 (기준 밖, 막는 것은 아니다). game/craft/stations/stations.gd 의 tick_crafts 에서 한 시설당 한 번만 재 has_work · advance_queue 에 같은 chests 를 넘기거나, 창의 _room_chests 처럼 놓인 수가 바뀔 때만 다시 재는 캐시를 두고, chest_scans 로 「유지 줄 하나 · 60프레임 동안 방 재기가 몇 번 이하」를 단언하는 테스트를 더하라
-- [ ] 3. spec 에 적는다
+- [x] 3. spec 에 적는다
   - 기준: spec/07_automation/npc-villagers.md 직업 표에 **제작자** 줄을 사람 결정으로 더한다 — 하는 일 · 쓰는 것
   - 기준: spec/05_craft/crafting-stations.md 에 「N개 유지」 규칙 · 재고는 같은 방 상자에서 센다 · 제작자가 그것을 보고 움직인다를 사람 결정으로 적는다
   - 기준: 찍어서 확인한다 — 제작자가 시설에 붙어 만들고 상자에 넣는 모습
   - 기준: (앞 단계 QA) 주민 사람 설계(G-160)가 spec 에 없다 — spec/07_automation/npc-villagers.md 6줄은 「사람됨(나이 · 특성 · 스트레스 · 관계 · 죽음)은 … (아래 규칙, 사람 결정 2026-09-28)」라고 하지만, 사람이 준 규칙(수면 30 부터 스트레스 오름 · 0 이면 대폭, 스트레스 100 에 부정 특성 발동, 50 · 80 경고, 70 부터 느리게, 부정 특성 넷 · 긍정 특성 여덟과 그 효과, 특성은 변하지 않는다)은 spec/ 어디에도 없다 (커밋 72774ced 에 있던 것이 이어지지 않았다 — 원문은 plan/list.md 1535~1550줄 G-160). 이번 기준 「70 부터 느리게 — npc-villagers.md」도 spec 이 아니라 목록에만 있다. 본문이 125줄 상한이라 spec/07_automation/ 에 villager-persona.md 같은 짝 파일을 만들어 그 줄들을 「사람 결정 2026-09-28」 표시와 함께 그대로 옮기고, npc-villagers.md 6줄의 「아래 규칙」을 그 파일로 가리키게 고쳐라. 이번 단계의 Villager.pace · Persona.STRESS_SLOW 도 거기서 가리키게 하라
+- [ ] 4. (앞 단계 QA) 제작자 방 바닥에 풀이 솟는다
+  - 기준: 제작자 방 바닥에 풀이 솟는다 — /tmp/crafter_shot/villager_crafter.png · villager_crafter_done.png 에서 토대 위 방 안 바닥을 풀잎이 뚫고 올라와 있다(화면 아래쪽). 토대가 놓인 칸의 풀(잔디 인스턴스)을 걷지 않는 것으로 보인다. 토대를 놓을 때 그 발자국 안의 풀을 지우거나 숨기고, 토대 발자국 안에 풀 인스턴스가 0 인지 단언하는 테스트를 더하라
+  - 기준: (앞 단계 QA) 두 그림이 거의 같아 「상자에 넣었다」가 눈으로 안 보인다 — villager_crafter 와 villager_crafter_done 은 같은 카메라 · 같은 구도라 차이가 주민 위치 조금뿐이고, 상자 안 의자는 로그로만 확인된다. shots.gd _set_up_crafter 의 done 장면에서 상자 내용(또는 제작대 결과 칸)을 화면 글로 띄우거나 카메라를 상자 쪽으로 돌려, 그림만 보고도 의자가 상자에 든 것을 알 수 있게 하라
 
 
 ## [x] G-213 검색 칸을 하나로 — 상자 창 · 시설 창 (2026-10-13)
