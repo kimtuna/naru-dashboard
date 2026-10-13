@@ -2653,7 +2653,7 @@
   - 기준: **맨손 상자는 그대로 둔다** (맨손 레시피는 셋 — 사람 결정 2026-09-21). 판자 상자를 더하려면 그 결정을 먼저 뒤집어야 하니 **건드리지 않는다**
   - 기준: 사다리로 오를 수 있다 (04_life/climbing.md 와 어긋나지 않는다) (테스트)
   - 기준: (앞 단계 QA) spec equipment.md 들여쓰기가 깨졌다 — spec/02_player/equipment.md 규칙 절에서 새 「- **방어** …」 줄을 「장비칸은 여덟」 줄의 하위 줄들 사이에 끼워 넣어, 그 뒤의 「가방 창의 인벤토리 칸 위에 있다 (사람 결정 2026-09-26)」 · 「장비칸은 저장본에 담긴다」 하위 줄이 이제 「방어」 아래에 매달린 것처럼 읽힌다. 「- **방어** …」 두 줄을 「장비칸은 저장본에 담긴다 …」 하위 줄 다음(「장비칸」 묶음이 끝난 뒤)으로 옮겨라. 사람 결정 줄 자체는 지워지지 않았다
-- [ ] 4. (앞 단계 QA) 사다리를 돌려 놓을 수 없다
+- [x] 4. (앞 단계 QA) 사다리를 돌려 놓을 수 없다
   - 기준: 사다리를 돌려 놓을 수 없다 — game/build/furniture/furniture.gd 의 사다리 판은 늘 X 축을 따라 선다(report temporary 에 적힘). Z 축으로 뻗은 벽 · 위층 바닥 가장자리에 대려면 판 방향이 맞지 않는다. 건축물 돌리기(game/build/buildings.gd 의 rotate)와 같은 길로 놓을 때 방향을 고르게 하고, Furniture.ladder_of 의 local 판정이 돌린 판에서도 맞는지 보는 테스트(돌린 사다리 앞에서 W → y>1.5)를 더하라. spec/05_craft/facilities.md 가구 줄에 「방향은 돌리지 않는다(임시)」가 없으니 적어 두거나 고쳐라
 
 
@@ -2671,6 +2671,8 @@
   - 기준: pending 목록을 합친 뒤 지울 길이 없다 — tags.json 의 "pending" · "_pending" 은 3d-lane2 가 합쳐지면 쓸모가 없어지지만(「다 들어온 뒤에는 지워도 된다」) 누가 지울지 정해진 곳이 없다. 3d-lane2 가 3d-start 에 합쳐진 뒤 tags.json 에서 pending · _pending 두 키를 지우고, test_recipe_tags.gd test_game_tag_file_lists_the_lane2_materials_as_pending 의 pending 단언을 「pending 이 없거나 비었다」로 바꿔라 (RecipeTags 의 pending 읽기 기능과 test_pending_name_joins_its_group_only_when_the_item_exists 는 남겨도 된다)
 - [ ] 5. pending 판정이 무게표만 본다 (G-204 단계 4)
   - 기준: pending 판정이 무게표만 본다 — RecipeTags.load_from 은 ItemWeights.table() 만으로 '있는 아이템'을 가르지만 test_tag_new_materials.gd 의 _exists 는 무게표와 ko.po ITEM_<이름> 둘을 본다. 무게만 먼저 들어온 이름이 갈래에 드는 틈이 있다 — 기준을 하나로 맞추거나(주석에 까닭을 적거나) 두 정의가 같은 함수를 쓰게 하라
+- [ ] 6. 사다리 판정 범위가 정사각이라 회전 판정이 안 걸린다 (G-206 단계 4)
+  - 기준: 사다리 판정 범위가 정사각이라 회전 판정이 안 걸린다 — Furniture.ladder_of 의 범위가 |local.z|≤LADDER_TOUCH(0.6) · |local.x|≤size.x*0.5+0.2(0.6) 로 같아서, 90° 돌린 판에서는 판의 제 좌표(affine_inverse)로 재든 월드 좌표 차(at - ladder.global_position)로 재든 결과가 같다. 실제로 ladder_of 를 월드 좌표 차로 깨 봐도 test_furniture.gd 17개가 다 통과했다. 지금 동작은 맞지만 test_an_unturned_ladder_side_on_is_not_climbed 의 주석(「ladder_of 가 판 좌표로 잰다」)과 report 의 설명은 사실과 다르다 — 그 테스트가 지키는 것은 판의 몸(충돌)이 돌았는지다. 주석을 고치거나, 판 좌표 판정을 지키고 싶으면 ladder_of 를 직접 불러 돌린 사다리 기준으로 판 앞 0.5m · 옆 0.1m 와 판 옆 0.5m · 앞 0.1m 같이 판정이 갈리는 점(LADDER_TOUCH 와 옆 여유를 다르게 둘 때)을 단언하는 단위 테스트를 더하라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
