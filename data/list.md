@@ -2657,7 +2657,11 @@
   - 기준: 사다리를 돌려 놓을 수 없다 — game/build/furniture/furniture.gd 의 사다리 판은 늘 X 축을 따라 선다(report temporary 에 적힘). Z 축으로 뻗은 벽 · 위층 바닥 가장자리에 대려면 판 방향이 맞지 않는다. 건축물 돌리기(game/build/buildings.gd 의 rotate)와 같은 길로 놓을 때 방향을 고르게 하고, Furniture.ladder_of 의 local 판정이 돌린 판에서도 맞는지 보는 테스트(돌린 사다리 앞에서 W → y>1.5)를 더하라. spec/05_craft/facilities.md 가구 줄에 「방향은 돌리지 않는다(임시)」가 없으니 적어 두거나 고쳐라
 
 
-## [>] G-904 루프가 찾은 것 — 스스로 갚는다
+## [ ] G-904 루프가 찾은 것 — 스스로 갚는다
+- 결정: **단계 4 는 사람이 손으로 했다** (2026-10-13). 차선 둘을 합치는 일에 매여 있었고 세션은 git 을 못 쓴다 —
+  합치면서 같이 했다: `tags.json` 의 `pending` · `_pending` 을 지우고(보리 · 옥수수 · 채소 셋 · 약초 넷이 갈래에 들어갔다),
+  `test_recipe_tags` 의 단언을 「pending 이 없다 + 그 재료가 갈래에 든다」로 바꿨다.
+  채소 끼움(test_cook_table)과 `_has_empty_tag` 건너뛰기도 같이 지웠다. 단계 5 · 6 은 그대로 남았다
 - 차선: 3d-start (루프가 가져갔다 2026-10-13 09:33)
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
@@ -2668,7 +2672,7 @@
   - 기준: 새 원자재의 얻을 길이 없다 — 석탄 · 모래 · 구리/주석/금/은 광석이 섬 어디에도 안 나서 지금 게임에서는 강철괴 · 유리 · 주괴 넷을 만들 수 없다. 자원 배치는 사람이 정하지만(facilities.md 미정) 이 아이템들이 「얻을 길 없음」임을 미정 줄에 이름으로 적어 두어라 (막는 것은 아니다)
 - [x] 3. spec 사냥 문서에 창자가 없다 (G-203 단계 4)
   - 기준: spec 사냥 문서에 창자가 없다 — spec/04_life/hunting.md 의 부위 산출 예(사슴 몸통 고기·가죽)에 이번에 더한 창자(임시)를 적어 두어라 (facilities.md 에만 적혀 있다)
-- [ ] 4. pending 목록을 합친 뒤 지울 길이 없다 (G-204 단계 4)
+- [x] 4. pending 목록을 합친 뒤 지울 길이 없다 (G-204 단계 4)
   - 기준: pending 목록을 합친 뒤 지울 길이 없다 — tags.json 의 "pending" · "_pending" 은 3d-lane2 가 합쳐지면 쓸모가 없어지지만(「다 들어온 뒤에는 지워도 된다」) 누가 지울지 정해진 곳이 없다. 3d-lane2 가 3d-start 에 합쳐진 뒤 tags.json 에서 pending · _pending 두 키를 지우고, test_recipe_tags.gd test_game_tag_file_lists_the_lane2_materials_as_pending 의 pending 단언을 「pending 이 없거나 비었다」로 바꿔라 (RecipeTags 의 pending 읽기 기능과 test_pending_name_joins_its_group_only_when_the_item_exists 는 남겨도 된다)
 - [ ] 5. pending 판정이 무게표만 본다 (G-204 단계 4)
   - 기준: pending 판정이 무게표만 본다 — RecipeTags.load_from 은 ItemWeights.table() 만으로 '있는 아이템'을 가르지만 test_tag_new_materials.gd 의 _exists 는 무게표와 ko.po ITEM_<이름> 둘을 본다. 무게만 먼저 들어온 이름이 갈래에 드는 틈이 있다 — 기준을 하나로 맞추거나(주석에 까닭을 적거나) 두 정의가 같은 함수를 쓰게 하라
