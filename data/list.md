@@ -2802,7 +2802,7 @@
 - [x] 4. (앞 단계 QA) 창 높이 단언이 _full_list_height 를 지키지 않는다
   - 기준: 창 높이 단언이 _full_list_height 를 지키지 않는다 — _fit 의 list 를 옛 _rows.get_combined_minimum_size().y 로 되돌려도 test_the_scroll_goes_back_to_the_top_and_the_window_does_not_jump 가 그대로 통과했다(_fit 은 _center.resized 에서만 불려 검색 때는 안 돌고, 「씨앗」은 줄이 많아 어차피 자리를 채운다). 기준 밖(창이 안 튀는 것은 덤)이라 막지 않는다. test_station_search.gd 에 「의자」처럼 한 줄만 남긴 채 w._fit() 을 부르고(또는 창 크기를 바꿔 resized 를 내고) 판 높이 · scroll 높이가 거르기 전과 같은지 보는 단언을 더하라
 
-## [ ] G-212 게임을 업데이트하면 제작 시설이 안 돈다 — 사람이 본 그대로 재현한다 (2026-10-13)
+## [x] G-212 게임을 업데이트하면 제작 시설이 안 돈다 — 사람이 본 그대로 재현한다 (2026-10-13)
 - 차선: 3d-start
 - spec: spec/05_craft/crafting-stations.md · 01_settings/save.md
 - G-209 단계 1 에서 뗐다. 옛 판(d219e9ed) 저장본으로는 **재현되지 않았다** — 저장 꼴이 같고 불러온 시설이 새로 놓은 것과 똑같이 돈다 (검사 다섯).
