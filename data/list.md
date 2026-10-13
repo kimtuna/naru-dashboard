@@ -2830,7 +2830,7 @@
   - 대신: **옛 저장본을 지금 판에서 글로 만든다** — `git show <옛 커밋>:game/settings/save/world_data.gd` 등으로 그때 저장 꼴을 읽고,
     그 꼴 그대로의 저장 파일(JSON · 딕셔너리)을 테스트 안에서 적어 **지금 판으로 불러온다**. 옛 판을 실행할 필요가 없다
 
-## [ ] G-210 컵 · 음료 · 염전 · 상자 검색 · 주민 일 범위 · 이름 (사람이 플레이해 보고 2026-10-13)
+## [>] G-210 컵 · 음료 · 염전 · 상자 검색 · 주민 일 범위 · 이름 (사람이 플레이해 보고 2026-10-13)
 - 차선: 3d-lane2
 - spec: spec/02_player/hunger-thirst.md · 05_craft/facilities.md · 06_build/storage.md · 07_automation/npc-villagers.md
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다
