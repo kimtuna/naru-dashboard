@@ -2951,7 +2951,7 @@
 - [x] 3. 차선 부딪힘 알림이 PLAY_NOTIFY 를 무시한다 (G-212 단계 2)
   - 기준: 차선 부딪힘 알림이 PLAY_NOTIFY 를 무시한다 — tools/play.sh 의 merge 실패 쪽은 "$ROOT/harness/notify.sh" 를 직접 불러 시험에서 진짜 알림이 뜰 수 있다. "$NOTIFY" 로 바꿔라
 
-## [ ] G-214 제작 창 · 창을 닫으면 한쪽으로 걷는다 · 음료는 컵을 재료로 (사람이 플레이해 보고 2026-10-14)
+## [x] G-214 제작 창 · 창을 닫으면 한쪽으로 걷는다 · 음료는 컵을 재료로 (사람이 플레이해 보고 2026-10-14)
 - 차선: 3d-start
 - spec: spec/05_craft/crafting-stations.md · facilities.md · 02_player/hunger-thirst.md
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다
