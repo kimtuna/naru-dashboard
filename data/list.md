@@ -3012,7 +3012,7 @@
 - [x] 3. (앞 단계 QA) gather_work.gd 주석이 낡았다
   - 기준: gather_work.gd 주석이 낡았다 — game/automation/villagers/gather_work.gd:34 「Villager.hand, 처음 HAND 2m」를 1.2m(G-215.2)로 고쳐라
   - 기준: (앞 단계 QA) 손 검사가 직업 잣대를 다시 짠다 — test_villager_hand_close.gd 의 _resource_far · _station_far 가 GatherWork.reaches_from · CraftingWork.station_reach 를 부르지 않고 같은 셈을 테스트 안에서 다시 한다(높이 차 UP_REACH · slack 은 안 본다). 직업 쪽 잣대가 바뀌어도 테스트는 모른다. 각 선 자리 s 에서 GatherWork.new().reaches_from(v, s, handle, Villager.WAYPOINT) · CraftingWork.station_reach(v, s, st, Villager.WAYPOINT) 가 true 인지 함께 단언하라
-- [ ] 4. (앞 단계 QA) 손 검사에 고아 노드 2개가 생겼다
+- [x] 4. (앞 단계 QA) 손 검사에 고아 노드 2개가 생겼다
   - 기준: 손 검사에 고아 노드 2개가 생겼다 — test_villager_hand_close.gd 의 _set_up 이 Villager.new() · Harvest.new() 를 트리에 안 넣고 만들어, GUT 가 「2 orphans」를 보고한다(HEAD 판에는 없었다). 테스트마다 _set_up 을 부르니 after_all 의 free 전까지 고아로 센다. add_child(villager) · add_child(gather.harvest) 로 트리에 넣거나 autofree 로 감싸 orphans 0 이 되게 하라
   - 기준: (앞 단계 QA) slack 을 빼도 손 검사가 통과한다 — reaches_from · station_reach 의 '+ slack' 을 '+ 0.0' 으로 바꿔도 6개 다 통과했다. 선 자리가 slack 없이도 손 안이라 WAYPOINT 를 넘기는 뜻이 지켜지지 않는다. 기준 문장대로는 됐으니 막지는 않는다 — 지키려면 길 끝에서 WAYPOINT 만큼 더 멀리 선 자리를 하나 넣어 slack 0 이면 false, WAYPOINT 면 true 인지 단언하라
 
