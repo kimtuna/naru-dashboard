@@ -2945,7 +2945,7 @@
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
 - [x] 1. LANES 를 기다리기 전에 읽는다 (G-212 단계 2)
   - 기준: LANES 를 기다리기 전에 읽는다 — tools/play.sh 는 LANES(step.py lanes)를 맨 위에서 한 번 계산하고 Godot 이 꺼질 때까지 몇 시간 기다릴 수 있다. 그 사이 뒤에 온 play.sh 는 exit 0 하므로 기다리는 동안 목록에 새로 붙은 차선은 빠진다. LANES 계산을 기다림 루프 뒤(잠금 잡은 뒤)로 옮겨라
-- [ ] 2. 죽은 표시 판정이 pid 재사용에 약하다 (G-212 단계 2)
+- [x] 2. 죽은 표시 판정이 pid 재사용에 약하다 (G-212 단계 2)
   - 기준: 죽은 표시 판정이 pid 재사용에 약하다 — naru-play.waiting/pid 의 pid 가 죽은 뒤 다른 프로세스가 같은 pid 를 받으면 kill -0 이 참이라 뒤에 온 play.sh 가 영영 조용히 끝난다. pid 와 함께 시작 시각(ps -o lstart= -p)을 적어 대조하거나, 표시 나이(예: 하루)를 넘으면 버리게 하라
   - 기준: (앞 단계 QA) 부딪힘 알림이 PLAY_NOTIFY 를 안 따른다 — tools/play.sh 의 차선 부딪힘 줄은 "$ROOT/harness/notify.sh" 를 바로 부르는데 기다림 알림은 "$NOTIFY"(PLAY_NOTIFY 로 바꿀 수 있다)를 쓴다. 시험에서 PLAY_NOTIFY 로 알림을 막아도 부딪힘 때는 진짜 알림이 뜰 수 있다. 부딪힘 줄도 "$NOTIFY" 로 바꿔라 (이번 기준 밖)
 - [ ] 3. 차선 부딪힘 알림이 PLAY_NOTIFY 를 무시한다 (G-212 단계 2)
