@@ -2982,7 +2982,7 @@
   - 기준: 물은 그대로다 — 빈 컵을 들고 민물을 우클릭하면 찬다
   - 기준: spec/02_player/hunger-thirst.md · 05_craft/facilities.md 를 **사람 결정으로 고쳐 적고** 낡은 「붓는다」 줄을 지운다
   - 기준: 3단 한도를 넘지 않는다 — 컵은 재료 한 칸일 뿐 단계를 늘리지 않는다 (레시피 깊이 검사)
-- [ ] 4. (앞 단계 QA) 주민의 drink 가 맨 음료만 받는다
+- [x] 4. (앞 단계 QA) 주민의 drink 가 맨 음료만 받는다
   - 기준: 주민의 drink 가 맨 음료만 받는다 — automation/villagers/villager.gd:352 drink(item) 은 손에 든 맨 「beer」 같은 이름을 덜어 마시는데, 이제 술은 컵에 든 채로만 나온다(Cup.filled). 지금은 게임 코드가 부르지 않아(언제 마시나 미정) 막지 않지만, 주민이 마실 때가 오면 음료가 든 컵 칸을 찾아 한 잔으로 쓰도록 Cup.counts_as 로 세게 고치고, tests/craft/stations/test_cook_table.gd:214 의 v.hands.add({item="beer"}) 도 Cup.filled(Cup.WOODEN, "beer") 로 바꿔 단언하라
   - 기준: (앞 단계 QA) 낡은 주석 「컵에 담아 마신다」 — game/life/food/food_catalog.gd:11 의 drink 필드 설명이 G-210.2 시절 말 그대로다. 「컵에 든 채로 나와 컵에서 마신다 (G-214.3)」로 고쳐라
 
