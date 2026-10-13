@@ -2998,7 +2998,7 @@
   - 기준: 대상과 주민 사이에 **벽 · 횃불 · 상자 · 시설**이 있으면 **돌아서** 닿는다 — 직업마다 검사 하나씩 (테스트)
   - 기준: 길이 정말 없으면 박고 서 있지 않고 **「길이 막혔다」**를 띄우고 다른 일감으로 넘어간다 (테스트)
   - 기준: 찍어서 확인한다 — 장애물을 돌아 나무 · 바위로 가는 주민
-- [ ] 2. 대상에 더 붙어서 일한다
+- [x] 2. 대상에 더 붙어서 일한다
   - 지금 주민의 손은 2m (`villager.gd HAND`, 임시 — G-210.5 에서 몸통 겉으로 재게 했다). 사람이 **더 가깝게**를 원한다
   - 기준: 손 길이를 **걸을 땅이 허락하는 가장 가까운 자리**까지 줄인다 — 걸을 땅은 장애물 둘레를 깎아 둔다(`animal_nav.gd AGENT_RADIUS`
     · `WALL_PAD`). 그보다 짧으면 영영 못 닿는다. **재서 정하고** 앞뒤 값과 까닭을 report 에 적는다 (목표 1m 남짓)
@@ -3006,6 +3006,9 @@
   - 기준: 값은 「임시」로 적는다 — 사람이 플레이해 보고 다시 정한다
   - 기준: (앞 단계 QA) 거닐기가 아직 제 걷기를 쥔다 — game/automation/villagers/stroll.gd 가 Villager.walker() 로 _walk 를 따로 두고 _walk.plan · _walk.step 을 직접 부른다. 직업이 아니라 이번 기준 밖이지만 「걷기는 한 곳」 원칙과 어긋난다. JobWork 의 _go · _stride 를 따로 떼어 둘이 같이 쓰게 하거나, stroll.gd 머리 주석에 왜 따로인지 적어라
   - 기준: (앞 단계 QA) 사람이 본 처박힘을 재현하지 못했다 — report 의 how 에 적힌 대로 네 직업은 이미 PathWalk 를 탔고, 사람의 섬(AsPlayedRoom)에서도 처박힘이 0.1초 아래였다. 이번 단계는 걷기를 모으고 길 없을 때 넘어가기를 더했을 뿐, 사람이 2026-10-14 본 증상의 원인은 아직 짚지 못했다. 다음 단계에서 사람이 쓰던 저장본(나무꾼 · 광부가 담긴 것)이나 실제 섬 지형(나무 밀집 · 절벽 · 상자 곁)으로 재현 테스트를 짜 원인을 찾아라. current.md 의 「까닭은 이미 짚었다」 줄은 코드와 달랐다는 것도 spec history 에 남아 있으니 함께 보라
+- [ ] 3. (앞 단계 QA) gather_work.gd 주석이 낡았다
+  - 기준: gather_work.gd 주석이 낡았다 — game/automation/villagers/gather_work.gd:34 「Villager.hand, 처음 HAND 2m」를 1.2m(G-215.2)로 고쳐라
+  - 기준: (앞 단계 QA) 손 검사가 직업 잣대를 다시 짠다 — test_villager_hand_close.gd 의 _resource_far · _station_far 가 GatherWork.reaches_from · CraftingWork.station_reach 를 부르지 않고 같은 셈을 테스트 안에서 다시 한다(높이 차 UP_REACH · slack 은 안 본다). 직업 쪽 잣대가 바뀌어도 테스트는 모른다. 각 선 자리 s 에서 GatherWork.new().reaches_from(v, s, handle, Villager.WAYPOINT) · CraftingWork.station_reach(v, s, st, Villager.WAYPOINT) 가 true 인지 함께 단언하라
 
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
