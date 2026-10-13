@@ -2916,7 +2916,7 @@
 - [x] 4. (앞 단계 QA) 제작자 방 바닥에 풀이 솟는다
   - 기준: 제작자 방 바닥에 풀이 솟는다 — /tmp/crafter_shot/villager_crafter.png · villager_crafter_done.png 에서 토대 위 방 안 바닥을 풀잎이 뚫고 올라와 있다(화면 아래쪽). 토대가 놓인 칸의 풀(잔디 인스턴스)을 걷지 않는 것으로 보인다. 토대를 놓을 때 그 발자국 안의 풀을 지우거나 숨기고, 토대 발자국 안에 풀 인스턴스가 0 인지 단언하는 테스트를 더하라
   - 기준: (앞 단계 QA) 두 그림이 거의 같아 「상자에 넣었다」가 눈으로 안 보인다 — villager_crafter 와 villager_crafter_done 은 같은 카메라 · 같은 구도라 차이가 주민 위치 조금뿐이고, 상자 안 의자는 로그로만 확인된다. shots.gd _set_up_crafter 의 done 장면에서 상자 내용(또는 제작대 결과 칸)을 화면 글로 띄우거나 카메라를 상자 쪽으로 돌려, 그림만 보고도 의자가 상자에 든 것을 알 수 있게 하라
-- [ ] 5. (앞 단계 QA) 풀 숨김 테스트가 MultiMesh 를 안 본다
+- [x] 5. (앞 단계 QA) 풀 숨김 테스트가 MultiMesh 를 안 본다
   - 기준: 풀 숨김 테스트가 MultiMesh 를 안 본다 — VegetationView.visible_within 은 자료와 _hidden 표로 셀 뿐이라, cover() 의 mm.set_instance_transform(…scaled(ZERO)…) 줄을 지워도 4개 테스트가 다 통과한다(헤드리스 더미 렌더러가 get_instance_transform 에 늘 단위 변환을 돌려주는 것은 QA 가 Godot 4.7.2 로 확인했다 — 그래서 막는 것은 아니고 그림으로는 확인됨). 숨기기 · 되살리기를 한 곳(예: _apply(kind, chunk, n, xform))으로 모으고 테스트에서 그 함수가 부른 변환을 기록하게 하거나, 숨긴 인스턴스의 basis 를 따로 담아 두고 「숨긴 열쇠마다 마지막으로 넣은 basis 가 ZERO 크기」를 단언하라
 
 
