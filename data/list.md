@@ -2736,7 +2736,7 @@
   - 수치도 깨졌다: 상한이 70kg 인데 **돌 한 칸(99개)이 148kg** — 캐고 다니면 거의 늘 −40% 였다
 - **weights.json 은 지우지 않는다** — 그 파일이 「이 아이템이 게임에 있나」를 가리는 목록이기도 하다
   (`RecipeTags.load_from` 이 `ItemWeights.table()` 로 갈래에 들 이름을 가린다). 속도만 떼어 낸다
-- [ ] 1. 무게가 속도를 깎지 않는다
+- [x] 1. 무게가 속도를 깎지 않는다
   - 기준: 짐이 아무리 무거워도 **걸음이 느려지지 않는다** (테스트). `Player.weight_factor` 를 속도 셈에서 뺀다
   - 기준: `ItemWeights` 의 `FREE_KG` · `SLOW_PER_KG` · `SLOW_MAX` · `speed_factor` 를 지운다.
     **`table()` · `of()` · `carried()` 는 남긴다** — 갈래 판정이 쓴다
