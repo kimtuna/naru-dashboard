@@ -2679,7 +2679,7 @@
 - [x] 6. 사다리 판정 범위가 정사각이라 회전 판정이 안 걸린다 (G-206 단계 4)
   - 기준: 사다리 판정 범위가 정사각이라 회전 판정이 안 걸린다 — Furniture.ladder_of 의 범위가 |local.z|≤LADDER_TOUCH(0.6) · |local.x|≤size.x*0.5+0.2(0.6) 로 같아서, 90° 돌린 판에서는 판의 제 좌표(affine_inverse)로 재든 월드 좌표 차(at - ladder.global_position)로 재든 결과가 같다. 실제로 ladder_of 를 월드 좌표 차로 깨 봐도 test_furniture.gd 17개가 다 통과했다. 지금 동작은 맞지만 test_an_unturned_ladder_side_on_is_not_climbed 의 주석(「ladder_of 가 판 좌표로 잰다」)과 report 의 설명은 사실과 다르다 — 그 테스트가 지키는 것은 판의 몸(충돌)이 돌았는지다. 주석을 고치거나, 판 좌표 판정을 지키고 싶으면 ladder_of 를 직접 불러 돌린 사다리 기준으로 판 앞 0.5m · 옆 0.1m 와 판 옆 0.5m · 앞 0.1m 같이 판정이 갈리는 점(LADDER_TOUCH 와 옆 여유를 다르게 둘 때)을 단언하는 단위 테스트를 더하라
 
-## [ ] G-207 제작대 창이 끊긴다 · 맷돌이 비었다 (사람이 플레이해 보고 2026-10-13)
+## [x] G-207 제작대 창이 끊긴다 · 맷돌이 비었다 (사람이 플레이해 보고 2026-10-13)
 - 차선: 3d-start
 - spec: spec/05_craft/crafting-stations.md · facilities.md
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다
