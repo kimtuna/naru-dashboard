@@ -2633,7 +2633,7 @@
   - 기준: 주민이 약을 먹는 곳이 게임에 없다 — Villager.take_medicine 은 테스트에서만 불린다(eat · drink 도 같다). 스트레스 효과는 함수로는 듣지만 게임 안에서 주민이 스스로 약 · 음식을 먹는 길은 없다. spec/07_automation/npc-villagers.md 에 「주민이 언제 먹나」가 미정으로 적혀 있지 않으면 미정 줄에 한 줄 적어 두어라 (값을 지금 고르라는 것이 아님)
   - 기준: (앞 단계 QA) 독의 자투리 피해가 저장되지 않는다 — Medicine._poison_carry(1 HP 미만 몫)는 저장본에 안 담기는데 spec/01_settings/save.md 의 「안 담는다」 목록에는 없다(코드 주석에만 까닭이 있다). save.md 안 담는다 목록에 「독 자투리 피해(1 HP 미만) — 1초도 안 되는 몫」 한 줄을 더하라
 
-## [ ] G-206 제작대 — 무기 · 갑옷 · 도구 · 가구 (사람 결정 2026-10-12)
+## [x] G-206 제작대 — 무기 · 갑옷 · 도구 · 가구 (사람 결정 2026-10-12)
 - 차선: 3d-start
 - spec: spec/05_craft/facilities.md · 02_player/equipment.md · 08_combat/tools-as-weapons.md
 - [x] 1. 자루를 쓰는 도구 · 금속 사슬
