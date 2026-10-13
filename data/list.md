@@ -2970,7 +2970,7 @@
   - 기준: 찍어서 확인한다 — 연 그대로의 시설 창
   - 기준: (앞 단계 QA) 짝 없는 .uid 쓰레기 파일이 남았다 — game/tests/core/input/test_zz_probe.gd.uid 가 test_zz_probe.gd 없이 남았다(git status 에 ?? 로 보인다). rm 으로 지워라
   - 기준: (앞 단계 QA) 세계 씨앗 칸 · 지도 Y 칸은 검사가 안 돈다 — test_held_keys.gd 는 세계 만들기의 이름 칸과 지도 field_x 만 친다. HeldKeys 는 LineEdit 면 다 잡으니 지금은 맞지만, world_create 의 SeedRow/Edit 과 map_window.field_y() 도 _type_lost 로 쳐 보는 줄을 매개변수에 더해 두면 칸이 LineEdit 이 아닌 것으로 바뀔 때 잡힌다
-- [ ] 3. 음료는 컵을 재료로 만든다 — 컵이 모금 수를 정한다
+- [x] 3. 음료는 컵을 재료로 만든다 — 컵이 모금 수를 정한다
   - **사람 결정 2026-10-14** (G-210.2 의 「손에 든 음료를 빈 컵에 담는다」를 바꾼다):
     「마실 것을 만드는 **재료에 컵이 있어야** 한다. 과일 주스로 예를 들면 지금 아무 과일 ×2 인데 **아무 과일 ×2 + 컵**인 거다.
     그 컵이 **나무컵이면 3번 · 돌컵이면 4번 · 쇠컵이면 6번** 마신다」
@@ -2982,6 +2982,9 @@
   - 기준: 물은 그대로다 — 빈 컵을 들고 민물을 우클릭하면 찬다
   - 기준: spec/02_player/hunger-thirst.md · 05_craft/facilities.md 를 **사람 결정으로 고쳐 적고** 낡은 「붓는다」 줄을 지운다
   - 기준: 3단 한도를 넘지 않는다 — 컵은 재료 한 칸일 뿐 단계를 늘리지 않는다 (레시피 깊이 검사)
+- [ ] 4. (앞 단계 QA) 주민의 drink 가 맨 음료만 받는다
+  - 기준: 주민의 drink 가 맨 음료만 받는다 — automation/villagers/villager.gd:352 drink(item) 은 손에 든 맨 「beer」 같은 이름을 덜어 마시는데, 이제 술은 컵에 든 채로만 나온다(Cup.filled). 지금은 게임 코드가 부르지 않아(언제 마시나 미정) 막지 않지만, 주민이 마실 때가 오면 음료가 든 컵 칸을 찾아 한 잔으로 쓰도록 Cup.counts_as 로 세게 고치고, tests/craft/stations/test_cook_table.gd:214 의 v.hands.add({item="beer"}) 도 Cup.filled(Cup.WOODEN, "beer") 로 바꿔 단언하라
+  - 기준: (앞 단계 QA) 낡은 주석 「컵에 담아 마신다」 — game/life/food/food_catalog.gd:11 의 drink 필드 설명이 G-210.2 시절 말 그대로다. 「컵에 든 채로 나와 컵에서 마신다 (G-214.3)」로 고쳐라
 
 ## [ ] G-215 주민이 장애물을 돌아간다 · 대상에 더 붙는다 (사람이 플레이해 보고 2026-10-14)
 - 차선: 3d-lane2
