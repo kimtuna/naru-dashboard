@@ -2657,7 +2657,7 @@
   - 기준: 사다리를 돌려 놓을 수 없다 — game/build/furniture/furniture.gd 의 사다리 판은 늘 X 축을 따라 선다(report temporary 에 적힘). Z 축으로 뻗은 벽 · 위층 바닥 가장자리에 대려면 판 방향이 맞지 않는다. 건축물 돌리기(game/build/buildings.gd 의 rotate)와 같은 길로 놓을 때 방향을 고르게 하고, Furniture.ladder_of 의 local 판정이 돌린 판에서도 맞는지 보는 테스트(돌린 사다리 앞에서 W → y>1.5)를 더하라. spec/05_craft/facilities.md 가구 줄에 「방향은 돌리지 않는다(임시)」가 없으니 적어 두거나 고쳐라
 
 
-## [ ] G-904 루프가 찾은 것 — 스스로 갚는다
+## [x] G-904 루프가 찾은 것 — 스스로 갚는다
 - 결정: **단계 4 는 사람이 손으로 했다** (2026-10-13). 차선 둘을 합치는 일에 매여 있었고 세션은 git 을 못 쓴다 —
   합치면서 같이 했다: `tags.json` 의 `pending` · `_pending` 을 지우고(보리 · 옥수수 · 채소 셋 · 약초 넷이 갈래에 들어갔다),
   `test_recipe_tags` 의 단언을 「pending 이 없다 + 그 재료가 갈래에 든다」로 바꿨다.
