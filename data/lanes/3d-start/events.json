@@ -1,91 +1,5 @@
 [
  {
-  "time": "2026-09-29 05:27:42",
-  "epoch": 1790627262,
-  "type": "pass",
-  "title": "통과 — G-162 단계 2 (O 로 방 페이지를 연다)",
-  "group": "G-162",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "O 로 여는 방 페이지 — 생성된 방만 줄마다 이름 · 역할, 열어 둔 채 벽을 헐면 줄이 빠진다. 바뀐 곳만 156개 파일 · 1401개 테스트 통과",
-   "approach": "방은 그때그때 재는 것이라 창(RoomWindow)도 상태를 두지 않고 Buildings.rooms() 를 다시 재서 줄을 세운다 — 열 때, 건축물 placed · broken · collapsed 신호가 온 프레임, 그리고 제작대가 들고 나는 것은 신호가 없어 열어 둔 동안 RoomOverlay.REFRESH(0.5초)마다. GameRoot 가 섬의 Buildings 가 들어오면 창에 걸어 주고(주민 창이 Villagers 를 받는 것과 같은 길), O 로 열고 닫으며 Esc 로 닫고 다른 창과 겹치지 않는다 — window_open 에 들어가 조작 잠금 · 안내 줄 · 조준점 숨김이 다른 창과 같다. 줄은 이름 · 역할 두 칸(GridContainer)뿐이고 역할은 방 종류 번역 키(ROOM_<kind>, 잡실 포함). 이름은 아직 바꿀 수 없어 차례대로 「방 1 · 방 2」(ROOMS_NAME) — 같은 방을 알아보는 열쇠와 이름 저장은 이름 바꾸기 단계의 몫으로 남겼다. 처음 찍었더니 ScrollContainer 가 제 줄만큼 자라지 않아 방 셋이 있는데 제목과 안내 줄만 보였다 — 줄 높이만큼 키우되 핫바 위 빈자리에서 멈추게 고치고, 마지막 줄이 목록 안에 보이는지 무는 단언을 테스트에 더했다. 다시 찍은 그림(rooms_ko · rooms_en)에서 제작소 · 대장간 · 잡실 세 줄이 잘리지 않고 보인다. (앞 단계 QA) rooms.md 수치 절에 방 빛깔 다섯 · MISC_COLOR · ALPHA 0.45 · REFRESH 0.5초를 「(임시)」로 한 줄씩 적었다. input.md 에 O 줄, save.md 「안 담는다」에 방 페이지, hud.md 조준점 숨김 목록에 방 페이지를 적었다.",
-   "why": "RoomWindow.ROOM_FOR_FRAME 120px — 목록 밖 창 몫(제목 · 안내 줄 · 테두리) 높이, 눈으로 잡았다; 기본 이름 「방 N」(차례) — 이름 바꾸기 단계 전까지의 자리 채움",
-   "files": [
-    "game/ui/hud/room_window.gd",
-    "game/ui/hud/room_window.tscn",
-    "game/core/game_root.gd",
-    "game/core/game_root.tscn",
-    "game/core/input/input_actions.gd",
-    "game/project.godot",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/tests/ui/hud/test_room_window.gd",
-    "game/tests/ui/layout/test_window_layout.gd",
-    "spec/01_settings/input.md",
-    "spec/01_settings/save.md",
-    "spec/06_build/rooms.md",
-    "spec/12_ui/hud.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "O 로 방 페이지가 열리고 닫힌다 — spec/01_settings/input.md 표에 한 줄 (테스트)",
-     "evidence": "test_o_opens_and_closes_the_room_page 가 진짜 KEY_O 를 push_input 해 열림/닫힘/Esc 닫힘을 본다. test_the_key_is_o_and_written_in_input_md 가 InputMap 의 physical_keycode==KEY_O 와 input.md 의 「| **O**」 줄에 「방 페이지」가 있는지 본다. project.godot 에 rooms(79) 가 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "생성된 방만 줄줄이 보인다 — 방이 없으면 「아직 없다」가 뜬다 (테스트)",
-     "evidence": "test_only_made_rooms_are_listed_with_name_and_role — 막힌 방 둘 + 트인 토대 하나에서 줄이 둘뿐. test_no_rooms_says_none_yet — 한 변이 트인 곳에서 줄 0 · Empty 라벨이 보이고 「아직 생긴 방이 없다」로 번역된다"
-    },
-    {
-     "ok": true,
-     "criterion": "줄마다 방의 이름 · 방의 역할이 보인다 (테스트) — 지금은 이 둘뿐이다",
-     "evidence": "같은 테스트가 줄마다 이름(「방 N」) · 역할(잡실 · 제작소) 라벨이 보이는지, GridContainer 가 두 칸이고 자식 수가 머리 둘 + 방마다 둘인지, 마지막 줄이 스크롤 안에 들어오는지 본다. test_role_follows_a_station_placed_while_open 이 역할이 제작대를 따라 바뀌는지도 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "벽을 헐면 방이 없어지면 페이지에서도 사라진다 — 열어 둔 채로도 따라 바뀐다 (테스트)",
-     "evidence": "test_breaking_a_wall_drops_the_row_while_open — 열어 둔 채 hit_piece 로 벽을 헐고 2프레임 뒤 줄 2→1, 지붕을 헐어 0 · 「아직 없다」. 일부러 깨 봤다: broken 신호 연결을 끄자 「헌 방의 줄이 곧바로 빠졌다」에서 떨어졌다 (되돌렸다, cmp 로 같음 확인)"
-    },
-    {
-     "ok": true,
-     "criterion": "창이 떠 있는 동안 조작이 잠기고 걷기 안내 줄이 숨는다 — 다른 창과 같은 규칙 (테스트)",
-     "evidence": "test_controls_lock_and_walk_hint_hides_while_open — LOCK_WINDOW 잠금 · HUD/Hint 숨김 · 조준점 숨김 · window_open 참, 닫으면 돌아온다. test_other_windows_and_the_room_page_do_not_stack 가 V/E/M 과 겹치지 않는지 본다. test_window_layout 에도 방 페이지가 들어갔다"
-    },
-    {
-     "ok": true,
-     "criterion": "글자는 번역 키다 — ko · en 둘 다 (테스트)",
-     "evidence": "test_every_text_is_a_translation_key_in_ko_and_en 이 RoomWindow.KEYS 와 방 종류 키(잡실 포함)가 ko · en 번역 객체에 다 있는지, 제목 · 역할 라벨이 키 그대로인지 본다. test_the_page_follows_the_language 가 en 으로 바꾸면 「Room 1」 · 「Utility room」 으로 따라가는지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "찍어서 확인한다 — 방 몇 개가 뜬 페이지 한 장",
-     "evidence": "/tmp/rooms_shot/rooms_ko.png 를 직접 봤다 — 방 1 제작소 · 방 2 대장간 · 방 3 잡실 세 줄, 머리 줄 이름 · 역할, 「O · Esc 닫기」 안내가 잘림 없이 뜬다. ui_shots 에 rooms 자리가 더해졌다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) rooms.md 수치 절이 「없음」으로 남았다 — … 그 절에 이 넷을 「(임시)」로 한 줄씩 적어라",
-     "evidence": "spec/06_build/rooms.md 「## 수치」에 방 빛깔 다섯 · MISC_COLOR · ALPHA 0.45 · REFRESH 0.5초가 각각 「(임시)」로 한 줄씩 들어갔다"
-    }
-   ],
-   "issues": [
-    "ROOM_FOR_FRAME 이 spec 수치 절에 없다 — game/ui/hud/room_window.gd 의 ROOM_FOR_FRAME 120px 는 코드에 「임시」라 적혔으나 spec/06_build/rooms.md(또는 spec/12_ui/hud.md) 「## 수치」에는 없다. 앞 단계 QA 가 짚은 것과 같은 꼴이다 — rooms.md 수치 절에 「방 페이지 목록 밖 창 몫 높이 RoomWindow.ROOM_FOR_FRAME 120px (임시) — 눈으로 잡았다」 한 줄을 더해라"
-   ],
-   "good": [
-    "test_role_follows_a_station_placed_while_open — 열어 둔 채 제작대를 놓으면 역할이 REFRESH 간격으로 따라 바뀌는 것(기준은 벽을 헐 때만 말했다). 기준의 「따라 바뀐다」를 넓게 지킨 것이라 순서를 흐트리지는 않는다"
-   ]
-  },
-  "test": "1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/core/test_open_chest_window.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok    434s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           181\nTests            1571\nPassing Tests    1571\nFailing Tests       0\nRisky/Pending       0\nAsserts         85905\nTime           434s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "e44b7b31"
- },
- {
   "time": "2026-09-29 05:49:33",
   "epoch": 1790628573,
   "type": "pass",
@@ -9759,5 +9673,60 @@
   },
   "test": "omation/villagers/test_hands_chest_one_rule.gd\nok      1s  res://tests/automation/villagers/test_job_work_shared.gd\nok      1s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           333\nTests            2563\nPassing Tests    2563\nFailing Tests       0\nRisky/Pending       0\nAsserts         97568\nTime           549s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "c053349d"
+ },
+ {
+  "time": "2026-10-14 04:03:37",
+  "epoch": 1791918217,
+  "type": "pass",
+  "title": "통과 — G-214 단계 1 (창을 닫으면 캐릭터가 한쪽으로만 걷는다 — 재현부터)",
+  "group": "G-214",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "창을 닫거나 조작 잠금이 풀리는 순간 눌린 걷기 · 점프 · 웅크리기를 한 곳(HeldKeys 자동 로드)에서 맞춘다 — 검색 칸 등 글 칸에 W 를 치고 닫으면 한쪽으로 걷던 흠. 바뀐 곳만 211개 파일 · 1823개 테스트 통과",
+   "approach": "까닭: 짐작(글 칸이 키를 먹어 뗌이 안 닿는다)은 반만 맞았다. 검사로 확인해 보니 Godot 는 글 칸이 키를 먹어도 그 전에 Input 의 눌림을 먼저 고친다 — 글 칸에 포커스가 있어도 W 누름 · 뗌이 둘 다 Input 에 닿는다 (test_a_focused_text_field_does_not_hide_the_key_release_from_input). 뗌을 잃는 곳은 엔진에 닿기 전, 맥 입력기다: Godot macOS 판(godot_content_view.mm)은 한글 조합이 진행 중이면 keyUp 을 통째로 버린다(「Ignore all input if IME input is in progress」). 두벌식에서 W 는 ㅈ 이라 검색 칸에 치는 순간 조합이 시작되고, W 를 뗀 신호가 사라져 Input 은 W 가 눌린 채라 믿는다 — 창을 닫아 조작이 돌아오면 그 방향으로 걷는다. 사람이 「검색하면 한쪽으로 간다」고 한 것, 검색 전에는 방 이름 · 지도 표 칸에서 같은 일이 났을 것이다. 같은 꼴: 글 칸이 있는 곳 전부(제작대 · 상자 검색, 지도 표 칸, 방 이름, 캐릭터 · 세계 만들기 이름 — 메뉴에서 친 뒤 게임에 들어오면 캐릭터가 서자마자 걷는다). 글 칸 없는 창(설정 · 가방 · 주민 · 낚시)은 Input 이 뗌을 다 받으므로 문제없음을 검사로 확인했다. 고침: 새 자동 로드 HeldKeys(core/input/held_keys.gd)가 gui_focus_changed 로 글 칸(LineEdit · TextEdit)이 잡힌 것을 적어 두고, Player.unlock_controls 가 마지막 잠금이 풀려 조작이 돌아오는 순간(창 · 죽음 · 비행 카메라 다) 그리고 Player._ready(캐릭터가 들어올 때) HeldKeys.settle() 를 부른다 — 한 곳이다. 글 칸을 썼으면 걷기 4방향 · 점프 · 웅크리기 · 디버그 비행 키 눌림을 Input.action_release 로 놓는다. 글 칸을 안 썼으면 건드리지 않는다 — 키를 쥔 채 E 로 가방을 닫으면 계속 걷는다(기존 test_pause_menu 와 같다). 한계: 글 칸을 쓴 뒤 같은 창 안에서 진짜로 쥐고 닫은 키도 놓는다 — 입력기 탓과 가릴 길이 없다. 다시 누르면 걷는다. 달리기 키는 게임에 없다(input.md) — 웅크리기는 토글이라 눌림이 남아도 켜지지 않지만 같이 놓는다. 검사: headless 에는 입력기가 없어 「누름만 넣고 뗌은 안 넣는」 것으로 삼킴을 흉내 냈다. settle 을 끄면 글 칸 검사 5개가 떨어지는 것(캐릭터가 걷는다)을 확인했다. 돌린 것: TEST_DIR=res://tests/core/input (23개 통과), 바뀐 곳만 TESTS=changed_tests.py → 파일 211개 · 테스트 1823개 통과 (전체는 아니다).",
+   "why": "",
+   "files": [
+    "game/core/input/held_keys.gd",
+    "game/project.godot",
+    "game/player/movement_controls/player.gd",
+    "game/tests/core/input/test_held_keys.gd",
+    "spec/01_settings/input.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "검색 칸에 글자(특히 W · A · S · D 처럼 걷기 키와 겹치는 글자)를 친 뒤 창을 닫으면 캐릭터가 저절로 걷는 것을 검사로 재현한다 (테스트)",
+     "evidence": "test_held_keys.gd 의 test_typing_w_in_the_station_search_then_closing_does_not_walk 가 제작대 검색 칸에 W(ㅈ)를 누름만 넣어(입력기가 뗌을 삼키는 꼴) 닫기 전 MOVE_UP 이 눌린 채임을 단언하고, 닫은 뒤 걷지 않는지 본다. HeldKeys.settle 을 끄고(if not _typed → if true) 돌리니 이 검사를 포함해 글 칸 검사 5개가 떨어졌다 — 재현이 진짜다. 되돌렸다"
+    },
+    {
+     "ok": true,
+     "criterion": "까닭을 찾아 report 에 적는다 — 짐작: 글 칸이 키를 먹어 키를 뗀 신호가 게임에 안 닿아 걷기가 눌린 채로 남는다",
+     "evidence": "report.how 에 적었다 — 짐작은 반만 맞고, 글 칸은 Input 눌림을 바꾸지 않으며(test_a_focused_text_field_does_not_hide_the_key_release_from_input 로 확인) 뗌을 잃는 곳은 Godot macOS 판이 IME 조합 중 keyUp 을 버리는 자리(godot_content_view.mm)라고 짚었다. 두벌식 W=ㅈ 로 조합이 시작되는 경로까지 설명한다"
+    },
+    {
+     "ok": true,
+     "criterion": "같은 꼴을 다 찾는다 — 글 입력 칸(검색 · 방 이름 · 지도 표 · 캐릭터 · 세계 만들기)과 창 열기 · 닫기 · 조작 잠금이 걸린 모든 자리. 「키를 누른 채 창을 열고, 창 안에서 떼고, 닫는다」 · 「글 칸에서 걷기 키 글자를 치고 닫는다」 · 「Esc 로 닫는다」를 창마다 검사로 돈다 (테스트)",
+     "evidence": "WINDOWS 8개가 GameRoot._windows() 8개와 같다(menu·bag·map·villagers·rooms·station·chest·fishing). 창마다 test_held_key_released_inside_the_window… · test_closing_with_escape… · test_key_still_held… 를 돌고, 글 칸 있는 창(map·rooms·station·chest — 게임 안 LineEdit 를 grep 한 것과 맞다)은 test_typing_walk_letters… 로 WASD+Ctrl 을 친다. 캐릭터 · 세계 만들기 이름 칸은 test_typing_a_name_in_the_menu…, 죽음 · 비행 잠금은 test_other_locks_settle… 가 본다. Player._ready 의 settle 을 빼니 메뉴 검사가 떨어졌다(되돌렸다)"
+    },
+    {
+     "ok": true,
+     "criterion": "창을 닫거나 조작 잠금이 풀리는 순간 눌려 있던 걷기 · 달리기 · 웅크리기가 실제 키 상태와 맞는다 — 한 곳에서 맞춘다 (테스트)",
+     "evidence": "HeldKeys.settle() 한 곳을 Player.unlock_controls(마지막 잠금이 풀릴 때)와 Player._ready 가 부른다. test_typing_walk_letters… 가 HELD 전부(걷기 4 · 점프 · 웅크리기 · 비행) 놓임과 is_crouching false, 다시 누르면 걷는 것까지 보고, test_key_still_held_when_closing_keeps_walking 가 글 칸을 안 썼으면 쥔 키 그대로 걷는 쪽을, test_settles_only_when_the_last_lock_lifts 가 마지막 잠금에서만 맞추는 것을 본다. 달리기 키는 게임에 없다(input.md). 글 칸을 쓴 뒤 진짜 쥔 키도 놓는 한계는 엔진에 OS 키 상태를 물을 길이 없어 생긴 것이고 코드 · spec 에 적혀 있다"
+    }
+   ],
+   "issues": [
+    "짝 없는 .uid 쓰레기 파일이 남았다 — game/tests/core/input/test_zz_probe.gd.uid 가 test_zz_probe.gd 없이 남았다(git status 에 ?? 로 보인다). rm 으로 지워라",
+    "세계 씨앗 칸 · 지도 Y 칸은 검사가 안 돈다 — test_held_keys.gd 는 세계 만들기의 이름 칸과 지도 field_x 만 친다. HeldKeys 는 LineEdit 면 다 잡으니 지금은 맞지만, world_create 의 SeedRow/Edit 과 map_window.field_y() 도 _type_lost 로 쳐 보는 줄을 매개변수에 더해 두면 칸이 LineEdit 이 아닌 것으로 바뀔 때 잡힌다"
+   ],
+   "good": []
+  },
+  "test": "d/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/build/test_room_overlay.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      2s  res://tests/automation/villagers/test_villager_door.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      2s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      1s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/recipes/test_recipe_tags.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      2s  res://tests/craft/stations/test_barn.gd\nok      2s  res://tests/craft/stations/test_cook_table.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_loom.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/life/medicine/test_medicine.gd\nok      2s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/player/movement_controls/test_aim_water_surface.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_barn_window.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_search_field_shared.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok    446s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           211\nTests            1823\nPassing Tests    1823\nFailing Tests       0\nRisky/Pending       0\nAsserts         81311\nTime           446s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "7fe08000"
  }
 ]
