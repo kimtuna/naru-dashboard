@@ -2666,7 +2666,7 @@
   - 기준: G-201 앞부터 있던 「제련로」가 남았다 — 시설 이름이 facilities.md 와 다르다. G-201 이전부터 있던 주석·단언 문구에 「제련로」가 남아 있다: game/ui/hud/station_window.gd 13·27행, game/craft/stations/stations.json _recipes, game/core/debug/ui_shots.gd 545행, game/tests/ui/layout/test_window_layout.gd 358~390행, game/tests/ui/hud/test_station_window.gd 11~106행, game/tests/craft/test_from_empty_hands.gd 11·20·64·87·89·115·146·895·911~998행. 이번 기준 밖이고, 차선 1 이 쥔 파일과 부딪히지 않게 두 차선이 합친 뒤에 「용광로(smelter)」로 바꿔라. 글자만 바꾸면 된다
 - [x] 2. 새 원자재의 얻을 길이 없다 (G-202 단계 1)
   - 기준: 새 원자재의 얻을 길이 없다 — 석탄 · 모래 · 구리/주석/금/은 광석이 섬 어디에도 안 나서 지금 게임에서는 강철괴 · 유리 · 주괴 넷을 만들 수 없다. 자원 배치는 사람이 정하지만(facilities.md 미정) 이 아이템들이 「얻을 길 없음」임을 미정 줄에 이름으로 적어 두어라 (막는 것은 아니다)
-- [ ] 3. spec 사냥 문서에 창자가 없다 (G-203 단계 4)
+- [x] 3. spec 사냥 문서에 창자가 없다 (G-203 단계 4)
   - 기준: spec 사냥 문서에 창자가 없다 — spec/04_life/hunting.md 의 부위 산출 예(사슴 몸통 고기·가죽)에 이번에 더한 창자(임시)를 적어 두어라 (facilities.md 에만 적혀 있다)
 - [ ] 4. pending 목록을 합친 뒤 지울 길이 없다 (G-204 단계 4)
   - 기준: pending 목록을 합친 뒤 지울 길이 없다 — tags.json 의 "pending" · "_pending" 은 3d-lane2 가 합쳐지면 쓸모가 없어지지만(「다 들어온 뒤에는 지워도 된다」) 누가 지울지 정해진 곳이 없다. 3d-lane2 가 3d-start 에 합쳐진 뒤 tags.json 에서 pending · _pending 두 키를 지우고, test_recipe_tags.gd test_game_tag_file_lists_the_lane2_materials_as_pending 의 pending 단언을 「pending 이 없거나 비었다」로 바꿔라 (RecipeTags 의 pending 읽기 기능과 test_pending_name_joins_its_group_only_when_the_item_exists 는 남겨도 된다)
