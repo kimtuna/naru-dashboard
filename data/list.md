@@ -2764,7 +2764,7 @@
   - 기준: (앞 단계 QA) W 판 테스트가 사다리 코드를 못 잡는다 — test_furniture.gd test_w_against_a_tall_board_only_walks 는 LADDERS 무리에 안 든 맨 StaticBody 를 세우므로 옛 사다리 길이 player.gd 에 남아 있어도 통과한다. 지금은 test_player_has_no_ladder_path 가 소스로 대신 지키니 막는 것은 아니다 — 이 테스트는 지우거나 그 점을 주석에 적어라
 
 
-## [ ] G-209 제작 시설 — 업데이트 뒤 멈춤 · 대기열 · 결과 다섯 칸 · 검색 (사람이 플레이해 보고 2026-10-13)
+## [x] G-209 제작 시설 — 업데이트 뒤 멈춤 · 대기열 · 결과 다섯 칸 · 검색 (사람이 플레이해 보고 2026-10-13)
 - 차선: 3d-start
 - spec: spec/05_craft/crafting-stations.md · facilities.md
 - 결정: **「업데이트 뒤 멈춤」은 G-212 로 떼었다** (2026-10-13) — 옛 저장본으로 재현이 안 돼 사람에게 물었다.
