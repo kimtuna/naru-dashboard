@@ -1,88 +1,5 @@
 [
  {
-  "time": "2026-09-29 07:10:41",
-  "epoch": 1790633441,
-  "type": "pass",
-  "title": "통과 — G-163 단계 2 (주민에게 거주지 방과 반경을 준다)",
-  "group": "G-163",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "주민 창(V)에서 거주지 방(만들어진 방만)과 반경(짧음 24 · 중간 48 · 멂 96m, 네모)을 고르고 저장한다 · 거주지가 없으면 일을 안 하고 창에 까닭이 남는다 · 한 방에 여럿 · 방 페이지에 사는 주민 수 · 방을 헐면 멈추고 알린다. 바뀐 곳만 140개 파일 · 1255개 테스트 통과",
-   "approach": "주민(Villager)에 거주지 home(방 ID — G-162.3 의 가장 작은 판 + 바닥 높이, 저장 키 home_room)과 반경 reach 를 더했다. G-157.3 의 옛 저장본이 겉에 home(Vector3, 밭일 자리)을 쓰고 있어 키를 home_room 으로 갈랐다. 반경 값은 Villager.REACHES 한 곳에 「임시」로 두고, 네모 범위 판정은 Villager.covers(x · z 저마다 반경 안)로 뒀다 — 반경을 실제 일할 자리로 쓰는 것은 다음 단계 몫이라 판정만 만들었다. 일을 매 틱 부르는 곳(Villager._physics_process)에서 거주지가 없으면 일을 부르지 않는다 — 직업이 무엇이든 한 길이다. Villagers 가 건축물을 watch_buildings 로 걸어 서고 · 헐리고 · 무너질 때 한 프레임 뒤(call_deferred, 한 번으로 묶어) 방을 다시 재고, 없어진 방에 살던 주민은 lose_home(하던 걸음 멈춤) + 「○○ 이(가) 살던 방이 없어져 일을 멈췄다」를 알린다. 불러오기 때는 건축물이 주민보다 먼저 돌아오고 검사가 미뤄져 있어 반쯤 선 방으로 거주지를 지우지 않는다(저장 테스트에서 다시 재도 남는 것을 본다). 주민 창에는 나이 · 직업 줄에 거주지 고르기(OptionButton — 「없음」 + 만들어진 방, 지은 이름 · 없으면 방 종류)를, 그 아래에 반경 단추 셋을, 거주지가 없으면 빨간 까닭 줄을 넣었다. 처음엔 줄을 하나 더 넣어 창이 핫바를 9px 가렸다(test_window_layout) — 나이 · 직업 · 거주지를 한 줄에 모았고, 영어에서 반경 단추가 넘쳐 두 줄이 되던 것을 찍어 보고 거주지를 윗줄로 옮기고 'Middle' → 'Mid' 로 줄였다(ko · en 둘 다 핫바 위에서 끝나는 것을 그림으로 봤다). 방 페이지는 셋째 칸 「사는 주민」(Villagers.residents 수)을 더했고 GameRoot 가 주민들을 방 페이지에도 걸어 준다 — 두 칸을 못 박던 test_room_window 를 세 칸으로 고쳤다. 기존 밭일 · 직업 · 나무꾼 테스트 셋은 거주지가 없으면 일을 안 하게 되어 before_each 에서 거주지를 쥐여 준다(건축물 없는 땅이라 Villagers.house 가 ID 를 그대로 받는다). 테스트는 직업마다 밭 · 나무를 차리지 않고 한 방향으로 걷기만 하는 일(Stride)을 끼워 「일을 하나」를 걸음으로 본다. 직업을 줄 때 거주지가 없으면 「맡았다」 대신 「거주지 방을 주면 일을 시작한다」고 알린다. (앞 단계 QA) regrowth.gd 주석 목록에 침대를 더했다. 바뀐 곳 그물(changed_tests.py) 140개 파일 · 1255개 테스트 모두 통과.",
-   "why": "반경 짧음 24 · 중간 48 · 멂 96m (Villager.REACHES) — 사람이 정한 값이지만 「전부 임시」라 했다; 처음 반경은 중간(Villager.REACH_START) — spec 에 정한 것이 없어 가운데 것으로 뒀다",
-   "files": [
-    "game/automation/villagers/villager.gd",
-    "game/automation/villagers/villagers.gd",
-    "game/core/game_root.gd",
-    "game/i18n/en.po",
-    "game/i18n/ko.po",
-    "game/ui/hud/room_window.gd",
-    "game/ui/hud/villager_window.gd",
-    "game/world/resources_regrowth/regrowth.gd",
-    "game/world/terrain/test_island.gd",
-    "game/tests/automation/villagers/test_villager_home.gd",
-    "game/tests/automation/villagers/test_villager_gathering.gd",
-    "game/tests/automation/villagers/test_villager_jobs.gd",
-    "game/tests/automation/villagers/test_villager_watering.gd",
-    "game/tests/ui/hud/test_room_window.gd",
-    "spec/01_settings/save.md",
-    "spec/06_build/rooms.md",
-    "spec/07_automation/npc-villagers.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "주민 창(V)에서 거주지 방을 고른다 — 만들어진 방만 보인다 (G-162 의 목록을 쓴다) (테스트)",
-     "evidence": "test_villager_home.gd test_the_window_lists_only_made_rooms_and_picking_one_houses_them — 방 둘 + 트인 토대 하나를 세우고 목록 ID 가 buildings.rooms() 와 같고 둘뿐인지, 맨 앞 「없음」, 지은 이름 「나무파밍」으로 뜨는지, 고르면 v.home 이 바뀌는지, 없는 방 ID 는 거부되는지 본다. test_a_room_made_while_the_window_is_open_joins_the_list_on_refresh 도 있다. 고르기는 item_selected.emit 이지만 칸이 보이고 화면 안인지 먼저 확인한다"
-    },
-    {
-     "ok": true,
-     "criterion": "반경 세 단계를 고른다 — 짧음 24m · 중간 48m · 멂 96m, 네모난 범위. 값은 한 곳에 두고 「임시」를 적는다 (테스트)",
-     "evidence": "test_three_reaches_24_48_96_picked_in_the_window — REACHES 값 · 단추 글 · 진짜 클릭으로 far/short 를 고르고 하나만 눌리는지. test_the_reach_is_a_square_not_a_circle — (23,23) 모서리는 안(원이면 밖), 변 밖은 밖. test_the_reach_values_live_in_one_place_marked_temporary — REACHES 바로 위 「임시」, 창·Villagers 에 수치 중복 없음"
-    },
-    {
-     "ok": true,
-     "criterion": "거주지 · 반경이 저장된다 (테스트)",
-     "evidence": "test_home_and_reach_are_saved — SaveStore 로 실제 저장·읽기 후 IslandState.apply 로 되살려 home · reach(far) 가 돌아오고, 안 고른 주민은 빈 거주지 · REACH_START 인지, 다시 재도(check_homes) 남는지 본다. test_an_old_save_without_a_home_comes_back_homeless 로 G-157.3 의 home(Vector3) 과 섞이지 않음을 본다. save.md 목록에도 적혔다. IslandState.apply 는 건축물을 주민보다 먼저 되살린다(island_state.gd:135 → 166)"
-    },
-    {
-     "ok": true,
-     "criterion": "거주지가 없으면 일을 시작하지 않는다 — 왜 안 하는지 창 안에 남는다 (잠깐 떴다 사라지는 줄이 아니다) (테스트)",
-     "evidence": "test_without_a_home_they_do_not_start_and_the_window_keeps_saying_why — 직업(Stride)이 있어도 움직이지 않고 tick 도 0번, 창의 Why 줄이 Notice.SECONDS+0.5 초 뒤에도 보이며, 거주지를 고르면 걷히고 일을 시작한다. test_giving_a_job_without_a_home_says_a_home_is_needed 도 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "한 방에 주민 여럿을 둘 수 있다 (사람 결정 2026-09-29) — 몇이 사는지 방 페이지에 보인다 (테스트)",
-     "evidence": "test_many_can_live_in_one_room_and_the_room_page_counts_them — 창에서 두 주민을 같은 방에 두고 앞 사람이 밀려나지 않는지, residents 가 [a,b] 인지, 진짜 O 로 연 방 페이지의 칸이 2 · 다른 방 0, 머리 줄 「사는 주민」, 열어 둔 채 셋째가 들어오면 3 으로 느는지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "방을 헐어 거주지가 없어지면 주민이 멈추고 알린다 (테스트)",
-     "evidence": "test_breaking_the_home_room_stops_them_and_tells — 일하던 주민의 방 벽을 hit_piece 로 실제로 헐어 home 이 비고 SAY_HOME_GONE(이름 들어감)을 알리고 움직임이 멈추며, 다른 방 주민은 그대로 일하고, 창에 Why 줄이 남는지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) regrowth 주석에 침대가 빠졌다 — game/world/resources_regrowth/regrowth.gd:28 의 「놓인 것(제작대 · 상자 · 횃불 · 선착장 · 건축물 — Placeable.GROUP)」 목록에 침대가 없다. 침대도 Placeable.GROUP 에 들어 재생을 막으니 목록에 「침대」를 더하라 (막는 것은 아니다)",
-     "evidence": "regrowth.gd:28 주석이 「제작대 · 상자 · 횃불 · 침대 · 선착장 · 건축물」로 고쳐졌다 (주석이라 테스트 대상 아님)"
-    }
-   ],
-   "issues": [
-    "방 페이지 머리 주석이 「둘뿐이다」 그대로다 — game/ui/hud/room_window.gd:6 이 「줄마다 방의 이름 · 방의 역할 … 둘뿐이다」라 적고 두 줄 아래 8줄에 셋째 칸(사는 주민)을 적어 서로 어긋난다. 6줄의 「둘뿐이다」를 「이름 · 역할 · 사는 주민 수(G-163.2)」로 고쳐라 (spec/06_build/rooms.md 는 이미 고쳤다)"
-   ],
-   "good": [
-    "직업을 줄 때 거주지가 없으면 「맡았다」 대신 「거주지 방을 주면 일을 시작한다」(VILLAGER_NEEDS_HOME)를 알린다 — 기준의 「왜 안 하는지 알린다」에 붙는 덤이라 해가 없다",
-    "Villager.covers(네모 판정)만 만들고 실제 일 자리에는 아직 안 쓴다 — spec 에 「다음 단계 몫」이라 적었다"
-   ]
-  },
-  "test": "    2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_health_bar.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/build/test_placeable.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           176\nTests            1534\nPassing Tests    1534\nFailing Tests       0\nRisky/Pending       0\nAsserts         54022\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "a46843fc"
- },
- {
   "time": "2026-09-29 07:54:18",
   "epoch": 1790636058,
   "type": "pass",
@@ -9644,6 +9561,42 @@
   "group": "G-214",
   "step": "4",
   "attempt": "1",
+  "report": {
+   "problem": "주민의 drink 가 맨 음료 대신 그 술이 가득 든 컵 칸(Cup.counts_as)을 한 잔으로 마신다 · food_catalog 낡은 주석 고침 — 바뀐 곳에 걸린 55개 파일 379개 테스트 통과",
+   "approach": "Villager.drink 는 hands.remove(item) 로 맨 「beer」 칸을 덜었는데, G-214.3 부터 술은 컵에 든 채로만 나온다. 이제 손에서 Cup.is_cup 이고 Cup.counts_as(칸) == 그 술인 칸(그 술이 가득 든 컵)을 찾아 한 잔으로 쓰고, 다 마신 컵은 사라진다(사람 결정 2026-10-13 — 돌려받지 않는다). 맨 술(옛 저장본) · 마시다 만 컵 · 물 컵은 마시지 않는다. 테스트의 손 채우기를 Cup.filled 로 바꿨고 food_catalog.gd:11 주석을 「컵에 든 채로 나와 컵에서 마신다 (G-214.3)」로 고쳤다. changed_tests.py 로 고른 55개 파일 379개 테스트 통과.",
+   "why": "",
+   "files": [
+    "game/automation/villagers/villager.gd",
+    "game/life/food/food_catalog.gd",
+    "game/tests/craft/stations/test_cook_table.gd",
+    "game/tests/life/food/test_drinks.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "주민의 drink 가 맨 음료만 받는다 — automation/villagers/villager.gd:352 drink(item) 은 손에 든 맨 「beer」 같은 이름을 덜어 마시는데, 이제 술은 컵에 든 채로만 나온다(Cup.filled). 지금은 게임 코드가 부르지 않아(언제 마시나 미정) 막지 않지만, 주민이 마실 때가 오면 음료가 든 컵 칸을 찾아 한 잔으로 쓰도록 Cup.counts_as 로 세게 고치고, tests/craft/stations/test_cook_table.gd:214 의 v.hands.add({item=\"beer\"}) 도 Cup.filled(Cup.WOODEN, \"beer\") 로 바꿔 단언하라",
+     "evidence": "villager.gd drink 가 hands.find 로 Cup.is_cup 이고 Cup.counts_as(칸)==item 인 칸을 찾아 한 잔 덜고 컵을 없앤다. test_cook_table.gd:214 가 Cup.filled(Cup.WOODEN, \"beer\") 로 바뀌고 컵이 사라졌는지 단언한다. test_drinks.gd 의 새 테스트 셋(맨 술 거부 · 마시다 만 컵/물 컵 거부 · 여러 컵 중 맞는 술 컵만 마심)이 있다. counts_as 검사를 빼 보니 test_drinks.gd 에서 단언 여럿이 실패했다(확인 뒤 되돌림). 전체 2592개 통과 · guard 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 낡은 주석 「컵에 담아 마신다」 — game/life/food/food_catalog.gd:11 의 drink 필드 설명이 G-210.2 시절 말 그대로다. 「컵에 든 채로 나와 컵에서 마신다 (G-214.3)」로 고쳐라",
+     "evidence": "food_catalog.gd:11 이 「drink(음료면 true — 컵에 든 채로 나와 컵에서 마신다 (G-214.3))」로 바뀌었다 (diff 확인)"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "gd\nok      0s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/recipes/test_workbench_gear.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           336\nTests            2592\nPassing Tests    2592\nFailing Tests       0\nRisky/Pending       0\nAsserts         98886\nTime           552s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-14 06:32:36",
+  "epoch": 1791927156,
+  "type": "start",
+  "title": "루프 시작",
   "report": {
    "problem": "주민의 drink 가 맨 음료 대신 그 술이 가득 든 컵 칸(Cup.counts_as)을 한 잔으로 마신다 · food_catalog 낡은 주석 고침 — 바뀐 곳에 걸린 55개 파일 379개 테스트 통과",
    "approach": "Villager.drink 는 hands.remove(item) 로 맨 「beer」 칸을 덜었는데, G-214.3 부터 술은 컵에 든 채로만 나온다. 이제 손에서 Cup.is_cup 이고 Cup.counts_as(칸) == 그 술인 칸(그 술이 가득 든 컵)을 찾아 한 잔으로 쓰고, 다 마신 컵은 사라진다(사람 결정 2026-10-13 — 돌려받지 않는다). 맨 술(옛 저장본) · 마시다 만 컵 · 물 컵은 마시지 않는다. 테스트의 손 채우기를 Cup.filled 로 바꿨고 food_catalog.gd:11 주석을 「컵에 든 채로 나와 컵에서 마신다 (G-214.3)」로 고쳤다. changed_tests.py 로 고른 55개 파일 379개 테스트 통과.",
