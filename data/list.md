@@ -3017,7 +3017,7 @@
   - 기준: (앞 단계 QA) slack 을 빼도 손 검사가 통과한다 — reaches_from · station_reach 의 '+ slack' 을 '+ 0.0' 으로 바꿔도 6개 다 통과했다. 선 자리가 slack 없이도 손 안이라 WAYPOINT 를 넘기는 뜻이 지켜지지 않는다. 기준 문장대로는 됐으니 막지는 않는다 — 지키려면 길 끝에서 WAYPOINT 만큼 더 멀리 선 자리를 하나 넣어 slack 0 이면 false, WAYPOINT 면 true 인지 단언하라
 
 
-## [ ] G-216 제작 창을 표로 · 음료가 든 컵은 음료로 보인다 (사람이 플레이해 보고 2026-10-14)
+## [x] G-216 제작 창을 표로 · 음료가 든 컵은 음료로 보인다 (사람이 플레이해 보고 2026-10-14)
 - 차선: 3d-start
 - spec: spec/05_craft/crafting-stations.md · 02_player/hunger-thirst.md
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다
