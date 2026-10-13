@@ -2986,7 +2986,7 @@
   - 기준: 주민의 drink 가 맨 음료만 받는다 — automation/villagers/villager.gd:352 drink(item) 은 손에 든 맨 「beer」 같은 이름을 덜어 마시는데, 이제 술은 컵에 든 채로만 나온다(Cup.filled). 지금은 게임 코드가 부르지 않아(언제 마시나 미정) 막지 않지만, 주민이 마실 때가 오면 음료가 든 컵 칸을 찾아 한 잔으로 쓰도록 Cup.counts_as 로 세게 고치고, tests/craft/stations/test_cook_table.gd:214 의 v.hands.add({item="beer"}) 도 Cup.filled(Cup.WOODEN, "beer") 로 바꿔 단언하라
   - 기준: (앞 단계 QA) 낡은 주석 「컵에 담아 마신다」 — game/life/food/food_catalog.gd:11 의 drink 필드 설명이 G-210.2 시절 말 그대로다. 「컵에 든 채로 나와 컵에서 마신다 (G-214.3)」로 고쳐라
 
-## [ ] G-215 주민이 장애물을 돌아간다 · 대상에 더 붙는다 (사람이 플레이해 보고 2026-10-14)
+## [x] G-215 주민이 장애물을 돌아간다 · 대상에 더 붙는다 (사람이 플레이해 보고 2026-10-14)
 - 차선: 3d-lane2
 - spec: spec/07_automation/npc-villagers.md
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다
