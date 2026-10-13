@@ -2882,7 +2882,7 @@
   - 기준: (앞 단계 QA) 사람이 치는 빠르기를 0.6초로 가정했다 — test_villager_gather_close.gd 의 시간 비교는 사람도 HarvestWork.HIT_EVERY(0.6초)마다 한 대씩 친다고 본다. 사람의 좌클릭(Harvest.swing)에는 쿨다운이 없어 실제로는 더 빨리 칠 수 있다. 그 가정을 테스트 주석과 spec 의 「한 그루」 줄에 「사람 빠르기는 HIT_EVERY 로 가정 — 임시」라고 적어 두어라
 
 
-## [ ] G-211 제작자 — 시설의 재고 규칙을 보고 주민이 만든다 (사람 결정 2026-10-13)
+## [x] G-211 제작자 — 시설의 재고 규칙을 보고 주민이 만든다 (사람 결정 2026-10-13)
 - 차선: 3d-start
 - spec: spec/07_automation/npc-villagers.md · 05_craft/crafting-stations.md
 - **G-209 다음에 한다** — G-209 의 대기열 · 「붙어 있어야 돈다」 위에 얹힌다 (같은 차선이라 순서가 저절로 맞는다)
