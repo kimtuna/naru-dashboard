@@ -3006,9 +3006,12 @@
   - 기준: 값은 「임시」로 적는다 — 사람이 플레이해 보고 다시 정한다
   - 기준: (앞 단계 QA) 거닐기가 아직 제 걷기를 쥔다 — game/automation/villagers/stroll.gd 가 Villager.walker() 로 _walk 를 따로 두고 _walk.plan · _walk.step 을 직접 부른다. 직업이 아니라 이번 기준 밖이지만 「걷기는 한 곳」 원칙과 어긋난다. JobWork 의 _go · _stride 를 따로 떼어 둘이 같이 쓰게 하거나, stroll.gd 머리 주석에 왜 따로인지 적어라
   - 기준: (앞 단계 QA) 사람이 본 처박힘을 재현하지 못했다 — report 의 how 에 적힌 대로 네 직업은 이미 PathWalk 를 탔고, 사람의 섬(AsPlayedRoom)에서도 처박힘이 0.1초 아래였다. 이번 단계는 걷기를 모으고 길 없을 때 넘어가기를 더했을 뿐, 사람이 2026-10-14 본 증상의 원인은 아직 짚지 못했다. 다음 단계에서 사람이 쓰던 저장본(나무꾼 · 광부가 담긴 것)이나 실제 섬 지형(나무 밀집 · 절벽 · 상자 곁)으로 재현 테스트를 짜 원인을 찾아라. current.md 의 「까닭은 이미 짚었다」 줄은 코드와 달랐다는 것도 spec history 에 남아 있으니 함께 보라
-- [ ] 3. (앞 단계 QA) gather_work.gd 주석이 낡았다
+- [x] 3. (앞 단계 QA) gather_work.gd 주석이 낡았다
   - 기준: gather_work.gd 주석이 낡았다 — game/automation/villagers/gather_work.gd:34 「Villager.hand, 처음 HAND 2m」를 1.2m(G-215.2)로 고쳐라
   - 기준: (앞 단계 QA) 손 검사가 직업 잣대를 다시 짠다 — test_villager_hand_close.gd 의 _resource_far · _station_far 가 GatherWork.reaches_from · CraftingWork.station_reach 를 부르지 않고 같은 셈을 테스트 안에서 다시 한다(높이 차 UP_REACH · slack 은 안 본다). 직업 쪽 잣대가 바뀌어도 테스트는 모른다. 각 선 자리 s 에서 GatherWork.new().reaches_from(v, s, handle, Villager.WAYPOINT) · CraftingWork.station_reach(v, s, st, Villager.WAYPOINT) 가 true 인지 함께 단언하라
+- [ ] 4. (앞 단계 QA) 손 검사에 고아 노드 2개가 생겼다
+  - 기준: 손 검사에 고아 노드 2개가 생겼다 — test_villager_hand_close.gd 의 _set_up 이 Villager.new() · Harvest.new() 를 트리에 안 넣고 만들어, GUT 가 「2 orphans」를 보고한다(HEAD 판에는 없었다). 테스트마다 _set_up 을 부르니 after_all 의 free 전까지 고아로 센다. add_child(villager) · add_child(gather.harvest) 로 트리에 넣거나 autofree 로 감싸 orphans 0 이 되게 하라
+  - 기준: (앞 단계 QA) slack 을 빼도 손 검사가 통과한다 — reaches_from · station_reach 의 '+ slack' 을 '+ 0.0' 으로 바꿔도 6개 다 통과했다. 선 자리가 slack 없이도 손 안이라 WAYPOINT 를 넘기는 뜻이 지켜지지 않는다. 기준 문장대로는 됐으니 막지는 않는다 — 지키려면 길 끝에서 WAYPOINT 만큼 더 멀리 선 자리를 하나 넣어 slack 0 이면 false, WAYPOINT 면 true 인지 단언하라
 
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
