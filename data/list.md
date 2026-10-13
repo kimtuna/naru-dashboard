@@ -2792,13 +2792,15 @@
   - 기준: spec/05_craft/crafting-stations.md 규칙에 **사람 결정으로 적는다** — 「사람이 그 시설에 붙어 있어야 만든다 (손 닿는 거리,
     같은 방이어도 떨어지면 멈춘다) · 까닭(팰월드 · 소울마스크, NPC 의 중요성 · 분할 작업) · 대기열(우선순위 · 옮기기 · 개수) · 결과 칸 다섯」
   - 기준: 그 조건이 **한 상수/함수 한 곳**에 있다 — 사람이 「자동으로 돌게」로 바꾸면 그 줄만 고친다
-- [ ] 3. 시설 창에 검색
+- [x] 3. 시설 창에 검색
   - 사람이 짚었다: 「**제작 관련 시설들 가독성 떨어짐. 검색 기능 추가**」
   - 기준: 시설 창 위에 **검색 칸**이 있고, 이름(번역된 것)에 글자가 들면 그 줄만 남는다 (테스트)
   - 기준: 검색해도 **스크롤 · 회색 줄 · 대기열**이 그대로 맞다 — G-207 의 가벼운 갱신을 깨지 않는다 (테스트)
   - 참고: **카테고리는 사람이 먼저 본다** (「카테고리 추가 — 나한테 검사」). 사람이 정하면 단계로 붙인다
   - 기준: (앞 단계 QA) 왕복 저장 검사의 대기열 두 줄이 비교되지 않는다 — game/tests/settings/save/test_round_trip.gd:511-512 에서 table 2 · chair 3 을 넣지만 불러온 뒤 비교하는 _station_work(:566)는 buffer · crafting · left · total 만 담아 대기열이 사라져도 통과한다. _station_work 의 사전에 queue = s.queue() 를 더해 저장 전후가 [{table,2},{chair,3}] 로 같은지 보게 하라 (기준 4 는 test_station_queue.gd 가 따로 지키므로 막는 것은 아니다)
   - 기준: (앞 단계 QA) 시설 거리 계산이 회전을 무시한다 — game/craft/stations/stations.gd _nearest_on 은 station.size() 를 세계 축 그대로 써서, 시설을 90° 돌려 놓을 수 있다면 길쭉한 시설의 바닥 상자가 틀려진다. 시설이 돌 수 있는지 보고, 돈다면 station.global_transform.affine_inverse() 로 at 을 로컬로 옮긴 뒤 clamp 하고 다시 세계로 옮기며, 돌린 시설의 긴 변 끝에 선 경우를 테스트로 넣어라
+- [ ] 4. (앞 단계 QA) 창 높이 단언이 _full_list_height 를 지키지 않는다
+  - 기준: 창 높이 단언이 _full_list_height 를 지키지 않는다 — _fit 의 list 를 옛 _rows.get_combined_minimum_size().y 로 되돌려도 test_the_scroll_goes_back_to_the_top_and_the_window_does_not_jump 가 그대로 통과했다(_fit 은 _center.resized 에서만 불려 검색 때는 안 돌고, 「씨앗」은 줄이 많아 어차피 자리를 채운다). 기준 밖(창이 안 튀는 것은 덤)이라 막지 않는다. test_station_search.gd 에 「의자」처럼 한 줄만 남긴 채 w._fit() 을 부르고(또는 창 크기를 바꿔 resized 를 내고) 판 높이 · scroll 높이가 거르기 전과 같은지 보는 단언을 더하라
 
 ## [ ] G-212 게임을 업데이트하면 제작 시설이 안 돈다 — 사람이 본 그대로 재현한다 (2026-10-13)
 - 차선: 3d-start
