@@ -1,44 +1,5 @@
 [
  {
-  "time": "2026-09-27 19:37:03",
-  "epoch": 1790505423,
-  "type": "pass",
-  "title": "통과 — G-920 단계 2 (옆 테스트 주석이 제작대를 가공대라 부른다 (G-920 단계 7))",
-  "group": "G-920",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "스테이션 창 테스트 세 파일의 주석 · 단언 글에서 workbench 를 가리키는 「가공대」를 「제작대」로 고쳤다 (바뀐 곳만: 3개 파일 37개 테스트 통과)",
-   "approach": "주석만 고치는 일이라 새 테스트는 짜지 않았다. 세 파일의 「가공대」를 전부 「제작대」로 바꿨다 — 기준에 적힌 줄(12·14·16·53 / 10·12 / 11·14·16·18행)에 더해, 같은 파일 안에서 같은 흠이 있는 단언 글 두 줄(test_station_window.gd 95·106행)과 주석 한 줄(223행)도 고쳤다. test_station_window.gd 11행은 「제작대(workbench) · 제련로 — 서로 다른 레시피를 든 두 시설」로 적어, 이름과 갈래가 겹치지 않게 했다(spec/05_craft/crafting-stations.md 에서 「제작대」는 갈래 이름으로도 쓰인다). 남은 것: 다른 파일(game/ui/hud/station_window.gd, tests/ui/hud/test_station_collect_note.gd, tests/craft/…, tests/life/…, tests/build/… 등)에도 「가공대」가 남아 있지만 기준 밖이라 손대지 않았다. 확인: changed_tests.py 로 고른 3개 파일, 37개 테스트 통과.",
-   "why": "",
-   "files": [
-    "game/tests/ui/hud/test_station_output.gd",
-    "game/tests/ui/hud/test_station_short_rows.gd",
-    "game/tests/ui/hud/test_station_window.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "옆 테스트 주석이 제작대를 가공대라 부른다 — 이번 기준 밖이다. game/tests/ui/hud/test_station_output.gd(12·14·16·53행) · test_station_short_rows.gd(10·12행) · test_station_window.gd(11·14·16·18행)의 주석이 workbench 를 옛 이름 「가공대」로 부른다. 가리키는 것은 workbench 상수이고 ITEM_workbench 는 「제작대」다. 이 주석들의 「가공대」를 「제작대」로 고쳐라. test_station_window.gd 11행 「가공대 · 제련로 — 서로 다른 레시피를 든 두 제작대」는 「제작대(workbench) · 제련로 — …」처럼 이름과 갈래가 헷갈리지 않게 적어라",
-     "evidence": "git diff 로 확인: 적힌 행 전부 「가공대」→「제작대」. test_station_window.gd 11행은 「제작대(workbench) · 제련로 — 서로 다른 레시피를 든 두 시설」로 이름과 갈래가 겹치지 않는다. 세 파일에 grep 「가공대」 0건. ko.po ITEM_workbench = 「제작대」, en.po = 「Workbench」와 맞다. 주석·단언 글만 바뀌어 동작 변화 없음. test.log 는 전체 실행 211파일 1758개 통과, guard 통과. 주석 고치기라 (테스트) 표시가 없는 기준이다"
-    }
-   ],
-   "issues": [
-    "다른 코드 주석에도 가공대가 남았다 — workbench 를 「가공대」로 부르는 주석이 game/ui/hud/station_window.gd(13·24행), game/tests/ui/hud/test_station_collect_note.gd, game/tests/craft/stations/test_station_recipes.gd · test_stations.gd, game/tests/craft/recipes/test_recipes.gd, game/tests/life/food/test_food.gd, game/tests/life/hunting/test_carry_cage.gd, game/tests/life/farming/test_farmland.gd, game/tests/build/test_room_chests.gd · test_room_kinds.gd 에 남아 있다. `grep -rn 가공대 game --include='*.gd'` 로 찾아 workbench 를 가리키는 것만 「제작대」로 고쳐라 (갈래 이름으로 쓴 곳은 「제작대(workbench)」처럼 풀어 적는다)",
-    "[결정] spec 에서 workbench 이름이 가공대다 — spec/05_craft/crafting-stations.md 17행은 갈래 이름으로 「가공대(열 없는 가공)」, spec/06_build/rooms.md 20·37·38행은 방 조건에 「가공대」, spec/08_combat/tools-as-weapons.md 70행은 사람 결정 줄에 「총알은 가공대에서 만든다」라 적었는데 게임 안 이름(ITEM_workbench)은 「제작대」다. 사람 결정 줄이 걸려 있어 세션이 못 고친다 — spec 의 「가공대」를 「제작대」로 맞출지, 갈래 이름 「가공대」와 물건 이름 「제작대」를 따로 둘지 사람이 정해야 한다"
-   ],
-   "good": [
-    "기준에 적힌 행 밖의 같은 흠 세 줄(test_station_window.gd 95·106행 단언 글, 223행 주석)도 「제작대」로 고쳤다 — 같은 파일 · 같은 흠이라 순서를 흐트러뜨리지 않는다"
-   ]
-  },
-  "test": "d\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      0s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           211\nTests            1758\nPassing Tests    1758\nFailing Tests       0\nRisky/Pending       0\nAsserts         78803\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "dd76c4b"
- },
- {
   "time": "2026-09-27 19:48:57",
   "epoch": 1790506137,
   "type": "pass",
@@ -9696,6 +9657,45 @@
  {
   "time": "2026-10-13 09:33:00",
   "epoch": 1791851580,
+  "type": "fail",
+  "title": "차선 합치기 실패 — 3d-lane2(dff125dc) → 3d-start",
+  "group": "G-206",
+  "step": "4",
+  "attempt": "1",
+  "report": {
+   "problem": "가구를 들고 T 로 놓을 방향을 90°씩 돌린다 — 사다리 판을 Z 축으로도 세우고, 돌린 방향은 저장된다. 바뀐 곳만 131개 파일 1197개 테스트 통과",
+   "approach": "사다리 판이 늘 X 축을 따라 서서 Z 축으로 뻗은 벽에 댈 수 없었다. 건축물 돌리기와 같은 키(T, BUILD_ROTATE)를 가구를 들고 있을 때 Furnitures 가 받아 다음에 놓을 방향(place_yaw)을 90° 돌리게 했다(rotate_held). Placer 에 _preview_yaw() 를 두어 미리보기 판도 같이 돈다. place_at 이 yaw 를 받아 Transform 으로 세우고, standing/restore 가 yaw 를 담아 껐다 켜도 방향이 남는다(옛 저장본은 0). Furniture.ladder_of 는 이미 판의 제 좌표(affine_inverse)로 재므로 고칠 것이 없었고, 이를 테스트로 확인했다: +X 를 본 캐릭터 1m 앞에 돌린 사다리 → W 로 y>1.5, 같은 자리 안 돌린 사다리(판 옆 끝) → 오르지 않는다. spec facilities.md 가구 줄 · input.md T 줄에 적었다. 검사: test_furniture.gd 단독 17개 통과, changed_tests.py 그물 131개 파일 1197개 통과(전체는 돌리지 않았다).",
+   "why": "가구 돌리기 한 번 = 90° (Furnitures.TURN) — 놓는 칸이 1m 격자라 네 방향이면 된다; 가구 돌리기 키 T — 건축물 돌리기 임시 키를 함께 쓴다",
+   "files": [
+    "game/build/furniture/furnitures.gd",
+    "game/build/furniture/furniture.gd",
+    "game/build/placer.gd",
+    "game/core/input/input_actions.gd",
+    "game/tests/build/test_furniture.gd",
+    "spec/05_craft/facilities.md",
+    "spec/01_settings/input.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "사다리를 돌려 놓을 수 없다 — game/build/furniture/furniture.gd 의 사다리 판은 늘 X 축을 따라 선다(report temporary 에 적힘). Z 축으로 뻗은 벽 · 위층 바닥 가장자리에 대려면 판 방향이 맞지 않는다. 건축물 돌리기(game/build/buildings.gd 의 rotate)와 같은 길로 놓을 때 방향을 고르게 하고, Furniture.ladder_of 의 local 판정이 돌린 판에서도 맞는지 보는 테스트(돌린 사다리 앞에서 W → y>1.5)를 더하라. spec/05_craft/facilities.md 가구 줄에 「방향은 돌리지 않는다(임시)」가 없으니 적어 두거나 고쳐라",
+     "evidence": "T(BUILD_ROTATE, 건축물 돌리기와 같은 키)로 가구를 들고 있을 때 place_yaw 를 90° 돌리고(furnitures.gd rotate_held), 미리보기(placer.gd _preview_yaw)와 놓인 가구(place_at yaw)에 반영된다. test_t_turns_the_held_furniture_and_right_click_places_it_turned 가 실제 입력 이벤트로 T → 미리보기 · 놓인 판이 Z 축을 따르는지, 네 번이면 제자리인지 본다. test_a_turned_ladder_is_climbed_from_its_face 가 +X 를 본 캐릭터 1m 앞 돌린 사다리에서 W → y>1.5 를 확인하고, test_an_unturned_ladder_side_on_is_not_climbed 가 막아야 할 경우(안 돌린 판 옆 끝)를 본다. 일부러 place_at 이 yaw 를 무시하게 깨 보니 test_furniture.gd 에서 3개가 떨어졌다(되돌림). 저장: standing() 에 yaw 를 담고 restore 가 되살리며, 옛 저장본(yaw 없음)은 0 — test_a_turned_ladder_keeps_its_turn_after_saving. spec facilities.md 가구 줄 · input.md T 줄에 적었고 키 · 각은 임시로 표시됐다. 전체 테스트(300 파일) 0 실패 · guard 통과."
+    }
+   ],
+   "issues": [
+    "사다리 판정 범위가 정사각이라 회전 판정이 안 걸린다 — Furniture.ladder_of 의 범위가 |local.z|≤LADDER_TOUCH(0.6) · |local.x|≤size.x*0.5+0.2(0.6) 로 같아서, 90° 돌린 판에서는 판의 제 좌표(affine_inverse)로 재든 월드 좌표 차(at - ladder.global_position)로 재든 결과가 같다. 실제로 ladder_of 를 월드 좌표 차로 깨 봐도 test_furniture.gd 17개가 다 통과했다. 지금 동작은 맞지만 test_an_unturned_ladder_side_on_is_not_climbed 의 주석(「ladder_of 가 판 좌표로 잰다」)과 report 의 설명은 사실과 다르다 — 그 테스트가 지키는 것은 판의 몸(충돌)이 돌았는지다. 주석을 고치거나, 판 좌표 판정을 지키고 싶으면 ladder_of 를 직접 불러 돌린 사다리 기준으로 판 앞 0.5m · 옆 0.1m 와 판 옆 0.5m · 앞 0.1m 같이 판정이 갈리는 점(LADDER_TOUCH 와 옆 여유를 다르게 둘 때)을 단언하는 단위 테스트를 더하라"
+   ],
+   "good": []
+  },
+  "test": "t_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/craft/stations/test_smoker.gd\nok      0s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    545s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           300\nTests            2378\nPassing Tests    2378\nFailing Tests       0\nRisky/Pending       0\nAsserts        122250\nTime           545s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-13 09:33:03",
+  "epoch": 1791851583,
   "type": "fail",
   "title": "차선 합치기 실패 — 3d-lane2(dff125dc) → 3d-start",
   "group": "G-206",
