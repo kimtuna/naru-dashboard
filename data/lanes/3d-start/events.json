@@ -2,40 +2,6 @@
  {
   "time": "2026-09-28 14:21:29",
   "epoch": 1790572889,
-  "type": "start",
-  "title": "루프 시작",
-  "report": {
-   "problem": "villager_water 찍기 주석을 실제 그림(젖은 셋 · 마른 하나)에 맞추고, water_spots 주석을 「연못 물가 점 · 개울 점」으로 고쳤다. 바뀐 곳만: 13 파일 110 테스트 통과",
-   "approach": "첫 장은 둘이 젖기를 기다린 뒤 찍지만, 찍기 전 SETTLE_FRAMES + 60 프레임 동안에도 주민이 계속 일해서 연못에서 물을 채워 와 셋째 밭까지 준 때가 잡힌다. 기다림 조건을 고치는 대신(주민을 멈추려면 코드가 늘어난다) 주석을 실제 모습대로 고쳤다. harness/shot.sh 로 villager_water 를 찍어 보니 젖은 셋 · 마른 하나였고, 고친 주석과 맞았다. field_care.gd 의 water_spots 주석도 TestIsland._fresh_water_spots 가 실제로 주는 것(연못 물가 선의 점 · 개울 점)으로 맞췄다. 주석만 고쳐서 새 테스트는 없다. changed_tests 그물로 13 파일 110 테스트가 통과했다.",
-   "why": "",
-   "files": [
-    "game/core/debug/shots.gd",
-    "game/automation/villagers/field_care.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "찍기 주석이 그림과 다르다 — game/core/debug/shots.gd 의 villager_water 주석(「둘을 준 때(젖은 밭 둘 · 마른 밭 둘)」)과 달리 실제 첫 장은 젖은 셋 · 마른 하나다(물 2번치를 다 쓰고 이미 채워 하나 더 준 뒤 찍힌다). 주석을 「물 두 번치가 떨어져 연못에서 채우러 간 뒤, 젖은 밭 · 마른 밭이 섞인 때」처럼 실제 모습으로 고치거나, want 를 셋째 밭 전에 잡히게 기다림 조건을 고쳐라",
-     "evidence": "shots.gd 192~197줄 주석이 「첫 장은 둘이 젖은 뒤에 찍는데 찍기 전 프레임 동안 주민이 계속 일해 물 두 번치가 떨어져 연못에서 채워 온 뒤(젖은 밭 · 마른 밭이 섞인 때 — 흔히 젖은 셋 · 마른 하나)」로 바뀌었다. .loop/out/care/villager_water.png 를 직접 보니 짙은(젖은) 밭 셋 · 밝은 갈색(마른) 밭 하나로 주석과 맞다. 주석만 고치는 기준이라 테스트는 요구되지 않는다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) water_spots 주석이 낡았다 — game/automation/villagers/field_care.gd 의 `var water_spots` 주석이 「연못 가운데 · 개울 점」이라 적혀 있는데, TestIsland._fresh_water_spots 는 연못 가운데가 아니라 물가 선의 점들을 준다. 「연못 물가 점 · 개울 점」으로 고쳐라",
-     "evidence": "field_care.gd 45줄이 「(Vector3, 연못 물가 점 · 개울 점)」으로 바뀌었다. test_island.gd:327 _fresh_water_spots 는 pond rim 의 점들과 river 점들을 돌려주어 주석과 맞다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "death/test_health.gd\nok      2s  res://tests/build/test_rooms.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      0s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      0s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      0s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_item_slot_fit.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           222\nTests            1813\nPassing Tests    1813\nFailing Tests       0\nRisky/Pending       0\nAsserts         81342\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
-  "time": "2026-09-28 14:21:29",
-  "epoch": 1790572889,
   "type": "fail",
   "title": "차선 합치기 실패 — 3d-lane2(4fc4ae36) → 3d-start",
   "report": {
@@ -9689,5 +9655,45 @@
     "question": "G-209.1 「업데이트하면 제작 시설이 안 돈다」를 옛 판(d219e9ed) 저장본으로는 재현하지 못했다 — 저장 꼴이 같고, 불러온 시설이 새로 놓은 것과 똑같이 돈다(검사 5개). 어떻게 안 됐는지 한 가지만 알려 주세요: (가) 우클릭해도 창이 안 열렸다 (나) 창은 열리는데 줄이 다 회색이었다 (다) 눌러도 시간이 안 흘렀다 (라) 다 된 것을 못 꺼냈다. 그리고 그때 Godot 편집기/게임을 켜 둔 채로 업데이트(tools/play.sh)가 돌았는지, 그 시설이 집(방) 안에 있었는지도요."
    }
   }
+ },
+ {
+  "time": "2026-10-13 20:28:19",
+  "epoch": 1791890899,
+  "type": "pass",
+  "title": "통과 — G-209 단계 1 (결과 칸을 다섯으로)",
+  "group": "G-209",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "제작 시설 결과(출력 버퍼)를 세 칸에서 다섯 칸으로 늘렸다. 세 칸이던 옛 저장본도 그대로 읽힌다. 바뀐 곳 그물: 70개 파일 · 668개 테스트 통과",
+   "approach": "CraftingStation.BUFFER_SLOTS 를 3에서 5로 바꿨다. stations.json 에 slots 를 따로 적지 않은 시설(제작대 · 용광로 · 조리대 등)은 모두 이 값을 쓰고, 축사는 계속 6칸이다. 저장본은 버퍼를 칸 목록으로 적고 restore_work 는 칸 수까지만 읽는다. 그래서 세 칸짜리 옛 버퍼는 고치지 않아도 그대로 들어오고 남은 두 칸은 빈다. 이것을 Stations.restore 로 직접 불러오는 테스트로 확인했다. test_smoker 의 '버퍼가 꽉 차서 시작하지 않는다' 테스트는 칸 셋을 직접 채우고 있어서 다섯 칸에서는 기름이 들어갈 자리가 남았다. 그래서 buffer_slot_count() 만큼 채우도록 고쳤다. 창은 칸 수만큼 칸을 만들고 6칸짜리 축사 창이 이미 있어서 화면은 따로 찍어 보지 않았다. 바뀐 곳에 걸리는 테스트(70개 파일 · 668개)가 통과했다 (.loop/out/g209_changed.log).",
+   "why": "BUFFER_SLOTS = 5 — 사람이 다섯 칸을 골랐다. 다만 spec 에서 최대 칸 수가 아직 미정이라 코드에 '임시'라고 적어 두었다",
+   "files": [
+    "game/craft/stations/crafting_station.gd",
+    "game/tests/craft/stations/test_buffer_five_slots.gd",
+    "game/tests/craft/stations/test_smoker.gd",
+    "spec/05_craft/crafting-stations.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "결과(출력 버퍼)가 **다섯 칸**이다 (지금 3 — `crafting_station.gd BUFFER_SLOTS`) (테스트)",
+     "evidence": "crafting_station.gd BUFFER_SLOTS 3→5. tests/craft/stations/test_buffer_five_slots.gd test_buffer_has_five_slots 가 BUFFER_SLOTS==5 를 숫자로 못박고, 제작대·용광로·조리대의 catalog.slots_of 와 놓인 시설의 buffer_slot_count()==5 를 본다(값을 되돌리면 깨진다). test_five_different_things_fill_five_slots 가 다섯 가지가 다섯 칸에 들고 그때 buffer_full 이 참인지 본다. test_station_output · test_recipes 의 창·가득참 테스트도 BUFFER_SLOTS 를 따라가 통과(test.log 70파일 668개 통과, guard 통과)"
+    },
+    {
+     "ok": true,
+     "criterion": "옛 저장본의 세 칸짜리 버퍼가 그대로 읽힌다 (테스트)",
+     "evidence": "test_old_three_slot_buffer_loads_as_is 가 Stations.standing 이 적는 꼴({kind, at, job, buffer, yield_left})로 세 칸 버퍼를 var_to_bytes 왕복시켜 Stations.restore 로 불러온 뒤, 칸 수 5 · 버퍼 3칸 · 칸마다 물건과 개수가 그대로인지 · buffer_full 이 거짓인지 · 빈 두 칸에 두 스택이 들어가는지를 본다. restore_work 는 _slots 까지만 읽으므로 3칸은 손대지 않고 들어온다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "free_grid.gd\nok      8s  res://tests/craft/stations/test_salt_pan_island.gd\nok      7s  res://tests/craft/stations/test_twelve_facilities.gd\nok      6s  res://tests/ui/layout/test_window_layout.gd\nok      8s  res://tests/build/test_furniture.gd\nok      8s  res://tests/world/frontier_islands/test_dock_building.gd\nok      5s  res://tests/craft/stations/test_beehive.gd\nok      5s  res://tests/combat/tools_as_weapons/test_gun_ladder.gd\nok      5s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      5s  res://tests/craft/stations/test_beehive_rooms_cache.gd\nok      4s  res://tests/ui/hud/test_station_output.gd\nok      3s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      3s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      4s  res://tests/ui/hud/test_station_window.gd\nok      4s  res://tests/automation/villagers/test_villager_cleaning.gd\nok      5s  res://tests/combat/tools_as_weapons/test_ammo_kinds.gd\nok      3s  res://tests/craft/recipes/test_recipes.gd\nok      3s  res://tests/life/hunting/test_butcher_yields.gd\nok      5s  res://tests/craft/stations/test_salt_pan.gd\nok      3s  res://tests/ui/hud/test_room_names.gd\nok      4s  res://tests/player/hunger_thirst/test_cup.gd\nok      2s  res://tests/build/test_building_collapse.gd\nok      1s  res://tests/craft/stations/test_brewing.gd\nok      3s  res://tests/build/test_bed.gd\nok      2s  res://tests/craft/stations/test_millstone.gd\nok      3s  res://tests/life/food/test_food.gd\nok      2s  res://tests/build/test_placeable.gd\nok      2s  res://tests/build/test_room_overlay.gd\nok      3s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      3s  res://tests/ui/hud/test_room_window.gd\nok      1s  res://tests/craft/recipes/test_recipe_tags.gd\nok      2s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      1s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/recipes/test_smelter_recipes.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_barn.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/stations/test_cook_table.gd\nok      2s  res://tests/craft/stations/test_loom.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/ui/hud/test_barn_window.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok    448s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            70\nTests             668\nPassing Tests     668\nFailing Tests       0\nRisky/Pending       0\nAsserts         28931\nTime           448s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "f38be2e6"
  }
 ]
