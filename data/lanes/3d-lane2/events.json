@@ -1,39 +1,5 @@
 [
  {
-  "time": "2026-09-25 00:28:41",
-  "epoch": 1790263721,
-  "type": "pass",
-  "title": "통과 — G-910 단계 1 (다쳐서 도망간 뒤 진정하지 않는다 (G-130 단계 3))",
-  "group": "G-910",
-  "step": "1",
-  "attempt": "2",
-  "report": {
-   "problem": "G-910.1 진정(CALM_AFTER) — 구현·spec 은 이미 HEAD 에 있고, 흔들리던 「다가와 다시 문다」 테스트를 시간 배분을 바꿔 고쳤다 (test_animal_sound.gd 29개 통과, 4회 연속)",
-   "approach": "animal.gd 의 CALM_AFTER · _panic_left · panicked() 와 spec 수치 줄(15 초, 임시)은 앞 회차 것이 HEAD 에 이미 들어 있었다. 떨어진 것은 test_hurt_hostile_calms_after_a_while_and_chases_again 의 마지막 단언 하나(600행)로, 이 회차에서 그냥 돌리니 통과했다 — 흔들리는 테스트였다. 원인: 진정하는 순간까지 짐승이 도망 길을 9 m/s 로 달려 사람에게서 보는 거리 끝(15 m)까지 멀어질 수 있는데, 진정한 뒤 쫓아가 무는 데 준 시간이 4 초뿐이라 쫓기(CHASE)는 잡혀도 물기(bit)까지 못 미칠 때가 있었다. 고침: 「CALM_AFTER 가 지나 진정했다(체력은 25% 그대로)」를 먼저 단언하고, 그 뒤 다시 마주 세워(_face_off) 처음 무는 시험과 같은 6 초를 주고 CHASE · bit 을 단언한다. 진정하기 전에는 보이는 사람을 쫓지 않는다는 단언은 그대로다. 파일을 4 번 연속 돌려 29개 모두 통과. 바뀐 곳에 걸리는 그물(changed_tests.py)도 같은 파일 하나였다.",
-   "why": "CALM_AFTER 15 초 (animal.gd · spec/04_life/hunting.md 수치 줄) — 앞 회차가 정한 임시 값, 그대로 둠. 사람이 사냥해 보고 정한다",
-   "files": [
-    "game/tests/life/hunting/test_animal_sound.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "다쳐서 도망간 뒤 진정하지 않는다 — spec/04_life/hunting.md 22행 「한동안 뒤 진정한다」가 아직 없다. panicked() 는 체력만 보므로 30% 아래인 짐승은 영원히 쫓지도 물지도 않고 소리마다 9 m/s 로 달아난다(체력이 차오르는 길도 없다). animal.gd 에 도망 시작 시각을 두고 CALM_AFTER(임시 값, spec 수치 줄에도 「임시」로)가 지나면 panicked() 가 false 가 되게 하라. 테스트: 25% 로 다친 적대가 CALM_AFTER 뒤에 보이는 사람을 다시 CHASE 하는지, 그 전에는 안 하는지 단언하라",
-     "evidence": "game/life/hunting/animal.gd — _panic() 이 _panic_left = CALM_AFTER(15 초, 「임시」 주석) 로 도망 시작 시각을 두고, _physics_process 가 delta 만큼 줄이며, panicked() 는 low_health() and _panic_left > 0.0 이다. spec/04_life/hunting.md 66행에 「15 초 … 임시」 수치 줄이 있다. tests/life/hunting/test_animal_sound.gd 의 test_hurt_hostile_calms_after_a_while_and_chases_again 이 25% 로 다친 적대를 두고 (a) CALM_AFTER 의 70% 가 지나고 사람을 8 m 앞에 다시 세워도 CHASE 가 없고 panicked() 가 참임을, (b) CALM_AFTER 가 다 지나면 low_health() 는 참인 채 panicked() 가 거짓 · calm_in() 이 0 임을, (c) 그 뒤 다시 마주 세우면 CHASE 하고 bit 까지 남을 단언한다. test_calm_after_is_a_temporary_value_in_spec_and_code 가 코드 · spec 양쪽 「임시」와 수치 일치를 지킨다. 껍데기가 아닌지 확인: panicked() 를 시간을 무시하고 low_health() 만 보게 바꿔 이 파일만 돌리니 594 · 603 · 604 · 605 행(진정 · 다시 쫓기 · 다시 물기)과 612 · 619 행이 떨어졌다(27/29). 되돌린 뒤 animal.gd 는 git 에 변경 없음. 루프의 test.log 에서는 바뀐 곳 13 파일 122/122 통과, guard 통과. 이번 회차 diff 는 테스트 파일 하나뿐이고 흔들리던 마지막 단언은 진정 확인과 다시 쫓기 확인을 나눠(다시 _face_off 후 6 초) 고쳤다 — 8 m 를 4 m/s 로 다가가 무는 데 넉넉한 시간이라 타당하다."
-    }
-   ],
-   "issues": [],
-   "good": [
-    "test_calmed_animal_panics_again_when_hurt — 기준 문장에는 없는 「진정한 뒤 또 맞으면 처음부터 다시 도망간다 · 진정한 비적대는 발소리에 9 m/s 가 아니라 5 m/s 로 달아난다」 단언 (앞 회차 것). spec 66행이 적은 대로라 기준의 뜻 안이며 순서를 흐트러뜨리지 않는다"
-   ]
-  },
-  "test": "--- 바뀐 곳만: 13 개 ---\ntest.sh: 파일 13 개를 6 개씩 한꺼번에 돌린다\nok     12s  res://tests/life/hunting/test_leg_slow.gd\nok     14s  res://tests/life/hunting/test_butchery.gd\nok     28s  res://tests/life/hunting/test_island_animals.gd\nok     35s  res://tests/life/hunting/test_animal_sound.gd\nok     10s  res://tests/life/hunting/test_sedation_capture.gd\nok     13s  res://tests/life/hunting/test_carry_cage.gd\nok      4s  res://tests/ui/hud/test_target_bars.gd\nok     43s  res://tests/combat/tools_as_weapons/test_tranq_ammo.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      9s  res://tests/combat/tools_as_weapons/test_gun_stats.gd\nok      3s  res://tests/life/hunting/test_body_parts.gd\nok     51s  res://tests/life/hunting/test_animal_walk.gd\nok    267s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            13\nTests             123\nPassing Tests     122\nFailing Tests       0\nPending             0\nAsserts          2658\nTime           268s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "235c4c7"
- },
- {
   "time": "2026-09-25 00:36:57",
   "epoch": 1790264217,
   "type": "pass",
@@ -7874,5 +7840,37 @@
   },
   "test": "d\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           349\nTests            2673\nPassing Tests    2673\nFailing Tests       0\nRisky/Pending       0\nAsserts        103451\nTime           735s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "dee699c2"
+ },
+ {
+  "time": "2026-10-14 22:10:28",
+  "epoch": 1791983428,
+  "type": "pass",
+  "title": "통과 — G-906 단계 1 (지붕(놓은 바닥판)에 끼인 판이 없다 (G-218 단계 2))",
+  "group": "G-906",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "지붕(놓은 바닥판) 판 속에 선 주민이 그 윗면으로 올라서는지 보는 테스트를 더했다 — 바뀐 곳만: 1개 파일 · 6개 테스트 통과",
+   "approach": "BuildPiece.is_floor 는 토대 · 지붕을 보지만 끼인 판 테스트는 토대만 썼다. 맞닿은 지붕 두 장(윗면 1.2m · 두께 0.2m)을 땅에 선 몸의 허리에 걸쳐 놓고, 그 자리로 주민을 되살려 지붕에 끼였는지(floor_in 이 지붕을 돌려준다) · 20 틱 뒤 그 윗면에 붙어 섰는지 · 선 자리 그대로 위로 올렸는지 단언한다. is_floor 에서 roof 를 빼 보니 이 테스트만 떨어졌다(5 통과 · 1 실패) — 지붕 갈래를 실제로 잡는다. 코드는 고치지 않았다(이미 지붕을 본다).",
+   "why": "",
+   "files": [
+    "game/tests/automation/villagers/test_villager_g218_floor_stuck.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "지붕(놓은 바닥판)에 끼인 판이 없다 — BuildPiece.is_floor(build_piece.gd:124)는 foundation · roof 둘을 보고 spec 도 「토대 · 지붕」이라 적지만, test_villager_g218_floor_stuck.gd 는 토대만 쓴다. 지붕 판 속에 몸을 둔 경우를 하나 넣어 그 윗면으로 올라서는지 단언하라",
+     "evidence": "test_villager_g218_floor_stuck.gd::test_inside_a_roof_lifts_them_on_top — 맞닿은 wood_roof 두 장(z 10·14, 한 변 4m 라 z 12 에서 맞닿음, 윗면 1.2m · 두께 0.2m)을 놓고 땅(y 0)에 주민을 되살린다. kind_of 가 \"roof\" 인지, floor_in 이 null 이 아니고 그 지붕 둘 중 하나인지 단언해 몸이 정말 지붕에 끼인 상태에서 시작함을 확인한 뒤, 20 틱 뒤 _assert_on_top(1.2) 로 발이 윗면에 붙고 · 판과 안 겹치고 · is_on_floor 인지, 옆으로 0.15m 안인지 본다. VillagerUnstick.floor_in(unstick.gd:37)은 BuildPiece.is_floor 로만 판을 가르므로 is_floor 에서 roof 를 빼면 assert_not_null(sunk) 부터 떨어진다 — 지붕 갈래를 실제로 잡는다(구현 세션도 roof 를 빼 1 실패를 봤다고 적었다. QA 의 직접 깨 보기는 권한이 막혀 코드 경로를 읽어 확인했다). test.log: 바뀐 곳 1 파일 · 6 테스트 · 150 단언 모두 통과, guard 통과."
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 1 개 ---\ntest.sh: 파일 1 개를 6 개씩 한꺼번에 돌린다\nok      5s  res://tests/automation/villagers/test_villager_g218_floor_stuck.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             1\nTests               6\nPassing Tests       6\nFailing Tests       0\nRisky/Pending       0\nAsserts           150\nTime           5s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "74051b8d"
  }
 ]
