@@ -3104,13 +3104,16 @@
   - 기준: 옛 저장본이 그대로 읽히고 주민이 곧 걷는다 (테스트)
   - 기준: (앞 단계 QA) 놓을 때 판이 _on_placed 갈래를 따로 지키지 않는다 — test_placed_on_a_standing_villager_lifts_them 은 놓은 뒤 20 물리 프레임을 기다리는데 Villager.READY_FRAMES 가 15라, Villagers._on_placed 의 unstick_soon() 을 지워도 박자(_on_beat)가 잡아 통과할 것이다. 놓은 뒤 기다림을 READY_FRAMES 보다 짧게(예: 3 프레임) 하거나 놓기 직전 박자를 맞춰, 곧바로 올렸는지 단언하라
   - 기준: (앞 단계 QA) 위가 막힌 판이 벽만 본다 — 기준의 「다른 토대」로 막힌 경우(끼인 판 바로 위에 또 다른 토대가 겹쳐 선 자리)는 test_blocked_above_… 에 없다. 위층 토대로 막은 판을 하나 더 넣어 nearest_free 로 빠지는지 단언하라
-- [ ] 4. 주민끼리 비켜 간다
+- [x] 4. 주민끼리 비켜 간다
   - 기준: 마주 오는 두 주민 · 한 상자 앞의 두 주민이 서로 비벼 끼이지 않고 비켜 간다 — Godot 의 회피(NavigationAgent3D avoidance · RVO) 또는 같은 꼴 (테스트)
   - 기준: 걷기는 여전히 PathWalk 한 곳 — 직업 파일은 「어디로」만 정한다 (테스트)
   - 기준: 찍어서 확인한다 — 좁은 문을 엇갈려 지나는 두 주민
   - 기준: spec/07_automation/npc-villagers.md 에 적는다
   - 기준: (앞 단계 QA) project.godot 내비 설정 바꾼 까닭이 없다 — game/project.godot 에 [navigation] 3d/merge_rasterizer_cell_scale=0.01 을 새로 넣었는데 코드 · spec 어디에도 왜 넣었는지 · 짐승의 땅에도 걸리는지가 적혀 있지 않다(grep 해도 project.godot 한 줄뿐). 전역 지도 설정이라 짐승 길찾기에도 걸린다. FolkGround 머리 주석이나 spec/07_automation/npc-villagers.md 의 FolkGround 줄에 까닭(조각 변 꼭짓점을 잇기 위한 것인지)과 「임시」 여부를 적어라
   - 기준: (앞 단계 QA) G-217 테스트의 시작 자리를 옮겼다 — test_villager_g217_every_job.gd 의 OUT_AT 을 남동쪽 비탈 (-269,-188) 에서 (-266,-204) 평지로 옮겨 통과시켰다. 줄 놓기 자리 찾기 문제라 주석에 까닭은 적었지만, 비탈 아래에서 출발해 일을 시작하는 경우는 이제 아무 테스트도 안 본다. 옛 자리에서도 일을 시작하는지(줄 놓기 없이 r.ok 만) 보는 판을 하나 더 두는 것을 고려하라
+- [ ] 5. (앞 단계 QA) 「같은 쪽이면 앞사람보다 빨리 안 걷는다」를 보는 테스트가 없다
+  - 기준: 「같은 쪽이면 앞사람보다 빨리 안 걷는다」를 보는 테스트가 없다 — spec 과 PathWalk 머리 주석이 이 갈래(_give_way 의 마지막 `if best <= AVOID_NEAR: return h * minf(...)`)를 약속하지만 test_villager_g218_give_way.gd 에는 마주 오기 · 문 · 상자만 있다. 트인 땅에서 두 주민을 1m 간격으로 같은 쪽 한 자리 근처(서로 다른 끝점)로 걷게 하고, 뒤 주민의 비빈 시간 < PRESS_LIMIT · 두 몸 가장 가까운 거리 > 몸 지름을 보는 판을 더하라
+  - 기준: (앞 단계 QA) 선 몸을 돌아갈 옆이 막혔을 때의 갈래를 보는 테스트가 없다 — _give_way 의 `if not _clear(body, away, true): return Vector3.ZERO` (문구멍에 일하느라 선 주민) 는 끼임 시계로만 끝난다. 문 한가운데에 주민 하나를 세워 두고(걷지 않음) 다른 주민이 문을 지나려 할 때 밀어 비비지 않고(pressed < PRESS_LIMIT) STUCK 으로 끝나는지 보는 판을 더하라
 
 ## [x] G-219 배고픔은 체력을 깎고 목마름은 -30% — 바닥이어도 크게 느려지지 않는다 (사람 결정 2026-10-14)
 - 차선: 3d-start
