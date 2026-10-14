@@ -3140,7 +3140,7 @@
 - [x] 5. (앞 단계 QA) prune 테스트가 옛 코드에서도 통과한다
   - 기준: prune 테스트가 옛 코드에서도 통과한다 — test_island_cache.gd 의 test_prune_leaves_another_checkout_alone 은 prune 이 원래부터 받은 폴더만 보므로 G-219.4 전 코드에서도 통과해 아무것도 지키지 않는다(기준의 단언은 test_cache_dir_differs_per_checkout 이 맡아 통과에는 문제없다). 지우거나, IslandCache.save(_shape) 를 기본 DIR 로 부른 뒤 dir_for(다른 경로) 폴더의 판이 남는지 보는 식으로 실제 DIR 갈림을 거치게 고쳐라
   - 기준: (앞 단계 QA) 공용 폴더의 옛 저장본이 영영 남는다 — user://island_cache 바로 아래의 옛 .bin(섬마다 수십 MB)은 이제 어느 prune 도 보지 않는다. 모든 차선이 새 코드로 넘어간 뒤 지울 길을 만들어라: 예) IslandCache 에서 ROOT 바로 아래의 VERSION 이 낮거나 파일(폴더 아닌) 저장본을 지우는 정리 함수와 그 테스트(임시 폴더로)
-- [ ] 6. (앞 단계 QA) 실패하면 진짜 user:// 에 폴더가 남는다
+- [x] 6. (앞 단계 QA) 실패하면 진짜 user:// 에 폴더가 남는다
   - 기준: 실패하면 진짜 user:// 에 폴더가 남는다 — test_island_cache.gd 의 test_save_leaves_another_checkout_alone 은 진짜 user://island_cache 아래 다른 차선 폴더를 만들고 맨 끝에서만 지운다. dir_for 가 깨져 그 폴더가 이 차선 DIR 과 같아지면 내 판이 들어 있어 remove_absolute(other) 가 실패해 폴더가 남는다(QA 가 깨 봤을 때 island_cache/same 이 남아 손으로 지웠다). 막는 것은 아니다 — after_each 나 테스트 끝에서 other 안의 파일을 모두 지운 뒤 폴더를 지우게 고쳐라
 
 ## [ ] G-906 루프가 찾은 것 — 스스로 갚는다
