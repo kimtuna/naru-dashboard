@@ -3255,7 +3255,7 @@
   - 기준: 나중에 들어온 참가자도 이미 지어진 것을 그대로 본다 (테스트)
   - 기준: (앞 단계 QA) 늘 참인 단언 한 줄 — test_harvest_on_server.gd test_two_guests_on_one_pile_… 의 assert_eq(host.inventory.count_of("stone") + 2, 5, …) 는 바로 위 줄(서버장 3)과 같은 것을 본다. 상수 2 대신 _kit_of(host, full) 에서 이 회차에 늘어난 몫을 세어(remove 뒤 97 → 99 이므로 count_of - (STACK_MAX - 2)) 합을 단언하거나 stone_of.call() 처럼 세 가방을 합쳐 보라
   - 기준: (앞 단계 QA) 테스트 사이 빈 줄 하나 — test_harvest_on_server.gd 의 test_the_guest_skill_check_… 끝과 test_two_reaping_one_herb_at_once_get_only_one 사이가 한 줄만 띄워졌다. 다른 함수들처럼 두 줄로
-- [ ] 10. 상자 안 — 여럿이 같이 연다
+- [x] 10. 상자 안 — 여럿이 같이 연다
   - 기준: 열기 · 칸 옮기기 · 정렬 · 채우기를 서버가 실행하고 연 사람 **모두**에게 내용을 보낸다 — `_open` 하나를 연 사람마다로 바꾼다 (netcode.md 「창은 여럿이 같이 연다」) (테스트, ENet 둘)
   - 기준: 한쪽이 바꾸면 같이 연 다른 쪽 창이 곧 같은 것을 본다 (테스트) · **둘이 한꺼번에 같은 칸을 집으면 하나만 얻는다** (테스트)
   - 기준: (앞 단계 QA) 방 이름 바꾸기에 거리 · 길이 검사가 없다 — core/net/net_world.gd _build_for 의 &"room" 갈래는 권한(Acts.BUILD)만 보고 어느 방이든 아무 길이의 이름으로 바꾼다. 다른 갈래처럼 그 방의 조각(room id → 토대 자리)에 _near(id, …, PIECE_GIRTH) 를 보거나, 방 이름 창의 최대 길이를 서버에서도 잘라라(테스트: 멀리 선 참가자의 rename 이 서버 room_names 를 안 바꾼다)
@@ -3263,6 +3263,7 @@
 - [ ] 11. 제작 시설 · 대기열 · 버퍼 · 목장
   - 기준: 대기열 · 개수 · 꺼내기 · 먹이 · 가축 넣기를 서버가 실행하고, 시설 틱(Stations._process)은 서버만 돈다 → 연 사람에게 대기열 · 진행 · 버퍼 (netcode.md 표 「제작 시설 · 목장」) (테스트, ENet 둘)
   - 기준: 한쪽이 바꾸면 다른 쪽이 곧 같은 것을 본다 (테스트) · **둘이 한꺼번에 같은 버퍼를 꺼내면 하나만 얻는다** (테스트)
+  - 기준: (앞 단계 QA) 연 사람에게 보내는 _send_chest 를 지켜 주는 테스트가 없다 — net_world.gd _send_chest 첫 줄에 return 을 넣어도 test_chest_on_server 5개가 모두 통과했다. 상자 안이 놓는 곳 목록(standing, 0.1초마다 Chests.sync)으로도 모든 참가자에게 가서 그 길이 대신 맞춰 주기 때문이다. 둘 중 하나로 정리하라: (가) _send_chest 가 맡는다면 standing 맞추기를 끈 채(예: 테스트에서 _placed 의 chests 갈래를 막거나 PLACED_PERIOD 를 크게) 연 사람만 곧 받는지, 열지 않은 참가자는 _chest_items 를 안 받는지 단언하는 테스트를 더하라. (나) standing 이 맡는다면 _send_chest · SENDS_META 를 지우고 netcode.md 「창은 여럿이 같이 연다」 줄을 그 길로 고쳐라
 - [ ] 12. 농사 — 밭 · 심기 · 물 · 비료 · 수확
   - 기준: 밭 만들기 · 심기 · 물 · 비료 · 수확을 서버가 실행하고 밭 · 작물 칸을 모두에게 맞춘다. 날이 바뀌면 서버만 자란다 (netcode.md 표 「농사」) (테스트, ENet 둘)
   - 기준: 한쪽이 바꾸면 다른 쪽이 곧 같은 것을 본다 (테스트) · **둘이 한꺼번에 같은 작물을 거두면 하나만 얻는다** (테스트)
