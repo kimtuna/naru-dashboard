@@ -1,65 +1,5 @@
 [
  {
-  "time": "2026-09-24 21:39:13",
-  "epoch": 1790253553,
-  "type": "pass",
-  "title": "통과 — G-147 단계 1 (마우스 올린 자리의 좌표가 보인다)",
-  "group": "G-147",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "지도 위에 마우스를 올리면 그 자리의 세계 좌표(X · Y)가 커서 곁에 뜬다 — Pointer 로만 읽고, 지도 네모 밖이면 사라진다. 바뀐 곳만 골라 돌림: 30 스크립트 248 테스트 전부 통과 · guard 통과",
-   "approach": "지도는 밝히기와 「내 자리」까지만 있어 어디가 어디인지 읽을 길이 없었다. MapWindow 에 point_of 의 거꿀 world_at 을 두고(같은 map_rect · span 잣대라 닫았다 열어도 어긋나지 않는다), 매 프레임 Pointer.position 을 이 노드 안 자리로 옮겨 지도 네모 안이면 HUD_MAP_COORDS(「X %d · Y %d」, Y 는 섬의 z) 글자를 커서 곁에 띄우고 밖이면 숨긴다. 글자는 지도 네모 안에 머문다 — 오른쪽 · 아래 끝에서는 커서 반대편으로 옮겨 앉는다 (HudSmallLabel 이라 외곽선이 있어 밝힌 칸 위에서도 읽힌다). 글자는 코드로 만든다 — 장면 없이 MapWindow.new() 로 세우는 테스트(Painted)가 있어 $Coords 가 null 이었다. 지도를 닫으면 글자도 같이 걷는다. 찍기(ui_shots)에 map 자리를 넣어 harness/shot.sh --ui <폴더> map 으로 찍었고 PNG 를 열어 봤다 — 구석에서도 잘리지 않고 다른 것을 덮지 않는다. 좌표는 잠깐 보는 것이라 저장하지 않는다(상태가 아니다).",
-   "why": "MapWindow.COORDS_OFFSET = (14, 14) px — 글자가 커서에서 비켜 앉는 거리. 사람이 보고 정한다; UiShots.MAP_SPAN = 512 m · MAP_WALKED 네 자리 — 지도 사진용 밝힌 자리",
-   "files": [
-    "game/ui/hud/map_window.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/tests/ui/hud/test_map_coords.gd",
-    "game/tests/core/debug/test_ui_shots.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "지도 위에 마우스를 올리면 그 자리의 세계 좌표가 보인다 (테스트)",
-     "evidence": "tests/ui/hud/test_map_coords.gd — test_hovering_the_center_of_the_map_reads_the_center_of_the_island (가운데 → (0,0) · 글자 「X 0 · Y 0」), test_the_text_reads_the_world_coordinates_of_the_place_under_the_cursor (point_of(160,-120) 위 → hover_world (160,-120) · 글자에 160/-120), test_the_text_follows_the_cursor, test_the_text_uses_a_translation_key (HUD_MAP_COORDS 가 ko/en 둘 다 있고 %d 둘). world_at 에 +10 을 몰래 넣자 이 테스트들이 전부 떨어졌다 — 껍데기가 아니다"
-    },
-    {
-     "ok": true,
-     "criterion": "마우스가 지도 밖으로 나가면 사라진다 (테스트)",
-     "evidence": "test_the_text_disappears_when_the_cursor_leaves_the_map (안 → 밖 → 다시 안), test_the_dim_area_around_the_map_shows_nothing (네모 오른쪽 · 아래 · (1,1) 세 곳), test_nothing_shows_without_a_memory_to_measure_by. _update_coords 의 숨김을 없애자 셋 다 떨어졌다"
-    },
-    {
-     "ok": true,
-     "criterion": "좌표는 game/core/input/ 의 Pointer 를 거쳐 읽는다 — 커서를 직접 읽지 않는다 (테스트)",
-     "evidence": "map_window.gd pointer_local() 이 Pointer.position(get_viewport()) 만 쓴다. test_the_coordinates_come_from_the_pointer_not_the_real_cursor (simulate_position 을 옮기면 따라오고, 지우면 안 뜬다), test_the_map_window_never_touches_the_cursor_directly (get_mouse_position · warp_mouse · mouse_mode 등 원문 검사 + Pointer.position( 이 있어야 함). test.log guard 도 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "지도를 닫았다 열어도 어긋나지 않는다 — 지도 네모와 세계 좌표가 늘 같은 잣대다 (테스트)",
-     "evidence": "world_at 이 point_of 와 같은 map_rect()·span 을 쓴다. test_closing_and_reopening_keeps_the_same_scale (닫고 다시 열어 같은 자리 → 같은 좌표·같은 글자, point_of∘world_at 왕복 0.01 안), test_the_marker_and_the_readout_agree_on_where_i_stand (내 자리 표시 위 = 선 좌표, 닫았다 열어도), test_the_map_corners_are_the_island_corners (네 귀 = ±span/2, 왕복). 잣대를 어긋내자 전부 떨어졌다"
-    },
-    {
-     "ok": true,
-     "criterion": "찍어서 확인한다 — 글자가 지도 밖으로 잘리지 않고 다른 것을 덮지 않는다",
-     "evidence": ".loop/shots/map/map_ko.png · map_en.png 가 있다. 오른쪽 아래 구석(r.end-6)에 커서를 두고 찍은 사진에서 「X 250 · Y 250」이 커서 왼쪽 위로 옮겨 앉아 네모 안에 있고 표시·핫바를 덮지 않는다. 덧붙여 test_the_text_stays_inside_the_map_at_every_corner (네 귀 + 가운데에서 글자 Rect 가 map_rect 안) · test_the_text_does_not_sit_under_the_cursor 가 코드로도 지킨다 — 반대편 옮김·clamp 를 빼자 세 귀에서 떨어졌다"
-    }
-   ],
-   "issues": [
-    "밝힌 칸이 지도 네모 밖으로 삐져나온다 — .loop/shots/map/map_ko.png 오른쪽 아래를 보면 (200,200) 언저리 밝힌 칸이 지도 테두리(아래·오른쪽) 바깥까지 그려진다. 이번 단계(좌표 글자) 밖의, 원래 있던 _draw 흠이다. game/ui/hud/map_window.gd _draw 에서 밝힌 칸 Rect 를 map_rect() 로 잘라(Rect2.intersection) 그리고, tests/ui/hud/test_map_window.gd 에 「섬 가장자리 칸을 밝혀도 그린 칸이 map_rect 를 넘지 않는다」 단언을 더하라"
-   ],
-   "good": []
-  },
-  "test": "translation_key\n* test_every_key_the_window_shows_has_a_korean_and_an_english_word\n17/17 passed.\n\n\nres://tests/ui/hud/test_station_window_temporary_note.gd\n* test_the_header_says_the_bar_size_and_the_decimals_are_temporary\n* test_the_header_points_at_the_bar_size_the_window_actually_uses\n* test_the_header_quotes_the_format_the_code_actually_uses\n* test_the_note_does_not_stick_to_the_row_size\n* test_the_check_catches_a_missing_or_stale_note\n5/5 passed.\n\n\nres://tests/ui/hud/test_target_bars.gd\n* test_bars_show_only_while_aiming_at_an_animal\n* test_bars_hide_when_aiming_away\n* test_only_the_aimed_animal_shows_among_many\n* test_health_bar_follows_and_changes_color_in_the_sedation_zone\n* test_sedation_gauge_follows_the_animal\n* test_no_numbers_percent_or_ticks\n6/6 passed.\n\n\nres://tests/ui/layout/test_window_layout.gd\n* test_measures_on_the_fixed_screen\n* test_windows_are_found_not_listed\n* test_new_window_is_measured_without_touching_the_test\n* test_off_screen_is_caught\n* test_overlap_is_caught_but_dim_is_not\n* test_scrolled_out_rows_are_not_off_screen\n* test_text_overflow_is_caught\n* test_see_through_back_is_caught\n* test_text_touching_the_panel_edge_is_caught\n* test_nothing_is_off\n    재는 검사 — 창 7 개 · 어긋난 곳 0 곳\n    (없다)\nUIMEASURE 창 7 개 · 어긋난 곳 0 곳\n(없다)\n* test_window_backs_hide_what_is_behind\n* test_window_panel_is_fully_opaque\n* test_chest_hint_keeps_off_the_window_edge\n* test_long_notice_covers_no_gauge\n* test_crosshair_hides_while_a_window_is_open\n* test_station_windows_fit_the_screen\n* test_bag_stays_above_hotbar\n* test_hotbar_top_is_the_theme_room\n18/18 passed.\n\n\nres://tests/world/map/test_map_memory.gd\n* test_a_fresh_map_is_all_hidden\n* test_the_map_covers_the_whole_island\n* test_standing_somewhere_lights_that_spot\n* test_only_as_far_as_the_reveal_radius\n* test_walking_lights_a_trail_and_leaves_the_rest_dark\n* test_nothing_outside_the_island_is_ever_lit\n* test_it_follows_the_player\n* test_it_tells_when_new_ground_is_lit\n* test_what_is_lit_survives_being_stored_and_restored\n* test_stored_maps_do_not_leak_into_each_other\n* test_a_map_of_another_size_is_thrown_away\n11/11 passed.\n\n\n\n\n==============================================\n= 36 Orphans\n==============================================\ntest_ui_shots.gd\n    - test_island_shot_builds_the_real_island\n        * [HandView:<Control#1441129325579>(hand_view.gd)] + 5\ntest_bag_temporary_note.gd\n    - test_the_header_says_the_dim_and_the_layer_are_temporary\n        * [HandView:<Control#1908827775270>(hand_view.gd)] + 5\n    - test_the_header_points_at_the_theme_the_scene_actually_uses\n        * [HandView:<Control#1909431754880>(hand_view.gd)] + 5\n        * [HandView:<Control#1909968625991>(hand_view.gd)] + 5\n    - test_the_header_quotes_the_layer_the_bag_actually_sits_on\n        * [HandView:<Control#1910706823270>(hand_view.gd)] + 5\n    - test_the_note_does_not_stick_to_the_slot_size\n        * [HandView:<Control#1911344335994>(hand_view.gd)] + 5\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              30\nTests               248\nPassing Tests       248\nAsserts            2843\nOrphans              36\nTime              42.937s\n\n\n---- All tests passed! ----\n\nWARNING: 36 RIDs of type \"CanvasItem\" were leaked.\n   at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2735)\nWARNING: 179 ObjectDB instances were leaked at exit (run with `--verbose` for details).\n   at: cleanup (core/object/object.cpp:2536)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:822)\nERROR: 9 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.\nERROR: 100 RID allocations of type 'PN18TextServerAdvanced22ShapedTextDataAdvancedE' were leaked at exit.\nERROR: 1 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "c3529a8"
- },
- {
   "time": "2026-09-24 22:10:18",
   "epoch": 1790255418,
   "type": "fail",
@@ -7703,5 +7643,51 @@
    "good": []
   },
   "test": "mation/villagers/test_villager_watering.gd\nok     36s  res://tests/automation/villagers/test_villager_crafter.gd\nok    148s  res://tests/automation/villagers/test_villager_g217_every_job.gd\nok     30s  res://tests/automation/villagers/test_villager.gd\nok     35s  res://tests/automation/villagers/test_villager_chests_full.gd\nok     27s  res://tests/automation/villagers/test_villager_chest_saved_room.gd\nok     27s  res://tests/automation/villagers/test_villager_harvesting.gd\nok     18s  res://tests/automation/villagers/test_villager_blind_spots.gd\nok     23s  res://tests/automation/villagers/test_villager_can_churn.gd\nok     24s  res://tests/automation/villagers/test_villager_chest_shared.gd\nok     18s  res://tests/automation/villagers/test_villager_jobs.gd\nok     18s  res://tests/automation/villagers/test_villager_many_fields.gd\nok     20s  res://tests/automation/villagers/test_villager_walks_in.gd\nok     19s  res://tests/automation/villagers/test_villager_planting.gd\nok     18s  res://tests/automation/villagers/test_villager_room_doors.gd\nok     15s  res://tests/automation/villagers/test_villager_jobs_detour.gd\nok     15s  res://tests/automation/villagers/test_villager_as_built.gd\nok     14s  res://tests/automation/villagers/test_villager_as_played.gd\nok     11s  res://tests/automation/villagers/test_villager_hands_room.gd\nok     15s  res://tests/automation/villagers/test_villager_reach.gd\nok     13s  res://tests/automation/villagers/test_villager_body_slope.gd\nok     10s  res://tests/automation/villagers/test_villager_gather_close.gd\nok     10s  res://tests/core/debug/test_ui_shots.gd\nok      8s  res://tests/automation/villagers/test_villager_torch_detour.gd\nok      9s  res://tests/automation/villagers/test_villager_home.gd\nok      5s  res://tests/automation/villagers/test_villager_cleaning.gd\nok      9s  res://tests/automation/villagers/test_villager_door_close.gd\nok      2s  res://tests/core/test_game_root_tidy.gd\nok      4s  res://tests/automation/villagers/test_villager_chest_detour.gd\nok      3s  res://tests/build/test_bed.gd\nok      3s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      1s  res://tests/automation/villagers/test_job_work_shared.gd\nok      5s  res://tests/core/test_path_walk_replan.gd\nok      2s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      2s  res://tests/automation/villagers/test_villager_door.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      1s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/core/test_path_walk.gd\nok      2s  res://tests/craft/stations/test_cook_table.gd\nok      2s  res://tests/life/medicine/test_medicine.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok    351s  res://tests/automation/villagers/test_villager_g217_real_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            59\nTests             349\nPassing Tests     349\nFailing Tests       0\nRisky/Pending       0\nAsserts          8996\nTime           351s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-14 15:21:27",
+  "epoch": 1791958887,
+  "type": "pass",
+  "title": "통과 — G-218 단계 1 (걷는 중에 길을 다시 묻는다 · 끼여도 곧장 포기하지 않는다)",
+  "group": "G-218",
+  "step": "1",
+  "attempt": "2",
+  "report": {
+   "problem": "G-218.1 — PathWalk 가 걷는 중 지도 차례가 바뀌면 길을 다시 묻고, 주민은 끼여도 길을 다시 물어 STUCK_RETRIES(2)번 더 끼일 때만 STUCK — QA 가 짚은 두 테스트를 더했다. 바뀐 곳만 59개 파일 351개 통과",
+   "approach": "앞 시도의 구현(PathWalk 한 곳에서 지도 차례가 바뀌면 다시 묻기 · 끼이면 _ask 로 다시 묻고 stuck_retries 번 더 끼일 때만 STUCK, 주민 walker 는 STUCK_RETRIES)은 그대로 두고 QA 가 짚은 증거 빈칸을 메웠다. (1) plan 뒤 길을 내비메시가 주지 않을 엉뚱한 길로 바꿔 넣고 몸을 세워 STUCK_TIME 을 넘기면, 길이 TO 근처에서 끝나는 진짜 길로 바뀌었는지 본다 — 끼임 가지의 _ask 를 `if false:` 로 빼 보니 이 테스트만 떨어졌다. (2) 진짜 섬 판에서 나무로 걷던 나무꾼을 제자리에 붙들어, 첫 STUCK_TIME 뒤에도 _skip(FORGET 목록)이 비어 있고 같은 나무로 계속 걷다가 STUCK_RETRIES 번 더 끼인 뒤에야 빼 두는지 본다 — 주민 walker 의 stuck_retries 를 0 으로 되돌려 보니 이 테스트가 떨어졌다. 깨 본 뒤 원래대로 되돌렸다. 바뀐 곳 그물(changed_tests.py, 59개 파일 351개) 통과.",
+   "why": "PathWalk.STUCK_RETRIES = 2 — 끼였을 때 길을 다시 묻고 더 걸어 보는 번수, 기준이 준 임시값",
+   "files": [
+    "game/core/path_walk.gd",
+    "game/automation/villagers/villager.gd",
+    "game/automation/villagers/job_work.gd",
+    "game/automation/villagers/gather_work.gd",
+    "game/tests/core/test_path_walk_replan.gd",
+    "game/tests/automation/villagers/test_villager_gathering.gd",
+    "game/tests/automation/villagers/test_villager_g217_every_job.gd",
+    "spec/07_automation/npc-villagers.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "**걷는 중에 걸을 땅이 바뀌면 길을 다시 묻는다** — 지금은 길을 한 번만 묻는다(`core/path_walk.gd:52` plan). 상자 · 벽을 놓아 다시 구워도 옛 길로 가다 처박힌다. `NavigationServer3D.map_changed` 를 듣거나 걷는 동안 잠깐마다(임시 0.5 ~ 1초) 다시 묻는다 — PathWalk 한 곳에서 (테스트: 걷는 중 앞에 상자를 놓으면 돌아간다)",
+     "evidence": "PathWalk.step 이 map_get_iteration_id 가 map_at 과 다르면 _ask 로 다시 묻는다 — JobWork._stride 의 옛 다시 묻기는 지우고 PathWalk 한 곳으로 옮겼다. test_path_walk_replan.gd::test_walking_asks_again_when_the_ground_changes 가 걷는 중 가운데 띠를 도려낸 내비메시로 바꾸고 띠를 지나지 않고 남쪽 다리로 돌아 닿는지 본다. QA 가 step 의 지도 차례 비교를 `if false and` 로 꺼 보니 이 파일 2개가 떨어졌다(되돌렸다). 진짜 섬 판 test_villager_g217_every_job.gd 도 walk.map_at 로 옮겨 통과."
+    },
+    {
+     "ok": true,
+     "criterion": "**끼이면 곧장 포기하지 않는다** — 지금은 STUCK 이면 그 대상을 바로 뺀다(`gather_work.gd:95` _blocked). 먼저 길을 다시 묻고, 몇 번(임시 2번) 더 끼일 때만 뺀다 (테스트)",
+     "evidence": "PathWalk.step 끼임 가지가 _retried < stuck_retries 면 _ask 로 다시 묻고 시계를 되돌린다. 주민 walker 는 STUCK_RETRIES=2(임시 표시 있음), 짐승은 0. test_a_stuck_villager_really_asks_the_map_again — 끼임 가지의 _ask 를 QA 가 꺼 보니 이 테스트가 떨어졌다(바꿔 넣은 길이 그대로). test_villager_gathering.gd::test_a_stuck_woodcutter_asks_again_before_giving_up_the_tree — 진짜 섬에서 나무꾼을 붙들어 첫 STUCK_TIME 뒤 _skip 이 비고 같은 나무로 걷다가 2번 더 끼인 뒤에야 빼는지 본다. QA 가 Villager.walker 의 stuck_retries 를 0 으로 바꾸니 이 테스트가 「처음 끼였을 때 나무를 빼 두지 않는다」에서 떨어졌다(되돌렸다). 앞 회차 QA 지적 둘 다 메웠다."
+    }
+   ],
+   "issues": [
+    "g217_every_job 주석이 낡았다 — game/tests/automation/villagers/test_villager_g217_every_job.gd 13 · 16 · 179 줄 주석과 249 줄 단언 메시지가 아직 「_stride 의 다시 묻기 · JobWork._stride」라 적는다. 다시 묻기는 이제 PathWalk.step 에 있다 — 그 넷을 PathWalk.step 으로 고쳐라"
+   ],
+   "good": []
+  },
+  "test": "mation/villagers/test_villager_watering.gd\nok     36s  res://tests/automation/villagers/test_villager_chests_full.gd\nok     37s  res://tests/automation/villagers/test_villager_crafter.gd\nok     27s  res://tests/automation/villagers/test_villager_chest_saved_room.gd\nok     26s  res://tests/automation/villagers/test_villager_harvesting.gd\nok     40s  res://tests/automation/villagers/test_villager.gd\nok    173s  res://tests/automation/villagers/test_villager_g217_every_job.gd\nok     24s  res://tests/automation/villagers/test_villager_can_churn.gd\nok     25s  res://tests/automation/villagers/test_villager_chest_shared.gd\nok     21s  res://tests/automation/villagers/test_villager_walks_in.gd\nok     20s  res://tests/automation/villagers/test_villager_blind_spots.gd\nok     19s  res://tests/automation/villagers/test_villager_jobs.gd\nok     18s  res://tests/automation/villagers/test_villager_many_fields.gd\nok     15s  res://tests/automation/villagers/test_villager_jobs_detour.gd\nok     19s  res://tests/automation/villagers/test_villager_room_doors.gd\nok     19s  res://tests/automation/villagers/test_villager_planting.gd\nok     15s  res://tests/automation/villagers/test_villager_as_built.gd\nok     10s  res://tests/automation/villagers/test_villager_gather_close.gd\nok     15s  res://tests/automation/villagers/test_villager_reach.gd\nok     11s  res://tests/automation/villagers/test_villager_hands_room.gd\nok     15s  res://tests/automation/villagers/test_villager_as_played.gd\nok     13s  res://tests/automation/villagers/test_villager_body_slope.gd\nok      6s  res://tests/core/test_path_walk_replan.gd\nok      9s  res://tests/automation/villagers/test_villager_home.gd\nok      8s  res://tests/automation/villagers/test_villager_torch_detour.gd\nok      9s  res://tests/automation/villagers/test_villager_door_close.gd\nok      4s  res://tests/automation/villagers/test_villager_chest_detour.gd\nok     12s  res://tests/core/debug/test_ui_shots.gd\nok      6s  res://tests/automation/villagers/test_villager_cleaning.gd\nok      4s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      3s  res://tests/build/test_bed.gd\nok      3s  res://tests/core/test_open_chest_window.gd\nok      3s  res://tests/ui/hud/test_villager_window.gd\nok      3s  res://tests/automation/villagers/test_villager_door.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      2s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      3s  res://tests/core/test_game_root_tidy.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/craft/stations/test_cook_table.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      2s  res://tests/life/medicine/test_medicine.gd\nok      1s  res://tests/automation/villagers/test_job_work_shared.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok    405s  res://tests/automation/villagers/test_villager_g217_real_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            59\nTests             351\nPassing Tests     351\nFailing Tests       0\nRisky/Pending       0\nAsserts          9013\nTime           405s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "afc0e65a"
  }
 ]
