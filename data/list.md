@@ -3135,8 +3135,11 @@
   - 기준: (앞 단계 QA) hunger-thirst.md 목적·규칙이 낡았다 — spec/02_player/hunger-thirst.md 4행 「배고픔 · 목마름이 이동 속도를 정한다」와 12행 「굶어 죽거나 말라 죽지 않는다 — 느려지기만 한다」는 배고픔이 이제 속도를 안 건드리므로 맞지 않다. 이 묶음의 「배고픔 0 → 체력 감소」 단계에서 함께 고쳐라: 목적은 「목마름이 속도를, 배고픔이 체력을」로, 「느려지기만 한다」는 배고픔 쪽 결과(체력)로 바꾼다. hunger_thirst.gd 머리 주석 「바닥이어도 죽지 않는다」도 그 단계에서 체력 규칙과 맞춘다
 - [x] 3. (앞 단계 QA) 체력 1 에서도 「체력이 준다」 알림이 남는다
   - 기준: 체력 1 에서도 「체력이 준다」 알림이 남는다 — hunger_thirst.gd _update_alert 의 want 가 is_hungry() and health != null 뿐이라, 체력이 STARVE_FLOOR 에 닿아 더 안 깎이는 동안에도 「배가 고파 체력이 준다」가 뜨고 is_starving() 이 참이다 (죽은 동안에도). 막는 것은 아니다 — 굶는다는 알림으로 남겨 둘지, 문구를 「배가 고프다」 쪽으로 다듬을지 정해 test_starving.gd 에 체력 1 일 때의 알림 단언을 하나 더해 두면 좋다
-- [ ] 4. (앞 단계 QA) 차선끼리 섬 캐시를 같이 써 서로 지운다
+- [x] 4. (앞 단계 QA) 차선끼리 섬 캐시를 같이 써 서로 지운다
   - 기준: 차선끼리 섬 캐시를 같이 써 서로 지운다 — test_round_trip.gd 의 BAKE_ONLY 는 증상만 뺐다. 원인은 user://island_cache 를 모든 체크아웃(차선)이 같이 쓰고 IslandCache.prune 이 다른 차선의 판을 지우는 것이라, 다른 테스트도 같이 돌 때 구울지 읽을지가 바뀌어 흔들릴 수 있다. world/terrain/island_cache.gd 에서 캐시 경로를 체크아웃마다 가르거나(예: 프로젝트 경로 해시를 폴더 이름에 붙임) prune 이 자기 차선 판만 지우게 하고, 두 경로가 달라지는 것을 test_island_cache.gd 에 단언으로 더하라
+- [ ] 5. (앞 단계 QA) prune 테스트가 옛 코드에서도 통과한다
+  - 기준: prune 테스트가 옛 코드에서도 통과한다 — test_island_cache.gd 의 test_prune_leaves_another_checkout_alone 은 prune 이 원래부터 받은 폴더만 보므로 G-219.4 전 코드에서도 통과해 아무것도 지키지 않는다(기준의 단언은 test_cache_dir_differs_per_checkout 이 맡아 통과에는 문제없다). 지우거나, IslandCache.save(_shape) 를 기본 DIR 로 부른 뒤 dir_for(다른 경로) 폴더의 판이 남는지 보는 식으로 실제 DIR 갈림을 거치게 고쳐라
+  - 기준: (앞 단계 QA) 공용 폴더의 옛 저장본이 영영 남는다 — user://island_cache 바로 아래의 옛 .bin(섬마다 수십 MB)은 이제 어느 prune 도 보지 않는다. 모든 차선이 새 코드로 넘어간 뒤 지울 길을 만들어라: 예) IslandCache 에서 ROOT 바로 아래의 VERSION 이 낮거나 파일(폴더 아닌) 저장본을 지우는 정리 함수와 그 테스트(임시 폴더로)
 
 ## [ ] G-906 루프가 찾은 것 — 스스로 갚는다
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
