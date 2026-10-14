@@ -1,51 +1,5 @@
 [
  {
-  "time": "2026-09-30 02:34:39",
-  "epoch": 1790703279,
-  "type": "pass",
-  "title": "통과 — G-167 단계 1 (왜 설 자리가 없는지 재서 밝힌다)",
-  "group": "G-167",
-  "step": "1",
-  "attempt": "2",
-  "report": {
-   "problem": "사람의 저장본 판(2×2 판 방 · 문 · 계단 · 북서 구석 상자 · 방 안 밭 넷+밀)을 그대로 세워 상자 둘레 걸을 땅을 재고, 안 닿는 까닭(길 끝이 북쪽 벽 밖)을 단언으로 남겼다",
-   "approach": "QA 지적 셋을 풀었다. (1) 저장본 fields 넷(첫 칸 (-379,205)·(-379,201)·(-382,201)·(-382,205), 높이 18.7322 = 바닥 — 저장 파일에서 직접 읽었다)을 island_state 와 같은 길(farmland.restore → crops.restore, 밀 stage 0)로 되살리고 assert_eq 로 밭 네 칸·밀을 단언했다. 머리 주석의 「방 둘레 것만」도 고쳤다. (2) 밭을 세운 뒤 다시 잰 값 — 그대로다: 방 바닥 걸을 땅 47.97㎡, 상자에서 방 안 걸을 땅 수평 0.75m(남·동 0.75m, 북·서는 벽이라 없음), 방 안 가장 가까운 점 (-382.7, 19.13, 200.5) 수평 0.80m·높이 +0.39m·3차원 0.89m, 거기 서면 손이 닿는다(true). 벽 밖 점 (-383.52, 18.88, 199.72) 수평 0.78m·높이 +0.14m·3차원 0.79m. 벽 밖 주민 자리 → 상자 · 방 가운데 → 상자 두 길 모두 끝이 이 북쪽 벽 밖 점이고 거기서 in_reach 는 거짓. (3) 까닭은 하나 — 길을 상자 발밑 점으로 묻자 3차원으로 가장 가까운 걸을 땅을 끝으로 주는데, 방 바닥 걸을 땅이 0.39m 떠 있어 벽 밖 점(0.79m)이 방 안 점(0.89m)보다 가깝다고 뽑힌다. 까닭 가리기에서 상자 도려내기 뺌·벽 도려내기 뺌·몸 반지름 0 어느 것도 방 안 거리 0.75m 를 바꾸지 않는다(상자 도려내기를 빼면 0.00m 이 될 뿐, 설 자리는 원래 있다) — 도려내기·몸 반지름·방 넓이는 까닭이 아니다. 길 끝이 방 밖(북쪽 벽 밖, z<200)이고 손이 안 닿는 지금 모습을 assert_false/assert_lt 로 적고 「G-167.1 — 고치면 뒤집는다」 주석을 달았다. 고치지는 않았다. 바뀐 곳만 돌렸다: changed_tests 2 파일, Asserts 29, 실패 0.",
-   "why": "",
-   "files": [
-    "game/tests/automation/villagers/test_villager_chest_saved_room.gd",
-    "game/tests/automation/villagers/test_villager_chest_room_measure.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "**사람이 지은 그대로** 만든다 — 턱 + 계단 + 2×2 판 방 + 문 + **벽에 붙은 상자** + 밭. 그 자리에서 걸을 땅이 상자 둘레 어디까지 남는지 **숫자로 재어** report 에 적는다 (테스트)",
-     "evidence": "test_villager_chest_saved_room.gd::test_measure_the_saved_room — 저장본의 방·문·계단·지붕(PIECES 17개)과 북서 구석 상자, 방 안 밭 넷+밀 stage 0 을 farmland.restore → crops.restore 로 되살리고 assert_eq(tilled_cells().size(), 4) · is_tilled · kind_at==wheat 로 단언한다(앞 QA 지적 해소). 네 쪽 거리(남·동 0.75m, 북·서 없음)·방 바닥 47.97㎡·방 안 점 수평 0.80m/3차원 0.89m·벽 밖 점 0.79m 를 재어 로그에 남겼고 test_files 로그 값이 report 와 일치한다. 방 안 설 자리가 손 거리 안이고 거기서 in_reach 참임을 assert_true/assert_lt 로 단언한다"
-    },
-    {
-     "ok": true,
-     "criterion": "안 닿는 까닭을 **하나로 짚는다** — 상자 도려내기 · 벽 도려내기 · 몸 반지름 · 방이 좁아서 중 무엇인가. 짐작이 아니라 잰 값으로 적는다",
-     "evidence": "까닭 가리기(상자·벽 도려내기 뺌, 몸 반지름 0)를 다시 구워 재어 방 안 걸을 땅 0.75m 가 그대로임을 보이고 넷 모두 까닭이 아님을 밝혔다. 까닭 하나 — 길을 상자 발밑 점으로 물으면 3차원 가장 가까운 걸을 땅이 끝이 되는데, 방 바닥 걸을 땅이 0.39m 떠 있어 북쪽 벽 밖 점(0.79m)이 방 안 점(0.89m)보다 가깝게 뽑힌다. 두 출발점 모두 길 끝이 z<200 이고 in_reach 거짓임을 assert_false/assert_lt 로 적고 「G-167.1 — 고치면 뒤집는다」 주석을 달았다(앞 QA 지적 해소)"
-    },
-    {
-     "ok": true,
-     "criterion": "이 단계에서는 고치지 않는다 — 재서 밝히기만 한다",
-     "evidence": "git status 에 바뀐 것은 current.md 와 새 테스트 두 파일(+uid)뿐 — 게임 코드는 손대지 않았다"
-    }
-   ],
-   "issues": [
-    "합성 판 테스트가 흠을 재현하지 못한다 — test_villager_chest_room_measure.gd 는 머리 주석에 「사람이 지은 그대로(AsBuiltRoom)」라 적지만 거기서는 길 끝이 방 안이라 assert_true(room.in_room(end)) 가 통과한다. 흠은 저장본 판(test_villager_chest_saved_room.gd)에서만 난다. 머리 주석에 「AsBuiltRoom 판은 방 바닥과 벽 밖 땅의 높이 차가 달라 흠이 안 난다 — 흠 재현은 test_villager_chest_saved_room.gd」라고 적거나, 까닭 가리기가 saved_room 과 겹치니 이 파일을 지우고 한 곳으로 모아라",
-    "까닭 가리기 헬퍼가 두 파일에 겹친다 — _bake · _area · _nearest · _gaps 가 test_villager_chest_room_measure.gd 와 test_villager_chest_saved_room.gd 에 거의 그대로 둘이다. 위 정리 때 한 파일로 모으거나 tests 쪽 공용 헬퍼로 빼라"
-   ],
-   "good": []
-  },
-  "test": "--- 바뀐 곳만: 2 개 ---\ntest.sh: 파일 2 개를 6 개씩 한꺼번에 돌린다\nok      2s  res://tests/automation/villagers/test_villager_chest_room_measure.gd\nok      2s  res://tests/automation/villagers/test_villager_chest_saved_room.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             2\nTests               3\nPassing Tests       3\nFailing Tests       0\nRisky/Pending       0\nAsserts            29\nTime           2s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "b8a150f9"
- },
- {
   "time": "2026-09-30 02:59:00",
   "epoch": 1790704740,
   "type": "pass",
@@ -9933,5 +9887,46 @@
   },
   "test": "tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      0s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/world/map/test_map_memory.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           377\nTests            2832\nPassing Tests    2832\nFailing Tests       0\nRisky/Pending       0\nAsserts        118191\nTime           702s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "d5c64065"
+ },
+ {
+  "time": "2026-10-15 07:27:44",
+  "epoch": 1792016864,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-221 단계 16 (시도 1)",
+  "group": "G-221",
+  "step": "16",
+  "attempt": "1",
+  "report": {
+   "problem": "몸 상태 · 전투를 서버가 정한다 — 참가자마다 배고픔 · 목마름 · 체력 · 버프 · 독 · 탄창을 서버가 틱해 주인에게 보내고, 먹기 · 마시기 · 약 · 낙하 · 휘두르기 · 쏘기 · 재장전은 바람이다. 붙은 자리 · 갈고리줄 · 체력은 몸 소식에 싣고, 탄알은 모두에게 보인다. 참가자 섬 주민 알림(앞 단계 QA)도 맞췄다. 바뀐 곳만(changed_tests): 288개 파일 2302개 테스트 통과",
+   "approach": "참가자 기계가 배고픔 · 버프 · 독 · 체력 · 탄을 제 손으로 돌리고 있었다 — 서버는 참가자 몸을 몰랐다. ① 새 core/net/net_vitals.gd(판 아래 「Vitals」): 서버가 참가자마다 몸 몫(Person — HungerThirst · Health · Buffs 노드, 독 자투리, 총마다 Magazine)을 들어올 때 건넨 캐릭터의 body · magazines 로 세우고 틱한다(독은 Medicine.poison, 장전은 사본 가방으로). 0.1초마다(PERIOD, 임시) 지문(배고픔 1% · 버프 1초 눈금)이 바뀐 사람에게만 보내고, 주인은 _on_vitals 로 제 몸에 덮어쓴다. 주인 기계의 HungerThirst · Buffs 는 remote 면 스스로 흐르지 않고 Medicine 은 ask 가 있으면 독으로 깎지 않는다. 서버 몫의 굶는 줄은 서버장 화면에 올리지 않는다(HungerThirst.alerts). ② 먹기 · 약 · 컵 한 모금 · 컵 채우기 · 연못 물은 Food · Medicine · Drinking 의 ask 로 서버에 — 본 칸을 같이 보내 서버 칸이 다르면 하지 않는다. 같은 칸을 답 전에 두 번 먹어도 하나만 줄고, 서버장 · 참가자가 한꺼번에 먹어도 저마다 제 가방에서 하나씩(테스트). 셈은 Food.feed · Medicine.apply_to · Drinking.sip_into 로 빼서 혼자일 때와 같다. 약의 기력은 주인이 쥐므로 st 로 실어 보낸다. 권한 없이 된다. ③ 낙하: Player.fall_report 가 있으면 높이만 알리고 서버가 FallDamage 로 깎아 곧 돌려준다. 서버장이 떨어지면 서버장 몸이 서버 것이고 참가자는 몸 소식 hp 로 본다. ④ 몸 소식에 hp · hx 와 붙은 자리 w(벽) · g(갈고리)를 실었다. 참가자 hp 는 서버가 NetBodies.overlay 로 서버 몫을 덧씌운다. VisitorBody 가 줄(손 → 갈고리) · 잡은 자리를 그리고 맞은 횟수를 센다. ⑤ 맞기: 서버장 화면의 참가자 몸에 BodyHitbox(사람 무리 — 짐승이 쫓고 문다, Health.of 는 health() 도 찾게)를 달아 서버 몫에서 사본 장비의 갑옷으로 덜어 깎는다. 처음엔 StaticBody3D 로 만들었더니 건축의 땅 찾기 광선이 참가자 몸 위를 땅으로 짚어 test_build_on_server 가 떨어졌다 — 짐승 눈은 가린 것이 없으면 보고, 무는 것은 광선 없이 친다. 사람이 사람을 맞힐 일도 없어 물리 몸이 아닌 Node3D 로 바꿨다. ⑥ 전투: Attack.ask 가 있으면 휘두르기는 (눈 · 조준 방향), 쏘기는 (총 · 총구 · 조준 · 퍼짐)을 보낸다. 서버는 권한 Acts.HUNT · 거리를 보고 맞히고(hit_with), 사본 탄창에서 한 발 빼 흩어짐을 서버 rng 로 굴려 Attack.fire 로 날린다(서버장 화면에 예광탄). 알 방향은 쏜 사람을 뺀 모두에게 보내고(_shot) 받은 기계는 그림 알(Projectile.harmless)을 날린다. 서버장이 쏜 것도 Attack.fired 로 모두에게 간다. 참가자는 쏜 순간 한 발 빼 두고 제 그림 알을 날린다 — 거절되면 그 총 탄창을 다시 보내 되돌린다. 재장전 · 탄 바꾸기도 바람. 「한 발씩」 장전(리볼버)이 한 발마다 사본 가방에서 꺼내는데 가방을 돌려주지 않아 changed 그물에서 떨어졌다 → 탄창 지문이 바뀌면 가방도 돌려주게 했다. 이것을 처음 보낼 때부터 했더니 test_bodies_seen 의 손으로 입힌 장비를 덮어써 떨어졌다 → 처음 보낼 때는 하지 않는다. ⑦ 같은 게임이면 한 팀이라(사람 결정 2026-10-14) Health.deal(by) 가 사람끼리면 0 을 준다(Health.teammates). ⑧ 죽음 · 데스 상자는 아직 각자다 — 서버 몫이 0 이면 0 을 한 번 보내 주인이 죽고 서버 몫은 곧 다시 찬다(netcode.md 에 적음). ⑨ (앞 단계 QA) 참가자 섬 알림: Villager.snapshot 에 cramped(서버가 잰 「거주지 방이 좁다」)를 싣고, Villagers._sync_alerts 가 remote 면 그림의 stalled · cramped 로 줄을 맞춘다. 판이 그림을 받을 때마다 sync_alerts 를 부른다. ENet 테스트에서 미르 기계에 멈춤 · 좁은 방 줄이 섰다가 풀리면 걷힌다. ⑩ (앞 단계 QA) NetWorld.folk() 는 지우지 않고 그 테스트에서 쓴다(서버는 주민, 참가자는 그림을 쥔다). 확인: test_body_on_server 8개 · test_folk_on_server 7개 통과, multiplayer 폴더 14개 파일 85개 통과. 마지막 changed_tests 그물은 288개 파일 2302개 통과 — 전체는 돌리지 않았다.",
+   "why": "NetVitals.PERIOD 0.1초 — 몸 상태를 훑는 주기, 몸 소식과 같게; NetVitals.NEED_STEP 0.01 · LEFT_STEP 1초 — 지문 눈금: 배고픔은 8초에 한 번 남짓 가고, 먹기 · 맞기는 곧 간다; NetVitals.MUZZLE_SLACK 4m — 쏜 자리 · 휘두른 자리가 서버가 아는 몸에서 이만큼 안이어야 그 사람 것으로 친다(눈높이 + 몸 소식 지연); 휘두르기 · 쏘기의 권한을 Acts.HUNT(사냥)로 물었다 — 짐승을 다치게 하는 일이라. 권한 단위는 netcode.md 미정(임시 묶음); 사람은 사람을 다치게 하지 않는다(Health.teammates) — 「같은 게임 안이면 한 팀」에서 끌어낸 것. 혼자일 때는 달라지는 것이 없다; VisitorBody.ROPE_WIDTH 0.04m · GRIP_SIZE 0.25m — 남에게 보이는 갈고리줄 · 잡은 자리의 임시 그림; 참가자 서버 몫이 죽으면 0 을 한 번 보내고 곧 다시 채운다 — 죽음 · 데스 상자를 서버로 옮기기 전까지",
+   "files": [
+    "game/core/net/net_vitals.gd",
+    "game/multiplayer/body_hitbox.gd",
+    "game/multiplayer/visitor_body.gd",
+    "game/core/net/net_session.gd",
+    "game/core/net/net_bodies.gd",
+    "game/core/net/net_world.gd",
+    "game/core/game_root.gd",
+    "game/combat/damage_death/health.gd",
+    "game/combat/tools_as_weapons/attack.gd",
+    "game/combat/tools_as_weapons/projectile.gd",
+    "game/player/hunger_thirst/hunger_thirst.gd",
+    "game/player/hunger_thirst/drinking.gd",
+    "game/player/movement_controls/player.gd",
+    "game/life/food/buffs.gd",
+    "game/life/food/food.gd",
+    "game/life/medicine/medicine.gd",
+    "game/automation/villagers/villager.gd",
+    "game/automation/villagers/villagers.gd",
+    "game/tests/multiplayer/body_island.gd",
+    "game/tests/multiplayer/test_body_on_server.gd",
+    "game/tests/multiplayer/test_folk_on_server.gd",
+    "spec/11_multiplayer/netcode.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "test": "ok      1s  res://tests/core/tools/test_test_totals_awk.gd\n\n================ 떨어진 파일: res://tests/multiplayer/test_body_on_server.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/multiplayer/test_body_on_server.gd\n* test_needs_buffs_and_poison_tick_on_the_server_and_come_to_the_owner\n    2 Orphans\n        * [<Node#164936812849>]\n        * [<Node#191981686383>]\n* test_eating_drinking_and_medicine_are_asked_and_done_on_the_server\n    2 Orphans\n        * [<Node#252178336728>]\n        * [<Node#225754222216>]\n* test_two_eating_the_same_food_at_once_only_one_goes\n    2 Orphans\n        * [<Node#282192776179>]\n        * [<Node#308616892920>]\n* test_falls_are_told_by_the_owner_and_cut_on_the_server\n    2 Orphans\n        * [<Node#338161568195>]\n        * [<Node#364585683832>]\n* test_others_see_where_one_holds_on_and_the_rope\n    2 Orphans\n        * [<Node#402183426138>]\n        * [<Node#428607541668>]\n* test_hits_come_off_only_on_the_server_and_others_see_them\n    3 Orphans\n        * [<Node#512325847547>]\n        * [<Node#485549411106>]\n        * [<Node#459125296456>]\n* test_swings_and_shots_are_asked_and_the_server_hits\n    [Failed]:  서버 짐승이 맞았다\n      at line 451\n    3 Orphans\n        * [<Node#597705100441>]\n        * [<Node#544504548651>]\n        * [<Node#570928665272>]\n* test_a_guest_without_the_right_cannot_hurt_and_gets_the_round_back\n    2 Orphans\n        * [<Node#713635662818>]\n        * [<Node#740059779573>]\n18 orphans\n7/8 passed.\n\n\n\n\n==============================================\n= 18 Orphans\n==============================================\ntest_body_on_server.gd\n    - test_needs_buffs_and_poison_tick_on_the_server_and_come_to_the_owner\n        * [<Node#164936812849>]\n        * [<Node#191981686383>]\n    - test_eating_drinking_and_medicine_are_asked_and_done_on_the_server\n        * [<Node#252178336728>]\n        * [<Node#225754222216>]\n    - test_two_eating_the_same_food_at_once_only_one_goes\n        * [<Node#282192776179>]\n        * [<Node#308616892920>]\n    - test_falls_are_told_by_the_owner_and_cut_on_the_server\n        * [<Node#338161568195>]\n        * [<Node#364585683832>]\n    - test_others_see_where_one_holds_on_and_the_rope\n        * [<Node#402183426138>]\n        * [<Node#428607541668>]\n    - test_hits_come_off_only_on_the_server_and_others_see_them\n        * [<Node#512325847547>]\n        * [<Node#485549411106>]\n        * [<Node#459125296456>]\n    - test_swings_and_shots_are_asked_and_the_server_hits\n        * [<Node#597705100441>]\n        * [<Node#544504548651>]\n        * [<Node#570928665272>]\n    - test_a_guest_without_the_right_cannot_hurt_and_gets_the_round_back\n        * [<Node#713635662818>]\n        * [<Node#740059779573>]\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/multiplayer/test_body_on_server.gd\n- test_swings_and_shots_are_asked_and_the_server_hits\n    [Failed]:  서버 짐승이 맞았다\n          at line 451\n\nTotals\n------\nScripts               1\nTests                 8\nPassing Tests         7\nFailing Tests         1\nAsserts           161/162\nOrphans              18\nTime              13.292s\n\n\n---- 1 failing tests ----\n\nWARNING: 18 ObjectDB instances were leaked at exit (run with `--verbose` for details).\n   at: cleanup (core/object/object.cpp:2536)\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           378\nTests            2841\nPassing Tests    2840\nFailing Tests       1\nRisky/Pending       0\nAsserts        120257\nTime           706s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/multiplayer/test_body_on_server.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
