@@ -3212,7 +3212,7 @@
   - 기준: 혼자 하기는 지금 그대로다 — 서버 없이 도는 판이 깨지지 않는다 (전체 테스트)
   - 기준: **접속은 한 곳**(예: game/net/ 의 접속 자리)에만 있다 — ENetMultiplayerPeer 를 부르는 곳이 거기 하나다. 위의 동기화 · 권한 코드는 어떤 접속인지 모른다 (테스트: 다른 곳에서 ENet 을 부르면 떨어진다)
   - 기준: (앞 단계 QA) 권한 단계에서 「도구함」 줄과 맞춰 볼 것 — spec/06_build/building.md 102줄 「도구함(건축 권한) · 부패는 나중에 — 멀티용이다 (사람 결정 2026-09-24)」가 이번 「서버장이 길드장 · 권한 UI」와 겹친다. 사람 결정 줄이라 지우지 말고, 권한 단계(report 의 14번)에서 permissions.md 에 「도구함은 권한 UI 와 어떤 관계인가」를 한 줄 적어 이어라
-- [ ] 3. Steam 로비 · 방 코드 (앱 ID 480)
+- [x] 3. Steam 로비 · 방 코드 (앱 ID 480)
   - 기준: GodotSteam(GDExtension, 쓰는 Godot 판에 맞는 것)을 넣고 앞 단계의 접속 자리에 Steam 접속(SteamMultiplayerPeer)을 더한다 — ENet 은 시험용으로 남긴다. 라이선스를 THIRD_PARTY.md 에 적는다
   - 기준: 서버장이 서버를 열면 Steam 로비가 생기고 **짧은 방 코드**(임시 6자, 헷갈리는 0/O · 1/I 빼고)가 화면에 뜬다. 참가자가 코드를 치면 그 로비를 찾아 들어온다 — 로비 찾기는 「나루 로비」 표시로 거른다(480 은 다른 개발자 로비와 같이 쓴다) (테스트: Steam 을 흉내 낸 가짜로 코드 만들기 · 거르기 · 찾기)
   - 기준: Steam 친구 목록의 「게임 참가」 · 초대로도 들어온다
@@ -3227,6 +3227,8 @@
   - 기준: 참가자와 서버장이 서로의 몸이 걷고 · 뛰고 · 웅크리는 것을 본다. 이름표가 뜬다 (테스트)
   - 기준: 든 것 · 입은 것이 남에게도 보인다 (테스트)
   - 기준: 마우스 · 카메라는 각자 제 것만 — 남의 몸이 내 입력을 받지 않는다 (guard · 테스트)
+  - 기준: (앞 단계 QA) SteamApi 의 진짜 신호 잇기는 테스트 밖이다 — core/net/steam_api.gd start() 안에서 Steam 신호(lobby_created result==1 · lobby_joined response==1/4)를 우리 신호로 바꾸는 람다는 가짜가 start() 를 덮어써 한 번도 돌지 않는다. 이름 · 인자 수는 QA 가 ClassDB 로 맞는 것을 봤지만 값 해석(ENTER_OK=1 · ENTER_FULL=4 · LOBBY_PUBLIC=2 · WORLDWIDE=3)이 GodotSteam 상수와 같은지는 지켜지지 않는다. headless 에서도 Engine.get_singleton("Steam") 이 있으니(초기화 없이) tests/core/net 에 `ClassDB.class_get_integer_constant("Steam", "LOBBY_TYPE_PUBLIC") == SteamApi.LOBBY_PUBLIC` 같은 단언을 네 상수에 대해 더하고, 신호 변환은 static 함수로 빼 단위 테스트하라
+  - 기준: (앞 단계 QA) SteamApi.set_lobby_data 가 부를 때마다 setLobbyJoinable 도 부른다 — core/net/steam_api.gd: 키 하나 적을 때마다 같은 호출이 반복된다. 로비가 섰을 때 한 번(SteamRoom._on_created 또는 create_lobby 답) 부르게 옮겨라 (동작 차이는 없다)
 - [ ] 5. 세계를 맞춘다 — 1단계 표대로 나눠 단계를 더한다
   - 기준: 1단계 표의 자리마다 단계를 이 묶음에 더한다 — 시험은 ENet 으로, 사람은 Steam 으로 친구와 본다 (채집 · 떨어진 것 · 건축 · 상자 · 시설 · 농사 · 동물 · 주민 · 시간 · 전투 · 데스 상자 …) — 한 단계 = 한 무리
   - 기준: 자리마다 「한쪽이 바꾸면 다른 쪽이 곧 같은 것을 본다」 · 「둘이 한꺼번에 같은 것을 집으면 하나만 얻는다」를 테스트로
