@@ -3111,9 +3111,11 @@
   - 기준: spec/07_automation/npc-villagers.md 에 적는다
   - 기준: (앞 단계 QA) project.godot 내비 설정 바꾼 까닭이 없다 — game/project.godot 에 [navigation] 3d/merge_rasterizer_cell_scale=0.01 을 새로 넣었는데 코드 · spec 어디에도 왜 넣었는지 · 짐승의 땅에도 걸리는지가 적혀 있지 않다(grep 해도 project.godot 한 줄뿐). 전역 지도 설정이라 짐승 길찾기에도 걸린다. FolkGround 머리 주석이나 spec/07_automation/npc-villagers.md 의 FolkGround 줄에 까닭(조각 변 꼭짓점을 잇기 위한 것인지)과 「임시」 여부를 적어라
   - 기준: (앞 단계 QA) G-217 테스트의 시작 자리를 옮겼다 — test_villager_g217_every_job.gd 의 OUT_AT 을 남동쪽 비탈 (-269,-188) 에서 (-266,-204) 평지로 옮겨 통과시켰다. 줄 놓기 자리 찾기 문제라 주석에 까닭은 적었지만, 비탈 아래에서 출발해 일을 시작하는 경우는 이제 아무 테스트도 안 본다. 옛 자리에서도 일을 시작하는지(줄 놓기 없이 r.ok 만) 보는 판을 하나 더 두는 것을 고려하라
-- [ ] 5. (앞 단계 QA) 「같은 쪽이면 앞사람보다 빨리 안 걷는다」를 보는 테스트가 없다
+- [x] 5. (앞 단계 QA) 「같은 쪽이면 앞사람보다 빨리 안 걷는다」를 보는 테스트가 없다
   - 기준: 「같은 쪽이면 앞사람보다 빨리 안 걷는다」를 보는 테스트가 없다 — spec 과 PathWalk 머리 주석이 이 갈래(_give_way 의 마지막 `if best <= AVOID_NEAR: return h * minf(...)`)를 약속하지만 test_villager_g218_give_way.gd 에는 마주 오기 · 문 · 상자만 있다. 트인 땅에서 두 주민을 1m 간격으로 같은 쪽 한 자리 근처(서로 다른 끝점)로 걷게 하고, 뒤 주민의 비빈 시간 < PRESS_LIMIT · 두 몸 가장 가까운 거리 > 몸 지름을 보는 판을 더하라
   - 기준: (앞 단계 QA) 선 몸을 돌아갈 옆이 막혔을 때의 갈래를 보는 테스트가 없다 — _give_way 의 `if not _clear(body, away, true): return Vector3.ZERO` (문구멍에 일하느라 선 주민) 는 끼임 시계로만 끝난다. 문 한가운데에 주민 하나를 세워 두고(걷지 않음) 다른 주민이 문을 지나려 할 때 밀어 비비지 않고(pressed < PRESS_LIMIT) STUCK 으로 끝나는지 보는 판을 더하라
+- [ ] 6. (앞 단계 QA) 같은 쪽 판의 pressed 단언은 그 갈래를 못 잡는다
+  - 기준: 같은 쪽 판의 pressed 단언은 그 갈래를 못 잡는다 — 같은 쪽 갈래를 `return v` 로 지워도 wb.pressed < PRESS_LIMIT 는 그대로 통과했다(거리 단언 둘만 떨어졌다). 판 전체는 거리 단언으로 지켜지니 막는 것은 아니다. test_villager_g218_give_way.gd 의 그 판 주석에 「이 갈래를 지키는 것은 거리 단언 — pressed 는 덤」이라 적어 두거나, 앞 주민을 아예 세운 채(목적지 바로 앞) 따라붙게 하는 판으로 pressed 도 걸리게 하라
 
 ## [x] G-219 배고픔은 체력을 깎고 목마름은 -30% — 바닥이어도 크게 느려지지 않는다 (사람 결정 2026-10-14)
 - 차선: 3d-start
