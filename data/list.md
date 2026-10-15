@@ -3475,7 +3475,7 @@
   - 쪼갬 (루프 2026-10-16): 「안 한 사람은 제 섬에 남아 그대로 논다」는 서버가 섬 여럿을 같이 돌려야 해서 한 회차에 못 짓는다 — 5 · 6 · 7단계로 옮겼다 (앞 회차 QA 의 제안)
   - 기준: 돌아올 때도 같은 창으로 (테스트 — 다 타면 같이 돌아온다). netcode.md:113 · 148 을 이 결정으로 고친다. 「돌아올 때 참가한 사람만(남는 사람은 개척 섬에)」은 7단계
   - 기준: (앞 단계 QA) netcode.md 에 DockBuilder 가 남았다 — spec/11_multiplayer/netcode.md 41줄 「놓는 곳(Buildings · Stations · Chests · Torches · Beds · Furnitures · ClimbGear · DockBuilder)」에서 DockBuilder 를 지워라. dock_builder.gd 는 이번 단계에서 없어졌고 같은 파일 99줄 표는 이미 고쳤다 (파일이 150줄 꽉 찼으니 줄을 늘리지 말 것)
-- [ ] 4. 다른 섬에 다녀오면 느려진다
+- [>] 4. 다른 섬에 다녀오면 느려진다 → G-225-4 로 떼었다
   - 사람이 본 것 (2026-10-16): 「선착장에 와서 다른 섬으로 오니 이동속도가 느려지는 것 같음. 그리고 다시 본섬에 돌아와도 느린느낌 배고픔이랑 목마름 100%임에도」 — 서버장인지 참가자인지는 모른다
   - 짚어 볼 곳 (짐작이다 — 재현으로 가린다): player.gd:226 속도 = base_speed(목마름 0 이면 ×0.7, hunger_thirst.gd:153) · speed_multiplier(버프) · crouch_factor · slope_factor. 섬을 건널 때 player_state.gd remember/restore(12-61)가 웅크림 · 버프를 되살린다. 참가자는 net_vitals.gd `_vitals` 469-483 이 서버 사본으로 덮는다 · `_cross` 가 섬을 지을 때마다 `_fit_body`(game_root.gd:1239-1302)가 다시 붙인다(두 번 붙어 두 번 깎이나)
   - 기준: **재현부터** — 평지에서 걸은 속도를 재고, 섬을 갔다 와서(서버장 · 참가자 둘 다, 3단계 전 길이든 뒤 길이든) 같은 자리에서 다시 잰다. 느려지면 까닭을 고치고 테스트로 남긴다. 재현이 안 되면 report 에 잰 숫자를 남기고 사람에게 서버장 · 참가자 어느 쪽이었나 묻는다
@@ -3493,6 +3493,19 @@
   - 기준: tests/multiplayer/test_dock_crew.gd 에 「셋 중 둘이 타고 출발 → 둘은 SULFUR, 솔은 HOME 에 남아 움직이고 치기가 된다」 테스트
   - 기준: 돌아올 때도 참가한 사람만 — 개척 섬에 둘이 있을 때 하나만 참가해 출발하면 그 사람만 HOME 으로 오고 다른 사람은 SULFUR 에 남는다 (test_dock_crew.gd)
   - 기준: netcode.md 표 「섬 열기 · 배」의 「남는 사람이 있으면 아직 안 떠난다(임시)」를 지운다
+
+## [>] G-225-4 다른 섬에 다녀오면 느려진다 (G-225 단계 4 에서 떼었다 — 결정을 기다린다)
+- 차선: 3d-start
+- 떼어 온 곳: G-225 단계 4 — 나머지 단계는 G-225 가 이어 한다. 하다 만 것은 브랜치 g/G-225-4
+- spec: spec/11_multiplayer/netcode.md · spec/03_world/frontier-islands.md (선착장 · 배)
+- **자가 피드백**: 찾은 것을 단계로 계속 붙인다
+- 테스트는 headless 둘(셋)을 ENet 으로 · Steam 은 가짜(fake_steam.gd)로. **사람의 Steam 을 켜거나 로그인하지 않는다**
+- [ ] 1. 다른 섬에 다녀오면 느려진다
+  - 사람이 본 것 (2026-10-16): 「선착장에 와서 다른 섬으로 오니 이동속도가 느려지는 것 같음. 그리고 다시 본섬에 돌아와도 느린느낌 배고픔이랑 목마름 100%임에도」 — 서버장인지 참가자인지는 모른다
+  - 짚어 볼 곳 (짐작이다 — 재현으로 가린다): player.gd:226 속도 = base_speed(목마름 0 이면 ×0.7, hunger_thirst.gd:153) · speed_multiplier(버프) · crouch_factor · slope_factor. 섬을 건널 때 player_state.gd remember/restore(12-61)가 웅크림 · 버프를 되살린다. 참가자는 net_vitals.gd `_vitals` 469-483 이 서버 사본으로 덮는다 · `_cross` 가 섬을 지을 때마다 `_fit_body`(game_root.gd:1239-1302)가 다시 붙인다(두 번 붙어 두 번 깎이나)
+  - 기준: **재현부터** — 평지에서 걸은 속도를 재고, 섬을 갔다 와서(서버장 · 참가자 둘 다, 3단계 전 길이든 뒤 길이든) 같은 자리에서 다시 잰다. 느려지면 까닭을 고치고 테스트로 남긴다. 재현이 안 되면 report 에 잰 숫자를 남기고 사람에게 서버장 · 참가자 어느 쪽이었나 묻는다
+  - 기준: (앞 단계 QA) sail_to 가 아직 모두를 끌고 간다 — game/core/game_root.gd sail_to(421~) 는 사람 길에서는 빠졌지만(Dock.boarded → open_dock_window) 여전히 net.members() 전부를 _sail_crew 에 넘긴다. 테스트(test_world_on_server · test_locked_island · test_autosave)만 쓰는 길이라 막는 것은 아니지만 「아무도 끌려가지 않는다」와 어긋난 공개 함수다. G-225.7 에서 막음을 걷을 때 sail_to 를 테스트 도우미로 이름을 바꾸거나 crew 를 인자로 받게 하고, 주석에 「사람 길 아님」을 적어라
+  - 기준: (앞 단계 QA) 낡은 주석 둘 — game/core/game_root.gd 844줄 _depart 주석 「(sail_to → NetWorld.sail_crew)」는 실제로는 _sail_crew 를 부른다 → 「_sail_crew → NetWorld.sail_crew」로 고쳐라. game/ui/hud/notice.gd 6줄 「(core/game_root.gd 의 sail_to)」는 잠긴 섬 알림이 이제 open_dock_window 에서 뜨므로 그 이름으로 고쳐라
 
 ## [ ] G-908 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-lane2
