@@ -3428,7 +3428,7 @@
   - 기준: 대기열 한 줄 = **물건 이름 · − · 수 칸 · + · ×** 그것뿐 (테스트: 줄의 보이는 자식이 이 다섯이다). 「유지」 글자 · 「지금 %d / 유지 %d」 · 「×N」 은 줄에 없다
   - 기준: 수 칸은 숫자를 바로 넣을 수도 있다(임시 — − · + 와 같은 change_queue_count 길). 「만드는 중 n초」 · 막힌 까닭(Why)은 줄 안 글자가 아니라 마우스를 올리면 뜨는 풀이로 옮긴다(임시)
   - **사람 결정 2026-10-16**: 「그 목록에서 유지랑 지금의 글자를 빼달라는거야. 유지라는 기능을 빼달라는게 아니라」 — 「N개 유지」 기능 · 다 채워도 줄이 남는 것은 그대로다. 이 단계는 줄의 글자 · 모양만 바꾸고 유지의 동작(crafting_station.gd · stations.gd)은 건드리지 않는다
-- [ ] 2. 「아무 연료」 → 「연료」
+- [x] 2. 「아무 연료」 → 「연료」
   - **사람 결정 2026-10-16**: 「아무연료 말고 그냥 연료 라고만 하면 될 것 같아」
   - 기준: i18n/ko.po:1157 `TAG_fuel` 을 「연료」로. en.po 는 그 뜻 그대로(Fuel). 다른 TAG_ 라벨에 「아무」가 붙은 것이 있으면 같이 뺀다 (테스트: tests/craft/recipes/test_smelter_recipes.gd:238 을 맞춘다)
   - 기준: (앞 단계 QA) 쓰지 않게 된 _set_text 가 남았다 — game/ui/hud/station_window.gd:437 static func _set_text 를 이제 아무도 부르지 않는다(grep 결과 정의뿐). 지워라
@@ -3437,6 +3437,7 @@
   - **사람 결정 2026-10-16**: 「1234567890 이거 마우스 휠로도 움직일 수 있게」
   - 지금: 휠은 R 을 누른 탄 고르기(combat/tools_as_weapons/attack.gd:168-171) · 기초 높이(build/buildings.gd:176)에만 쓴다 — core/input/input_actions.gd:30-31 「핫바는 휠을 쓰지 않는다」
   - 기준: 그 둘이 휠을 쥐지 않았을 때 휠 아래 = 다음 칸 · 위 = 앞 칸(임시), 10 ↔ 1 은 돌아간다. 탄 고르기 · 기초 높이 중에는 핫바가 안 움직인다 · 창(가방 · 시설 창 등)이 열려 있을 때도 안 움직인다 (테스트). input_actions.gd 주석과 spec 을 고친다
+  - 기준: (앞 단계 QA) 주석에 옛 갈래 이름 「아무 …」가 남았다 — 화면 글자를 가리키는 주석이 옛 라벨 그대로다. game/tests/craft/stations/test_drink_cups.gd:191 의 메시지 「갈래 이름(아무 빈 컵)으로 적힌다」 → 「(빈 컵)」, game/tests/ui/hud/test_station_window_frame_cost.gd:22 · :197 「아무 곡물」 → 「곡물」, game/tests/ui/hud/test_station_tag_inputs.gd:5 「아무 곡물 1」 → 「곡물 1」, game/tests/craft/recipes/test_smelter_recipes.gd:211 「아무 연료가 아니라」 → 「연료 갈래가 아니라」. 사람 말을 옮긴 인용(test_drink_cups.gd:4 · :99, spec)과 '어느 곡물이든' 뜻으로 쓴 _temporary 설명은 그대로 둬도 된다
 - [ ] 4. 배고픔 · 목마름이 100% 면 먹지도 마시지도 않는다
   - **사람 결정 2026-10-16**: 「음식 및 음료는 100% 상태에선 먹어지지 않게」
   - 지금: player/hunger_thirst/hunger_thirst.gd:128-141 eat · drink 는 1.0 으로 자르기만 한다 — 가득이어도 food.gd `eat_from()` 60-68 이 물건을 먼저 bag.take 하고, drinking.gd `_sip()` 74-84 · 물가 마시기(96) · 컵(107)도 그대로 쓴다. 서버 길(core/net/net_vitals.gd:322-324 · 358-359 · 366-372)도 같다
