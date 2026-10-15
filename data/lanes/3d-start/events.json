@@ -1,56 +1,5 @@
 [
  {
-  "time": "2026-10-12 00:12:58",
-  "epoch": 1791731578,
-  "type": "pass",
-  "title": "통과 — G-992 단계 2 (villager.gd (629줄) 를 다듬는다)",
-  "group": "G-992",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "villager.gd 다듬기: 겹친 코드 다섯 자리를 _folk_bodies · _doors · _in_lane · _halt_work · _spot · _on_beat 로 모았다. 긴 함수 둘(_physics_process · thread_path)은 _refresh_fit · _straight_crossings 로 쪼갰다. 죽은 strolling() 을 지우고 낡은 주석 둘을 고쳤다. 바뀐 곳만 37개 파일 223/223 통과 (앞뒤 같다)",
-   "approach": "villager.gd 629줄을 다 읽고 그 자리에서 고쳤다. 겉 행동은 그대로다. 새로 넣은 이름은 다 `_` 로 시작하고, 지운 공개 이름은 strolling() 하나다 (아래 참고).\n\n| 종류 | 자리 | 무엇 | 어떻게 고쳤나 |\n|---|---|---|---|\n| 겹침 | in_reach · reaches_from | 「주민 무리의 몸 RID 모으기」 네 줄이 두 번 있었다 | _folk_bodies() 로 모았다. in_reach 몸통에 Aim.reaches( 는 그대로 있다 (test_villager_reach 가 소스를 본다) |\n| 겹침 | thread_path · _mind_doors | Placeable 무리에서 문(BuildPiece, kind door)을 훑는 고리가 두 번 있었다 | _doors() 로 모았다 (무리 차례도 같다) |\n| 겹침 | _lane_door · _crosses_after | 「문구멍 둘레인가(문 폭/2+0.2 · DOOR_LANE)」 판정이 글자 그대로 두 번 있었다 | _in_lane(lane) 으로 모았다 |\n| 겹침 | assign · lose_home · stall · _physics_process | 「work() 가 있으면 halt()」 세 줄이 네 번 있었다 | _halt_work() 로 모았다. work() 를 부르는 때와 횟수는 같다 |\n| 겹침 | stall · to_dict | `global_position if is_inside_tree() else position` 이 두 번 있었다 | _spot() 으로 모았다 |\n| 겹침 | _physics_process | `(physics_frames + instance_id) % N == 0` 이 READY_FRAMES · DOOR_FRAMES 로 두 번 있었다 | _on_beat(every) 로 모았다 |\n| 긴 함수 | _physics_process (23줄) | 일할 수 있나 다시 묻기 · 멈춤 풀기가 움직임 계산과 한 몸에 섞여 있었다 | _refresh_fit() 로 뺐다 (순서 그대로: _fit_stale 끄기 → unstall → why_idle → 멈추기) |\n| 긴 함수 | thread_path (31줄) | 안쪽에 「모서리 없이 문구멍을 곧장 지나는 문」 고리가 하나 더 겹쳐 있었다 | _straight_crossings(doors, through, a, b) 로 뺐다. a 는 그 고리 동안 바뀌지 않아 같은 점이 같은 차례로 들어간다 |\n| 죽은 코드 | strolling() | 부르는 곳이 없다. 3d-start · 3d-lane2 두 차선을 git grep 으로 다 보았고, 테스트에서도 spec 에서도 안 부른다 | 지웠다. 공개 이름이지만 어느 차선에서도 안 불러서 경계를 넘지 않는다 |\n| 낡은 주석 | 머리말 11줄 | 나무꾼 · 광부를 「GatherWork」라 적었다. 실제로는 HarvestWork(GatherWork 를 잇는다)다 | HarvestWork 로 고쳤다 |\n| 낡은 주석 | recheck · _fit_stale | 「거주지를 바꿨을 때」만 적혀 있었다. 실제로는 lose_home · stall · unstall 도 부른다 | 부르는 때를 다 적었다 |\n\n**괜찮다고 본 것**: 머리말의 나머지 줄을 하나씩 맞춰 보았다. 스텟 · 수면이 움직이는 규칙은 아직 없고 (ui_shots 만 값을 넣는다), 이름표는 Villagers.show_tag 가 켜고 끄고, PathWalk 는 core/path_walk.gd 에 있다. 저장 주석(work 줄이 늘 안 생긴다)은 save_state 가 JobWork 의 빈 틀뿐이라 맞다. 다른 공개 함수는 다 밖이나 테스트에서 부른다. works() 는 settle_in 에서만 쓰지만 공개 이름이라 두었다.\n\n**참고 항목: in_reach · _mind_doors · _physics_process 가 매 프레임 겹치나** — 셋은 겹치지 않는다. _mind_doors 는 DOOR_FRAMES(4)마다 문만 훑고, in_reach 는 일이 물을 때만 몸 목록을 모은다. 손으로 하던 것을 이번에 _doors · _folk_bodies 로 모았다. 매 프레임 하는 일 가운데 무거운 것은 이 파일 밖에 있다 — 아래 옆 파일 참고.\n\n**옆 파일에서 눈에 걸린 것 (고치지 않았다)**:\n1. villagers.gd ground_ready 는 _fit 인 주민마다 **매 물리 프레임** 불린다 (villager.gd _physics_process). 그때마다 home_room · room_center · _navs_at(자식 훑기)을 하고, GROUND_IN 메타를 본 뒤에야 끝난다. 프레임 몫이 크면 villagers.gd 쪽에서 들었다는 표를 주민마다 기억해 두는 것을 볼 만하다.\n2. villagers.gd set_home 에도 「v.work() 가 있으면 halt()」 세 줄이 있다. villager 의 _halt_work 와 같은 일인데, 공개 이름을 하나 더 만들어야 모을 수 있어 두었다.\n\n**경계를 넘는 것**: 없다.\n\n**테스트**: changed_tests.py 가 고른 그물(37개 파일)을 같은 목록으로 두 번 돌렸다. 고치기 전(원본 파일을 잠시 되돌려서)은 223/223 통과 · Asserts 5089, 고친 뒤도 223/223 통과 · Asserts 5089 다. 로그에 villager.gd 의 오류 · 경고는 없다. 테스트 파일은 손대지 않았고, 새 테스트도 짜지 않았다 (행동이 그대로여야 하는 단계라 이미 있는 그물이 그것을 본다). **전체 스위트는 돌리지 않았다** — 묶음 마지막 단계에서 루프가 돌린다. 그래서 「전체 통과 개수」의 앞뒤 숫자는 이 그물 숫자(223 → 223)다. 앞 단계 report 의 숫자(36개 파일 · 227)와는 다른데, 그물이 이번에 바뀐 파일을 보고 따로 고르기 때문이다. 하나씩 무엇이 다른지는 맞춰 보지 않았다.",
-   "why": "",
-   "files": [
-    "game/automation/villagers/villager.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "이 파일에서 **겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석**을 찾아 report 에 표로 적고, **그 자리에서 고친다** (찾아만 두지 않는다)",
-     "evidence": "report how 에 11줄 표(겹침 6 · 긴 함수 2 · 죽은 코드 1 · 낡은 주석 2)가 있고 git diff 에 전부 반영됐다. 하나씩 대조했다: _halt_work(assign·lose_home·stall·_refresh_fit) 은 원래 work()!=null→halt() 와 같고, assign 에서 job 을 바꾸기 전에 부르는 순서도 같다. _refresh_fit 은 원래 순서(unstall → why_idle → _fit 이면 halt → _fit=ok) 그대로. _straight_crossings 는 a·through 가 고리 동안 안 바뀌어 같은 점이 같은 차례로 들어간다. _doors() 는 `n is BuildPiece` 거르기로 _mind_doors 의 `as`+null 거르기와 같다. _in_lane · _spot · _on_beat · _folk_bodies 는 글자 그대로 모은 것이다. 지운 strolling() 은 git grep 으로 모든 로컬 브랜치(3d-start · 3d-lane2 · g/*)와 naru-lane2 워킹트리에서 부르는 곳이 없음을 확인했다. 주석 고침(HarvestWork · recheck 부르는 때)도 맞다"
-    },
-    {
-     "ok": true,
-     "criterion": "**고칠 것이 없으면 없다고 적는다** — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다",
-     "evidence": "report 「괜찮다고 본 것」에 머리말 나머지 줄 · 저장 주석 · works() 를 둔 까닭 · 참고 항목(in_reach · _mind_doors · _physics_process 매 프레임 겹침 없음)을 까닭과 함께 적었다"
-    },
-    {
-     "ok": true,
-     "criterion": "**전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다",
-     "evidence": "report 에 앞 223/223 · Asserts 5089 → 뒤 223/223 · Asserts 5089 (원본으로 되돌려 같은 그물을 두 번). 루프의 test.log(바뀐 곳만 39개 파일) 는 253/253 통과 · 실패 0. 전체 스위트는 묶음 마지막 단계에서 루프가 돌린다 — 1단계와 같은 방식"
-    },
-    {
-     "ok": true,
-     "criterion": "이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)",
-     "evidence": ".loop/out/test.log: villagers 테스트 33개 + bed · path_walk · villager_window · ui_shots 등 39개 파일 253/253 통과, guard 통과. test_villager_reach(소스에 Aim.reaches( 가 in_reach 몸통에 있나 봄)도 통과. 테스트 파일은 바뀌지 않았다(git diff 에 villager.gd · current.md 뿐)"
-    }
-   ],
-   "issues": [
-    "문을 곧장 지나는 길을 지키는 테스트가 없다 — QA 가 thread_path 의 `out.append_array(_straight_crossings(doors, through, a, b))` 줄을 `pass` 로 바꿔 TEST_DIR=res://tests/automation/villagers 를 돌렸더니 175/175 가 그대로 통과했다 (되돌렸다). 모서리 없이 문구멍을 가로지르는 길(a·b 가 둘 다 DOOR_LANE 밖, 선분이 문 폭/2+0.5 안을 지남)에 thread_path 가 _door_points 두 점을 넣는지 보는 테스트를 tests/automation/villagers/ 에 짜라 — 문 하나를 놓고 path=[문 앞 2m, 문 뒤 2m] 을 넣어 결과가 4점이고 가운데 둘이 문 한가운데 줄(_door_lane x≈0)에 있는지 단언",
-    "villagers.gd ground_ready 가 매 물리 프레임 불린다 — villager.gd _physics_process 가 _fit 인 주민마다 매 틱 _island.ground_ready(self) 를 부르고, 그때마다 home_room · room_center · _navs_at(자식 훑기)를 한 뒤 GROUND_IN 메타를 본다 (구현 report 의 옆 파일 지적 1). villagers.gd 쪽에서 땅이 들었음을 주민마다 기억해 두고 바로 true 를 돌려주게 다듬어라 — 겉 행동은 같아야 한다",
-    "villagers.gd set_home 의 halt 세 줄이 villager._halt_work 와 겹친다 — set_home 안 `var w := v.work(); if w != null: w.halt()` 는 villager.gd 의 _halt_work 와 같은 일이다. 모으려면 villager 에 공개 이름이 하나 필요하다 (부르는 쪽이 이 묶음 파일뿐인지 보고, 아니면 G-994 로)"
-   ],
-   "good": []
-  },
-  "test": "--- 바뀐 곳만: 39 개 ---\ntest.sh: 파일 39 개를 6 개씩 한꺼번에 돌린다\nok     34s  res://tests/automation/villagers/test_villager_chests_full.gd\nok     37s  res://tests/automation/villagers/test_villager_farm_cycle.gd\nok     40s  res://tests/automation/villagers/test_villager_no_straight.gd\nok     58s  res://tests/automation/villagers/test_villager_stairs.gd\nok     22s  res://tests/automation/villagers/test_villager_can_churn.gd\nok     30s  res://tests/automation/villagers/test_villager.gd\nok     33s  res://tests/automation/villagers/test_villager_watering.gd\nok     74s  res://tests/automation/villagers/test_villager_gathering.gd\nok     23s  res://tests/automation/villagers/test_villager_chest_saved_room.gd\nok     17s  res://tests/automation/villagers/test_villager_room_doors.gd\nok     22s  res://tests/automation/villagers/test_villager_chest_shared.gd\nok     21s  res://tests/automation/villagers/test_villager_harvesting.gd\nok     19s  res://tests/automation/villagers/test_villager_walks_in.gd\nok     93s  res://tests/automation/villagers/test_villager_chest_wall.gd\nok     18s  res://tests/automation/villagers/test_villager_blind_spots.gd\nok     17s  res://tests/automation/villagers/test_villager_many_fields.gd\nok     17s  res://tests/automation/villagers/test_villager_jobs.gd\nok     15s  res://tests/automation/villagers/test_villager_planting.gd\nok     13s  res://tests/automation/villagers/test_villager_as_built.gd\nok     14s  res://tests/automation/villagers/test_villager_reach.gd\nok      9s  res://tests/automation/villagers/test_villager_hands_room.gd\nok      9s  res://tests/automation/villagers/test_villager_door_close.gd\nok     13s  res://tests/automation/villagers/test_villager_as_played.gd\nok     10s  res://tests/automation/villagers/test_villager_home.gd\nok      3s  res://tests/automation/villagers/test_villager_chest_detour.gd\nok      8s  res://tests/automation/villagers/test_villager_torch_detour.gd\nok      5s  res://tests/ui/layout/test_window_layout.gd\nok      3s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      3s  res://tests/build/test_bed.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok     10s  res://tests/core/debug/test_ui_shots.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      2s  res://tests/automation/villagers/test_villager_door.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      0s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            39\nTests             253\nPassing Tests     253\nFailing Tests       0\nRisky/Pending       0\nAsserts          5315\nTime           118s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "6ef7484c"
- },
- {
   "time": "2026-10-12 00:26:28",
   "epoch": 1791732388,
   "type": "pass",
@@ -10224,5 +10173,68 @@
   },
   "test": "tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           315\nTests            2444\nPassing Tests    2444\nFailing Tests       0\nRisky/Pending       0\nAsserts         76832\nTime           669s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "cac87568"
+ },
+ {
+  "time": "2026-10-16 04:25:16",
+  "epoch": 1792092316,
+  "type": "pass",
+  "title": "통과 — G-225 단계 7 (섬 여럿 ④ — 「다 타야 떠난다」 막음을 걷는다)",
+  "group": "G-225",
+  "step": "7",
+  "attempt": "1",
+  "report": {
+   "problem": "선착장 출발 때 참가한 사람만 건너가고 안 한 사람은 제 섬에 남는다 — 「다 타야 떠난다」 막음(CREW_SPLIT_NOTICE · DOCK_ALL_MUST_BOARD)을 걷었다. 바뀐 곳에 걸린 195개 파일 1522개 테스트 통과",
+   "approach": "GameRoot._depart 가 섬에 남는 사람이 있으면 CREW_SPLIT_NOTICE 를 띄우고 멈췄다. 이 막음을 지우고, _sail_crew 를 「탄 사람의 자리(_places)를 먼저 적고 → 서버장이 탔으면 서버장 기계가 건너가고(_cross), 안 탔으면 _fit_islands 로 갈 섬을 멀리 세우고 빈 섬은 내린 뒤 → 그 월드를 실어 탄 참가자만 건너게(sail_crew)」로 바꿨다. 출발하면 그 배 명단만 비운다(clear_all → clear). 서버장이 곧장 타는 sail_to 는 이제 crew 에 Acts.ME 를 넣는다(안 넣으니 서버장이 안 건너가 test_islands_afar 가 떨어졌다). 테스트: 셋 중 둘이 타면 둘은 SULFUR, 솔은 HOME 에 남아 움직이면 서버가 멀리 선 HOME 세계에서 자리를 받고, 솔이 친 바위는 서버의 HOME 바위에서 깎인다. 돌아올 때 미르만 타면 미르만 HOME 으로 오고 서버장은 SULFUR 에 남으며 서버 명단 · 미르 places · 섬별 맞추기 받는 사람이 맞는다. test_islands_split 의 _split 은 서버 속을 직접 부르지 않고 미르가 선착장 창에서 참가 · 출발한다. netcode.md 의 「남는 사람이 있으면 아직 안 떠난다(임시)」를 지우고 단계 ④를 걷었다로 고쳤으며, 줄 둘을 합쳐 148줄로 여유를 냈다.",
+   "why": "",
+   "files": [
+    "game/core/game_root.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/multiplayer/test_dock_crew.gd",
+    "game/tests/multiplayer/test_islands_split.gd",
+    "game/tests/multiplayer/test_islands_afar.gd",
+    "spec/11_multiplayer/netcode.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "출발하면 **참가한 사람만** 그 섬으로 간다 — 안 한 사람은 제 섬에 남아 그대로 논다. GameRoot `CREW_SPLIT_NOTICE` 와 그 번역 키를 걷는다",
+     "evidence": "game_root.gd _depart 에서 here/crew 비교 막음과 CREW_SPLIT_NOTICE 상수가 지워지고 _crew.clear(to_island) 로 그 배 명단만 비운다. _sail_crew 는 서버장이 탔을 때만 _cross, 아니면 _fit_islands. ko.po · en.po 의 DOCK_ALL_MUST_BOARD 가 지워졌고 game/ · spec/ 어디에도 CREW_SPLIT · DOCK_ALL_MUST_BOARD 가 남지 않았다(grep)"
+    },
+    {
+     "ok": true,
+     "criterion": "tests/multiplayer/test_dock_crew.gd 에 「셋 중 둘이 타고 출발 → 둘은 SULFUR, 솔은 HOME 에 남아 움직이고 치기가 된다」 테스트",
+     "evidence": "test_two_of_three_sail_and_the_third_stays_and_plays — 서버장 · 미르가 창에서 참가, 미르가 출발. host/mir island_id == SULFUR, sol island_id == HOME, 서버 island_of 둘 다 확인, 솔 자리를 서버가 HOME 세계에서 받고(_where_is, 몸이 HOME 세계 아래), 솔이 친 바위가 서버의 멀리 선 HOME 에서 150→125 로 깎이고 SULFUR 바위는 150 그대로. 막음이 있으면 출발 자체가 안 되어 첫 wait_until 에서 떨어진다. 전체 실행 test.log 170행 ok"
+    },
+    {
+     "ok": true,
+     "criterion": "돌아올 때도 참가한 사람만 — 개척 섬에 둘이 있을 때 하나만 참가해 출발하면 그 사람만 HOME 으로 오고 다른 사람은 SULFUR 에 남는다 (test_dock_crew.gd)",
+     "evidence": "test_only_the_crew_comes_back — 둘이 SULFUR 로 간 뒤(HOME 은 내려짐 확인) 미르만 돌아가는 배에 참가 · 출발. 미르 island_id == HOME · 선착장 곁, 서버장 island_id == SULFUR, 서버 island_of 맞음, HOME 이 멀리 다시 섬, places 일치, SULFUR/HOME 섬별 NetWorld 의 _members 가 미르를 옮겨 받는다. 서버장이 안 탄 배의 _fit_islands 길을 진짜로 탄다"
+    },
+    {
+     "ok": true,
+     "criterion": "netcode.md 표 「섬 열기 · 배」의 「남는 사람이 있으면 아직 안 떠난다(임시)」를 지운다",
+     "evidence": "표 줄이 「안 탄 사람은 제 섬에 남는다(「섬 여럿」)」로 바뀌었고 net_world 설명 줄 · 단계 ④ 줄도 맞게 고쳐졌다. 사람 결정 줄(2026-10-14 · 10-15 · 10-16)은 그대로다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) test_islands_split 의 _split 이 서버 속을 직접 부른다 — host.set_island_of · everywhere().sail_crew · _world_for_guest() 로 미르만 건너게 한다. G-225.7 에서 「다 타야」 막음을 걷으면 이 테스트의 _split 을 선착장 창(사람이 여는 길)으로 바꿔 진짜 길로 갈리게 하라",
+     "evidence": "_split 이 set_island_of · sail_crew 직접 호출을 버리고 미르가 dock.board() → 창의 join_button → depart_button 을 눌러 건너간다. 서버 crew_rows 에 미르 하나만 탄 것과 서버장이 HOME 에 남은 것을 단언한다. test.log 153행 ok"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) spec netcode.md 가 딱 150줄이다 — 한 줄만 더 붙어도 넘는다. G-225.7 에서 「섬 여럿」 단계 줄(①~④)을 붙일 때 다른 곳을 줄이거나 나누어라",
+     "evidence": "wc -l 148줄. 목적 절을 한 줄로 합치고 배 설명 두 줄을 합쳐 여유를 냈다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": " res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/life/medicine/test_medicine.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           395\nTests            2928\nPassing Tests    2928\nFailing Tests       0\nRisky/Pending       0\nAsserts        125052\nTime           806s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "4f3e1a52"
  }
 ]
