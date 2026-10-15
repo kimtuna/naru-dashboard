@@ -3362,7 +3362,7 @@
   - 기준: 서버장(혼자) 화면의 주민도 프레임마다 자리를 재어 뚝 끊기는 데가 있나 본다 — 있으면 고치고 없으면 report 에 「서버장 화면은 안 끊긴다」로 적는다
   - 기준: (앞 단계 QA) test_body_on_server 가 한 번 떨어졌다 — 흔들리는 테스트로 보인다. QA 가 tests/multiplayer 폴더를 두 번 돌렸는데 첫 판(game_root.gd 의 _shut_server 에서 set_room("") 한 줄만 바꾼 상태, 이 테스트는 그 함수를 안 지난다)에서 「미르가 서버장이 붙은 자리를 본다」가 떨어졌고, 되돌린 뒤 둘째 판과 전체 판에서는 통과했다. game/tests/multiplayer/test_body_on_server.gd 의 그 단언이 고정 프레임 · 시간을 기다리는지 보고, Sides.wait_until 로 조건을 기다리게 바꿔라
   - 기준: (앞 단계 QA) 저장 단언이 지어낸 키를 본다 — test_server_from_game.gd 의 `to_dict().has("server")` 는 아무도 쓰지 않는 키 이름이라 늘 참이다. 그 테스트의 뜻은 다음 단언(다시 들어오면 server_open() false)이 지키니 이 줄은 지우거나, 저장한 월드 dict 가 켜기 전 dict 와 키 목록이 같다는 단언으로 바꿔라
-- [ ] 6. Steam — 끌 때 충돌 · 「접속하는 중」이 끝나지 않는다
+- [x] 6. Steam — 끌 때 충돌 · 「접속하는 중」이 끝나지 않는다
   - 사람이 본 것 (2026-10-15): 참가한 맥에서 창을 X 로 끄면 macOS 충돌 보고(EXC_BAD_ACCESS, `recursive_mutex::lock` ← libgodotsteam). 그 전 한 번은 방을 찾은 뒤 「접속하는 중…」만 계속 떴다(재현 못 함 — 다음 시도에서는 붙었다)
   - 이 세션이 잰 것: 진짜 Steam 으로 **참가자가 붙은 뒤 끄면 매번** 충돌한다(peer.close() 를 불러도). 서버만 연 판 · 붙지 않은 판은 끌 때 멀쩡하다. 붙는 데는 3~8초 걸렸다
   - 기준: 끄는 길(창 X · 메뉴의 끝내기 · 판에서 나가기)이 모두 한 곳을 지난다 — Steam 판이면 접속을 닫고 · `multiplayer_peer` 를 비우고 · 로비에서 나가고 · `steamShutdown` 을 부른 **뒤** 엔진을 끈다 (창 X 는 `auto_accept_quit` 를 끄고 닫기 요청을 받아서). 차례는 가짜 Steam 으로 테스트한다 — 충돌이 사라졌는지는 사람이 본다
