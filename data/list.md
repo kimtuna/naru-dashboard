@@ -3521,7 +3521,7 @@
 - [x] 1. 번역 키 STATION_QUEUE_HAVE 가 짝 없이 남았다 (G-224 단계 1)
   - 기준: 번역 키 STATION_QUEUE_HAVE 가 짝 없이 남았다 — 「지금 %d / 유지 %d」 글자를 쓰는 곳이 없어졌는데 game/i18n/ko.po:1207 · en.po:1207 에 남아 있다. 두 po 에서 지워라 (test_station_keep_window 의 번역 검사 목록에서는 이미 뺐다)
 
-## [ ] G-226 최적화 — 섬 만들기 · 그리기 · 한 프레임 (동작은 그대로)
+## [x] G-226 최적화 — 섬 만들기 · 그리기 · 한 프레임 (동작은 그대로)
 - 차선: 3d-lane2
 - **사람 결정 2026-10-16**: 「맵생성이나 멀티플레이나 모든 부분에서 최적화 해줄 수 있어 ? 기능적인거 많이 건들이는거 말고」 — 멀티 쪽은 G-227(차선 3d-start, G-225 뒤)
 - **건드리지 않는 곳**: core/net/ · multiplayer/ · core/game_root.gd · world/frontier_islands/ — G-225 · G-227 이 쥔다. 여기서 찾은 것은 report 에 적어 G-227 에 단계로 붙인다
