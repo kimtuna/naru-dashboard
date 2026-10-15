@@ -3554,7 +3554,7 @@
   - 기준: (앞 단계 QA) 섬 위 건물 조각 검사가 상수와만 견준다 — tests/core/test_far_cull.gd test_on_the_island_built_pieces_are_not_shorter_than_trees 는 assert_gte(…, FarCull.BUILDING) 이라 BUILDING 을 0 으로 낮춰도 그대로 통과한다(QA 가 깨 봄). 지금은 옆 단위 검사가 BUILDING == ResourceView.RANGE["pine"] 을 묶어 지키니 막히지는 않는다. 상수 대신 ResourceView.RANGE["pine"] 과 견주게 바꿔라
   - 기준: (앞 단계 QA) 작물이 자랄 때 다시 재는 검사가 없다 — life/farming/crops.gd:723 의 FarCull.refresh(plant_node) 를 지워도 떨어지는 검사가 없다. tests/core/test_far_cull.gd 에 섬에 작물을 심고 단계를 올린 뒤 plant_node.visibility_range_end 가 새 크기의 FarCull.range_for 와 같은지 단언을 더하라
 
-## [ ] G-227 최적화 — 멀티 · 주민 · 몹 (동작은 그대로)
+## [x] G-227 최적화 — 멀티 · 주민 · 몹 (동작은 그대로)
 - 차선: 3d-start
 - 순서: G-225 뒤 — 섬 여럿을 같이 돌리는 것이 들어간 다음에 잰다
 - **사람 결정 2026-10-16**: 「맵생성이나 멀티플레이나 모든 부분에서 최적화 해줄 수 있어 ? 기능적인거 많이 건들이는거 말고」
