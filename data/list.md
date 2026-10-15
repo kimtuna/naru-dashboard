@@ -3328,7 +3328,7 @@
 - [x] 1. 스킬체크 테스트가 private 를 만진다 (G-221 단계 8)
   - 기준: 스킬체크 테스트가 private 를 만진다 — test_the_guest_skill_check_… 가 g._herb 를 직접 넣는다(조준점 대신). Gathering 에 테스트용 open(herb) 같은 길이 있으면 그것을 쓰고, 없으면 기존 gathering 테스트처럼 조준으로 여는 길을 쓰는 편이 Gathering 속이 바뀌어도 깨지지 않는다
 
-## [ ] G-222 멀티 시험에서 본 것 — 참가자 배고픔 0 · 외형 · 권한 칸 · 게임 중 서버 열기 · Steam 끄기 충돌 (사람이 친구와 해 보고 2026-10-15)
+## [x] G-222 멀티 시험에서 본 것 — 참가자 배고픔 0 · 외형 · 권한 칸 · 게임 중 서버 열기 · Steam 끄기 충돌 (사람이 친구와 해 보고 2026-10-15)
 - 차선: 3d-start
 - spec: spec/11_multiplayer/ (netcode · permissions · listen-server) · spec/01_settings/world-settings.md
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다
