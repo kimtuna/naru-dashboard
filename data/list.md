@@ -3462,7 +3462,7 @@
   - 지금(이 세션이 잼): 서버가 사라지면 net_session.gd `_on_server_gone` 411 → `_end` 416-422 → leave(deferred, peer.close · multiplayer_peer=null · leaveLobby) → game_root.gd `_leave_to_main_menu` 941-957. steamShutdown 은 그 뒤 AppQuit.finish(core/app_quit.gd:27-32) 에서만. 로비를 떠난 것을 받는 Steam 신호(lobby_chat_update)는 안 잇는다(steam_api.gd:59-62)
   - 기준: **재현부터** — 가짜 Steam 으로 서버장이 사라진 뒤 참가자가 메뉴로 나가고 · 끄는 길(창 X · Cmd+Q = NSApplication terminate · 메뉴 끝내기) 셋을 테스트로 밟고, 그 길에서 SteamMultiplayerPeer · 로비 · 콜백이 steamShutdown 보다 **먼저** 다 풀리는지(남은 참조 0) 본다. Cmd+Q 가 AppQuit 길을 타는지 본다
   - 기준: 서버장이 끄든 튕기든 참가자는 「서버가 닫혔다」를 보고 메뉴로 나가고, 그 뒤 어떤 길로 꺼도 충돌 보고서가 생기지 않는다 — 고친 판은 사람이 맥에서 다시 본다 (사람 확인)
-- [ ] 2. 집 섬 선착장은 만들지 않고 정해진 한 곳에 있다
+- [x] 2. 집 섬 선착장은 만들지 않고 정해진 한 곳에 있다
   - **사람 결정 2026-10-16**: 「선착장을 만드는거 말고 한곳에 지정해야 할 것 같음」
   - 지금: 집 섬 선착장은 작업대 레시피(craft/recipes/workbench.json:765-769)로 만들어 world/frontier_islands/dock_builder.gd 로 물가에 놓는다(기둥을 치면 부서진다, 172). 개척 섬 선착장은 지도에 박혀 있다(islands.json `dock_prebuilt`)
   - 기준: 집 섬에도 개척 섬처럼 선착장이 **처음부터 한 곳**에 박혀 있다(못 부순다). 자리는 사람이 아직 안 정했다 — 처음 나는 자리 가까운 물가(임시)로 하고 spec 에 「임시」로 적는다
@@ -3473,6 +3473,7 @@
   - 기준: 우클릭하면 바로 건너가지 않고 **선착장 창**이 열린다 — 갈 섬 · 「참가」/「빠지기」 · 참가한 사람 목록 · 「출발」. 서버장 · 참가자 누구나 참가하고 출발을 누를 수 있다(임시 — 누가 출발을 누르나는 사람이 안 정했다). 같은 선착장의 창을 연 사람끼리 목록이 같이 바뀐다 (테스트: 셋이 붙어 둘만 참가)
   - 기준: 출발하면 **참가한 사람만** 그 섬으로 간다 — 안 한 사람은 제 섬에 남아 그대로 논다. 그러려면 서버가 섬 여럿을 같이 돌려야 한다(사람이 서로 다른 섬에 있다) — 섬마다 누가 있나 · 그 섬의 몹 · 주민 · 시설이 그 섬에 사람이 없어도 어떻게 되나는 루프가 netcode.md 에 적고 단계로 나눈다(크면 이 단계를 쪼갠다). 섬을 열 권한은 묻지 않는다(G-222.3)
   - 기준: 돌아올 때도 같은 창으로 · 참가한 사람만 (테스트). netcode.md:113 · 148 을 이 결정으로 고친다
+  - 기준: (앞 단계 QA) netcode.md 에 DockBuilder 가 남았다 — spec/11_multiplayer/netcode.md 41줄 「놓는 곳(Buildings · Stations · Chests · Torches · Beds · Furnitures · ClimbGear · DockBuilder)」에서 DockBuilder 를 지워라. dock_builder.gd 는 이번 단계에서 없어졌고 같은 파일 99줄 표는 이미 고쳤다 (파일이 150줄 꽉 찼으니 줄을 늘리지 말 것)
 - [ ] 4. 다른 섬에 다녀오면 느려진다
   - 사람이 본 것 (2026-10-16): 「선착장에 와서 다른 섬으로 오니 이동속도가 느려지는 것 같음. 그리고 다시 본섬에 돌아와도 느린느낌 배고픔이랑 목마름 100%임에도」 — 서버장인지 참가자인지는 모른다
   - 짚어 볼 곳 (짐작이다 — 재현으로 가린다): player.gd:226 속도 = base_speed(목마름 0 이면 ×0.7, hunger_thirst.gd:153) · speed_multiplier(버프) · crouch_factor · slope_factor. 섬을 건널 때 player_state.gd remember/restore(12-61)가 웅크림 · 버프를 되살린다. 참가자는 net_vitals.gd `_vitals` 469-483 이 서버 사본으로 덮는다 · `_cross` 가 섬을 지을 때마다 `_fit_body`(game_root.gd:1239-1302)가 다시 붙인다(두 번 붙어 두 번 깎이나)
