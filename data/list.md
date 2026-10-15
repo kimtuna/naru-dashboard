@@ -3433,7 +3433,7 @@
   - 기준: i18n/ko.po:1157 `TAG_fuel` 을 「연료」로. en.po 는 그 뜻 그대로(Fuel). 다른 TAG_ 라벨에 「아무」가 붙은 것이 있으면 같이 뺀다 (테스트: tests/craft/recipes/test_smelter_recipes.gd:238 을 맞춘다)
   - 기준: (앞 단계 QA) 쓰지 않게 된 _set_text 가 남았다 — game/ui/hud/station_window.gd:437 static func _set_text 를 이제 아무도 부르지 않는다(grep 결과 정의뿐). 지워라
   - 기준: (앞 단계 QA) 쓰지 않는 테마 갈래 QueueWhy · QueueDoing — game/ui/theme/naru_theme.tres:87-90 의 QueueWhy(들여 쓰기 stylebox queue_why) · QueueDoing(초록 글자)은 Why · Doing 라벨이 사라져 쓰는 곳이 없다. 두 갈래와 SubResource("queue_why")를 지우고, 이 갈래를 보는 테스트가 있으면 함께 정리하라
-- [ ] 3. 핫바 1~0 을 마우스 휠로도 고른다
+- [x] 3. 핫바 1~0 을 마우스 휠로도 고른다
   - **사람 결정 2026-10-16**: 「1234567890 이거 마우스 휠로도 움직일 수 있게」
   - 지금: 휠은 R 을 누른 탄 고르기(combat/tools_as_weapons/attack.gd:168-171) · 기초 높이(build/buildings.gd:176)에만 쓴다 — core/input/input_actions.gd:30-31 「핫바는 휠을 쓰지 않는다」
   - 기준: 그 둘이 휠을 쥐지 않았을 때 휠 아래 = 다음 칸 · 위 = 앞 칸(임시), 10 ↔ 1 은 돌아간다. 탄 고르기 · 기초 높이 중에는 핫바가 안 움직인다 · 창(가방 · 시설 창 등)이 열려 있을 때도 안 움직인다 (테스트). input_actions.gd 주석과 spec 을 고친다
@@ -3492,6 +3492,14 @@
 - **건드리지 않는 곳**: core/net/ · multiplayer/ · core/game_root.gd · world/frontier_islands/ — G-225 · G-227 이 쥔다. 여기서 찾은 것은 report 에 적어 G-227 에 단계로 붙인다
 - **동작 · 보기는 그대로** — 보이는 거리 · 그림자 · 풀 밀도 같은 화질 값을 낮추는 것은 최적화가 아니다(사람이 안 정했다 — 낮추고 싶으면 제안으로 report 에). 같은 시드는 같은 섬 · 같은 자원 자리를 낸다
 - **자가 피드백**: 잰 숫자에서 큰 것부터 단계로 붙인다. 한 단계 = 한 곳 · 전후 숫자
+- 웹에서 찾은 기법 (이 세션이 2026-10-16 찾고 코드와 맞대 봄 — 사람 요청 「최신 최적화 기법을 웹에서 찾아보고 적용 할만한 것들을 가져와보자」). **잰 숫자로 효과가 있는 것만** 남긴다
+  - Terrain3D 가리개 굽기 — 지형으로 Occluder3D 를 굽는다(LOD 4 가 기본 · 영역마다 몇 초 · 지형이 바뀌면 다시). Godot 기본 굽기는 Terrain3D 를 못 본다 (terrain3d.readthedocs.io/en/latest/docs/occlusion_culling.html). 우리 섬은 실행 중에 만들어지므로 섬을 만들 때 굽고 island_cache 에 같이 둔다 — project.godot 에 occlusion culling 켜기
+  - Terrain3D 충돌 — 지금 `Terrain3DCollision.FULL_GAME`(world/terrain/test_island.gd:188). Terrain3D 1.0 의 Dynamic 은 사람 둘레만 충돌을 만든다(메모리 큰 절감). **서버는 사람 · 몹 · 주민이 섬 곳곳에 있으니 FULL 을 둔다** — 참가자 화면만 Dynamic 이 되나 잰다(참가자도 제 몸은 제가 움직이므로 제 둘레만 있으면 된다)
+  - 횃불 빛(world/lighting/torch_light.gd) — 빛 · 그림자의 distance fade(멀면 그림자 먼저 끄고 빛도 끈다). 놓은 횃불이 많을수록 크다. 가까이서 보이는 빛 · 그림자는 그대로
+  - 주민 · 몹 애니메이션 — VisibleOnScreenEnabler3D / Notifier3D 로 화면 밖이면 애니메이션 멈추기, 멀면 덜 자주 (Godot 문서 「Optimizing 3D performance」)
+  - 자동 인스턴싱 — Forward+ 는 **같은 메시 · 같은 재질**의 MeshInstance3D 를 묶어 그린다. 블록 · 시설 · 상자가 재질을 하나씩 복사하면(material.duplicate · 색만 다른 새 재질) 묶이지 않는다 — 같은 것은 재질을 나눠 쓰고, 색은 instance uniform 으로
+  - 섬 만들기를 WorkerThreadPool 로 — 높이 · 자원 · 나무 자리 계산은 스레드에서, 노드 만들기 · 붙이기는 메인에서(call_deferred) 나눠 한다. 노이즈는 한 번 이미지/배열로 뽑아 다시 쓴다
+  - 하지 않을 것: Terrain3D auto_shader 끄기 · 그림자 품질 낮추기 — 빨라지지만 보이는 것이 바뀐다(사람이 안 정했다)
 - [ ] 1. 먼저 잰다 — 어디가 느린가
   - 기준: 숫자를 **spec/00_core/performance.md**(새로)에 표로 적는다 — 이 맥 · 날짜 · 커밋. 고치기 전 기준선이다
     - 섬 만들기: 새 월드(시드 셋) 만들기 · 저장본 열기 · island_cache 가 있을 때/없을 때 — 단계별(지형 · 물 · 자원 · 나무 · 풀 · 콜리전 · 내비) 걸린 시간 (headless, Time.get_ticks_usec)
@@ -3516,6 +3524,10 @@
 - **동작은 그대로** — 보내는 내용 · 순서 · 권한 · 저장 형식은 바꾸지 않는다. 남의 몸 · 주민이 덜 부드러워지면 안 된다(G-222.5)
 - 테스트는 headless 셋을 ENet 으로 · Steam 은 가짜(fake_steam.gd). **사람의 Steam 을 켜거나 로그인하지 않는다**
 - **자가 피드백**: 잰 숫자에서 큰 것부터 단계로 붙인다. G-226 이 report 에 남긴 것도 여기 단계로
+- 웹에서 찾은 기법 (이 세션이 2026-10-16 찾음 — 잰 숫자로 효과가 있는 것만 남긴다)
+  - 보내는 수 줄이기 — 위치 · 방향을 그대로(Vector3 float 셋) 보내지 말고 줄인 꼴(섬 안 좌표는 16비트 · 방향은 각도 하나 등)로. 지금 몸 · 주민 모습은 0.1초마다(net_world.gd) 이어 그리기가 있으니 빈도는 그대로 두고 크기를 먼저 줄인다
+  - 사람마다 보이는 것만 — MultiplayerSynchronizer 의 visibility(set_visibility_for · public_visibility=false) 처럼 사람마다 받을 것을 고른다. 우리는 RPC 로 보내므로 같은 생각을 rpc_id 대상 고르기로 — 다른 섬 · 먼 것은 빼거나 덜 자주. 커뮤니티 글에는 visibility 가 대역폭보다 숨김용이라는 말도 있다 — **반드시 잰다**
+  - 안 바뀐 것은 안 보낸다(델타) — 멈춘 주민 · 몹 · 시설은 바뀔 때만
 - [ ] 1. 먼저 잰다
   - 기준: spec/00_core/performance.md 에 「멀티」 표를 더한다 — 서버장 + 참가자 둘(셋이면 셋)로 5분: 사람당 초당 보내고 받는 바이트 · RPC 수(종류별 위 10) · 서버 한 프레임 시간 · 들어올 때 건네는 월드 크기 · 걸린 시간 · 섬을 건널 때 걸린 시간
   - 기준: 주민 · 몹 · 시설 · 작물이 서버에서 한 프레임에 쓰는 시간 (주민 0 · 10 · 30 일 때)
