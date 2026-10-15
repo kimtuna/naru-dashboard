@@ -1,63 +1,5 @@
 [
  {
-  "time": "2026-09-30 19:03:58",
-  "epoch": 1790762638,
-  "type": "start",
-  "title": "루프 시작",
-  "report": {
-   "problem": "컵을 우클릭하면 한 모금(HungerThirst.SIP)씩 마시고 나무컵 3 · 쇠컵 8모금 뒤 빈 컵으로 남으며, 빈 컵으로 우클릭하면 CUP_EMPTY 한 줄이 뜬다 — 바뀐 곳만 5개 파일 48개 테스트 통과(+번역 2개 파일)",
-   "approach": "한 모금씩 마시기와 다 마시면 빈 컵으로 남기는 것은 단계 2가 이미 만들어 두었다(Cup.sip_selected · Drinking.drink_from_cup). 빠진 것은 빈 컵을 우클릭했을 때였다 — 아무 일도 없어서 고장으로 읽힐 자리였다. Drinking 의 우클릭 차례 맨 끝에 refuse_empty_cup 을 더했다: 채우기 → 연못 마시기 → 컵 마시기가 다 지나간 뒤에도 손에 빈 컵이 있으면 CUP_EMPTY(「빈 컵이다 — 민물을 우클릭해 채워라」)를 띄우고 그 우클릭을 끝낸다. 민물을 겨누면 전처럼 먼저 채워진다. 테스트는 진짜 우클릭을 넣어 나무컵 · 쇠컵을 끝까지 마신다 — 모금마다 목마름이 SIP 만큼 차고 남은 모금이 하나씩 줄며, 모금 수보다 두 번 더 눌러도 더 마시지 않고 {item, count=1} 빈 컵이 남는다. 목마름은 프레임 사이에도 조금씩 줄어서 비교에 0.01 여유를 두었다. spec 에 컵 표(모금 · 한 모금의 양 · 재료, 임시)를 적었고, 미정 칸에 「주민은 컵을 쓰지 않는다 — 지금은 사람만」을 한 줄 넣었다.",
-   "why": "컵 모금 수(나무컵 3 · 쇠컵 8)와 재료(나무 2 · 철 주괴 2) — 사람 결정으로 임시다. 사람이 마셔 보고 정한다 (cup.gd 에 「임시」 표시)",
-   "files": [
-    "game/player/hunger_thirst/drinking.gd",
-    "game/player/hunger_thirst/cup.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "spec/02_player/hunger-thirst.md",
-    "game/tests/player/hunger_thirst/test_cup_sips.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "나무컵 3모금 · 쇠컵 8모금 — 한 모금에 목마름이 얼마나 차는지는 지금 값(HungerThirst.SIP)을 쓴다 (테스트)",
-     "evidence": "test_cup_sips.gd test_wooden_cup_holds_three_sips_and_iron_cup_eight 가 Cup.sips_of 를 3·8 리터럴로 단언하고, test_each_right_click_... 가 모금마다 thirst 를 0 에서 HungerThirst.SIP 로 assert_almost_eq(0.01) 확인한다. drinking.gd 의 drink_from_cup 이 SIP 를 쓴다"
-    },
-    {
-     "ok": true,
-     "criterion": "컵을 들고 우클릭하면 한 모금 마시고 남은 모금이 준다 (테스트)",
-     "evidence": "test_each_right_click_drinks_one_sip_of_SIP_until_the_cup_is_empty — 진짜 InputEventMouseButton 우클릭을 root.push_input 으로 넣고, 모금마다 WateringCan.water_in(slot) 이 하나씩 주는지 나무컵·쇠컵 둘 다 단언한다. 모금 수 +2 번 눌러 더 마시지 않음(drunk == sips)도 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "다 마시면 빈 컵이 된다 — 컵이 사라지지 않는다 (테스트)",
-     "evidence": "같은 테스트 끝에서 slot(0) == {item, count=1} (water 키 없음)을 단언한다 — 컵이 남고 빈 컵이다"
-    },
-    {
-     "ok": true,
-     "criterion": "빈 컵으로는 마실 수 없다 — 왜 안 되는지 한 줄이 뜬다 (번역 키) (테스트)",
-     "evidence": "test_right_clicking_an_empty_cup_does_not_drink_and_says_why — 빈 쇠컵 3개로 진짜 우클릭, thirst 그대로 · 칸 그대로 · notice.visible · notice.text == tr(CUP_EMPTY) · tr(키) != 키 를 단언. test_no_empty_cup_line_... 가 물 든 컵·컵 아닌 것에는 안 뜨는 것도 막는다. CUP_EMPTY 가 ko.po · en.po 둘 다에 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "모금 수 · 재료는 임시다. spec/02_player/hunger-thirst.md 에 컵 표를 적는다 (사람 결정 2026-09-30)",
-     "evidence": "hunger-thirst.md 에 「### 컵 (모금 수 · 재료는 임시 — 사람 결정 2026-09-30)」 표(모금 · SIP · 재료 나무2/철 주괴2)가 생겼고 recipes.json 값과 맞는다. cup.gd SIPS 위에 「임시」 표시. 파일 44줄"
-    },
-    {
-     "ok": true,
-     "criterion": "주민도 컵을 쓰지는 않는다 — 지금은 사람만. 나중에 주민이 마시게 되면 그때 연다 (spec 미정에 한 줄)",
-     "evidence": "hunger-thirst.md 「## 미정」에 「주민은 컵을 쓰지 않는다 — 지금은 사람만. 주민이 마시게 되면 그때 연다」 한 줄이 들어갔다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           261\nTests            2073\nPassing Tests    2073\nFailing Tests       0\nRisky/Pending       0\nAsserts        100252\nTime           463s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-09-30 19:15:31",
   "epoch": 1790763331,
   "type": "pass",
@@ -10155,5 +10097,74 @@
   },
   "test": "--- 바뀐 곳만: 12 개 ---\ntest.sh: 파일 12 개를 6 개씩 한꺼번에 돌린다\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      2s  res://tests/core/net/test_acts_alone.gd\nok      2s  res://tests/core/net/test_steam_game.gd\nok      3s  res://tests/core/net/test_steam_quit.gd\nok      2s  res://tests/core/net/test_net_session.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      2s  res://tests/core/net/test_steam_server_gone.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      5s  res://tests/core/net/test_net_two_processes.gd\nok     10s  res://tests/core/net/test_net_game.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            12\nTests              64\nPassing Tests      64\nFailing Tests       0\nRisky/Pending       0\nAsserts          4422\nTime           10s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "505e2956"
+ },
+ {
+  "time": "2026-10-16 00:46:59",
+  "epoch": 1792079219,
+  "type": "fail",
+  "title": "QA 불합격 — G-225 단계 2 (시도 1)",
+  "group": "G-225",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "집 섬 선착장을 스폰 옆 물가 한 곳에 박고(못 부순다) 선착장 레시피 · 놓기 · 부수기(DockBuilder)를 뺐다. 옛 저장본의 놓인 선착장은 그 자리 재료 상자로, 가방 · 상자 · 바닥의 선착장 물건은 목재로 읽힌다. 바뀐 곳만 돈 테스트 210개 파일 · 1736개 전부 통과",
+   "approach": "내 섬은 islands.json 에서 dock_prebuilt:false 로 플레이어가 짓게 돼 있었다. 선착장은 이제 모든 섬에서 박힌 것이라 dock_prebuilt 와 DockBuilder(놓기 · 치기 · 저장)를 통째로 지우고, 내 섬에는 dock_near_spawn(임시) 을 달았다 — 스폰에서 사방 72방향으로 걸어 나가 처음 만나는 바다 가운데 가장 가까운 곳의 방향을 섬 가운데에서 본 각도로 바꿔, 개척 섬과 같은 dock_spot_at 으로 물가 평평한 땅을 찾는다. 지금 자리는 스폰에서 198m(가장 가까운 바다 200m, 옛 자리는 449m) — 사진으로 물가에 널판이 바로 걸친 것을 봤다. 옛 저장본: 섬 저장본의 docks 칸은 IslandState.apply 에서 그 자리에 목재 20이 든 상자 줄로 바꿔 chests 에 붙인다(받은 저장본은 안 건드리고, 다음 저장부터는 그냥 상자다). 가방 · 상자 · 바닥 · 죽은 자리 상자의 dock 물건은 OldItems.entry_of 가 목재 20개씩으로 바꾼다(REFUNDED 표). Dock 은 무리(Placeable.GROUP)와 placed_item 을 그대로 둔다 — 빼면 주민 길찾기가 기둥을 안 도려내고 놓기 겹침 판정에서도 빠진다. 부수는 길(DockBuilder.hit_dock)만 없어졌다. 선착장 레시피 · 무게 · 번역 키를 지우고 spec 에 결정 · 임시를 적었다(옛 09-21 결정 줄은 지우지 않고 바뀌었다고 표시). 남긴 것: 옛 저장본에서 제작대가 선착장을 만들던 중이면(5초짜리) 다 만든 dock 물건이 버퍼로 나오고, 그것은 다음에 불러올 때 가방에서 목재로 바뀐다.",
+   "why": "내 섬 선착장 자리 = 처음 나는 자리에서 가장 가까운 바다 쪽 물가(islands.json dock_near_spawn, Islands.SHORE_DIRECTIONS 72) — 사람이 자리를 아직 안 정했다; 옛 선착장 하나를 목재 20개로 돌려준다(OldItems.REFUNDED) — 옛 레시피 재료 그대로. 돌려주는 법은 spec 에 없다; 옛 저장본에 놓인 선착장은 그 자리에 상자를 세워 재료를 담는다(OldItems.dock_chests) — 재료가 소리 없이 사라지지 않게",
+   "files": [
+    "game/world/frontier_islands/islands.json",
+    "game/world/frontier_islands/islands.gd",
+    "game/world/frontier_islands/dock.gd",
+    "game/world/frontier_islands/dock_builder.gd (지움)",
+    "game/world/frontier_islands/island_state.gd",
+    "game/world/terrain/test_island.gd",
+    "game/settings/save/old_items.gd",
+    "game/settings/save/world_data.gd",
+    "game/core/net/net_world.gd",
+    "game/craft/recipes/workbench.json",
+    "game/player/inventory_hotbar/weights.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "spec/03_world/frontier-islands.md",
+    "spec/11_multiplayer/netcode.md",
+    "game/tests/world/frontier_islands/test_fixed_dock.gd (새로)",
+    "game/tests/world/frontier_islands/test_dock_building.gd (지움 — 몸통 검사는 test_fixed_dock 으로 옮김)",
+    "game/tests/world/frontier_islands/test_voyage.gd",
+    "game/tests/craft/test_from_empty_hands.gd",
+    "game/tests/settings/save/test_round_trip.gd",
+    "game/tests/settings/save/test_broken_stays_broken.gd",
+    "game/tests/multiplayer/test_build_on_server.gd",
+    "game/tests/multiplayer/build_island.gd",
+    "game/tests/build/test_placeable.gd",
+    "game/tests/build/test_collapse_takes_everything_placed.gd",
+    "game/tests/world/terrain/test_island_walk.gd",
+    "game/tests/world/storage/test_reach_temporary_notes.gd",
+    "game/tests/world/frontier_islands/test_locked_island.gd",
+    "game/tests/craft/stations/test_stations_aim_one_path.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "ok": false,
+     "criterion": "집 섬에도 개척 섬처럼 선착장이 **처음부터 한 곳**에 박혀 있다(못 부순다). 자리는 사람이 아직 안 정했다 — 처음 나는 자리 가까운 물가(임시)로 하고 spec 에 「임시」로 적는다",
+     "evidence": "박힌 자리는 확인된다 — test_voyage.gd test_my_island_has_its_dock_fixed_from_the_start 가 진짜 섬에서 island.dock 이 처음부터 서 있고 dock_spot 자리인지 보고, test_fixed_dock.gd test_my_islands_dock_is_fixed_near_the_spawn 이 스폰에서 가장 가까운 바다 + DOCK_INLAND_REACH 안쪽 · 옛 자리보다 가깝다는 것을 본다. spec(frontier-islands.md 미정 · 규칙)과 islands.json _temporary 에 임시가 적혔다. 그러나 「못 부순다」를 동작으로 보는 테스트가 없다: 옛 test_voyage 의 「쳐도 부서지지 않는다 · 대수도 깎이지 않는다」 단언을 지우고, 남은 것은 dock_builder.gd 파일이 없다는 것(test_nothing_places_a_dock)뿐이다. Dock 은 여전히 Placeable.GROUP 에 들고 placed_item()='dock' 이라 Placeable.hit_all 에 넘기면 부서지는 몸이다 — 내 섬 선착장 기둥을 진짜로 쳐서 그대로인지 보는 테스트가 없다"
+    },
+    {
+     "ok": false,
+     "criterion": "선착장 레시피 · 놓기를 뺀다. 옛 저장본에 놓아 둔 선착장 · 가방의 선착장 물건이 있어도 읽힌다 — 놓인 것은 지우고 재료를 그 자리 상자/가방으로 돌려준다(임시) (테스트)",
+     "evidence": "레시피 · 놓기는 빠졌다(test_no_recipe_makes_a_dock · test_nothing_places_a_dock). 놓인 것 → 그 자리 목재 20 상자(test_an_old_placed_dock_turns_into_a_chest_of_its_wood), 가방 · 상자 칸 · 바닥 → 목재(test_an_old_dock_item_is_read_as_its_wood)는 진짜 단언으로 본다. 그러나 옛 저장본의 제작대 길이 빠졌다: crafting_station.gd restore_work(264 · 283)는 OldItems.is_dropped 만 보고 entry_of 를 거치지 않아, 저장된 job.output='dock'(만들던 중) · 버퍼의 {item:'dock'} 이 그대로 살아난다. 꺼내면 가방에 'dock' 물건이 들어가는데 이번에 번역 키(ITEM_dock) · 무게(weights.json dock)를 지웠으므로 이름 없는 · 무게 없는 물건이 되고, 다음 불러오기 전까지 재료로 바뀌지 않는다. 보고서도 「남긴 것」으로 인정했다 — 옛 저장본의 선착장 물건이 재료로 돌아오지 않는 길이 남았다"
+    }
+   ],
+   "issues": [
+    "선착장 「못 부순다」 테스트가 없다 — tests/world/frontier_islands/test_voyage.gd(진짜 섬)에 내 섬 선착장 기둥(PillarL)을 조준하고 진짜 좌클릭(도끼 · 맨손 둘 다)을 Placeable.HITS+1 번 넣은 뒤 island.dock 이 is_instance_valid 하고 같은 자리이며 Placeable.hits_left(island.dock) == Placeable.HITS 이고 바닥에 dock 물건이 안 떨어졌는지 단언하라. 개척 섬 선착장도 같은 단언을 되살려라(옛 test_voyage 에 있던 것을 지웠다). 부술 수 있게 바꾸면(예: Buildings 가 Dock 도 hit_all 하게) 깨지는지 한 번 확인하라",
+    "옛 제작대의 선착장이 재료로 안 바뀐다 — craft/stations/crafting_station.gd restore_work 에서 saved_job.output 이 OldItems.REFUNDED 에 있으면 그 일을 버리고 재료(목재 20 × count)를 버퍼로, 버퍼 칸은 OldItems.entry_of 를 거쳐 넣어라(칸 한도 BUFFER_STACK 넘침 처리 포함). 테스트: tests/world/frontier_islands/test_fixed_dock.gd 에 Stations.restore([{kind='workbench', job={output='dock', count=1, left=2.0, total=5.0}, buffer=[{item='dock', count=1}]}]) 를 넣고 버퍼에 dock 이 없고 wood 가 들었는지 · 다 돌린 뒤에도 dock 이 안 나오는지 단언하라",
+    "spec 에 낡은 부수기 규칙이 남았다 — spec/03_world/frontier-islands.md 「선착장은 물가 쪽 기둥을 겨눠 부순다 (사람 결정 2026-09-22)」 줄은 이제 모든 선착장이 안 부서지므로 맞지 않는다. 지우지 말고 2026-09-21 줄처럼 취소선 + 「2026-10-16 결정으로 부술 선착장이 없다 — 몸통이 기둥에만 있는 것(내리는 자리를 비운다)은 그대로」로 표시하라",
+    "사람 결정 아래 줄 하나를 지웠다 — spec/03_world/frontier-islands.md 의 2026-09-21 결정 밑 「물가에만 놓인다. 「내 섬 = 원정 선착장이자 남이 찾아오는 항구」(00_core/vision.md)를 제 손으로 짓는 것이다」를 통째로 지웠다. 위 줄처럼 취소선으로 남겨라(「항구」 뜻은 vision.md 와 이어져 있다)"
+   ],
+   "good": []
+  },
+  "test": "oing_keeps.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/multiplayer/test_looks_seen.gd\nok      2s  res://tests/multiplayer/test_server_from_game.gd\nok      2s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_barn_window.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    432s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           210\nTests            1736\nPassing Tests    1736\nFailing Tests       0\nRisky/Pending       0\nAsserts         62965\nTime           432s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
