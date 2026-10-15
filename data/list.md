@@ -3438,7 +3438,7 @@
   - 지금: 휠은 R 을 누른 탄 고르기(combat/tools_as_weapons/attack.gd:168-171) · 기초 높이(build/buildings.gd:176)에만 쓴다 — core/input/input_actions.gd:30-31 「핫바는 휠을 쓰지 않는다」
   - 기준: 그 둘이 휠을 쥐지 않았을 때 휠 아래 = 다음 칸 · 위 = 앞 칸(임시), 10 ↔ 1 은 돌아간다. 탄 고르기 · 기초 높이 중에는 핫바가 안 움직인다 · 창(가방 · 시설 창 등)이 열려 있을 때도 안 움직인다 (테스트). input_actions.gd 주석과 spec 을 고친다
   - 기준: (앞 단계 QA) 주석에 옛 갈래 이름 「아무 …」가 남았다 — 화면 글자를 가리키는 주석이 옛 라벨 그대로다. game/tests/craft/stations/test_drink_cups.gd:191 의 메시지 「갈래 이름(아무 빈 컵)으로 적힌다」 → 「(빈 컵)」, game/tests/ui/hud/test_station_window_frame_cost.gd:22 · :197 「아무 곡물」 → 「곡물」, game/tests/ui/hud/test_station_tag_inputs.gd:5 「아무 곡물 1」 → 「곡물 1」, game/tests/craft/recipes/test_smelter_recipes.gd:211 「아무 연료가 아니라」 → 「연료 갈래가 아니라」. 사람 말을 옮긴 인용(test_drink_cups.gd:4 · :99, spec)과 '어느 곡물이든' 뜻으로 쓴 _temporary 설명은 그대로 둬도 된다
-- [ ] 4. 배고픔 · 목마름이 100% 면 먹지도 마시지도 않는다
+- [x] 4. 배고픔 · 목마름이 100% 면 먹지도 마시지도 않는다
   - **사람 결정 2026-10-16**: 「음식 및 음료는 100% 상태에선 먹어지지 않게」
   - 지금: player/hunger_thirst/hunger_thirst.gd:128-141 eat · drink 는 1.0 으로 자르기만 한다 — 가득이어도 food.gd `eat_from()` 60-68 이 물건을 먼저 bag.take 하고, drinking.gd `_sip()` 74-84 · 물가 마시기(96) · 컵(107)도 그대로 쓴다. 서버 길(core/net/net_vitals.gd:322-324 · 358-359 · 366-372)도 같다
   - 기준: 그 음식이 채우는 몸 상태(배고픔 / 목마름)가 **모두** 100% 면 먹지 않고 물건 · 컵 물이 줄지 않는다 — 하나라도 덜 찼으면 먹는다(임시). 혼자 판 · 서버 판(참가자의 몸은 서버 사본) 둘 다 (테스트). 「배가 부르다」 같은 짧은 알림(임시)

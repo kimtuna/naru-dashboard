@@ -1,48 +1,5 @@
 [
  {
-  "time": "2026-09-25 06:23:11",
-  "epoch": 1790284991,
-  "type": "pass",
-  "title": "통과 — G-910 단계 15 (낡은 Godot 함수 경고의 출처를 적어 둔다 — `instance_reset_physics_interpolation()` 은 deprecated 다)",
-  "group": "G-910",
-  "step": "15",
-  "attempt": "2",
-  "report": {
-   "problem": "낡은 함수(instance_reset_physics_interpolation) 경고의 출처를 THIRD_PARTY.md 에 적고, 우리 코드(addons 뺀 game/)에 그 함수가 없는지 소스를 읽어 지키는 테스트를 넣었다",
-   "approach": "경고는 Terrain3D 1.0.2 바이너리(addons/terrain_3d/bin)가 내는 것이고 우리 GDScript 는 그 함수를 안 부른다. 새 테스트가 res:// 아래 .gd/.tscn/.tres 를 훑어(addons · .godot 은 뺀다) 그 이름이 없는지 보고, 애드온 바이너리에는 그 이름이 정말 있는지 바이트로 확인하며(새 판으로 오르면 떨어져 THIRD_PARTY 줄을 지우라고 알린다), THIRD_PARTY.md 의 Terrain3D 줄이 까닭(deprecated · 경고 · 새 판)을 적었는지 본다. 찾는 이름은 테스트 안에서 쪼개 적어 제 글자에 제가 걸리지 않게 했다. 앞 회차 기계 검사가 떨어진 tests/craft/test_from_empty_hands.gd(토대 자리가 water) 는 이 단계와 무관한 건축(build/, 차선 1 몫) 쪽이다 — 앞 회차 전체 돌림에서 통과했고, 이번 회차에 같은 트리에서 그 파일만 다시 돌려 통과(814 asserts, 296s)했다. 섬 모양·물 판정은 시드 0 으로 결정적이라 6개 godot 을 한꺼번에 돌릴 때의 타이밍 흔들림으로 보이며, 이 단계에서는 손대지 않았다. 이번 회차 돌린 것: tests/world/terrain 폴더 6 파일 75개 통과(146s) · tests/craft/test_from_empty_hands.gd 1개 통과(296s). changed_tests.py 는 빈 목록을 냈다(앞 회차가 그때 전체 174 파일 1502개 통과를 봤다).",
-   "why": "",
-   "files": [
-    "THIRD_PARTY.md",
-    "game/tests/world/terrain/test_deprecated_call_source.gd",
-    "game/tests/world/terrain/test_deprecated_call_source.gd.uid"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "`game/` 에서 애드온을 뺀 곳에 이 함수가 없다는 것을 검사로 지킨다 (테스트 — 소스를 읽어 본다)",
-     "evidence": "tests/world/terrain/test_deprecated_call_source.gd 의 test_our_code_does_not_call_the_deprecated_function 이 res:// 아래 .gd/.tscn/.tres 를 훑어(addons · .godot · 제 파일은 뺀다) 그 이름이 없는지 본다. 일부러 깨 봤다 — world/terrain/test_island.gd 끝에 그 이름을 적자 그 경로를 짚으며 떨어졌고, 되돌리니 통과. test_the_walk_really_finds_our_files 가 섬 코드를 실제로 찾는지 · addons 를 안 세는지 지키고, test_the_check_catches_a_call 이 새 이름(reset_physics_interpolation)을 낡은 것으로 안 세는지 본다. 전체 174 파일 1502개 통과(test.log)"
-    },
-    {
-     "ok": true,
-     "criterion": "`THIRD_PARTY.md` 의 Terrain3D 줄에 「1.0.2 는 deprecated 함수를 불러 경고가 뜬다 — 새 판으로 올릴 때 사라진다」를 적는다",
-     "evidence": "THIRD_PARTY.md Terrain3D 줄에 그 문장과 함수 이름이 들어갔다. test_third_party_says_where_the_warning_comes_from 이 그 줄에 「deprecated」·「경고」·「새 판」·함수 이름이 있는지 본다. 일부러 「새 판」을 지우자 떨어졌고, 되돌리니 통과. 덤으로 test_the_addon_binary_really_is_the_source 가 애드온 바이너리에 그 이름이 정말 있는지 바이트로 확인한다 — 손으로 grep 해도 14개 바이너리 전부에 있다"
-    }
-   ],
-   "issues": [
-    "test_from_empty_hands 가 회차마다 흔들린다 — 앞 회차 전체 돌림에서 tests/craft/test_from_empty_hands.gd 가 「wood_foundation 놓을 자리가 water」로 떨어졌다가(줄 905) 이번 회차 전체 돌림에서는 같은 코드로 통과했다. 시드 0 으로 결정적이어야 할 섬 모양이 6개 godot 동시 실행 때 달라지는지, 아니면 토대 자리 짚기가 물리 프레임 타이밍에 걸리는지 원인을 찾아 고정해라 (건축 쪽이라 차선 1 몫이면 G-911 로). 재현: 전체를 두세 번 돌려 그 줄의 why 값을 모아 본다"
-   ],
-   "good": [
-    "test_the_addon_binary_really_is_the_source — 기준은 「우리 코드에 없다」뿐인데 애드온 바이너리에 그 이름이 있는지도 본다. 출처를 잘못 적는 것을 막는 것이라 이 단계 안이고, 새 판으로 오르면 THIRD_PARTY 줄을 지우라고 알려 준다. 순서를 흐트러뜨리지 않는다"
-   ]
-  },
-  "test": "es://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      0s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/build/test_rooms.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      0s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/core/test_open_chest_window.gd\nok      0s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok    295s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           174\nTests            1502\nPassing Tests    1502\nFailing Tests       0\nPending             0\nAsserts         68650\nTime           295s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "de394da"
- },
- {
   "time": "2026-09-25 06:34:01",
   "epoch": 1790285641,
   "type": "pass",
@@ -8006,5 +7963,47 @@
   },
   "test": "pes/test_hand_craft.gd\nok      2s  res://tests/core/test_window_fit.gd\nok      2s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/craft/stations/test_station_queue.gd\nok      2s  res://tests/life/medicine/test_medicine.gd\nok      2s  res://tests/multiplayer/test_looks_seen.gd\nok      2s  res://tests/multiplayer/test_server_from_game.gd\nok      2s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      3s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      3s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      3s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           281\nTests            2221\nPassing Tests    2221\nFailing Tests       0\nRisky/Pending       0\nAsserts         99825\nTime           624s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "04b123a3"
+ },
+ {
+  "time": "2026-10-16 01:24:37",
+  "epoch": 1792081477,
+  "type": "pass",
+  "title": "통과 — G-224 단계 4 (배고픔 · 목마름이 100% 면 먹지도 마시지도 않는다)",
+  "group": "G-224",
+  "step": "4",
+  "attempt": "1",
+  "report": {
+   "problem": "배고픔 · 목마름이 가득이면 음식 · 연못 물 · 컵(물 · 음료)을 먹지 · 마시지 않고 「배가 부르다」 · 「목이 마르지 않다」를 띄운다 — 혼자 판과 서버 판(사본 몸) 둘 다",
+   "approach": "HungerThirst.is_full_for(배고픔 몫, 목마름 몫) 하나로 「채우는 몸 상태가 모두 가득인가」를 묻고, 음식은 Food.too_full · 마실 것은 Drinking.too_full(sip_values 몫)로 같은 물음을 쓴다. 혼자 판은 Food.eat_held · eat_from, Drinking.drink_aimed · drink_from_cup 이 물건을 빼기 전에 막고 알린 뒤 우클릭을 끝낸다(뒤의 밭 · 제작대로 새지 않게). 서버 판은 net_vitals.run 이 EAT · CUP · WATER 를 사본 몸으로 다시 묻고 막으면 acts().give 로 그 사람에게 알림을 보낸다 — 참가자 화면이 늦게 맞아 바람이 그대로 와도 서버에서 막힌다. 몸 상태는 틱마다 줄어 1.0 에 거의 머물지 않아 1.0 만 가득으로 치면 막 먹은 다음 우클릭에 또 먹으므로 99% 부터 가득으로 친다. 가득인 몸으로 먹던 옛 테스트(test_food · test_cup_drinks · test_body_on_server 둘)는 먼저 비우거나 사본이 참가자에게 맞을 때까지 기다리게 고쳤다. 바뀐 곳 그물(changed_tests 35개 파일, 298개)을 돌려 292개 통과 · 6개 실패(test_food · test_cup_drinks — 가득인 몸으로 먹던 옛 테스트, test_body_on_server 는 통과)였고, 그 두 파일을 고쳐 다시 돌려 25개 모두 통과했다.",
+   "why": "HungerThirst.FULL_AT = 0.99 — 이 이상이면 가득으로 친다. 몸 상태가 틱마다 줄어 1.0 만 가득이면 거부가 사실상 안 듣는다. 약 8초어치 몫; 하나라도 덜 찼으면 먹는다 — 주스 · 따뜻한 우유는 배고픔과 목마름이 둘 다 가득일 때만 막는다 (기준의 임시); 알림 말 FOOD_FULL 「배가 부르다」 · DRINK_FULL 「목이 마르지 않다」",
+   "files": [
+    "game/player/hunger_thirst/hunger_thirst.gd",
+    "game/life/food/food.gd",
+    "game/player/hunger_thirst/drinking.gd",
+    "game/core/net/net_vitals.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "spec/02_player/hunger-thirst.md",
+    "game/tests/player/hunger_thirst/test_full_refuses.gd",
+    "game/tests/multiplayer/test_body_on_server.gd",
+    "game/tests/life/food/test_food.gd",
+    "game/tests/player/hunger_thirst/test_cup_drinks.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "그 음식이 채우는 몸 상태(배고픔 / 목마름)가 **모두** 100% 면 먹지 않고 물건 · 컵 물이 줄지 않는다 — 하나라도 덜 찼으면 먹는다(임시). 혼자 판 · 서버 판(참가자의 몸은 서버 사본) 둘 다 (테스트). 「배가 부르다」 같은 짧은 알림(임시)",
+     "evidence": "혼자 판: test_full_refuses.gd — 빵(배 가득이면 개수 그대로 · FULL_AT 안도 거부 · 덜 차면 먹음 · 알림 「배가 부르다」), 공용 길 Food.eat_from 거부, 연못(drank 신호 0 · DRINK_FULL 알림 · 덜 차면 마심), 컵 물 그대로/덜 차면 한 모금, 주스는 둘 다 가득일 때만 거부, 아무것도 안 채우는 것은 거부 안 함. 서버 판: test_body_on_server.gd test_a_full_body_on_the_server_does_not_eat_or_drink 가 참가자 기계 거부 + 바람을 곧바로 보내 EAT · CUP · WATER 를 서버 사본이 막고(사본 가방 빵 3 · 컵 물 3 · 알림 전달) 덜 차면 먹고 마시는 것까지 본다. 일부러 깨 봄: is_full_for 를 늘 false 로 → test_full_refuses 6개 모두 실패, net_vitals._refuse_full 을 늘 false 로 → test_body_on_server 해당 테스트 실패. 되돌렸다. 번역 키 FOOD_FULL · DRINK_FULL ko/en 둘 다, 말 · FULL_AT 0.99 는 코드 · spec 에 임시로 적혔다. test.log 바뀐 곳 297개 파일 2345 테스트 모두 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      3s  res://tests/ui/hud/test_search_field_shared.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_queue_window.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      3s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_placer.gd\nok      0s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      0s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/test_guard.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           297\nTests            2345\nPassing Tests    2345\nFailing Tests       0\nRisky/Pending       0\nAsserts        106006\nTime           627s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "76fc41db"
  }
 ]
