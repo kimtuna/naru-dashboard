@@ -1,57 +1,5 @@
 [
  {
-  "time": "2026-10-12 01:31:13",
-  "epoch": 1791736273,
-  "type": "pass",
-  "title": "통과 — G-992 단계 6 (build_piece.gd (472줄) 를 다듬는다)",
-  "group": "G-992",
-  "step": "6",
-  "attempt": "1",
-  "report": {
-   "problem": "G-992.6 build_piece.gd 를 다듬었다 — 미리 보기와 실물 크기를 한 곳으로 · 등급 위아래를 _grade_step 하나로 · roof_plates 가 Buildings._edge_plates 를, stairs_in 이 Buildings._pieces_of 를 쓴다 · 낡은 주석 넷. 바뀐 곳 테스트 앞 52 파일 370/370 → 뒤 53 파일 374/374 통과",
-   "approach": "| 파일:줄 | 무엇 | 어떻게 |\n|---|---|---|\n| build_piece.gd make (208·212·216·221) | 겹친 코드 — 토대 · 지붕 · 벽 · 기둥의 몸 크기를 미리 보기 모양(slab_mesh · wall_mesh · pillar_mesh)과 따로 한 번 더 적었다. 한쪽만 고치면 미리 보기와 실물이 어긋난다 | make 가 그 모양의 .size 를 쓴다 |\n| next_grade · prev_grade (229·239) | 겹친 코드 — 일곱 줄이 + 1 / - 1 만 다르다 | static func _grade_step(item, step) 하나로 (안에서만 쓰는 이름). 밖 이름 둘은 그대로 |\n| roof_plates (393) | 두 파일에 걸친 겹친 셈 — 변 양쪽 판을 Buildings._edge_plates 와 똑같이 제 손으로 셌다 | Buildings._edge_plates(edge) 를 부른다 (stairs_host 가 _pieces_of 를 부르는 G-991 의 틀과 같다 — buildings.gd 는 안 고쳤다) |\n| stairs_in (357) | 겹친 코드 — 무리에서 건축물만 고르는 일을 제 손으로 (as BuildPiece) 했다. 같은 파일 stairs_host 는 이미 Buildings._pieces_of 를 쓴다 | 같이 _pieces_of 를 쓴다 |\n| _build_stairs (320·327) | stairs_transform() 을 아홉 번 새로 셈 | 한 번 세어 slope 로 둔다 |\n| 87 · 108 · 113 · 197 줄 주석 | 낡은 주석 — 「토대가 없는 것은 쓰지 않는다」(실제로는 벽 · 문만 쓴다) · 「이 가방 아이템」(23 줄 사람 결정: 건축물은 아이템이 아니다) · make 가 slab 을 안 보는 목록에 기둥이 빠졌다 | 지금 하는 일대로 고쳤다 |\n\n**이미 고쳐져 있던 것**: current.md 가 말한 81 · 385 줄의 Buildings.link_counts 는 G-991.2 가 _link_counts 로 고쳐 두었고 stairs_host 도 이미 Buildings._pieces_of 를 쓴다 (test_build_piece_tidy 가 지킨다). 죽은 코드: 공개 함수 · 상수를 하나씩 grep 해 보니 모두 부르는 곳이 있다 (STAIRS_WALK_MARGIN_DEG 는 이 파일 안에서 쓴다). 너무 긴 함수: 가장 긴 _build_door 32 줄 · make 25 줄 — 한 덩어리 일이라 그대로 뒀다. 「임시」 · 「사람 결정」 줄은 하나도 안 건드렸다.\n\n**옆 파일에서 본 것 (고치지 않았다)**: buildings.gd:1115 주석 「(BuildPiece.roof_plates 가 제 변에 같은 셈을 한다)」 — 이제 roof_plates 가 _edge_plates 를 부르므로 「BuildPiece.roof_plates 도 이것을 쓴다」로 바꿀 자리. 경계를 넘는 것(G-994): build_piece.gd 가 Buildings 의 _ 이름 둘(_pieces_of · _edge_plates)을 부른다 — 밖에서 쓰니 공개 이름이 맞지만 이름을 바꾸면 buildings.gd(다른 단계) 를 고쳐야 한다.\n\n**전체 통과 개수**: 전체는 돌리지 않았다 (루프가 묶음 끝에 돌린다). 같은 그물(changed_tests.py)을 고치기 전 원본으로 한 번 · 고친 뒤 한 번 돌렸다 — 앞 52 파일 370/370 통과 · 단언 8746, 뒤 53 파일 374/374 통과 · 단언 8766 (새 파일 4 테스트가 더해졌다). 줄지 않았다. 있던 테스트 파일은 하나도 고치지 않았다.",
-   "why": "",
-   "files": [
-    "game/build/build_piece.gd",
-    "game/tests/build/test_build_piece_shared_shapes.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "이 파일에서 겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석을 찾아 report 에 표로 적고, 그 자리에서 고친다 (찾아만 두지 않는다)",
-     "evidence": "report how 에 표 여섯 줄 — make 의 몸 크기를 slab_mesh/wall_mesh/pillar_mesh .size 로(크기 식이 같음을 build_piece.gd:144-161 에서 확인), next/prev_grade → _grade_step(at<0 · 범위 밖 조건이 원래 두 함수와 같다), roof_plates → Buildings._edge_plates(buildings.gd:1117 과 셈 · 순서 · 타입 Array[Vector2i] 동일), stairs_in → Buildings._pieces_of(as BuildPiece null 거르기와 같다), stairs_transform 한 번만 셈, 낡은 주석 넷. 죽은 코드 · 긴 함수는 살펴보고 없다고 까닭을 적었다(가장 긴 _build_door 37줄). 81·385줄 link_counts 는 이미 _link_counts 로 고쳐져 있음을 grep 으로 확인. git diff 로 build_piece.gd 만 바뀌었다"
-    },
-    {
-     "ok": true,
-     "criterion": "고칠 것이 없으면 없다고 적는다 — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다",
-     "evidence": "죽은 코드(공개 함수 · 상수 grep) · 긴 함수(_build_door · make) · current.md 가 짚은 두 자리가 이미 고쳐진 것을 까닭과 함께 적었다"
-    },
-    {
-     "ok": true,
-     "criterion": "전체 테스트 통과 개수가 줄지 않았다 — report 에 앞뒤 숫자를 적는다",
-     "evidence": "report: 같은 그물로 고치기 전 52 파일 370/370 · 고친 뒤 53 파일 374/374 (새 테스트 4개). 있던 테스트 파일은 안 고쳤다(git status 에 새 파일 하나뿐). 루프 test.log 바뀐 곳 81 파일 551/551 통과. 전체는 묶음 끝에 루프가 돈다"
-    },
-    {
-     "ok": true,
-     "criterion": "이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)",
-     "evidence": ".loop/out/test.log — 바뀐 곳 81 파일(test_building_* · test_villager_stairs · test_stairs_speed · test_round_trip 등 BuildPiece 를 부르는 쪽 포함) 551 테스트 · 단언 12861 전부 통과, guard 통과. 새 test_build_piece_shared_shapes.gd 는 진짜 단언이다 — 몸의 CollisionShape 크기를 미리 보기 모양과 비교, 등급 위아래 끝값 · 건축물 아닌 것까지 확인, roof_plates 와 _edge_plates 비교"
-    }
-   ],
-   "issues": [
-    "buildings.gd:1116 주석이 낡았다 — 「(BuildPiece.roof_plates 가 제 변에 같은 셈을 한다)」인데 G-992.6 이후 roof_plates 는 이 _edge_plates 를 부른다. 「BuildPiece.roof_plates 도 이것을 쓴다」로 고쳐라 (buildings.gd 를 다루는 단계 몫)",
-    "Buildings 의 _ 이름이 밖에서 불린다 — build_piece.gd 가 Buildings._pieces_of(356·377줄) · _edge_plates(392줄)를 부른다. 밖에서 쓰니 _ 를 뗀 공개 이름이 맞다. 두 파일과 부르는 쪽을 같이 고쳐야 하니 G-994 에서 이름을 바꿔라",
-    "테스트가 TMPDIR 에 naru_dev_box_open_* 를 남긴다 — test.log 끝에 naru_dev_box_open_2099798754 가 남았다고 나온다. dev box 를 여는 테스트(tests/core/debug/test_dev_box_everything.gd 쪽)가 만든 임시 폴더를 TempDir.clean 으로 지우게 고쳐라"
-   ],
-   "good": []
-  },
-  "test": "st_villager_as_played.gd\nok     13s  res://tests/automation/villagers/test_villager_as_built.gd\nok     12s  res://tests/life/farming/test_farmland.gd\nok     12s  res://tests/build/test_building_roof_stairs.gd\nok      9s  res://tests/automation/villagers/test_villager_home.gd\nok     10s  res://tests/life/farming/test_field_free_grid.gd\nok     10s  res://tests/core/debug/test_ui_shots.gd\nok      9s  res://tests/automation/villagers/test_villager_door_close.gd\nok      9s  res://tests/automation/villagers/test_villager_hands_room.gd\nok      8s  res://tests/build/test_building_pillar.gd\nok      6s  res://tests/build/test_blueprint.gd\nok      8s  res://tests/automation/villagers/test_villager_torch_detour.gd\nok      8s  res://tests/build/test_building_stairs_plate.gd\nok      6s  res://tests/build/test_building_chain_grade.gd\nok      5s  res://tests/build/test_building_preview.gd\nok      5s  res://tests/build/test_building_roof_skyward.gd\nok      3s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      4s  res://tests/build/test_building_stairs_flip.gd\nok      5s  res://tests/ui/layout/test_window_layout.gd\nok      3s  res://tests/build/test_foundation_wheel_attach.gd\nok      5s  res://tests/build/test_building_stairs_roof.gd\nok      4s  res://tests/build/test_foundation_attach.gd\nok      3s  res://tests/ui/hud/test_room_names.gd\nok      5s  res://tests/player/movement_controls/test_stairs_speed.gd\nok      3s  res://tests/ui/hud/test_room_window.gd\nok      3s  res://tests/automation/villagers/test_villager_chest_detour.gd\nok      3s  res://tests/build/test_bed.gd\nok      3s  res://tests/build/test_building_collapse.gd\nok      3s  res://tests/build/test_building_downgrade.gd\nok      2s  res://tests/build/test_building_link_count.gd\nok      3s  res://tests/build/test_building_grades.gd\nok      3s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      2s  res://tests/automation/villagers/test_villager_door.gd\nok      3s  res://tests/ui/hud/test_villager_window.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_placeable.gd\nok      1s  res://tests/build/test_room_overlay.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/build/test_rooms.gd\nok      2s  res://tests/core/test_path_walk.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            81\nTests             551\nPassing Tests     551\nFailing Tests       0\nRisky/Pending       0\nAsserts         12861\nTime           437s  (godot 6 개)\n\nTMPDIR 에 새로 남은 naru_* 1 개 (테스트가 TempDir.clean 으로 지우지 않았다 — /var/folders/13/ht4_hck554d3rdqm2b3342880000gn/T):\n  naru_dev_box_open_2099798754\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "f601ea09"
- },
- {
   "time": "2026-10-12 02:08:37",
   "epoch": 1791738517,
   "type": "pass",
@@ -10235,5 +10183,72 @@
   },
   "test": "--- 바뀐 곳만: 2 개 ---\ntest.sh: 파일 2 개를 6 개씩 한꺼번에 돌린다\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok     51s  res://tests/perf/test_net_measure.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             2\nTests               6\nPassing Tests       6\nFailing Tests       0\nRisky/Pending       0\nAsserts            86\nTime           51s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "8c7d8fb2"
+ },
+ {
+  "time": "2026-10-16 06:22:00",
+  "epoch": 1792099320,
+  "type": "pass",
+  "title": "통과 — G-227 단계 2 (잰 것에서 가장 비싼 것을 줄인다 (단계를 더 붙인다))",
+  "group": "G-227",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "멀티 보내는 양을 줄였다 — 서버 보냄 20.7 → 4.0 KB/s · 참가자 받음 10.4 → 2.0 KB/s (60초 재기). 짐승 · 주민은 사람마다 바뀐 칸만 · 40m 밖은 0.5초마다, 몸 소식은 바이트 한 줄 · 이름/외형/입은 것은 바뀔 때만. 바뀐 곳 29파일 178개 통과",
+   "approach": "G-227.1 의 재기(headless 셋 · ENet)를 60초 창으로 고친 앞뒤에 똑같이 돌려 쟀다. 전: 서버 보냄 20.7 KB/s — 짐승(_animals_seen) 11.5 · 몸(_snapshot) 7.95. 짐승은 바뀐 짐승이면 모습 딕셔너리를 통째로 다시 보냈고, 몸 소식은 칸 이름이 바이트를 먹어 몸 하나 150 B 였다. ① 짐승 · 주민: 서버가 사람마다 마지막으로 보낸 모습을 쥐고 바뀐 칸만 조각([번호, 조각, true])으로 보낸다. 참가자는 받은 전부에 조각을 겹쳐 그대로 mirror 에 넘긴다(Animal · Villager 는 안 고쳤다). 전부를 받은 적이 없는 번호의 조각은 세우지 않는다. 통째로 달라고 하면(_want_*) 그 사람의 마지막 것을 그 목록으로 둔다. 섬을 떠난 사람 것은 지운다. ② 40m(FAR) 밖 것은 5번에 한 번(0.5초) — 건너뛴 몫은 안 적어 두니 가까이 오면 다음 훑기(0.1초)에 쌓인 몫이 간다. ③ 몸: 이름 · 외형 · 입은 것은 바뀔 때 · 처음 볼 때 · 1초마다만 싣고 받는 쪽이 앞의 것으로 채운다(unreliable 이라 잃어도 1초 안에 다시). 먼 몸은 빈 소식 {} (그대로 있다)을 보낸다 — 소식에서 빠지면 나간 것이라 빼지 못한다. ④ 몸 소식의 움직이는 칸을 바이트 한 줄로(NetBodies.pack · unpack, float32 그대로라 잃는 것 없음, 모자란 바이트는 그 칸까지만 읽는다). 저마다 쟀다: 바뀐 칸만 짐승 11.5→2.83 · 몸 7.95→5.86, 줄인 꼴 몸 5.86→2.57 · 몸 알림 1.33→0.52, 40m 짐승 2.83→0.61 (40m 만 끈 재기로 따로 쟀다 — 셋 다 나아져 남겼다). 40m 는 이 재기에서 몸에는 안 걸렸다(참가자 둘이 서로 가깝다) — 테스트로 먼 것은 1초 4번 아래 · 가까이 오면 0.3초 안에 제자리를 확인했다. 같은 프레임 묶기는 몸(unreliable)과 짐승(reliable)이 길이 달라 안 했다. 주민 관리 7.8 ms 는 처음 설 때 땅 굽기라 판단 띄엄띄엄과 상관없다 — 후보로 남겼다. QA 둘: counting_multiplayer 에 받는 사람마다 셈(to_peer)을 더해 「RPC 받음」 열을 채웠고, ENet 기다림 두 곳에 「임시 — 재기용」과 걷을 때 다시 잰다는 말을 적었다. G-222.5 이어 그리기 테스트(test_villager_smooth_motion · test_bodies_seen)는 그대로 통과. 새 상태는 판 동안만 쓰는 보낸 기록이라 저장하지 않는다. 전체 테스트는 돌리지 않았다 — 바뀐 곳 29파일 178개 + 몸 관련 6파일 18개 통과",
+   "why": "NetWorld.FAR · NetBodies.FAR 40m — 섬 안에서 눈에 잘 띄는 거리쯤; NetWorld.FAR_EVERY · NetBodies.FAR_EVERY 5 (0.5초) — 먼 것을 보내는 간격; NetBodies.STEADY_EVERY 10 (1초) — unreliable 몸 소식에서 이름 · 외형 · 입은 것을 잃었을 때 메워지는 한도; net_measure_probe.gd ENet 기다림 60~120초 — 재기용, 들어올 때 22초 멈춤을 고치면 걷을 수 있는지 다시 잰다",
+   "files": [
+    "game/core/net/net_world.gd",
+    "game/core/net/net_bodies.gd",
+    "game/tests/multiplayer/test_send_less.gd",
+    "game/tests/perf/counting_multiplayer.gd",
+    "game/tests/perf/net_measure_probe.gd",
+    "game/tests/perf/test_net_measure.gd",
+    "spec/00_core/performance.md",
+    "spec/11_multiplayer/netcode.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "고친 곳마다 전후 숫자를 적는다 — 나아지지 않으면 되돌린다. 전체 테스트가 전과 같다",
+     "evidence": "performance.md 「줄인 것」 표에 전 · 가 · 나 · 다 네 재기가 있다(서버 보냄 20.7→4.0 KB/s, 짐승 11.5→0.61, 몸 7.95→2.57, 몸 알림 1.85→0.52). 40m 만 끈 재기(다)로 40m 몫을 따로 쟀다. test_net_measure 가 표 머리(「## 줄인 것」 · 「| 전 |」 · 「| RPC 받음 |」)를 단언한다. test.log 맨 윗줄이 「전체」 — 402파일 2968개 모두 통과, guard 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "흔한 것부터 본다(짐작 — 재서 가린다): 바뀐 것만 보내기 · 안 움직이는 것은 안 보내기 · 같은 프레임 소식 묶기 · 멀리 있는/다른 섬의 것 덜 자주 · 신뢰 안 해도 되는 것(몸 모습)은 unreliable · 주민 길 찾기 · 판단을 매 프레임 말고 띄엄띄엄",
+     "evidence": "바뀐 칸만(net_world._changes_for · 사람마다 _animal_sent/_folk_sent) · 안 바뀐 것은 안 감(was == c 면 continue, 몸은 steady 칸 빼기) · 먼 것 덜 자주(FAR/FAR_EVERY) 를 만들었고, 묶기 · 판단 띄엄띄엄은 왜 안 했는지 performance.md 「안 고친 것」에 잰 까닭(reliable/unreliable 길이 다름 · 주민 관리 7.8ms 는 땅 굽기)과 함께 적었다. 몸은 이미 unreliable_ordered. test_send_less 의 test_only_changed_fields_go_and_far_ones_wait 가 처음 전부 · 안 바뀌면 [] · 바뀐 칸만 조각 · 칸이 빠지면 전부를 단언한다"
+    },
+    {
+     "ok": true,
+     "criterion": "보내는 횟수를 줄여도 남의 몸 · 주민 이어 그리기(G-222.5 테스트)가 통과한다",
+     "evidence": "전체 실행 test.log 에 test_villager_smooth_motion.gd · test_bodies_seen.gd 가 ok. 테스트 파일은 안 바뀌었다(git status)"
+    },
+    {
+     "ok": true,
+     "criterion": "안 보이는 것은 덜 보낸다(사람 요청 2026-10-16) — 다른 섬에 있는 사람에게는 그 섬 것을 안 보내고, 먼 것은 덜 자주 보낸다(거리 · 빈도 임시). 가까이 오면 바로 제자리로 보인다 (테스트)",
+     "evidence": "다른 섬 거르기는 G-225 의 _members()/where_of 그대로이고 test_islands_split(전체 실행 ok)가 지킨다. 먼 것: test_a_far_animal_is_sent_less_and_is_in_place_as_soon_as_it_is_near · test_a_far_body_… 가 진짜 ENet 두 기계로 가까이 1초 >6번, 멀리 1초 <4번, 가까이 오면 300ms 안에 _net_at/target 이 그 자리, 그림이 0.05m 안에 선다를 단언한다. 일부러 깨 봤다 — 두 파일의 FAR 를 40→100000 으로 놓자 두 ENet 테스트가 「먼 짐승/몸은 덜 자주 받는다 (9)」로 떨어졌다(되돌림 확인). FAR · FAR_EVERY 는 코드 · netcode.md 에 「임시」"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 참가자가 받는 RPC 수가 표에 없다 — … 「RPC 받음」 열로 더하거나 …",
+     "evidence": "counting_multiplayer.gd 에 to_peer(받는 사람마다 셈)를 더했고, test_counting_multiplayer_passes_rpcs_through_and_counts_them 가 서버→참가자 몫 > 0 · 참가자 보냄 합 = to_peer[1] · reset 후 비움을 단언한다. probe 가 rpc_to_per_s · 참가자 id 를 내고 test_three_godots_measure_the_multi_table 가 참가자 둘 다 > 0 을 단언한다. performance.md 표에 「RPC 받음」 열과 아래 한 줄 설명이 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) ENet 기다림 60~120초에 「임시」 표시가 없다 — … 「임시 — 재기용」으로 적어라 …",
+     "evidence": "net_measure_probe.gd 의 set_timeout 두 곳 주석에 「임시 — 재기용」과 들어올 때 멈춤을 고친 뒤 다시 잰다는 말이 들어갔다. report temporary 에도 올렸다"
+    }
+   ],
+   "issues": [
+    "몸 첫 소식을 잃으면 이름·외형이 1초 빈다 — net_bodies.gd _send_to_members 는 처음 보는 몸에 전부를 한 번 싣고 곧바로 _told[id][who]=true 로 적는데, _snapshot 은 unreliable 이라 그 한 번을 잃을 수 있다. 그러면 다음 소식은 n·a·e 가 빠진 것이고 받는 쪽 _filled(state, null) 은 그대로 넘겨 VisitorBody.apply 가 입은 것({})·기본 외형으로 그린다 — STEADY_EVERY(1초)까지. 먼 몸이면 {} 를 받아 _states[who]={} (자리 없는 몸)가 된다. (실제 망 손실에서만, 테스트 루프백에선 안 난다.) 고치는 법: 처음 보는 몸은 STEADY_EVERY 번 동안 계속 전부를 싣거나(_told 를 true 대신 남은 횟수로), 받는 쪽 _snapshot 에서 앞선 것이 없는 번호에 빈 소식/steady 없는 소식이 오면 건너뛰게 하라. test_send_less 에 「첫 _snapshot 하나를 버린 뒤에도 이름표 · 외형이 다음 소식에 서 있다」 단언을 더하라",
+    "performance.md 사람당 표에 창이 섞였다 — 「사람당 초당 바이트 · RPC (5분 평균)」 표의 보냄·받음은 G-227.1 의 5분·고치기 전 숫자인데 새 「RPC 받음」 열은 G-227.2 의 60초 창 숫자다(전인지 후인지도 안 적혔다). 다음 재기 때 표 전체를 같은 창 · 같은 시점(고친 뒤) 숫자로 갈거나, 「RPC 받음」 열이 어느 재기(전/나)인지 표 아래 줄에 적어라"
+   ],
+   "good": []
+  },
+  "test": "  1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           402\nTests            2968\nPassing Tests    2968\nFailing Tests       0\nRisky/Pending       0\nAsserts        128447\nTime           750s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "769f7247"
  }
 ]
