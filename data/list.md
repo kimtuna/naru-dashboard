@@ -3467,7 +3467,7 @@
   - 지금: 집 섬 선착장은 작업대 레시피(craft/recipes/workbench.json:765-769)로 만들어 world/frontier_islands/dock_builder.gd 로 물가에 놓는다(기둥을 치면 부서진다, 172). 개척 섬 선착장은 지도에 박혀 있다(islands.json `dock_prebuilt`)
   - 기준: 집 섬에도 개척 섬처럼 선착장이 **처음부터 한 곳**에 박혀 있다(못 부순다). 자리는 사람이 아직 안 정했다 — 처음 나는 자리 가까운 물가(임시)로 하고 spec 에 「임시」로 적는다
   - 기준: 선착장 레시피 · 놓기를 뺀다. 옛 저장본에 놓아 둔 선착장 · 가방의 선착장 물건이 있어도 읽힌다 — 놓인 것은 지우고 재료를 그 자리 상자/가방으로 돌려준다(임시) (테스트)
-- [ ] 3. 선착장 창 — 모일 사람만 모여 출발한다
+- [x] 3. 선착장 창 — 모일 사람만 모여 출발한다
   - **사람 결정 2026-10-16**: 「선착장에 들어가면 서버에 모든 사람이 텔레포트 하는데 이렇게 말고 모일 사람들이 모이고 출발 하면 출발 시키게」 · 「선착장에 우클릭하면 바로 와지는데 ui창이 열리게 하고 ui창에 참가한 사람만 이동할 수 있도록」 · 앞서 2026-10-15 「섬열기는 자유롭게 다같이 가도 되고 혼자 가도 되고 서버 몇명 남아서 본섬을 지켜도 되고」
   - 지금: dock.gd `_unhandled_input` ~148-155 우클릭 → board() → game_root.gd `sail_to` 405-418(참가자는 HOST_SAILS_NOTICE 만) → net_world.gd `sail_all` 1080-1087 이 **모든 사람**에게 _sail → `_cross` 439-468 이 옛 섬을 풀고 새 섬을 짓는다. 서버는 섬 하나만 돌린다 (netcode.md:113 · 148 「임시」)
   - 기준: 우클릭하면 바로 건너가지 않고 **선착장 창**이 열린다 — 갈 섬 · 「참가」/「빠지기」 · 참가한 사람 목록 · 「출발」. 서버장 · 참가자 누구나 참가하고 출발을 누를 수 있다(임시 — 누가 출발을 누르나는 사람이 안 정했다). 같은 선착장의 창을 연 사람끼리 목록이 같이 바뀐다 (테스트: 셋이 붙어 둘만 참가)
@@ -3479,6 +3479,8 @@
   - 사람이 본 것 (2026-10-16): 「선착장에 와서 다른 섬으로 오니 이동속도가 느려지는 것 같음. 그리고 다시 본섬에 돌아와도 느린느낌 배고픔이랑 목마름 100%임에도」 — 서버장인지 참가자인지는 모른다
   - 짚어 볼 곳 (짐작이다 — 재현으로 가린다): player.gd:226 속도 = base_speed(목마름 0 이면 ×0.7, hunger_thirst.gd:153) · speed_multiplier(버프) · crouch_factor · slope_factor. 섬을 건널 때 player_state.gd remember/restore(12-61)가 웅크림 · 버프를 되살린다. 참가자는 net_vitals.gd `_vitals` 469-483 이 서버 사본으로 덮는다 · `_cross` 가 섬을 지을 때마다 `_fit_body`(game_root.gd:1239-1302)가 다시 붙인다(두 번 붙어 두 번 깎이나)
   - 기준: **재현부터** — 평지에서 걸은 속도를 재고, 섬을 갔다 와서(서버장 · 참가자 둘 다, 3단계 전 길이든 뒤 길이든) 같은 자리에서 다시 잰다. 느려지면 까닭을 고치고 테스트로 남긴다. 재현이 안 되면 report 에 잰 숫자를 남기고 사람에게 서버장 · 참가자 어느 쪽이었나 묻는다
+  - 기준: (앞 단계 QA) sail_to 가 아직 모두를 끌고 간다 — game/core/game_root.gd sail_to(421~) 는 사람 길에서는 빠졌지만(Dock.boarded → open_dock_window) 여전히 net.members() 전부를 _sail_crew 에 넘긴다. 테스트(test_world_on_server · test_locked_island · test_autosave)만 쓰는 길이라 막는 것은 아니지만 「아무도 끌려가지 않는다」와 어긋난 공개 함수다. G-225.7 에서 막음을 걷을 때 sail_to 를 테스트 도우미로 이름을 바꾸거나 crew 를 인자로 받게 하고, 주석에 「사람 길 아님」을 적어라
+  - 기준: (앞 단계 QA) 낡은 주석 둘 — game/core/game_root.gd 844줄 _depart 주석 「(sail_to → NetWorld.sail_crew)」는 실제로는 _sail_crew 를 부른다 → 「_sail_crew → NetWorld.sail_crew」로 고쳐라. game/ui/hud/notice.gd 6줄 「(core/game_root.gd 의 sail_to)」는 잠긴 섬 알림이 이제 open_dock_window 에서 뜨므로 그 이름으로 고쳐라
 - [ ] 5. 섬 여럿 ② — 서버가 섬을 사람 따라 세우고 내린다
   - 3단계에서 쪼갰다. 짜임은 spec/11_multiplayer/netcode.md 「섬 여럿」(루프가 정한 임시)
   - 지금: 서버장 기계는 섬 하나(GameRoot._island)만 돌리고 `_cross` 가 옛 섬을 풀고 새 섬을 짓는다. 3단계 막음(GameRoot `CREW_SPLIT_NOTICE`)이 남는 사람이 있으면 배를 안 띄운다
