@@ -1,14 +1,5 @@
 [
  {
-  "time": "2026-09-25 08:37:55",
-  "epoch": 1790293075,
-  "type": "wait",
-  "title": "기다린다 — 토큰 한도에 걸렸다 (재개 시각을 못 뽑아 30분 쉰다)",
-  "group": "G-910",
-  "step": "14",
-  "attempt": "1"
- },
- {
   "time": "2026-09-25 09:08:06",
   "epoch": 1790294886,
   "type": "wait",
@@ -8165,5 +8156,68 @@
    ]
   },
   "test": "--- 바뀐 곳만: 15 개 ---\ntest.sh: 파일 15 개를 6 개씩 한꺼번에 돌린다\nok     11s  res://tests/core/debug/test_ui_shots.gd\nok     12s  res://tests/world/day_night/test_day_light.gd\nok     15s  res://tests/core/debug/test_dev_box.gd\nok     16s  res://tests/life/hunting/test_carry_cage.gd\nok     18s  res://tests/life/hunting/test_butchery.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok     10s  res://tests/player/movement_controls/test_face_aim.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok     10s  res://tests/core/debug/test_dev_box_open.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok     10s  res://tests/life/hunting/test_sedation_capture.gd\nok     38s  res://tests/automation/villagers/test_villager_watering.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            15\nTests             120\nPassing Tests     120\nFailing Tests       0\nRisky/Pending       0\nAsserts          2845\nTime           38s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-16 04:12:24",
+  "epoch": 1792091544,
+  "type": "pass",
+  "title": "통과 — G-226 단계 1 (먼저 잰다 — 어디가 느린가)",
+  "group": "G-226",
+  "step": "1",
+  "attempt": "2",
+  "report": {
+   "problem": "성능 기준선(spec/00_core/performance.md)에 QA 지적 셋을 고쳤다 — 주민 몫은 걸을 땅을 다 구운 뒤 재고, 내비 굽기 표를 따로 두고, 풀이 장식 안에 있음을 밝혔다",
+   "approach": "앞 시도는 주민 20명을 세우고 30프레임 뒤 쟀는데, 그때 villagers.gd 물리가 섬 전체 걸을 땅 조각을 한 번에 6ms 씩 굽는 중이라 굽기가 주민 비용(8.3ms · 물리 11.7ms)으로 잡혔다. PerfProbe.wait_ground 로 ground.done() 까지 기다려 굽는 동안/다 구운 뒤를 따로 쟀다: 내비 굽기는 25초 · 물리 1500번 · 조각 7396(빈 것 4449) · 한 조각 평균 3.4ms(가장 긴 17.6ms). 다 구운 뒤 villagers.gd 물리는 0.01ms, 스크립트 36가지 합은 프레임당 1.2ms, village_crowd 물리 1.12ms. 재다 보니 Performance.TIME_PHYSICS_PROCESS 가 평균이 아니라 지난 1초의 가장 긴 한 번이라, 다 구운 뒤 90 물리 프레임 쉬고 재며(REST) 조각 다시 굽기 측정은 맨 뒤로 뺐다. 표의 열 이름도 「물리 가장 긴 한 번」으로 고쳤다. 풀은 장식(vegetation) 안에 같이 굽고 그려 따로 단계가 없음을 표 아래 적었다. 후보 4는 「주민 물리」에서 「걸을 땅 굽기 25초(빈 조각이 60%)」로 바꿨다.",
+   "why": "PerfProbe.REST = 90 물리 프레임 — TIME_* 가 1초 창의 최댓값이라 1초 반 쉰다 (재는 조건, 게임 값 아님)",
+   "files": [
+    "game/core/debug/perf_probe.gd",
+    "game/core/debug/perf_island.gd",
+    "game/core/debug/perf_probe.tscn",
+    "game/core/debug/shots.gd",
+    "game/tests/core/debug/test_perf_probe.gd",
+    "spec/00_core/performance.md",
+    "spec/README.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "숫자를 spec/00_core/performance.md(새로)에 표로 적는다 — 이 맥 · 날짜 · 커밋. 고치기 전 기준선이다",
+     "evidence": "performance.md(120줄) 기준선 머리에 2026-10-16 · efde88f3 · Apple M5 Pro 48GB · macOS 26.6.2 · Godot 4.7.2. spec/README.md 에 목록 줄도 더했다"
+    },
+    {
+     "ok": true,
+     "criterion": "섬 만들기: 새 월드(시드 셋) 만들기 · 저장본 열기 · island_cache 가 있을 때/없을 때 — 단계별(지형 · 물 · 자원 · 나무 · 풀 · 콜리전 · 내비) 걸린 시간 (headless, Time.get_ticks_usec)",
+     "evidence": "굽기 표(landform~resources, 물=water), 세우기 표(시드1·2·3 · 저장본 없음 · 유황; build_terrain · build_sea · build_trees · 콜리전 33ms), 저장본 열기 표, 그리고 앞 QA 지적대로 내비(FolkGround) 표를 따로 두었다 — 25.4초 · 물리 1527번 · 7396조각 · 평균 3.36ms. /tmp/perf_scripts.json 의 build.home.navigation.* 값과 일치. 풀은 장식(vegetation) 안에 있다고 표 아래 밝혔다. test_perf_island_follows_test_island_ready_order · test_bake_stages_follow_island_shape_build 가 재는 차례가 게임 코드와 같은지 소스로 지킨다"
+    },
+    {
+     "ok": true,
+     "criterion": "한 프레임: harness/shot.sh 의 자리별 프레임 시간 + Performance 모니터(그리기 호출 · 물체 수 · 정점 · 물리 바디) — 집 섬 넓은 자리 · 숲 · 마을(주민 많을 때) · 개척 섬",
+     "evidence": "overview · spawn · forest · village_crowd(굽는 동안/다 구운 뒤) · 유황 둘의 표. shots.gd village_crowd 가 이제 PerfProbe.wait_ground 로 다 구운 뒤 잰다 — test_scripts_and_crowd_shot_wait_for_folk_ground 가 소스에서 확인. test_frame_line_names_place_and_render_numbers 가 PERF_FRAME 줄 내용을 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "스크립트: _process/_physics_process 를 도는 노드 수와 그 합 시간 (가장 비싼 열)",
+     "evidence": "스크립트 표 — 노드 57개 · 36가지, 굽는 동안 / 다 구운 뒤 열을 나눴다. villagers.gd 굽는 동안 8.1ms(가장 긴 11.8) → 다 구운 뒤 0.007ms 가 /tmp/perf_scripts.json scripts.baking.group / scripts.group 값과 일치. 앞 QA 지적(굽기를 주민 몫으로 잡음)이 고쳐졌다. test_process_groups_count_by_script · test_wait_ground_rests_past_one_second_window · test_scripts_and_crowd_shot_wait_for_folk_ground"
+    },
+    {
+     "ok": true,
+     "criterion": "메모리 · 저장본 크기 · 저장 걸린 시간",
+     "evidence": "메모리 표(303MB · 물체/노드/리소스), 저장본 크기(island_cache 25.5MB/5.2MB · 월드 25.2KB), save_world 0.5ms · apply 14.5~15.1초(set_gone_marks 14.7초)"
+    },
+    {
+     "ok": true,
+     "criterion": "사람 창을 띄우지 않는다 — headless 와 harness/shot.sh 만 (LOOP.md 2절)",
+     "evidence": "perf_probe.tscn 은 --headless 로 돌리고, 창 수치는 shot.sh(shots.gd) 로만 잰다. guard 통과(커서 · 포커스)"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 15 개 ---\ntest.sh: 파일 15 개를 6 개씩 한꺼번에 돌린다\nok     11s  res://tests/core/debug/test_ui_shots.gd\nok     11s  res://tests/world/day_night/test_day_light.gd\nok     15s  res://tests/life/hunting/test_carry_cage.gd\nok     16s  res://tests/core/debug/test_dev_box.gd\nok     18s  res://tests/life/hunting/test_butchery.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok     10s  res://tests/player/movement_controls/test_face_aim.gd\nok     11s  res://tests/core/debug/test_dev_box_open.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok     10s  res://tests/life/hunting/test_sedation_capture.gd\nok     38s  res://tests/automation/villagers/test_villager_watering.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            15\nTests             122\nPassing Tests     122\nFailing Tests       0\nRisky/Pending       0\nAsserts          2851\nTime           38s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "b5831aa9"
  }
 ]
