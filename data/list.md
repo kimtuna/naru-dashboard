@@ -3313,9 +3313,12 @@
   - 기준: spec/11_multiplayer/permissions.md 의 「권한 단위 미정」을 이 단위로 고쳐 적는다 (임시 표시)
   - 기준: (앞 단계 QA) 저장 테스트가 6~17단계 일부만 본다 — test_world_on_server.gd test_the_world_is_saved_only_on_the_host_and_reopens_as_the_guest_left_it 는 짓기(9)·캐기(8)·데스 상자(17)·섬/지도(18)만 참가자가 바꾼다. 같은 길(서버장 섬 상태 → IslandState)이라 기준은 넘겼지만, 참가자가 상자에 넣은 것(10)·심은 밭(12)·시설 대기열(11)·주민 직업(15) 중 몇 가지를 같은 테스트(또는 world_island 에 손발을 더한 새 테스트)에 넣어 다시 연 뒤 그대로인지 단언하면 「6~17단계」가 말 그대로 지켜진다
   - 기준: (앞 단계 QA) 지도를 통째로 0.1초마다 실을 수 있다 — net_world.gd _placed_now_of 의 MAP 은 바뀔 때마다 MapMemory.to_dict() 전체를 보낸다. 진짜 섬(칸 수가 큰 지도)에서 여럿이 걸으면 칸이 바뀔 때마다 지도 한 장이 간다. 지금 기준 밖이지만, 밝힌 칸만 보내거나 보내는 주기를 늦추는 것을 netcode.md 미정에 한 줄 적거나 고쳐 두면 좋다
-- [ ] 20. (앞 단계 QA) 길드 창 머리 칸이 언어를 바꿔도 안 바뀐다
+- [x] 20. (앞 단계 QA) 길드 창 머리 칸이 언어를 바꿔도 안 바뀐다
   - 기준: 길드 창 머리 칸이 언어를 바꿔도 안 바뀐다 — ui/hud/guild_window.gd 150행이 머리 칸을 세울 때 tr(Guild.key_of(u)).replace(" ", "\n") 로 글자를 박아 둔다(자동 번역이 아니라 이미 번역한 문자열). 게임 중 설정에서 언어를 바꾸면 길드 창 머리만 옛 언어로 남는다. NOTIFICATION_TRANSLATION_CHANGED 에서 머리 글자를 다시 적거나, 다른 창이 언어 바뀜을 다루는 방식을 따르고, 언어를 en→ko 로 바꾼 뒤 머리 칸이 「제작\n시설」 이 되는지 보는 테스트를 더하라
   - 기준: (앞 단계 QA) 참가자 눈의 잠긴 칸이 잠겨 보이지 않는다 — guild_guest_ko.png 에서 참가자 창의 칸(disabled)이 길드장 창의 누를 수 있는 칸과 똑같은 테두리 · 밝기라 눌러지는 것처럼 보인다. 위의 안내 한 줄만이 보기 전용임을 알린다. ui_theme 의 CheckBox disabled 모양을 흐리게(예: 테두리 · 점 알파 0.5) 주거나 GuildWindow 에서 보는 눈일 때 modulate 를 낮춰라
+- [ ] 21. (앞 단계 QA) 참가자 첫 자리를 서버가 원점으로 친다
+  - 기준: 참가자 첫 자리를 서버가 원점으로 친다 — 게임 코드는 그대로 두고 test_build_on_server.gd _join 이 VisitorBody.placed() 를 기다리게만 바꿔 전체 실패를 풀었다. 참가자가 들어온 뒤 몸 소식이 처음 오기 전(0.1초 남짓)에는 GameRoot._where_is 가 VisitorBody.target 처음 값 (0,0,0) 을 그 사람 자리로 주어서, 손 닿는 거리 검사가 원점을 기준으로 한다(원점 곁의 바람은 잘못 받고, 먼 곳의 바람은 잘못 거부한다). report 에 따르면 _where_is 가 placed 전에 null 을 주게 하면 원점 곁에서 곧바로 바라는 멀티 테스트 셋(상자 · 세계 · 채집)이 떨어진다. 고치는 길: 접속 때(참가자가 들어올 때) 참가자가 첫 자리를 함께 보내 VisitorBody 를 그 자리에 놓거나, placed 전에 온 바람은 거부하고 그 세 테스트도 placed 를 기다리게 하라. 그다음 placed 전 바람이 원점 기준으로 받아지지 않는지 보는 테스트를 더하라
+  - 기준: (앞 단계 QA) 잠긴 칸 알파 「임시」 표시가 코드에 없다 — 테두리 알파 0.45 · 점 알파 0.5 는 report.temporary 에만 「임시」로 적혔다. guild_window.gd 의 MARK 주석(26~28행)이나 CELL 주석 곁에 「GuildCell disabled 테두리 0.45 · 점 0.5 — **임시**, 눈으로 잡았다 (naru_theme.tres)」 한 줄을 더하라
 
 ## [ ] G-907 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-start
