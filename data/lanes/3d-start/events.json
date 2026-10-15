@@ -1,45 +1,5 @@
 [
  {
-  "time": "2026-09-30 04:55:21",
-  "epoch": 1790711721,
-  "type": "start",
-  "title": "루프 시작",
-  "report": {
-   "problem": "WALL_CLEAR 를 0.45 로 낮추고 까닭을 적었다 · 상자 판 재기 테스트 이름과 주석을 지금 뜻(길 끝이 방 안)에 맞췄다 · 짐승 걸을 땅도 벽에서 0.6m 로 물러났다고 spec 에 적었다 — 바뀐 곳만 9개 파일 75개 통과",
-   "approach": "벽에서 잰 거리가 0.502m 로 WALL_CLEAR 0.5 를 2mm 차이로만 넘고 있었다. 굽는 칸 0.25m 에 맞춰 난 값이라 조금만 달라져도 흔들린다. 그래서 옛 흠(0.40)과 지금 값(0.50) 사이 한가운데인 0.45 로 낮추고 주석에 까닭을 적었다 — 고침을 되돌리면 0.40 이 나므로 여전히 떨어진다. 상자 판 테스트는 대조 단언이 이제 「길 끝이 방 안이다」를 보므로 이름을 test_the_saved_room_keeps_ground_by_the_chest_inside 로 바꿨다. 머리 주석에는 G-167.1 의 흠(방 밖)이 벽 몫 0.6 이후로는 재현되지 않는다고 적었다. spec 「짐승은 그대로다」 줄 곁에는 벽 몫 0.6 이 짐승 굽기에도 쓰여 짐승 걸을 땅도 벽에서 0.6m 로 물러났다는 것을 적었고, 결정적 단언 수치도 0.45m 로 맞췄다. 확인은 changed_tests.py 로 고른 9개 파일 75개 테스트만 돌렸다.",
-   "why": "",
-   "files": [
-    "game/tests/automation/villagers/test_villager_no_straight.gd",
-    "game/tests/automation/villagers/test_villager_chest_saved_room.gd",
-    "spec/07_automation/npc-villagers.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "벽 거리 여유가 2mm 뿐이다 — test_villager_no_straight.gd 의 땅 재기가 지금 0.502m 로 WALL_CLEAR 0.5 를 겨우 넘는다(report). 굽는 칸 0.25m 에 맞춰 난 값이라 엔진 · 굽기 설정이 조금만 달라져도 흔들릴 수 있다. WALL_CLEAR 를 몸 반지름 0.4 보다 넉넉한 0.45 쯤으로 낮추거나(0.45 로 되돌리면 0.40 이 나므로 여전히 잡는다) 그 이유를 WALL_CLEAR 주석에 적어라",
-     "evidence": "test_villager_no_straight.gd:40 WALL_CLEAR 0.5→0.45, 바로 위 주석에 까닭(0.502m · 굽는 칸 0.25m · 옛 흠 0.40과 지금 0.50 사이)을 적었다. 일부러 깨 봤다 — AnimalNav.WALL_PAD 0.6→0.45 로 되돌리고 이 파일만 돌리니 두 땅 재기 테스트(doorless_room · below_a_ledge)가 clear 0.40 < 0.45 로 떨어졌다(6개 중 2개 실패). 되돌려 놓았다. 전체 테스트(2016개)는 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 상자 대조 단언의 뜻이 뒤집혔다 — test_villager_chest_saved_room.gd 의 대조가 이제 「길 끝이 방 안이다」(assert_true)라 G-167.1 이 잰 흠(방 밖)을 더는 재현하지 않는다. 주석에 까닭은 적혔으나 테스트 이름 · 머리 주석(test_measure_the_saved_room 이 흠을 잰다는 설명)이 옛 뜻이면 맞춰 고쳐라",
-     "evidence": "테스트 이름을 test_the_saved_room_keeps_ground_by_the_chest_inside 로 바꾸고 함수 주석에 지금 뜻(길 끝이 방 안, 방 밖으로 나가면 떨어진다)을 적었다. 머리 주석에 G-167.4 뒤로는 G-167.1 흠이 재현되지 않는다는 줄을 더했다. 옛 이름은 game/ · spec/ 어디에도 안 남았다(plan/list.md 의 기준 문장에만 있다)"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 벽 몫 변경이 짐승 걸을 땅도 바꾼다 — AnimalNav.WALL_PAD 0.6 은 짐승 굽기에도 쓰인다(짐승은 벽에서 0.15m 더 물러난다). 전체 테스트는 통과했으나 spec/07_automation/npc-villagers.md 「짐승은 그대로다」 줄 곁 또는 짐승 spec 에 이 한 줄(벽 둘레 짐승 걸을 땅도 0.6m 로 물러났다)을 적어라",
-     "evidence": "spec/07_automation/npc-villagers.md 「짐승은 그대로다」 줄 바로 아래에 「벽 몫 0.6m(AnimalNav.WALL_PAD)은 짐승 굽기에도 쓰인다 — 벽 둘레 짐승 걸을 땅도 0.6m 로 물러났다 (전에는 0.45m)」 줄을 더했다. 같은 줄의 결정적 단언 수치도 0.45m 로 맞췄다. spec 109줄 · 사람 결정 줄 지운 것 없음"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           250\nTests            2016\nPassing Tests    2016\nFailing Tests       0\nRisky/Pending       0\nAsserts         98290\nTime           451s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-09-30 05:27:25",
   "epoch": 1790713645,
   "type": "fail",
@@ -10097,5 +10057,63 @@
    "good": []
   },
   "test": "ts.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/recipes/test_workbench_gear.gd\nok      1s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/stations/test_station_keep.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           383\nTests            2870\nPassing Tests    2870\nFailing Tests       0\nRisky/Pending       0\nAsserts        122069\nTime           713s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-15 12:11:28",
+  "epoch": 1792033888,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-221 단계 19 (시도 2)",
+  "group": "G-221",
+  "step": "19",
+  "attempt": "2",
+  "report": {
+   "problem": "G-221.19 길드 — QA 세 흠 고침: 한 팀 테스트가 진짜로 지키게(양성 대조 + 서버장 몸이 선 위에 있음을 잼) · 저장 안 된 캐릭터의 #peer 권한 열쇠를 저장본에서 뺌 · 길드 창 머리 칸이 붙어 읽히지 않게. 바뀐 곳만: 파일 265개 · 테스트 2135개 통과",
+   "approach": "한 팀 테스트: 참가자의 평타 광선은 카메라 높이(약 2.0m)로 지나가 1.8m 캡슐인 서버장 머리 위를 넘어갔고, 알은 몸 눈높이에서 (서버장 몸이 없는) 먼 조준점으로 나가 서버장 옆을 지나갔다 — 그래서 _people() 제외를 지워도 통과했다. 이제 같은 겨눔에 짐승을 세워 평타·알이 닿는 것을 먼저 보이고(양성 대조), 짐승을 치운 뒤 서버장 몸을 평타 광선·알의 선 한가운데에 붙들어 세우고 서버장 세계에서 그 선이 맨 먼저 서버장 몸에 닿는 것을 잰 다음 서버장 체력이 그대로이고 서버 탄창에서 한 발이 빠졌음을 단언한다. q.exclude 를 지우면 평타 단언이, p.skip 을 지우면 알 단언이 떨어지는 것을 직접 돌려 확인했다. #peer 열쇠: 실제 접속 흐름은 저장된 캐릭터만 고르지만 막아 둠 — WorldData.SESSION_KEY('#')로 시작하는 길드 열쇠는 to_dict 에서 빼고, 예전 저장본에 남은 것도 from_dict 에서 버린다(permissions.md 에 한 줄). 길드 창: 표에 GuildList 테마 변형(칸 사이 14px)을 걸고 두 낱말 머리는 낱말마다 한 줄로 꺾었다(제작/시설 · 섬/열기 · Pick/up) — shots_guild2 의 ko·en 길드장 눈 · 참가자 눈 네 장을 열어 확인했다. 앞 단계 QA 두 기준(저장 테스트에 상자·밭·대기열 추가, 지도 통째 전송 미정 한 줄)은 앞 시도 작업에 이미 들어 있다.",
+   "why": "권한 단위 11가지 (Guild.UNITS) — Claude 가 1단계 표에서 뽑았다; 길드 창 키 P · 칸 크기 28x24 · 칸 사이 14px — 눈으로 잡았다; 줍기 권한 안내는 3초에 한 번",
+   "files": [
+    "current.md",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "game/core/game_root.gd",
+    "game/core/input/input_actions.gd",
+    "game/core/net/acts.gd",
+    "game/core/net/net_acts.gd",
+    "game/core/net/net_session.gd",
+    "game/core/net/net_vitals.gd",
+    "game/core/net/net_world.gd",
+    "game/i18n/en.po",
+    "game/i18n/ko.po",
+    "game/player/pickup/pickup.gd",
+    "game/project.godot",
+    "game/settings/save/world_data.gd",
+    "game/tests/core/net/net_sides.gd",
+    "game/tests/multiplayer/test_body_on_server.gd",
+    "game/tests/multiplayer/test_build_on_server.gd",
+    "game/tests/multiplayer/test_chest_on_server.gd",
+    "game/tests/multiplayer/test_death_on_server.gd",
+    "game/tests/multiplayer/test_farm_on_server.gd",
+    "game/tests/multiplayer/test_fish_on_server.gd",
+    "game/tests/multiplayer/test_folk_on_server.gd",
+    "game/tests/multiplayer/test_harvest_on_server.gd",
+    "game/tests/multiplayer/test_hunt_on_server.gd",
+    "game/tests/multiplayer/test_station_on_server.gd",
+    "game/tests/multiplayer/test_world_on_server.gd",
+    "game/tests/ui/layout/test_window_layout.gd",
+    "game/ui/theme/naru_theme.tres",
+    "game/ui/theme/ui_theme.gd",
+    "spec/01_settings/input.md",
+    "spec/01_settings/save.md",
+    "spec/11_multiplayer/netcode.md",
+    "spec/11_multiplayer/permissions.md",
+    "game/core/net/guild.gd",
+    "game/core/net/net_guild.gd",
+    "game/tests/core/net/test_guild.gd",
+    "game/tests/multiplayer/test_guild_on_server.gd",
+    "game/tests/ui/hud/test_guild_window.gd",
+    "game/ui/hud/guild_window.gd"
+   ],
+   "decision": null
+  },
+  "test": "est_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\n\n================ 떨어진 파일: res://tests/multiplayer/test_folk_on_server.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/multiplayer/test_folk_on_server.gd\n* test_bodies_live_on_the_server_and_the_guest_only_mirrors_them\n    2 Orphans\n        * [<Node#157739387171>]\n        * [<Node#195639119618>]\n* test_a_late_joiner_gets_them_whole_and_arrivals_and_leavers_follow\n    3 Orphans\n        * [<Node#262261443614>]\n        * [<Node#293265738841>]\n        * [<Node#233522074505>]\n* test_the_guest_window_asks_and_both_windows_see_the_same\n    2 Orphans\n        * [<Node#338128017903>]\n        * [<Node#366867389033>]\n* test_the_guest_releases_a_villager_on_the_server\n    [Failed]:  [\"\"] expected to equal [\"하람 이(가) 섬을 떠났다\"]:  떠났다는 한 줄은 미르에게\n      at line 287\n    2 Orphans\n        * [<Node#405471760830>]\n        * [<Node#434211133779>]\n* test_two_giving_one_villager_different_jobs_at_once_one_stays\n    3 Orphans\n        * [<Node#497595451900>]\n        * [<Node#527475674078>]\n        * [<Node#468856084989>]\n* test_an_unpermitted_guest_is_refused_and_told_why\n    2 Orphans\n        * [<Node#570257575923>]\n        * [<Node#598996949002>]\n* test_the_guest_sees_the_stalled_and_cramped_alert_lines\n    3 Orphans\n        * [<Node#699073038970>]\n        * [<Node#663438233700>]\n        * [<Node#634698863954>]\n17 orphans\n6/7 passed.\n\n\n\n\n==============================================\n= 17 Orphans\n==============================================\ntest_folk_on_server.gd\n    - test_bodies_live_on_the_server_and_the_guest_only_mirrors_them\n        * [<Node#157739387171>]\n        * [<Node#195639119618>]\n    - test_a_late_joiner_gets_them_whole_and_arrivals_and_leavers_follow\n        * [<Node#262261443614>]\n        * [<Node#293265738841>]\n        * [<Node#233522074505>]\n    - test_the_guest_window_asks_and_both_windows_see_the_same\n        * [<Node#338128017903>]\n        * [<Node#366867389033>]\n    - test_the_guest_releases_a_villager_on_the_server\n        * [<Node#405471760830>]\n        * [<Node#434211133779>]\n    - test_two_giving_one_villager_different_jobs_at_once_one_stays\n        * [<Node#497595451900>]\n        * [<Node#527475674078>]\n        * [<Node#468856084989>]\n    - test_an_unpermitted_guest_is_refused_and_told_why\n        * [<Node#570257575923>]\n        * [<Node#598996949002>]\n    - test_the_guest_sees_the_stalled_and_cramped_alert_lines\n        * [<Node#699073038970>]\n        * [<Node#663438233700>]\n        * [<Node#634698863954>]\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/multiplayer/test_folk_on_server.gd\n- test_the_guest_releases_a_villager_on_the_server\n    [Failed]:  [\"\"] expected to equal [\"하람 이(가) 섬을 떠났다\"]:  떠났다는 한 줄은 미르에게\n          at line 287\n\nTotals\n------\nScripts               1\nTests                 7\nPassing Tests         6\nFailing Tests         1\nAsserts           135/136\nOrphans              17\nTime              3.278s\n\n\n---- 1 failing tests ----\n\nWARNING: 17 ObjectDB instances were leaked at exit (run with `--verbose` for details).\n   at: cleanup (core/object/object.cpp:2536)\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           383\nTests            2872\nPassing Tests    2871\nFailing Tests       1\nRisky/Pending       0\nAsserts        122126\nTime           711s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/multiplayer/test_folk_on_server.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
