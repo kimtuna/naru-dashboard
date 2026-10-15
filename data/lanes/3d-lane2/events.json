@@ -1,11 +1,5 @@
 [
  {
-  "time": "2026-09-25 04:30:32",
-  "epoch": 1790278232,
-  "type": "start",
-  "title": "루프 시작"
- },
- {
   "time": "2026-09-25 04:48:21",
   "epoch": 1790279301,
   "type": "pass",
@@ -7862,5 +7856,41 @@
   },
   "test": "--- 바뀐 곳만: 16 개 ---\ntest.sh: 파일 16 개를 6 개씩 한꺼번에 돌린다\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      5s  res://tests/ui/menu/test_pause_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok     20s  res://tests/craft/stations/test_stations.gd\nok     41s  res://tests/core/input/test_held_keys.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            16\nTests             143\nPassing Tests     143\nFailing Tests       0\nRisky/Pending       0\nAsserts          7950\nTime           41s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "9acfa589"
+ },
+ {
+  "time": "2026-10-15 20:21:43",
+  "epoch": 1792063303,
+  "type": "pass",
+  "title": "통과 — G-223 단계 3 (제작 시설 대기열 줄의 「만들기」를 뺀다)",
+  "group": "G-223",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "제작 시설 대기열의 「만들기」 줄에서 「만들기」 글을 뺐다 — 이름 · 개수만 보이고, 「유지」 줄은 「유지」 글이 남는다",
+   "approach": "대기열 줄 맨 앞 Mode 칸이 만들기 줄에도 「만들기」를 적고 있었다. Mode 칸은 남기되 만들기 줄에서는 글을 비우고 숨기며, 유지 줄에서만 「유지」를 적고 보인다(HFlowContainer 라 숨긴 칸은 자리를 차지하지 않는다). 표 머리줄의 「만들기」 · 「유지」 칸 이름은 대기열이 아니라서 그대로 둔다. 테스트: 만들기 줄에 보이는 글자 중 「만들기」가 없고 이름 · 개수는 보이며, 유지 줄은 「유지」가 보인다. 칸이 하나 빠져 줄이 넓어지자 「흐른 까닭은 들여 쓴다」 테스트에서 까닭이 더 이상 아랫줄로 흐르지 않아, 이름이 긴 물건을 흉내 내도록 이름 칸 최소 폭을 넓혀 흐름을 다시 만들었다. 화면 사진(harness/shot.sh --ui workbench, ko · en)에서 「의자 × 3」 · 「침대 × 1」 줄에 만들기 글이 없고 「유지 테이블 지금 0 / 유지 5」는 남은 것을 확인했다.",
+   "why": "유지 대기열 줄의 「유지」 글은 무엇이 다른지 보이려 임시로 남긴다 (current.md 기준의 「(임시)」) — station_window.gd 주석에 적음",
+   "files": [
+    "game/ui/hud/station_window.gd",
+    "game/tests/ui/hud/test_station_keep_window.gd",
+    "game/tests/ui/hud/test_station_doing_line.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "대기열 줄(ui/hud/station_window.gd:432 · :461 의 `Mode` 칸, STATION_QUEUE_MAKE)에 「만들기」 글이 없다 — 이름 · 개수만. 유지 대기열(STATION_QUEUE_KEEP)은 무엇이 다른지 보여야 하니 그 글은 남긴다 (임시) (테스트 · 화면 사진)",
+     "evidence": "station_window.gd 의 _queue_line 이 Mode 칸을 빈 글 · 숨김으로 만들고 _refresh_queue 가 유지 줄에서만 STATION_QUEUE_KEEP 을 적고 켠다. 「(임시)」는 코드 주석에 적혀 있다. test_station_keep_window.gd::test_the_queue_line_says_keep_only_for_keep_lines 가 만들기 줄의 Mode 가 안 보이는지, 보이는 Label 가운데 STATION_QUEUE_MAKE 가 없는지, Item · Count 가 보이는지, 유지 줄 Mode 가 STATION_QUEUE_KEEP 이고 보이는지를 확인한다. 옛 코드(STATION_QUEUE_MAKE 를 적고 보임)라면 assert_false(visible) 와 보이는 글 검사에서 깨진다. 전체 테스트 383개 파일 · 2877개 통과, guard 통과(test.log). 화면 사진 /tmp/g2233/workbench_ko.png 에서 「의자 × 3」 · 「침대 × 1」 줄에 만들기 글이 없고 「유지 테이블 지금 0 / 유지 5」는 남아 있다. 표 머리줄의 「만들기」 칸 이름은 대기열이 아니라서 그대로 두었다"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "test_station_doing_line.gd::test_a_flowed_reason_is_indented_inside_its_line 에서 Item 칸 최소 폭을 160 으로 넓혔다. 칸이 하나 빠져 줄이 넓어지니 흐름 검사가 계속 돌게 하려는 것이라 덤은 아니고, 지키던 것(흐른 까닭이 들여 쓰여 줄 안에 든다)도 그대로 지킨다"
+   ]
+  },
+  "test": "es://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           383\nTests            2877\nPassing Tests    2877\nFailing Tests       0\nRisky/Pending       0\nAsserts        122317\nTime           742s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "87496b99"
  }
 ]
