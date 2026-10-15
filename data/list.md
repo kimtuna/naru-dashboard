@@ -3483,13 +3483,15 @@
   - 기준: **재현부터** — 평지에서 걸은 속도를 재고, 섬을 갔다 와서(서버장 · 참가자 둘 다, 3단계 전 길이든 뒤 길이든) 같은 자리에서 다시 잰다. 느려지면 까닭을 고치고 테스트로 남긴다. 재현이 안 되면 report 에 잰 숫자를 남기고 사람에게 서버장 · 참가자 어느 쪽이었나 묻는다
   - 기준: (앞 단계 QA) sail_to 가 아직 모두를 끌고 간다 — game/core/game_root.gd sail_to(421~) 는 사람 길에서는 빠졌지만(Dock.boarded → open_dock_window) 여전히 net.members() 전부를 _sail_crew 에 넘긴다. 테스트(test_world_on_server · test_locked_island · test_autosave)만 쓰는 길이라 막는 것은 아니지만 「아무도 끌려가지 않는다」와 어긋난 공개 함수다. G-225.7 에서 막음을 걷을 때 sail_to 를 테스트 도우미로 이름을 바꾸거나 crew 를 인자로 받게 하고, 주석에 「사람 길 아님」을 적어라
   - 기준: (앞 단계 QA) 낡은 주석 둘 — game/core/game_root.gd 844줄 _depart 주석 「(sail_to → NetWorld.sail_crew)」는 실제로는 _sail_crew 를 부른다 → 「_sail_crew → NetWorld.sail_crew」로 고쳐라. game/ui/hud/notice.gd 6줄 「(core/game_root.gd 의 sail_to)」는 잠긴 섬 알림이 이제 open_dock_window 에서 뜨므로 그 이름으로 고쳐라
-- [ ] 5. 섬 여럿 ② — 서버가 섬을 사람 따라 세우고 내린다
+- [x] 5. 섬 여럿 ② — 서버가 섬을 사람 따라 세우고 내린다
   - 3단계에서 쪼갰다. 짜임은 spec/11_multiplayer/netcode.md 「섬 여럿」(루프가 정한 임시)
   - 지금: 서버장 기계는 섬 하나(GameRoot._island)만 돌리고 `_cross` 가 옛 섬을 풀고 새 섬을 짓는다. 3단계 막음(GameRoot `CREW_SPLIT_NOTICE`)이 남는 사람이 있으면 배를 안 띄운다
   - 기준: 서버가 누가 어느 섬에 있나(peer → 섬 id, 캐릭터 places 와 같은 값)를 쥐고, 사람이 선 섬을 다 세워 돌린다 — 섬마다 제 3D 세계(own_world_3d). 서버장 화면은 제가 선 섬만 그린다 (테스트: 서버장이 HOME 에 있는 채로 SULFUR 를 세우고 두 섬의 물리가 섞이지 않는다)
   - 기준: 아무도 없는 섬은 내린다 — IslandState 로 월드에 담고 짐승 · 주민 · 시설 틱은 그동안 멈춘다. 다시 오면 담은 대로 선다. 저장하면 선 섬 모두가 담긴다 (테스트)
 - [ ] 6. 섬 여럿 ③ — 맞추기 · 바람을 섬마다 가른다
   - 기준: 맞추기(놓는 곳 · 짐승 · 주민 · 떨어진 것 · 지도 · 몸 소식)는 그 섬에 선 사람에게만 간다. 바람(치기 · 놓기 · 줍기 …)은 바란 사람이 선 섬에 한다. 시계 · 날 · 연 섬 · 길드 · 배 명단은 모두 같다 (테스트: 두 섬에 갈린 둘이 서로의 몸 · 짐승을 받지 않고, 각자 제 섬에서 친 것이 제 섬에만 남는다)
+  - 기준: (앞 단계 QA) _lower_afar 가 _afar 가 null 이면 터진다 — game/core/game_root.gd _lower_afar 의 `_afar.get_node_or_null(id)` 는 지금 부르는 곳이 모두 _afar 가 있을 때뿐이라 괜찮지만, 앞에 `if _afar == null: return` 을 두어 다음 단계에서 부르는 곳이 늘어도 안전하게 하라
+  - 기준: (앞 단계 QA) 참가자 명단 값이 캐릭터 places 에 되써지지 않는다 — set_island_of 는 서버 _places 만 바꾸고 참가자 캐릭터 places 의 island 는 그대로다. 지금은 참가자가 서버장과 다른 섬에 설 길이 막혀(CREW_SPLIT_NOTICE) 어긋날 일이 없지만, G-225.7 에서 막음을 걷을 때 참가자 places 와 island_of 가 같은지 보는 단언을 test_dock_crew.gd 에 넣어라
 - [ ] 7. 섬 여럿 ④ — 「다 타야 떠난다」 막음을 걷는다
   - 기준: 출발하면 **참가한 사람만** 그 섬으로 간다 — 안 한 사람은 제 섬에 남아 그대로 논다. GameRoot `CREW_SPLIT_NOTICE` 와 그 번역 키를 걷는다
   - 기준: tests/multiplayer/test_dock_crew.gd 에 「셋 중 둘이 타고 출발 → 둘은 SULFUR, 솔은 HOME 에 남아 움직이고 치기가 된다」 테스트
