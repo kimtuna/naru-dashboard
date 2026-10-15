@@ -1,69 +1,5 @@
 [
  {
-  "time": "2026-09-30 15:28:21",
-  "epoch": 1790749701,
-  "type": "pass",
-  "title": "통과 — G-169 단계 3 (사람과 주민이 같은 상자를 같이 쓴다)",
-  "group": "G-169",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "사람과 농부가 같은 방 상자를 같이 쓴다 — 꺼내러 가는 사이 사람이 먼저 집으면 농부가 곧바로 길을 접고 없는 대로 한다 (test.log 「파일 34 개」 바뀐 곳만: 216개 통과)",
-   "approach": "상자에는 잠금·붙들기가 없어서(G-169.1 에서 잰 대로) 사람 손을 막는 것은 G-169.2 가 고친 되풀이뿐이었다. 남은 흠은 하나였다 — 농부가 씨앗·물뿌리개를 꺼내러 걸어가는 사이 사람이 먼저 집으면 농부는 상자 앞까지 걸어가 서서 「상자 곁에 설 자리가 없다」(틀린 까닭)를 남기고 RETRY 5초를 섰다. 그래서 FieldCare.tick 의 TO_CHEST 에서 방 상자에 꺼낼 것(_fetch_pick)이 더는 없으면 곧바로 _stop(0.0) 해 다시 고르게 했다 → 할 일이 없으면 「할 일이 없다」. 테스트(새 파일 test_villager_chest_shared.gd, 방 · 문 너머 연못 · 농부는 상자에서 떨어져 선다): (1) 농부가 물뿌리개를 꺼내 채워 물을 주는 동안 사람이 밀 칸을 Shift+클릭 30번 · 끌어 놓기 30번 — 다 됐고 밀 합 20 그대로, 농부는 밭 셋에 물을 다 줬고 떠나보내지 않았다(villagers.all() 에 그대로). (2) 사람이 먼저 — 씨앗 · 물뿌리개 각각, 꺼내러 가는 중에 사람이 다 집으면 3 물리 틱 안에 IDLE · 창은 WHY_NOTHING_TO_DO · 손 빈 채 · 사람 가방에 다 있다. (3) 농부가 먼저 — 씨앗 5 에서 빈 밭 수만큼 3 을 꺼내면 사람은 남은 2 를 집고 농부는 셋을 다 심는다. 상자 · 손 · 가방 · 심은 밭의 씨앗 합을 상자가 바뀔 때마다 · 프레임마다 재 한 번도 5 에서 벗어나지 않았다. (4) (앞 단계 QA) REFETCH · WHY_PUT_BACK — 농부가 씨앗을 꺼낸 순간 사람이 빈 밭 셋을 먼저 심는다 → 쓸 곳이 없어 도로 둔다 → 새 빈 밭을 갈아도 게임 시간 20초(REFETCH 30초 안) 동안 한 번도 다시 안 꺼내고 창은 WHY_PUT_BACK. 지킴 확인: 고친 줄을 되돌리면 (2) 둘이 떨어지고, field_care.gd 의 `_shun[k] = REFETCH` 를 `pass` 로 바꾸면 (4) 가 떨어졌다(다시 꺼냄 2번 · 창은 NOTHING_TO_DO). 되돌려 놓았다. 찍기: harness/shot.sh --ui 에 villager_chest_shared 자리를 더했다 — AsBuiltRoom 에서 농부가 씨앗을 꺼내 든 채(손 2) 사람이 상자 창을 열고 남은 씨앗 8 을 Shift+클릭으로 가방에 집은 그림. 카메라를 동쪽으로 비켜 방 · 농부가 창에 안 가리게 했다 (.loop/out/g1693/villager_chest_shared_ko.png · _en.png 열어 봤다 — 잘림 · 가림 없음).",
-   "why": "",
-   "files": [
-    "game/automation/villagers/field_care.gd",
-    "game/tests/automation/villagers/test_villager_chest_shared.gd",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "spec/07_automation/npc-villagers.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "주민이 일하는 중에도 사람이 그 상자에서 집을 수 있다 (테스트)",
-     "evidence": "test_villager_chest_shared.gd test_a_person_takes_from_the_chest_while_the_farmer_works — 농부가 IDLE 이 아닌 프레임에만 밀 칸을 Shift+클릭(quick_into_bag) · 끌어 놓기(SlotDrop._get_drag_data/_drop_data) 30번씩, 30/30 다 되고 밀 합 20 · 밭 셋에 물을 다 줬음을 단언. test.log 에서 ok"
-    },
-    {
-     "ok": true,
-     "criterion": "사람이 먼저 집으면 주민은 없는 대로 하고, 주민이 먼저 집으면 사람은 남은 것을 집는다 — 물건이 겹쳐 사라지거나 늘지 않는다 (테스트)",
-     "evidence": "test_when_the_person_takes_the_seeds_first / _the_can_first — 꺼내러 가는 중(TO_CHEST)에 사람이 다 집으면 3 물리 틱 안에 IDLE · WHY_NOTHING_TO_DO · 손 빔 · 합 그대로. test_when_the_farmer_takes_first_the_person_gets_the_rest — 농부 3 · 사람 2, 상자 changed 와 프레임마다 합(상자+손+가방+심은 밭)이 5 에서 한 번도 안 벗어남. field_care.gd TO_CHEST 의 새 줄을 빼면 IDLE 단언이 떨어진다(코드를 보면 3틱 뒤에도 TO_CHEST 로 남는다)"
-    },
-    {
-     "ok": true,
-     "criterion": "주민을 떠나보내지 않아도 된다 — 사람이 그것 때문에 주민을 내보내는 일이 없다 (테스트)",
-     "evidence": "test_a_person_takes_from_the_chest_while_the_farmer_works 가 집기 30번이 다 된 뒤 villagers.all().size()==1 · has(villager) · job==FARMER 를 단언 — 떠나보내지 않은 채 집기가 됐다"
-    },
-    {
-     "ok": true,
-     "criterion": "찍어서 확인한다 — 주민이 일하는 중에 사람이 상자를 연 창",
-     "evidence": ".loop/out/g1693/villager_chest_shared_ko.png 를 열어 봤다 — 상자 창(물뿌리개 칸)이 열려 있고 가방에 밀 씨앗 8 을 집었으며, 오른쪽 방 안에 농부가 보인다. 잘림 · 가림 없음. ui_shots.gd · ui_shots_kit.gd 에 villager_chest_shared 자리가 붙었다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) REFETCH(_shun) 만 지키는 테스트가 없다 — ...",
-     "evidence": "test_seeds_put_back_unused_are_not_taken_again — 농부가 씨앗을 꺼낸 순간 사람이 빈 밭을 다 심어 도로 두게 하고, 새 빈 밭을 갈아도 게임 20초 동안 다시 안 꺼냄(takes.n==1)을 단언. 직접 깨 봤다: field_care.gd:275 `_shun[k] = REFETCH` 를 `pass` 로 바꾸자 test_villager_chest_shared.gd 가 FAIL (can_churn 은 ok 그대로). 되돌렸다(diff 가 원래 +6 그대로)"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) WHY_PUT_BACK 까닭을 단언하는 테스트가 없다 — ...",
-     "evidence": "같은 테스트가 villagers.why_still(villager) == Villagers.WHY_PUT_BACK 과 tr(WHY_PUT_BACK) 이 키와 다름(번역됨)을 단언"
-    }
-   ],
-   "issues": [
-    "사람이 짚은 물뿌리개 다툼을 일하는 중 집기로 안 잰다 — test_a_person_takes_from_the_chest_while_the_farmer_works 는 농부가 안 건드리는 밀 칸만 집는다. 사람이 막혔던 것은 물뿌리개였다(G-169 머리말). 손이 거의 찬 농부(밀 · 씨앗 · 비료를 든 채)가 물 주기에 들어가는 동안 사람이 물뿌리개 칸을 Shift+클릭하는 경우를 test_villager_chest_shared.gd 에 더해, 한 번에 집히고 물뿌리개가 상자+손+가방 합 1 을 지키는지 단언하라 (막는 것은 아니다 — 되풀이 자체는 test_villager_can_churn.gd 가 지킨다)",
-    "REFETCH 테스트가 벽시계로 기다린다 — test_seeds_put_back_unused_are_not_taken_again 이 Time.get_ticks_msec 5000ms 를 기다려 「게임 시간 20초」를 가정한다. 프레임이 늦으면 게임 시간이 짧아져 REFETCH 가 풀렸어도 못 볼 수 있다. 게임 시간으로(물리 프레임 수 × delta 합으로) 20초를 재도록 바꿔라"
-   ],
-   "good": []
-  },
-  "test": "t_villager_harvesting.gd\nok     20s  res://tests/automation/villagers/test_villager_reach.gd\nok     19s  res://tests/automation/villagers/test_villager_can_churn.gd\nok     16s  res://tests/automation/villagers/test_villager_as_built.gd\nok     18s  res://tests/automation/villagers/test_villager_room_doors.gd\nok     16s  res://tests/automation/villagers/test_villager_jobs.gd\nok     19s  res://tests/automation/villagers/test_villager_walks_in.gd\nok      8s  res://tests/automation/villagers/test_villager_hands_room.gd\nok     17s  res://tests/automation/villagers/test_villager_many_fields.gd\nok     13s  res://tests/core/debug/test_dev_box.gd\nok     14s  res://tests/automation/villagers/test_villager_chest_shared.gd\nok     15s  res://tests/automation/villagers/test_villager_planting.gd\nok      9s  res://tests/automation/villagers/test_villager_home.gd\nok      5s  res://tests/ui/hud/test_target_bars.gd\nok      9s  res://tests/core/debug/test_dev_box_open.gd\nok      8s  res://tests/automation/villagers/test_villager_torch_detour.gd\nok     10s  res://tests/core/debug/test_ui_shots.gd\nok      2s  res://tests/automation/villagers/test_villager_chest_detour.gd\nok      5s  res://tests/ui/layout/test_window_layout.gd\nok      4s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      3s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      3s  res://tests/build/test_bed.gd\nok      2s  res://tests/ui/hud/test_map_pin.gd\nok      4s  res://tests/ui/hud/test_bag.gd\nok      3s  res://tests/ui/hud/test_map_window.gd\nok      3s  res://tests/ui/hud/test_room_names.gd\nok      3s  res://tests/ui/hud/test_room_window.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      4s  res://tests/ui/hud/test_station_output.gd\nok      2s  res://tests/automation/villagers/test_villager_door.gd\nok      3s  res://tests/ui/hud/test_station_window.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_health_bar.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok    438s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            69\nTests             504\nPassing Tests     504\nFailing Tests       0\nRisky/Pending       0\nAsserts          9531\nTime           438s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "01a63a18"
- },
- {
   "time": "2026-09-30 15:51:37",
   "epoch": 1790751097,
   "type": "pass",
@@ -10055,5 +9991,48 @@
    "good": []
   },
   "test": "--- 바뀐 곳만: 1 개 ---\ntest.sh: 파일 1 개를 6 개씩 한꺼번에 돌린다\nok      1s  res://tests/multiplayer/test_join_body.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             1\nTests               2\nPassing Tests       2\nFailing Tests       0\nRisky/Pending       0\nAsserts            32\nTime           1s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-15 19:45:01",
+  "epoch": 1792061101,
+  "type": "fail",
+  "title": "QA 불합격 — G-222 단계 1 (시도 2)",
+  "group": "G-222",
+  "step": "1",
+  "attempt": "2",
+  "report": {
+   "problem": "참가자 몸 0 을 진짜 섬(TestIsland) 둘을 ENet 으로 붙여 QA 가 짚은 세 길(첫 몸 소식 · 한 번 틱 · 먹기/물)로 재현하려 했으나 셋 다 멀쩡했다 — 결과를 테스트로 남기고, 맥 저장본이 0 이 된 까닭(들어오기 전에 이미 굶었다)을 근거와 함께 적는다. 게임 코드는 고치지 않았다",
+   "approach": "test.log(바뀐 곳만: changed_tests.py 가 고른 2개 파일)에서 6개 테스트 · 59개 단언이 통과했다.\n\n무엇을 해 봤나 — QA 가 짚은 셋을 진짜 섬(메뉴 기본 island_scene = TestIsland)으로 참가하는 test_join_body_island.gd 에 담았다. 저장본 몸은 배고픔 0.4 · 목마름 0.3 · 체력 60, 가방에 밀빵 3개다.\n(3) 첫 몸 소식: 참가자 기계가 받은 첫 _vitals 는 h 0.4 · t 0.3 · hp 60 이었다. 서버장 사본도, 참가자 화면도 같았다. 섬을 세우고 되돌린 몸을 빈 값이나 0 으로 덮지 않는다.\n(2) 한 번 틱: 참가자 HungerThirst 는 is_processing=false 였다. 2초 동안 서버 사본이 준 양은 흐른 초/LASTS_SECONDS 의 1.5배 안에 들었다. 체력은 그대로였고, 참가자 화면은 서버 사본을 1% 안으로 따라갔다.\n(1) 먹기 · 물: 참가자가 Food.eat_held 로 빵을 먹자 서버 사본 배고픔이 min(전+빵, 1) 만큼 올랐고, 참가자 화면과 가방(3→2)도 따라왔다. WATER 한 모금도 서버 사본 목마름을 SIP 만큼 올렸고 화면에 왔다.\n작은 섬 test_join_body.gd 로는 0.8/0.7/60 으로 들어오는 것과, 나갔다 다시 들어와도 같은 값인 것을 확인했다. 수용 기준의 서버장 사본 · 참가자 화면 · 다시 들어옴이 여기에 걸린다.\n\n맥 저장본이 0 이 된 까닭 — 참가 길 때문이 아니라, 들어오기 전에 이미 굶은 몸이었다. 근거는 셋이다.\n① 지금 맥 저장본 ㅁㄴㅇ(1789959457_2a520c0c)은 배고픔 0 · 목마름 0 · 체력 1 이다. 체력 1 은 STARVE_FLOOR 다. 체력이 1 까지 내려가려면 배고픔 0 인 채 5초에 1씩 8분 남짓 흘러야 한다. 들어올 때 값이 0 으로 덮이는 흠이었다면 체력은 그대로였을 것이다.\n② 같은 캐릭터의 백업이 날마다 줄어 있다. ~/Desktop/naru-saves/G-212(10-13)은 0.13/0.0/100, G-218.2(10-14 15:02)은 0.53/0.53/100 이다. 0.53 에서 바닥까지 7분, 다시 체력 1 까지 8분이면 된다.\n③ places 에 10-15 15:43 에 만든 서버장 월드가 있다. 18:38 참가(mac-join.log) 앞에 이미 한 판을 들어갔다는 뜻이다. 그 판이나 그 뒤 혼자 한 판에서 먹지 않고 15분 넘게 지나 바닥에 닿았다고 본다.\n서버장이 멀쩡했던 것은 서버장 캐릭터가 따로이기 때문이다. 다만 맥 가방 7번 칸에 밀빵 72개가 있다. 사람이 먹으려 했는데 안 됐다면, 그 판의 권한 칸 · 입력 문제(이 묶음의 다른 단계)일 수 있다. 먹기 RPC 자체는 권한을 묻지 않고, 위 (1) 에서 됐다.\n\n덤으로 본 것 — 한 godot 안 두 기계로 진짜 섬을 세우면, 섬을 세우는 몇 초 동안 ENet 을 돌보지 못해 참가자가 「서버가 닫혔다」로 끊겼다(ENet 최소 시간 초과 5초). 테스트에서만 peer.set_timeout 을 넉넉히 잡았다. 진짜 두 기계에서는 서버장이 계속 돌아 사람 시험에서는 일어나지 않았다. 섬을 세우는 것이 아주 느린 참가자 기계라면 같은 일이 날 수 있어 적어 둔다. 엔진의 deprecated 경고가 검사를 떨어뜨려서, test_dead_save.gd 처럼 섬은 before_all 에서만 세웠다.",
+   "why": "",
+   "files": [
+    "game/tests/multiplayer/test_join_body.gd",
+    "game/tests/multiplayer/test_join_body_island.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "ok": false,
+     "criterion": "**재현부터** — 배고픔 · 목마름 · 체력이 찬 캐릭터(저장본)로 참가하는 테스트를 먼저 만들어 떨어지는 것을 본다. 그 뒤 고친다",
+     "evidence": "떨어지는 것을 끝내 보지 못했다. 앞 QA가 짚은 세 길(첫 몸 소식 · 한 번 틱 · 먹기/물)은 ENet + 진짜 섬으로 확인해 배제했다(test_join_body_island.gd). 그런데 그 다음 '맥 저장본은 들어오기 전에 이미 굶었다'는 결론이 근거와 맞지 않는다. 캐릭터 1789959457_2a520c0c.sav 와 월드 worlds/1790014507_e428c509.sav 는 둘 다 10-15 19:11:41 에 저장됐다. 참가 판(18:38)은 18:43 에 Steam 충돌(signal 11)로 끝났고, 그 뒤 19:11 까지 혼자 한 판이 있었다. 그러니 지금 0/0/1 은 참가한 뒤의 값이다. 들어오기 전 몸을 알려 주지 못한다. 월드 id 1790014507 은 9-22 에 만든 것이라 '10-15 15:43 에 만든 서버장 월드'(③)와도 맞지 않는다. 남은 차이 — 사람은 NARU_STEAM=1 로 Steam 길로 들어왔는데, 테스트는 ENet 길만 탔다. 사람이 눈으로 본 것('들어오면 0, 서버장은 정상')이 아직 설명되지 않았다"
+    },
+    {
+     "ok": false,
+     "criterion": "참가자는 제 캐릭터 저장본의 배고픔 · 목마름 · 체력 그대로 들어온다 — 서버장 화면의 그 사람 사본 · 참가자 화면 둘 다 (테스트). 나갔다 다시 들어와도 그 값이다",
+     "evidence": "ENet 길로는 진짜 테스트가 있다. test_join_body.gd 는 0.8/0.7/60 으로 들어오는 것과 다시 들어오는 것을, test_join_body_island.gd 는 진짜 섬에서 0.4/0.3/60 을 본다. 일부러 깨 봤다 — net_vitals.gd vitals_of 의 set_levels 를 (0,0)으로 바꾸자 두 파일 다 실패했고, 본 뒤 되돌렸다(git status 깨끗). 다만 사람이 실제로 탄 Steam 참가 길(start_steam_join → SteamRoom → join_peer)은 테스트가 없다. 기준이 말하는 '참가자'의 길 하나가 빠졌으니, 의심스러우면 불합격으로 친다"
+    }
+   ],
+   "issues": [
+    "Steam 참가 길로 몸을 재현하지 않았다 — 사람은 NARU_STEAM=1 로 Steam 로비를 거쳐 들어왔다. 테스트는 ENet(127.0.0.1)만 탔다. tests/core/net/fake_steam.gd 와 test_steam_game.gd 가 Steam 길로 서버장·참가자를 세우는 방식을 그대로 쓰고, 저장본 몸 0.4/0.3/60 · 가방에 밀빵이 있는 캐릭터로 Steam 참가를 하는 테스트를 짜라. 단언할 것: 서버장 사본 vitals_of(id) · 참가자 화면 hunger_thirst/health · 참가자가 받은 첫 _vitals 소식이 저장본 값이다. Steam 길에서는 peer id · 붙는 순서(_welcome 과 _hello · 섬을 세우는 사이 첫 _push)가 ENet 과 다를 수 있다 — vitals_of 가 member_character 를 받기 전에 불려 null/기본값이 되는지, 섬을 세우는 동안 몸 소식이 먼저 오는지 본다",
+    "맥 저장본이 0 이 된 까닭의 근거가 틀렸다 — 캐릭터·월드 저장 시각은 둘 다 10-15 19:11:41 이다. 참가 판은 18:43 Steam 충돌로 끝났고(mac-join.log), 그 뒤 혼자 한 판이 19:11 까지 이어졌다. 그러니 0/0/1 은 참가한 뒤의 값이고, '들어오기 전에 이미 굶었다'를 뒷받침하지 못한다. 월드 1790014507 은 9-22 에 만든 것이다. report 에 근거를 적을 때 파일 시각(stat)을 확인하고, 시간 순서가 맞지 않는 결론은 쓰지 마라. Steam 길로도 재현이 안 되면, 무엇을 배제했는지만 적고 '사람 눈으로 다시 볼 것'을 남겨라",
+    "참가 화면 첫 프레임의 몸을 보지 않았다 — 사람은 '들어오면' 0 이라고 했다. 테스트는 첫 _vitals 를 받은 뒤의 값만 잰다. 참가자 GameRoot 가 선 직후 몸 소식이 오기 전 HUD(배고픔·목마름·체력 막대)가 무엇을 보이는지도 단언하라. 저장본에서 되돌린 값이어야 하고, 0 이나 빈 값이면 안 된다. 서버장 화면에 선 참가자 몸(NetBodies 가 싣는 health_of)도 그 사이 -1/0 으로 그려지지 않는지 본다"
+   ],
+   "good": [
+    "test_join_body_island.gd 는 ENet peer.set_timeout 을 테스트에서만 60초로 늘렸다. 한 godot 안 두 기계라서 생기는 끊김이라고 설명은 붙어 있다. 그러나 섬을 세우는 동안 5초 넘게 ENet 을 돌보지 못하면 느린 참가자 기계에서도 끊길 수 있다고 report 가 적었다 — 기준 밖이지만 짚어 둔다"
+   ]
+  },
+  "test": "--- 바뀐 곳만: 2 개 ---\ntest.sh: 파일 2 개를 6 개씩 한꺼번에 돌린다\nok      2s  res://tests/multiplayer/test_join_body.gd\nok     28s  res://tests/multiplayer/test_join_body_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             2\nTests               6\nPassing Tests       6\nFailing Tests       0\nRisky/Pending       0\nAsserts            59\nTime           28s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
