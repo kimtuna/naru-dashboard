@@ -3455,7 +3455,7 @@
 - spec: spec/11_multiplayer/netcode.md · spec/03_world/frontier-islands.md (선착장 · 배)
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다
 - 테스트는 headless 둘(셋)을 ENet 으로 · Steam 은 가짜(fake_steam.gd)로. **사람의 Steam 을 켜거나 로그인하지 않는다**
-- [ ] 1. 서버장이 끄면 참가자(맥)가 튕긴다
+- [x] 1. 서버장이 끄면 참가자(맥)가 튕긴다
   - 사람이 본 것 (2026-10-16): 「맥이 참가자 윈도우가 서버입장에서 윈도우가 바로 끄면 맥에서 아까 같은 에러가 나와」 — G-222.6(5b0501d3, 끌 때 안전하게) 이 든 판(bd4852a3)에서
   - 증거: ~/Desktop/naru-saves/G-224-crash-2026-10-16/Godot-2026-10-16-000322.ips — EXC_BAD_ACCESS(0x1d8) · `std::recursive_mutex::lock` ← Godot ← **libgodotsteam** ← Godot ← `-[NSApplication terminate:]`. 앱이 끝나는 길(종료 알림)에서 godotsteam 이 이미 풀린 것을 잡는다
   - 지금(이 세션이 잼): 서버가 사라지면 net_session.gd `_on_server_gone` 411 → `_end` 416-422 → leave(deferred, peer.close · multiplayer_peer=null · leaveLobby) → game_root.gd `_leave_to_main_menu` 941-957. steamShutdown 은 그 뒤 AppQuit.finish(core/app_quit.gd:27-32) 에서만. 로비를 떠난 것을 받는 Steam 신호(lobby_chat_update)는 안 잇는다(steam_api.gd:59-62)
