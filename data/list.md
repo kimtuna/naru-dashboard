@@ -3189,7 +3189,7 @@
 - [x] 4. (앞 단계 QA) 「하의은」 조사가 틀렸다
   - 기준: 「하의은」 조사가 틀렸다 — game/craft/recipes/workbench.json 의 _temporary 「상의 · 투구 · 하의은 가죽」과 game/tests/player/equipment/test_armor.gd 5줄 「상의 · 투구 · 하의은 상의 · 모자 · 바지칸」을 「하의는」으로 고쳐라 (각반은 → 하의은 으로 기계적으로 바꾼 흔적)
 
-## [ ] G-221 멀티 — 같은 게임에 있으면 한 팀 · 서버장이 길드장 (사람 결정 2026-10-14)
+## [x] G-221 멀티 — 같은 게임에 있으면 한 팀 · 서버장이 길드장 (사람 결정 2026-10-14)
 - 차선: 3d-start
 - spec: spec/11_multiplayer/ (listen-server · character-world · permissions) · 00_core/roadmap.md
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다
