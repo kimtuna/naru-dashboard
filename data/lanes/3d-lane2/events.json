@@ -1,14 +1,5 @@
 [
  {
-  "time": "2026-09-25 09:08:06",
-  "epoch": 1790294886,
-  "type": "wait",
-  "title": "기다린다 — 토큰 한도에 걸렸다 (재개 시각을 못 뽑아 30분 쉰다)",
-  "group": "G-910",
-  "step": "14",
-  "attempt": "1"
- },
- {
   "time": "2026-09-25 09:38:19",
   "epoch": 1790296699,
   "type": "wait",
@@ -8219,5 +8210,57 @@
   },
   "test": "--- 바뀐 곳만: 15 개 ---\ntest.sh: 파일 15 개를 6 개씩 한꺼번에 돌린다\nok     11s  res://tests/core/debug/test_ui_shots.gd\nok     11s  res://tests/world/day_night/test_day_light.gd\nok     15s  res://tests/life/hunting/test_carry_cage.gd\nok     16s  res://tests/core/debug/test_dev_box.gd\nok     18s  res://tests/life/hunting/test_butchery.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok     10s  res://tests/player/movement_controls/test_face_aim.gd\nok     11s  res://tests/core/debug/test_dev_box_open.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok     10s  res://tests/life/hunting/test_sedation_capture.gd\nok     38s  res://tests/automation/villagers/test_villager_watering.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            15\nTests             122\nPassing Tests     122\nFailing Tests       0\nRisky/Pending       0\nAsserts          2851\nTime           38s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "b5831aa9"
+ },
+ {
+  "time": "2026-10-16 05:02:46",
+  "epoch": 1792094566,
+  "type": "fail",
+  "title": "QA 불합격 — G-226 단계 2 (시도 1)",
+  "group": "G-226",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "안 보이는 것은 안 그린다 — 지형 가리개(occlusion culling) + 섬에 놓인 모든 것에 크기만큼의 visibility_range. 그리기 호출 spawn 633→564 · forest 613→531 · village_crowd 783→643, 그림은 그대로",
+   "approach": "1단계에서 잰 자리(shot.sh overview · spawn · forest · village_crowd · 유황)로 하나씩 켜고 끄며 그리기 호출을 쟀다. ① 지형 가리개: Terrain3D bake_mesh 도 재 봤으나(LOD 4 → 그리기 580) 섬마다 0.6초가 들어, 같은 꼴(둘레 칸의 가장 낮은 높이)을 높이 맵에서 바로 만들었다(8점=16m마다 · 0.14초 · 섬 저장본에 같이 둬 두 번째부터 0, 저장본 VERSION 6). 가리개가 땅 위로 나오지 않으니 땅에 안 가린 것은 가리지 않는다. 몫: spawn −53 · forest −67 · village_crowd −114. ② 놓인 것: core/far_cull.gd 가 섬 아래로 붙는 모든 GeometryInstance3D 에 「가장 긴 변 × 300m (≥100m)」 — 자원(광물 1.6m→500m)과 같은 꼴, 흐려지며 사라짐. 카메라에 붙은 마우스 판 · Sky3D 안개 판은 화면을 덮어 빼야 했다(목록을 찍어 보고 찾음). 미뤄 부를 때 지워진 노드를 넘기면 엔진이 떨어져 형 없는 인자로 받고 트리 안인지 본다. 몫: overview −20 · spawn −22 · 마을을 멀리서(village_far, 새로 잰 자리) −40. ③ 화면 밖에서 멈출 꾸밈 처리는 찾아보니 없었다(AnimationPlayer · 파티클 · 흔들기 없음, _process 는 다 게임 일) — VisibleOnScreenEnabler 는 headless 서버에서 늘 화면 밖이라 일을 멈추므로 넣지 않았고, 안 보여도 일이 같은 시간에 끝나는 테스트로 지킨다. 보기 그대로인지 전후 그림을 화소로 견줬다 — 다른 곳은 FPS 글자와 움직인 짐승 · 주민뿐. 이 맥은 GPU 가 남아 ms 는 잡음 안에서 조금 준다(forest 4.7→4.4 · village_crowd 5.6→5.2). 숫자는 spec/00_core/performance.md.",
+   "why": "",
+   "files": [
+    "game/project.godot",
+    "game/world/terrain/terrain_occluder.gd",
+    "game/world/terrain/island_shape.gd",
+    "game/world/terrain/island_cache.gd",
+    "game/world/terrain/test_island.gd",
+    "game/core/far_cull.gd",
+    "game/core/debug/shots.gd",
+    "spec/00_core/performance.md",
+    "game/tests/world/terrain/test_terrain_occluder.gd",
+    "game/tests/core/test_far_cull.gd",
+    "game/tests/core/test_unseen_work_goes_on.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "ok": false,
+     "criterion": "1단계에서 잰 자리로 켜 보고 나아지는 것만 남긴다 — ① occlusion culling(지형 · 큰 건물 · 벽을 가리개로, Terrain3D 가 가리개를 굽는 길이 있으면 그것) ② 놓인 것의 visibility_range(지금 나무가 쓰는 거리와 같은 꼴 — 보이는 거리는 사람 눈에 차이가 없게, 멀리서 사라지는 게 보이면 안 된다) ③ 화면 밖 · 먼 것은 보기만 멈춘다",
+     "evidence": "잰 숫자(spec/00_core/performance.md 전후 표)와 테스트(test_terrain_occluder.gd — 가리개가 땅 위로 안 나옴 · 저장본 왕복 · culling 켜짐 / test_far_cull.gd — 크기 꼴 · 흐려짐 · 제외 대상 · 나중에 붙는 것 · 진짜 섬 전부)는 탄탄하다. 그러나 「보기 그대로」가 깨지는 곳이 있다: ① 깊이를 안 보고(no_depth_test) 가려진 것 너머로 보이게 만든 표시 — 시설 PauseTag(craft/stations/crafting_station.gd:117, 「떠나 있어도 돌아와서 왜 안 됐는지 보인다」) · 방 오버레이 판(build/room_overlay.gd:141, 「벽 · 지붕 너머로도 보인다」) · 주민 NameTag(villager.gd:189) — 에 ignore_occlusion_culling 이 없어, 이제 언덕 뒤에 있으면 지형 가리개에 가려 사라진다. Godot 의 occlusion culling 은 재질의 no_depth_test 를 보지 않고 AABB 만 본다. ② 건물은 조각(4m 판 · 벽 → 1200m)마다 따로 거리를 받아, 여러 조각으로 된 집 한 채(수십 m)가 1200m 근처에서 덩어리째 사라진다 — 안개(fog_end 3500m)로는 아직 보이는 거리다. 전후 화소 비교를 한 자리(overview · spawn · forest · village_crowd · village_far)에 지은 건물이 없어 이 경우는 확인되지 않았다. ③ 꾸밈 처리가 없다는 조사는 맞다(animal · villager · crafting_station 의 _process 는 게임 일)"
+    },
+    {
+     "ok": true,
+     "criterion": "게임 일은 안 보여도 계속한다 — 주민 일 · 시설 제작 · 작물 · 몹 · 배고픔은 보이든 말든 똑같이 흐른다(테스트: 카메라를 돌려 안 보이게 해도 제작 · 주민 일이 같은 시간에 끝난다). 멈추는 것은 그림 · 애니메이션 · 소리 · 꾸밈뿐",
+     "evidence": "tests/core/test_unseen_work_goes_on.gd — 같은 판을 두 번 세워, 카메라가 앞에서 볼 때와 5km 밖에서 등을 돌렸을 때(판 위 모든 물체의 거리가 카메라보다 짧은지 _assert_nothing_drawn 으로 먼저 확인) 제작자 주민이 의자 둘을 상자에 넣는 게임 시간 · 덜어 간 판자 수가 같은지 본다. test_far_cull.gd test_only_drawing_stops_not_processing 이 process_mode · visible 이 그대로인지 본다. VisibleOnScreenEnabler 를 넣지 않은 까닭(headless 서버에서 늘 화면 밖)도 spec 에 적혔다. test.log 에서 둘 다 통과"
+    }
+   ],
+   "issues": [
+    "깊이 안 보는 표시가 언덕 뒤에서 사라진다 — 지형 가리개(TerrainOccluder)와 occlusion culling 을 켠 뒤, 가려진 것 너머로 보이라고 no_depth_test 를 건 것들이 언덕 뒤에서 culling 된다: craft/stations/crafting_station.gd:114 PauseTag · build/room_overlay.gd:_tint 의 판 · automation/villagers/villager.gd:186 NameTag. 셋에 `ignore_occlusion_culling = true` 를 걸거나, 더 튼튼하게는 FarCull 처럼 섬 아래로 붙는 GeometryInstance3D 중 재질 · Label3D 의 no_depth_test 가 켜진 것에 저절로 걸어라. 테스트: 섬에 시설을 놓고 멈춤 표시를 띄운 뒤 PauseTag.ignore_occlusion_culling 이 true 인지, 방 오버레이를 켜고 판마다 true 인지 단언하는 것을 tests/world/terrain/test_terrain_occluder.gd 에 더하라 (언덕 뒤 시설을 놓고 shot.sh 로 전후를 찍어 표시가 남는지도 performance.md 에 적어라)",
+    "건물 조각이 따로 사라진다 — FarCull 이 판 · 벽(4m → 1200m) · 기둥(3m → 900m)에 조각마다 거리를 걸어, 여러 조각으로 된 집 한 채는 1000~1200m 에서 덩어리째 흐려져 사라진다(안개 끝 3500m 라 아직 보이는 거리). 전후 화소 비교 자리에 지은 건물이 없어 확인되지 않았다. 둘 중 하나를 하라: (가) shots.gd 에 판 · 벽 · 지붕 수십 장의 집을 짓고 1000 · 1200 · 1500m 에서 찍는 자리를 더해 전후 화소가 같음을 performance.md 에 적는다, (나) 건물 조각(Buildings 아래)은 조각 크기가 아니라 붙은 건물 덩어리 크기(또는 나무와 같은 1600m)로 거리를 잡는다. 어느 쪽이든 test_far_cull.gd 에 「집 한 채의 조각은 그 집 크기에 맞는 거리를 받는다(또는 1600m 보다 짧지 않다)」 단언을 더하라",
+    "주민 손에 든 것이 몸보다 먼저 사라질 수 있다 — FarCull.apply 는 붙을 때 한 번만 잰다. 작은 것(0.3m → 100m)을 들었다가 같은 MeshInstance3D 의 mesh 만 바꾸면 거리는 처음 것 그대로다. 주민(540m)보다 손에 든 것이 훨씬 가까이서 사라진다 — villager 의 hands.gd 가 노드를 새로 만드는지 mesh 만 바꾸는지 보고, mesh 만 바꾸면 바꿀 때 FarCull.apply 를 다시 부르거나 몸에 붙은 것은 몸(주민 키)의 거리를 따르게 하라"
+   ],
+   "good": [
+    "core/debug/shots.gd 에 재는 자리 village_far 를 더했다 — 전후를 재려고 만든 것이라 기준 안의 일로 본다"
+   ]
+  },
+  "test": "orld/frontier_islands/test_lime.gd\nok      8s  res://tests/automation/villagers/test_villager_g218_folk_ground.gd\nok      8s  res://tests/world/frontier_islands/test_dock_building.gd\nok      6s  res://tests/life/fishing/test_bait_zone.gd\nok      8s  res://tests/core/test_far_cull.gd\nok      8s  res://tests/world/terrain/test_foundation_hides_grass.gd\nok      8s  res://tests/craft/stations/test_salt_pan_island.gd\nok      8s  res://tests/world/terrain/test_terrain_occluder.gd\nok      5s  res://tests/player/hunger_thirst/test_cup_drinks.gd\nok      6s  res://tests/core/test_path_walk_replan.gd\nok      5s  res://tests/combat/tools_as_weapons/test_aiming.gd\nok      6s  res://tests/automation/villagers/test_villager_cleaning.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      3s  res://tests/build/test_building_collapse.gd\nok      3s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      4s  res://tests/ui/hud/test_room_names.gd\nok      5s  res://tests/combat/tools_as_weapons/test_bullet_trace.gd\nok      6s  res://tests/ui/menu/test_pause_menu.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      2s  res://tests/core/test_game_root_tidy.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      3s  res://tests/build/test_bed.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      3s  res://tests/life/food/test_food.gd\nok      2s  res://tests/ui/hud/test_villager_window_release.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      1s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      2s  res://tests/core/test_window_fit.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/test_grid.gd\nok      0s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok    432s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           110\nTests             916\nPassing Tests     916\nFailing Tests       0\nRisky/Pending       0\nAsserts         75109\nTime           433s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
