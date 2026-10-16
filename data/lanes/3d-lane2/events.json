@@ -1,69 +1,5 @@
 [
  {
-  "time": "2026-09-26 08:27:04",
-  "epoch": 1790378824,
-  "type": "pass",
-  "title": "통과 — G-150 단계 2 (계단은 토대에만 붙고, 토대 위에도 놓인다 — Tab 으로 스냅을 바꾼다)",
-  "group": "G-150",
-  "step": "2",
-  "attempt": "2",
-  "report": {
-   "problem": "계단은 바닥 변에만 붙고(맨땅 X), Tab(build_stairs_flip)으로 아래로 ↔ 위로를 바꾼다 · 흔들리던 「토대 자리가 water」의 뿌리(바다 높이 바닥의 광선 잡음)를 잡았다 — 전체 175 파일 1497 테스트 전부 통과 (422초)",
-   "approach": "앞 회차가 기준을 다 만들어 두었고(계단 위로/아래로 · Tab 액션 · G-149 유지 · spec 밭 한 단어), 기계 검사만 tests/craft/test_from_empty_hands.gd 의 「토대 자리가 water」로 떨어졌다. 이 실패는 2026-09-25 QA 가 이미 「같은 코드로 떨어졌다 통과했다」고 짚은 흔들리는 검사였다. 뿌리를 재 봤다: 조준 광선이 딱 바다 높이(y=0)의 바닥을 비스듬히 맞히면 짚은 점의 y 가 ±1e-6 잡음이 되고, 땅 높이 광선(_ground_height)이 그 높이에서 쏘아 같은 잡음을 이어받는다 — 수직 광선 8000번 중 3168번이 음수 y(최소 -4.8e-7)를 돌려줬다. 섬이 넣어 주는 물음(IslandShape.is_under_water)은 y 를 안 보지만, 섬 없는 시험 땅의 기본 규칙(y < SEA_LEVEL)은 잡음 하나로 「물」이 됐다. 고침: Buildings.WATER_SLACK(1cm)을 두고 Buildings · Farmland 의 기본 규칙을 「바다 높이보다 여유 넘게 낮을 때만 물」로 바꿨다. 재현 테스트는 잡음 ±1e-6 을 201칸으로 훑는다 — 규칙을 되돌리면 2.4e-7 위의 잡음에서 물로 읽혀 떨어지는 것을 확인했다. 검사: 새 테스트 셋(4 파일 38개) 통과 → changed_tests.py 가 빈 목록(사람이 남긴 harness/session.sh 의 미커밋 변경이 game/ 밖이라)이어서 전체를 돌렸다: 175 파일 1497 테스트 전부 통과, 422초. test_from_empty_hands 도 이번엔 통과.",
-   "why": "",
-   "files": [
-    "game/build/buildings.gd",
-    "game/life/farming/farmland.gd",
-    "game/core/input/input_actions.gd",
-    "game/project.godot",
-    "game/tests/build/test_building_stairs_flip.gd",
-    "game/tests/build/test_water_rule_at_sea_level.gd",
-    "game/tests/core/input/test_input_spec_table.gd",
-    "spec/06_build/building.md",
-    "spec/01_settings/input.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "계단은 맨땅에 놓이지 않는다 — 토대(또는 2층 바닥)의 변에 붙을 때만 놓인다 (테스트)",
-     "evidence": "test_building_stairs_flip: test_no_stairs_on_bare_ground_whichever_way_they_attach 가 아래로 · 위로 둘 다 plan 이 no_floor 이고 place_at 이 null 인지, 멀리 토대가 있어도 같은지 본다. test_the_stairs_preview_aimed_at_bare_ground_does_not_show_at_all 이 진짜 조준으로 미리보기가 안 뜨고 place_held 가 null 인지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "토대 변에서 아래로 내려가는 계단과 토대 위에서 위층으로 올라가는 계단 둘 다 놓인다 (테스트)",
-     "evidence": "test_stairs_go_down_from_the_edge_of_a_raised_foundation (3m 토대 변 밖 판, 한 층 아래, host=A) · test_stairs_go_up_from_the_top_of_a_foundation_to_the_upper_floor (A 위에 서서 B 위 지붕에 매달림, 위층 바닥 무너지면 같이 무너짐) · test_stairs_up_need_an_upper_floor_to_hang_from (위층 바닥 없으면 no_support). 위로 가지를 아래로와 같게 고쳐 돌리니 세 테스트 모두 떨어졌다 — 되돌렸다"
-    },
-    {
-     "ok": true,
-     "criterion": "Tab 으로 붙는 자리(위로 · 아래로)를 바꾼다 — 미리보기가 바로 바뀐다. 입력은 InputMap 액션, spec/01_settings/input.md 표에 한 줄 (사람 결정 2026-09-26) (테스트)",
-     "evidence": "test_tab_flips_where_the_stairs_attach_and_the_preview_follows 가 진짜 조준 상태에서 BUILD_STAIRS_FLIP 액션을 눌러 refresh 없이 plan · 미리보기 위치 · 색이 바뀌는지, 다시 눌러 되돌아오는지 본다. test_tab_does_nothing_unless_stairs_are_picked 가 토대 들었을 때 · 도면 내려놓았을 때 안 바뀌는지 본다. project.godot 에 build_stairs_flip=Tab(4194306) 하나뿐, input.md 표에 Tab 줄, test_input_spec_table 의 BOUND 에 Tab 이 들어가 코드가 그 키로 묶였는지도 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "계단이 선 판에는 아무것도 못 짓는다(G-149)는 그대로다 (테스트)",
-     "evidence": "test_nothing_builds_on_the_plate_of_an_upward_stairs 가 위로 놓은 계단 판에 지붕 · 벽 · 문 · 기둥 · 옆 토대에서 뻗는 계단 · 같은 판 위로 계단 · 밭(can_till) 이 전부 taken/거부인지 본다. 위로 가지를 망가뜨리자 이 테스트도 떨어졌다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) spec 무너짐 줄에 밭이 빠져 있다 — spec/06_build/building.md 60줄에 밭(과 그 작물이 바닥에 쏟아진다)을 한 단어 더해라",
-     "evidence": "building.md 63줄 「설치물(제작대 · 상자 · 횃불 · 밭 — 심긴 작물도 바닥에 쏟아진다)」로 고쳐졌다. 사람 결정 줄은 지워지지 않았고 103줄이다"
-    }
-   ],
-   "issues": [
-    "[결정] harness/session.sh 미커밋 변경이 차선 브랜치에 남아 있다 — 사람이 남긴 --effort 옵션(.loop/effort 읽기)이 g/G-150 작업 트리에 있다. 이 묶음이 합쳐질 때 같이 커밋되거나 사라진다. 하네스 수정은 합칠 줄기(main)에 따로 커밋해야 한다 — 사람이 옮겨 커밋할지 정한다"
-   ],
-   "good": [
-    "Buildings.WATER_SLACK(1cm) 과 Buildings · Farmland 기본 is_water 규칙 변경 + tests/build/test_water_rule_at_sea_level.gd — 기준에 없지만 기계 검사(test_from_empty_hands 「토대 자리가 water」)가 흔들려 떨어진 뿌리를 잡은 것이라 정당하다. 섬(IslandShape.is_under_water)이 넣어 주는 규칙에는 영향이 없다"
-   ]
-  },
-  "test": "   1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      1s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/hud/test_station_window.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    421s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           175\nTests            1497\nPassing Tests    1497\nFailing Tests       0\nPending             0\nAsserts         68763\nTime           421s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "d34b537"
- },
- {
   "time": "2026-09-26 08:46:35",
   "epoch": 1790379995,
   "type": "pass",
@@ -8674,5 +8610,31 @@
   },
   "test": "//tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      3s  res://tests/ui/hud/test_barn_window.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_chest_window_search.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_item_slot_fit.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      3s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           315\nTests            2404\nPassing Tests    2404\nFailing Tests       0\nRisky/Pending       0\nAsserts        117857\nTime           520s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "3dbe274d"
+ },
+ {
+  "time": "2026-10-16 21:08:27",
+  "epoch": 1792152507,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-228 단계 5 (시도 1)",
+  "group": "G-228",
+  "step": "5",
+  "attempt": "1",
+  "report": {
+   "problem": "참가자 몸은 자리가 든 첫 몸 소식이 와야 서버장 화면에 선다 — 들어올 때 서버장 곁 1.5m 에 먼저 떴다가 제자리로 옮겨지던 것을 없앴다. 재현 테스트(test_join_spot.gd 2개)는 옛 코드에서 떨어지고 고친 코드에서 통과",
+   "approach": "재현: 서버장 화면을 프레임마다 지켜보며 참가자(저장 자리 (40,-25) · 처음이면 스폰 (-30,10))를 들였더니, 옛 코드에서 참가자 몸이 처음 보인 자리는 (5.5, 0, 0) — 서버장 (4,0,0) 곁 1.5m 였고 10프레임 넘게 거기 서 있었다. 까닭: 서버는 참가자가 들어오자마자 NetBodies.add_member 로 이름만 든 소식을 쥐고, GameRoot._sync_visitors 가 그것으로 몸을 세웠고 _seat_visitor 가 「첫 몸 소식이 올 때까지」 서버장 옆 1.5m 에 놓았다. 참가자 쪽은 _ready 에서 저장 자리로 되돌린 뒤 판에 붙으므로 첫 소식부터 제 자리다. 고침: _sync_visitors 가 아직 안 선 몸은 소식에 자리(p)가 들어야 세우고, _seat_visitor 의 곁 1.5m 를 지웠다 — 세우자마자 apply 가 받은 자리에 놓는다. 새 테스트는 진짜 ENet 두 기계 · 섬 id 를 쥔 작은 섬(world_island.gd)으로 저장 자리 · 스폰 두 경우를 재고, 처음 보인 자리가 참가자 자리 0.5m 안 · 서버장 10m 안에 뜬 프레임 0을 본다. 섬 없이 돌던 테스트 셋(test_net_game · test_server_from_game · test_steam_game)은 참가자에게 몸이 없어 이제 몸이 서지 않으므로 참가자 쪽에 작은 섬(tiny_island)을 주었고, test_visitor_input_guard 는 가짜 참가자 소식에 자리를 넣었다. QA: performance.md 의 지운 테스트 설명을 지난 기록(G-227.2)이라 밝히고 지금 test_send_less.gd 가 보는 것(먼 것도 0.1초마다 · 60 m 밖 짐승이 서지 않는다)으로 고쳤다. 테스트: 바뀐 곳 그물 204개 파일 1574개 중 1571 통과 · 3 실패(위 섬 없는 테스트 셋) → 그 셋을 고쳐 다시 돌려 18개 통과. 그물 전체는 고친 뒤 다시 돌리지 않았다",
+   "why": "",
+   "files": [
+    "game/core/game_root.gd",
+    "game/tests/multiplayer/test_join_spot.gd",
+    "game/tests/multiplayer/test_visitor_input_guard.gd",
+    "game/tests/core/net/test_net_game.gd",
+    "game/tests/multiplayer/test_server_from_game.gd",
+    "game/tests/core/net/test_steam_game.gd",
+    "spec/00_core/performance.md",
+    "spec/11_multiplayer/netcode.md"
+   ],
+   "decision": null
+  },
+  "test": "는다 (327초)\n    --- Awaiting 1.0 seconds  ---\n    한 바퀴 10. 빈 땅으로 걸어가 밭을 놓는다 (328초)\n    한 바퀴 11. 씨앗을 들고 우클릭으로 심는다 (332초)\n    한 바퀴 12. 빈 물뿌리개 → 밭 옆 연못에서 채운다 (332초)\n    한 바퀴 12-1. 비료를 들고 밭에 우클릭 (332초)\n    한 바퀴 12-2. 물뿌리개를 들고 날마다 물을 주며 날을 보낸다 (332초)\n    한 바퀴 13. 씨앗도 물뿌리개도 아닌 것을 들고 우클릭으로 거둔다 (332초)\n    한 바퀴 14-1. 맷돌을 놓고 밀을 밀가루로 간다 (332초)\n    한 바퀴 14-2. 요리대를 놓고 밀가루로 빵을 굽는다 (332초)\n    한 바퀴 15. 빵을 들고 우클릭으로 먹는다 (333초)\n    한 바퀴 16. 밭 옆 풀밭에 난 벨라도나를 캔다 (333초)\n    한 바퀴 17. 제작대로 돌아와 용광로에서 철괴 셋 · 유황 셋을 더 뽑고 (336초)\n    한 바퀴 18. 사슴을 찾아가 **다리만** 쏴 잡는다 (343초)\n    [Failed]:  [6] expected to equal [7]:  쏜 것은 다 다리에 맞았다\n      at line 1332\n    [Failed]:  [1] expected to equal [0]:  머리 · 몸통에는 한 발도 가지 않았다\n      at line 1333\n    [Failed]:  [7] expected to equal [8]:  다리 한 발만큼씩 깎여 쓰러졌다\n      at line 1337\n    한 바퀴 19. 주검에 다가가 우클릭으로 도축한다 (367초)\n    [Failed]:  DICTIONARY({ \"antler\": 2, \"beast_head\": 1, \"raw_meat\": 3, \"hide\": 1, \"bone\": 1, \"offal\": 1...fal\": 1 }) != DICTIONARY({ \"antler\": 2, \"beast_head\": 1, \"raw_meat\": 4, \"hide\": 2, \"bone\": 2, \"offal\": 1...fal\": 1 }).\n    { \"antler\": 2, \"beast_head\": 1, \"raw_mea...ffal\": 1 } != { \"antler\": 2, \"beast_head\": 1, \"raw_mea...ffal\": 1 }  3 of 6 keys do not match.  다리만 맞혀 잡으니 산출이 하나도 깎이지 않았다\n      at line 1361\n    [Failed]:  [3] expected to equal [4]:  도축한 raw_meat 4개가 가방에 들어왔다\n      at line 1363\n    [Failed]:  [1] expected to equal [2]:  도축한 hide 2개가 가방에 들어왔다\n      at line 1363\n    [Failed]:  [1] expected to equal [2]:  도축한 bone 2개가 가방에 들어왔다\n      at line 1363\n    [Failed]:  [6] expected to equal [7]:  점수표에 다리 7발이 적혔다\n      at line 1366\n    한 바퀴 20. 다른 사슴을 찾아 다리로 체력 10% 아래까지 몰고 (370초)\n    한 바퀴 21. 제작대로 돌아와 석재 블록을 굽고 제재소에서 판자를 켠다 (387초)\n    한 바퀴 22. 빈 땅으로 걸어가 토대를 놓는다 (415초)\n    한 바퀴 23. 토대 위로 걸어 올라가 한가운데에 서서 (416초)\n    한 바퀴 24. 머리 위에 지붕을 얹는다 (420초)\n    한 바퀴 25. 방 안에 선 채 저장한다 (422초)\n    한 바퀴 26. 집을 손으로 철거한다 (422초)\n    한 바퀴 27. 돌아온 재료로 다시 짓는다 (427초)\n    한 바퀴 22. 빈 땅으로 걸어가 토대를 놓는다 (427초)\n    한 바퀴 23. 토대 위로 걸어 올라가 한가운데에 서서 (428초)\n    한 바퀴 24. 머리 위에 지붕을 얹는다 (432초)\n1/2 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/craft/test_from_empty_hands.gd\n- test_from_empty_hands_to_a_fired_gun_without_being_handed_anything\n    [Failed]:  [6] expected to equal [7]:  쏜 것은 다 다리에 맞았다\n          at line 1332\n    [Failed]:  [1] expected to equal [0]:  머리 · 몸통에는 한 발도 가지 않았다\n          at line 1333\n    [Failed]:  [7] expected to equal [8]:  다리 한 발만큼씩 깎여 쓰러졌다\n          at line 1337\n    [Failed]:  DICTIONARY({ \"antler\": 2, \"beast_head\": 1, \"raw_meat\": 3, \"hide\": 1, \"bone\": 1, \"offal\": 1...fal\": 1 }) != DICTIONARY({ \"antler\": 2, \"beast_head\": 1, \"raw_meat\": 4, \"hide\": 2, \"bone\": 2, \"offal\": 1...fal\": 1 }).\n    { \"antler\": 2, \"beast_head\": 1, \"raw_mea...ffal\": 1 } != { \"antler\": 2, \"beast_head\": 1, \"raw_mea...ffal\": 1 }  3 of 6 keys do not match.  다리만 맞혀 잡으니 산출이 하나도 깎이지 않았다\n          at line 1361\n    [Failed]:  [3] expected to equal [4]:  도축한 raw_meat 4개가 가방에 들어왔다\n          at line 1363\n    [Failed]:  [1] expected to equal [2]:  도축한 hide 2개가 가방에 들어왔다\n          at line 1363\n    [Failed]:  [1] expected to equal [2]:  도축한 bone 2개가 가방에 들어왔다\n          at line 1363\n    [Failed]:  [6] expected to equal [7]:  점수표에 다리 7발이 적혔다\n          at line 1366\n\nTotals\n------\nScripts               1\nTests                 2\nPassing Tests         1\nFailing Tests         1\nAsserts           1880/1888\nTime              433.188s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           416\nTests            3043\nPassing Tests    3041\nFailing Tests       2\nRisky/Pending       0\nAsserts        131173\nTime           650s  (godot 6 개)\n\n떨어진 파일 2 개:\n  res://tests/multiplayer/test_body_on_server.gd\n  res://tests/craft/test_from_empty_hands.gd\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
