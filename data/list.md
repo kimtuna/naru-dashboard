@@ -3674,8 +3674,10 @@
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
 - [x] 1. 서버장이 벽에서 떨어지는 까닭은 아직 모른다 (G-228 단계 6)
   - 기준: 서버장이 벽에서 떨어지는 까닭은 아직 모른다 — test_grip_long_frame.gd 로 climbing.gd 의 붙잡기(긴 delta · 몰린 틱)는 아님이 드러났다. test_body_on_server.gd:374 근처의 「다시 붙이기」를 잠시 빼고 떨어질 때 is_climbing 이 false 가 되는 자리(release 를 부르는 곳 — 몸 소식 받기 · 다른 몸과의 부딪힘 · restore_hold 덮어쓰기)에 로그를 달아 찾고, 찾은 원인을 고친 뒤 테스트 쪽 누름을 걷어라
-- [ ] 2. (앞 단계 QA) body_island.gd 머리 주석이 낡았다
+- [x] 2. (앞 단계 QA) body_island.gd 머리 주석이 낡았다
   - 기준: body_island.gd 머리 주석이 낡았다 — game/tests/multiplayer/body_island.gd:11 의 「절벽 — 지형 층(Climbing.TERRAIN_LAYER)의 곧게 선 벽」이 이제 층 1|지형 층이라 틀린다. 「몸이 막히는 층 1 과 지형 층(1 | Climbing.TERRAIN_LAYER)의 곧게 선 벽」으로 고쳐라
+- [ ] 1. 새 테스트가 옆 테스트의 머리 주석을 가로챘다 (G-912 단계 2)
+  - 기준: 새 테스트가 옆 테스트의 머리 주석을 가로챘다 — game/tests/multiplayer/test_islands_split.gd 에서 test_guest_drops_bodies_of_the_island_left_behind 를 test_each_strike_stays_on_its_own_island 의 머리 주석(「## 각자 제 섬에서 친 것은 제 섬에만 남는다 …」 두 줄)과 그 func 사이에 끼워 넣었다. 그래서 그 두 줄이 이제 새 테스트 위에 붙어 엉뚱한 설명이 되었고, test_each_strike 는 주석을 잃었으며, 새 테스트가 「# ── 바람은 바란 사람이 선 섬에 ──」 칸 아래에 들어갔다. 새 테스트(와 그 주석 세 줄)를 test_split_two_do_not_receive_each_others_bodies_or_beasts 바로 뒤, 「바람은 바란 사람이 선 섬에」 칸 머리 앞으로 옮기고, 「각자 제 섬에서 친 것은…」 두 줄은 test_each_strike_stays_on_its_own_island 바로 위에 남겨라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
