@@ -1,23 +1,5 @@
 [
  {
-  "time": "2026-09-25 17:22:03",
-  "epoch": 1790324523,
-  "type": "wait",
-  "title": "기다린다 — 토큰 한도에 걸렸다 (재개 시각을 못 뽑아 30분 쉰다)",
-  "group": "G-910",
-  "step": "14",
-  "attempt": "1"
- },
- {
-  "time": "2026-09-25 17:52:16",
-  "epoch": 1790326336,
-  "type": "wait",
-  "title": "기다린다 — 토큰 한도에 걸렸다 (재개 시각을 못 뽑아 30분 쉰다)",
-  "group": "G-910",
-  "step": "14",
-  "attempt": "1"
- },
- {
   "time": "2026-09-25 18:22:29",
   "epoch": 1790328149,
   "type": "wait",
@@ -8425,6 +8407,62 @@
   "group": "G-909",
   "step": "1",
   "attempt": "1",
+  "report": {
+   "problem": "손에 든 것 바꿔 들기 검사가 크기가 다른 아이템을 차례로 들어 거리가 각 크기(몸 거리 이상)로 바뀌는지 본다 — 바뀐 곳 그물(test_far_cull.gd) 12개 통과",
+   "approach": "앞 검사는 wood 하나만 들고 _ours 만 봐서 HeldItem 의 FarCull.refresh 를 지워도 통과했다. 그런데 tools.json 의 도구는 다 몸(1.8m)보다 짧아 무엇을 들어도 거리가 몸 거리(540m)에 묶여, 실제 아이템만으로는 바꿔 들어도 거리 차이가 안 난다. 그래서 검사 안에서만 손의 목록에 몸보다 긴 장대(4m)를 하나 얹어 목재 → 장대 → 목재 → 파일의 가장 긴 도구 순서로 들고, 매번 거리가 max(크기 거리, 몸 거리)와 같은지 · 몸 거리 이상인지 · FarCull 이 건 거리인지 단언한다. 끝나면 원래 목록으로 돌린다. held_item.gd 의 refresh 를 잠깐 지워 이 검사가 떨어지는 것을 확인하고 되돌렸다.",
+   "why": "",
+   "files": [
+    "game/tests/core/test_far_cull.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "손에 든 것 바꿔 들기 검사가 바꿔 들지 않는다 — test_on_the_island_the_held_item_is_remeasured_when_switched 는 wood 하나만 들고 _ours 만 본다. 크기가 다른 두 아이템을 차례로 들어 거리가 각 크기(또는 몸 거리 이상)로 바뀌는지 단언하라",
+     "evidence": "game/tests/core/test_far_cull.gd 의 검사가 이제 wood → test_long_pole(4m, 몸보다 김) → wood → 파일의 가장 긴 도구(copper_spear) 를 차례로 들고, 매번 visibility_range_end 가 max(크기 거리, 몸 거리)와 같은지(540 ↔ 1200 으로 실제로 바뀜) · 몸 거리 이상인지 · _ours 인지 단언한다. pole_range > body_range 도 단언해 두 크기가 갈리는 것을 보장한다. 일부러 깨 봄: held_item.gd:68 의 FarCull.refresh(_mesh) 를 pass 로 바꾸고 TEST_DIR=res://tests/core 로 돌리자 이 검사가 12개 단언 모두 떨어졌다(되돌림 확인). 전체 test.log: 2988 통과 · 0 실패 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "ore/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           406\nTests            2988\nPassing Tests    2988\nFailing Tests       0\nRisky/Pending       0\nAsserts        127483\nTime           624s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-16 11:04:03",
+  "epoch": 1792116243,
+  "type": "start",
+  "title": "루프 시작",
+  "report": {
+   "problem": "손에 든 것 바꿔 들기 검사가 크기가 다른 아이템을 차례로 들어 거리가 각 크기(몸 거리 이상)로 바뀌는지 본다 — 바뀐 곳 그물(test_far_cull.gd) 12개 통과",
+   "approach": "앞 검사는 wood 하나만 들고 _ours 만 봐서 HeldItem 의 FarCull.refresh 를 지워도 통과했다. 그런데 tools.json 의 도구는 다 몸(1.8m)보다 짧아 무엇을 들어도 거리가 몸 거리(540m)에 묶여, 실제 아이템만으로는 바꿔 들어도 거리 차이가 안 난다. 그래서 검사 안에서만 손의 목록에 몸보다 긴 장대(4m)를 하나 얹어 목재 → 장대 → 목재 → 파일의 가장 긴 도구 순서로 들고, 매번 거리가 max(크기 거리, 몸 거리)와 같은지 · 몸 거리 이상인지 · FarCull 이 건 거리인지 단언한다. 끝나면 원래 목록으로 돌린다. held_item.gd 의 refresh 를 잠깐 지워 이 검사가 떨어지는 것을 확인하고 되돌렸다.",
+   "why": "",
+   "files": [
+    "game/tests/core/test_far_cull.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "손에 든 것 바꿔 들기 검사가 바꿔 들지 않는다 — test_on_the_island_the_held_item_is_remeasured_when_switched 는 wood 하나만 들고 _ours 만 본다. 크기가 다른 두 아이템을 차례로 들어 거리가 각 크기(또는 몸 거리 이상)로 바뀌는지 단언하라",
+     "evidence": "game/tests/core/test_far_cull.gd 의 검사가 이제 wood → test_long_pole(4m, 몸보다 김) → wood → 파일의 가장 긴 도구(copper_spear) 를 차례로 들고, 매번 visibility_range_end 가 max(크기 거리, 몸 거리)와 같은지(540 ↔ 1200 으로 실제로 바뀜) · 몸 거리 이상인지 · _ours 인지 단언한다. pole_range > body_range 도 단언해 두 크기가 갈리는 것을 보장한다. 일부러 깨 봄: held_item.gd:68 의 FarCull.refresh(_mesh) 를 pass 로 바꾸고 TEST_DIR=res://tests/core 로 돌리자 이 검사가 12개 단언 모두 떨어졌다(되돌림 확인). 전체 test.log: 2988 통과 · 0 실패 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "ore/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           406\nTests            2988\nPassing Tests    2988\nFailing Tests       0\nRisky/Pending       0\nAsserts        127483\nTime           624s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-16 11:04:03",
+  "epoch": 1792116243,
+  "type": "stop",
+  "title": "루프 끝 — 이 차선(3d-lane2) 몫을 다 했다. 다른 차선 몫으로 남은 것: G-225-4",
   "report": {
    "problem": "손에 든 것 바꿔 들기 검사가 크기가 다른 아이템을 차례로 들어 거리가 각 크기(몸 거리 이상)로 바뀌는지 본다 — 바뀐 곳 그물(test_far_cull.gd) 12개 통과",
    "approach": "앞 검사는 wood 하나만 들고 _ours 만 봐서 HeldItem 의 FarCull.refresh 를 지워도 통과했다. 그런데 tools.json 의 도구는 다 몸(1.8m)보다 짧아 무엇을 들어도 거리가 몸 거리(540m)에 묶여, 실제 아이템만으로는 바꿔 들어도 거리 차이가 안 난다. 그래서 검사 안에서만 손의 목록에 몸보다 긴 장대(4m)를 하나 얹어 목재 → 장대 → 목재 → 파일의 가장 긴 도구 순서로 들고, 매번 거리가 max(크기 거리, 몸 거리)와 같은지 · 몸 거리 이상인지 · FarCull 이 건 거리인지 단언한다. 끝나면 원래 목록으로 돌린다. held_item.gd 의 refresh 를 잠깐 지워 이 검사가 떨어지는 것을 확인하고 되돌렸다.",
