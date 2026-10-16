@@ -1,66 +1,5 @@
 [
  {
-  "time": "2026-10-12 05:29:45",
-  "epoch": 1791750585,
-  "type": "pass",
-  "title": "통과 — G-995 단계 5 (제작대 · 레시피 (901줄) 을 다듬는다)",
-  "group": "G-995",
-  "step": "5",
-  "attempt": "3",
-  "report": {
-   "problem": "제작대 · 레시피 5 파일(897줄)을 다듬었다 — Stations._aim_hit 을 Aim.at 한 줄로 줄이고, 겹친 「제작대 세우기」를 _stand 하나로 묶고, 낡은 주석 셋을 고쳤다. 바뀐 곳 그물 52 파일 498/498 통과",
-   "approach": "찾은 것 (전부 그 자리에서 고쳤다)\n| 종류 | 자리 | 무엇 | 어떻게 |\n|---|---|---|---|\n| 겹친 코드 (앞 단계 QA) | stations.gd _aim_hit | Aim.at 의 광선을 줄마다 다시 적었다 | DockBuilder 처럼 `if player == null or not is_inside_tree(): return {}` 뒤 `return Aim.at(player, get_world_3d().direct_space_state, REACH)` |\n| 겹친 코드 | stations.gd place_held · restore | make → add_child → global_position 세 줄이 두 곳에 | 안쪽 함수 _stand(kind, at) 로 묶었다 |\n| 겹친 값 | stations.gd REACH | 4.0 을 따로 적었다 (Aim.REACH 와 같은 값) | `const REACH := Aim.REACH` — 「임시」 표시는 남겼다 |\n| 낡은 주석 | stations.gd 머리 | 「채취와 같은 방식 (life/harvest/harvest.gd)」 — 광선은 이제 aim.gd 에 있다 | aim.gd 를 가리키게 |\n| 낡은 주석 | crafting_station.gd GROUP | 「방 판정 · 저장이 **나중에** 훑는다」 — 이미 Buildings.rooms · Farmland 가 훑는다 | 지금 쓰는 곳을 적었다 |\n\n괜찮다고 본 것: 죽은 코드 — 다섯 파일의 공개 함수를 전부 grep 했다. buffer_full · buffer_room_for · craft_total · has_materials · room_chests · recipes_for 는 station_window · villagers 가 부르고, RecipeCatalog.keys 는 테스트만 부르지만 StationCatalog.keys 와 짝인 읽기용이라 뒀다. 너무 긴 함수 — 가장 긴 것이 restore(21줄) · start_craft(15줄)라 자를 까닭이 없다. StationCatalog.load_from 과 RecipeCatalog.load_from 은 모양이 닮았지만 한 줄을 읽는 규칙이 다르고, 묶으려면 새 공용 자리를 만들어야 해서(이 단계 파일 밖) 두었다. HandCraft.can_make 와 Stations.has_materials 도 닮았지만 하나는 상자까지 센다.\n\n앞 시도의 기계 검사 실패: stations.gd:321 에 빈 줄 셋 — 이번에 보니 이미 둘로 줄어 있었고 test_no_triple_blank_lines 3/3 통과. test_animal_walk(물에 안 들어간다) 도 실패했었는데 이 단계는 사냥 파일을 건드리지 않는다 — 다시 돌리니 8/8 통과(흔들리는 테스트로 보인다).\n\n경계를 넘는 것: 없다 — 밖에서 부르는 이름은 하나도 바꾸지 않았다.\n\n테스트 개수: 앞 = 루프 전체 그물 2102 개 중 Passing 2100(앞 시도 test.log, 빈 줄 · 동물 걷기 2 실패) / 2101(그다음 시도, 동물 걷기 1 실패). 뒤 = 이 회차는 전체를 돌리지 않았다 — 바뀐 곳 그물 52 파일 498/498 통과 + 빈 줄 · 동물 걷기 2 파일 11/11 통과. 전체 숫자는 루프의 전체 그물이 적는다.",
-   "why": "",
-   "files": [
-    "game/craft/stations/stations.gd",
-    "game/craft/stations/crafting_station.gd",
-    "game/tests/craft/stations/test_stations_aim_one_path.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "이 파일들에서 겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석을 찾아 report 에 표로 적고, 그 자리에서 고친다 (찾아만 두지 않는다)",
-     "evidence": "report 의 how 에 표 5줄(겹친 광선 · place_held/restore 의 세우기 세 줄 · REACH 4.0 겹친 값 · 낡은 머리 주석 · 낡은 GROUP 주석)이 있고 git diff 에 다섯 개가 다 고쳐져 있다. _stand 로 묶은 것은 place_held · restore 의 동작을 그대로 둔다(make → add_child → global_position 순서 같음). 「임시」 표시와 「사람 결정」 줄은 그대로다"
-    },
-    {
-     "ok": true,
-     "criterion": "고칠 것이 없으면 없다고 적는다 — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다",
-     "evidence": "죽은 코드는 공개 함수를 grep 해 부르는 곳(station_window · villagers)을 적었고, 가장 긴 함수 길이(restore 21줄 · start_craft 15줄), load_from 두 개 · can_make/has_materials 를 안 묶은 까닭을 적었다"
-    },
-    {
-     "ok": true,
-     "criterion": "전체 테스트 통과 개수가 줄지 않았다 — report 에 앞뒤 숫자를 적는다",
-     "evidence": "report 에 앞 숫자(2102 중 2100 / 2101)와 뒤(바뀐 곳 그물 498/498)를 적었다. 루프가 돌린 전체 그물(test.log 맨 위 「--- 전체 ---」)이 2102/2102 통과 — 앞 단계 2099 · 앞 시도 2100/2101 보다 줄지 않았다. 앞 시도에서 떨어진 빈 줄 셋(stations.gd:321)과 test_animal_walk 도 이번 전체 그물에서 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)",
-     "evidence": "전체 그물 2102/2102 통과 — tests/craft/stations/test_stations.gd · test_station_recipes.gd, settings/save/test_broken_stays_broken.gd(Stations.restore) · test_round_trip.gd 를 포함한다. 일부러 깨 봤다: _aim_hit 끝을 `return {}` 로 바꾸고 TEST_DIR=res://tests/craft/stations 로 돌리니 test_stations.gd(「우클릭 → 제작대가 땅에 놓인다」 · 「조준점이 손 닿는 땅을 짚고 있다」)와 test_stations_aim_one_path.gd 가 떨어졌다. 되돌린 뒤 cmp 로 원본과 같음을 확인했다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) Stations._aim_hit 이 Aim.at 을 베꼈다 — game/craft/stations/stations.gd 의 _aim_hit 이 Aim.at(core 쪽 Aim) 과 줄마다 같은 광선을 다시 적는다. 이 단계 파일이 아니라 report 에 「경계를 넘는 것」으로 남겼다. DockBuilder._aim_hit 처럼 `if player == null or not is_inside_tree(): return {}` 뒤 `return Aim.at(player, get_world_3d().direct_space_state, REACH)` 로 줄이고 tests/craft/stations 를 돌려라",
-     "evidence": "_aim_hit 이 지시한 두 줄 그대로다. Aim.at 은 옛 코드와 같은 광선(aim_origin · far = 거리+reach · player 제외 · within 판정)이라 동작이 같다. test_stations_aim_one_path.gd 가 stations.gd 에 intersect_ray 가 없고 Aim.at 을 부르는지, Stations.REACH == Aim.REACH 인지 보고, 위 깨 보기에서 test_stations.gd 의 놓기 테스트가 이 길을 실제로 지킨다는 것을 확인했다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) report 의 테스트 개수 「뒤」가 일부만 적혔다 — G-995.4 report 는 뒤 숫자를 바뀐 곳 그물 33 파일 293/293 으로만 적었다. 다음 단계부터는 루프의 전체 그물이 돌았다면 test.log 의 「Passing Tests」 숫자(이번에는 2099)를 앞 숫자와 나란히 적어라",
-     "evidence": "report 의 앞 숫자가 앞 시도 test.log 의 전체 그물 Passing(2100 · 2101 / 2102)을 그대로 적었다. 이 회차의 전체 그물은 세션이 끝난 뒤 루프가 돌려 세션이 볼 수 없었고, report 는 그렇다고 밝혔다. 그 전체 그물은 2102/2102 다"
-    }
-   ],
-   "issues": [
-    "트리 밖 테스트가 Aim 길을 안 지난다 — game/tests/craft/stations/test_stations_aim_one_path.gd 의 test_aimed_station_is_empty_handed_without_a_player_or_tree 는 player 가 null 이라 새로 넣은 `not is_inside_tree()` 갈래를 따로 보지 않는다(막는 것은 아니다). player 를 넣고 트리 밖에 둔 Stations 로 aimed_station() 이 null 이고 에러가 없는지 보는 단언을 하나 더 넣어라"
-   ],
-   "good": []
-  },
-  "test": "age_death/test_health.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      0s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           268\nTests            2102\nPassing Tests    2102\nFailing Tests       0\nRisky/Pending       0\nAsserts        101686\nTime           471s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "de8fcdbf"
- },
- {
   "time": "2026-10-12 05:49:48",
   "epoch": 1791751788,
   "type": "pass",
@@ -10186,5 +10125,62 @@
    "good": []
   },
   "test": "_net_link_one_place.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/net/test_acts_alone.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/multiplayer/test_server_from_game.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      0s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      0s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           412\nTests            3007\nPassing Tests    3007\nFailing Tests       0\nRisky/Pending       0\nAsserts        130087\nTime           626s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-16 19:10:03",
+  "epoch": 1792145403,
+  "type": "pass",
+  "title": "통과 — G-229 단계 1 (숨 고르기 — 조준하고 가만히 있으면 점점 흔들림이 준다)",
+  "group": "G-229",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "숨 고르기 — 조준하고 가만히 있으면 2.5초에 걸쳐 흔들림이 0.15배로 줄고(숨 멎음) 3초 참으면 다시 흔들린다. 조준 중 퍼짐의 80%는 시선(조준점)이 실제로 흔들리는 것으로 보이고 쏜 알은 흔들린 조준점 둘레 20% 안으로 간다. 바뀐 곳 그물 256개 파일 2065개 중 5개(3파일)가 떨어져 고친 뒤 그 3파일 + 새 테스트 43개 통과",
+   "approach": "퍼짐은 그 순간 배율(조준 0.5 · 걸음 1.5 · 웅크림 0.6)만 곱하고 화면에 보이지 않았다. 배율에 숨 배율(Attack.breath — 조준하고 가만히 있은 시간 _still 로 1→0.15)을 곱해 흔들림 값으로 바꿨다. 조준 중에는 그 흔들림의 80%를 Player.set_sway 로 카메라 yaw/pitch 에 얹어(시선 _yaw/_pitch 는 그대로, 반동과 같은 길) 조준점이 느린 8자로 실제로 흔들리고, 쏠 때는 흔들린 조준점 방향 둘레로 나머지 20%(scatter_degrees)만 무작위로 벗어난다 — 둘을 더해도 퍼짐 각 안이라 탄착 넓이 · 탄속 · 낙차 · 반동은 그대로다. 허리 사격은 3인칭 화면이 출렁이지 않게 시선을 흔들지 않고 퍼짐을 다 무작위로 쓴다. 참가자는 흔들린 방향 + 남은 퍼짐을 보내고, 서버 상한은 Attack.spread_limit(총 퍼짐 × 걸음 1.5 — 숨 배율은 1을 넘지 않는다)로 한 곳에 모아 가장 큰 흔들림(걸으며 허리 사격)이 잘리지 않음을 총 16자루 모두 테스트로 본다. 그물에서 떨어진 셋: 저장 왕복 검사가 흔들림 시계를 잡아 「안 담는다」에 까닭과 함께 적었고(save.md 도), 몸 부위 검사가 attack.gd 의 sin(t*1.3)을 머리 배율 1.3 으로 읽어 진동수를 1.1 로 바꿨고, 어깨 카메라 테스트(조준 때 겨누는 방향 그대로)는 흔들림이 일부러 조준점을 움직이므로 그 테스트에서만 평타 _process 를 껐다. GUT 의 _pass 와 이름이 겹쳐 테스트 헬퍼를 _flow 로 지었다.",
+   "why": "BREATH_SETTLE 2.5초 — 조준하고 가만히 있으면 숨이 멎기까지; BREATH_MIN 0.15 — 숨 멎었을 때 흔들림 배율; BREATH_HOLD 3.0초 — 숨을 참는 시간, 지나면 1배로 돌아가 다시 고른다; AIM_LEFTOVER 0.2 — 조준 중 퍼짐 가운데 무작위로 남는 몫(나머지 0.8 은 보이는 흔들림); Attack.sway_path 의 진동수 — 흔들림이 그리는 8자 모양",
+   "files": [
+    "game/combat/tools_as_weapons/attack.gd",
+    "game/player/movement_controls/player.gd",
+    "game/core/net/net_vitals.gd",
+    "game/tests/combat/tools_as_weapons/test_breath.gd",
+    "game/tests/player/movement_controls/test_shoulder_camera.gd",
+    "game/tests/settings/save/test_round_trip.gd",
+    "spec/08_combat/tools-as-weapons.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "퍼짐을 「그 순간 곱하기」에서 **흔들림 값**으로 바꾼다 — 움직이면 커지고, 멈추고 조준하면 몇 초에 걸쳐 줄어 가장 작아진다(숨이 멎음). 걸리는 시간 · 가장 작은 값 · 숨을 얼마나 참나는 **임시**",
+     "evidence": "attack.gd breath() 가 _still 로 1→BREATH_MIN(0.15)을 BREATH_SETTLE(2.5초)에 걸쳐 고르고, spread_degrees 에 곱한다. test_breath.gd: test_aiming_still_settles_the_sway_over_seconds(절반 시점에 base 보다 작고 base*MIN 보다 큼 → 몇 초에 걸침, 끝에 base*MIN), test_moving_brings_the_sway_back_at_once(걸으면 곧바로 조준×걸음 배율), test_breath_runs_out_after_holding_it, test_letting_go_of_the_aim_drops_the_held_breath. 세 값 모두 상수 주석 · spec 에 「임시」로 적혀 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "그 흔들림이 **조준점(총구가 가리키는 곳)이 실제로 흔들리는 것**으로 보인다 — 흔들림이 클수록 크게. 쏜 알은 그 순간 흔들린 쪽 둘레로 간다. 보이는 흔들림과 퍼짐이 어긋나지 않는다 (테스트: 흔들림 0 근처에서 쏘면 조준점 둘레로 모인다)",
+     "evidence": "Player.set_sway 가 _pivot 회전에 얹혀 aim_direction 이 실제로 움직인다(test_the_sway_really_moves_the_crosshair_while_aiming), 걸을 때와 숨 멎었을 때의 흔들림이 퍼짐에 비례(test_the_sway_is_bigger_when_the_spread_is_bigger), 숨 멎고 쏜 30발이 조준점 둘레 spread×0.5×0.15×0.2 안에 모임(test_shots_with_breath_held_gather_around_the_crosshair), 실제 shoot() 알이 흔들린 조준점 둘레 scatter 안 · 흔들리지 않은 조준점에서 spread 안(test_a_real_shot_...). 일부러 깨 봤다: scatter 를 spread_degrees 로 되돌리면 2개, set_sway 를 빼면 2개가 떨어졌다(되돌림 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "참가자도 같다 — 서버가 받는 spread 상한(net_vitals.gd:446)이 새 흔들림 값 최댓값을 막지 않는지 본다 (테스트)",
+     "evidence": "net_vitals.gd 상한이 Attack.spread_limit(총 퍼짐×WALK_SPREAD)로 모였고 breath() ≤ 1 이라 최댓값(걸으며 허리 사격)과 같다. test_the_server_cap_never_clips_the_sway 가 쏘는 총 전부에서 최대 흔들림 == 상한, 조준 시 보내는 값 < 상한을 본다. test_a_guest_sends_the_swayed_aim_and_the_leftover_spread 가 참가자가 흔들린 방향 + 남은 퍼짐을 보내는지 본다(ask 인자를 spread_degrees 로 바꾸니 떨어졌다)"
+    },
+    {
+     "ok": true,
+     "criterion": "spec/08_combat/tools-as-weapons.md 에 「숨 고르기」를 사람 원문과 함께 적는다",
+     "evidence": "tools-as-weapons.md 퍼짐 줄 아래에 「숨 고르기 (사람 요청 2026-10-16)」 원문 인용 + 값(임시) + 흔들림/남은 퍼짐 규칙이 적혔다. 지워진 사람 줄 없음(추가만). 120줄"
+    }
+   ],
+   "issues": [
+    "숨이 차거나 걸으면 조준점이 한 프레임에 튄다 — attack.gd _breathe 가 BREATH_SETTLE+BREATH_HOLD 에서 _still 을 0 으로 바로 되돌려 breath 가 0.15→1 로 한 번에 뛰고, sway_offset = sway_path × 현재 퍼짐이라 조준점이 한 프레임에 최대 (1-0.15)×0.8×조준 퍼짐(돌격소총 약 0.85°, 걸으면 약 1.5°) 튄다. 흔들림 크기(또는 _still)를 초당 몇 배로 부드럽게 따라가게 하고(예: 숨이 차면 _still 을 0.5초쯤에 걸쳐 내림), test_breath.gd 에 숨이 차는 순간 연속 두 프레임의 player.sway() 차이가 작은지(예: 0.1° 미만) 보는 테스트를 더하라",
+    "허리 사격 퍼짐은 여전히 화면에 안 보인다 — 조준하지 않을 때는 시선을 흔들지 않아(3인칭 출렁임을 피하려는 판단, spec 에 적혀 있음) 걸으며 허리 사격한 퍼짐(가장 큰 값)이 보이지 않는다. 사람 원문은 「조준하면」이라 이번 기준엔 맞지만, 다음 단계(아이언사이트 · HUD)에서 허리 사격 퍼짐을 조준점 크기 등으로 보일지 spec 「미정」에 한 줄 적어 두어라"
+   ],
+   "good": []
+  },
+  "test": "k      3s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/automation/villagers/test_villager_door.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/core/net/test_acts_alone.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      3s  res://tests/core/net/test_steam_game.gd\nok      2s  res://tests/core/net/test_steam_server_gone.gd\nok      2s  res://tests/core/net/test_steam_quit.gd\nok      2s  res://tests/core/test_window_fit.gd\nok      2s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/stations/test_cook_table.gd\nok      1s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/craft/stations/test_loom.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/multiplayer/test_islands_afar.gd\nok      2s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/multiplayer/test_looks_seen.gd\nok      2s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_ammo_label.gd\nok      3s  res://tests/ui/hud/test_barn_window.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           259\nTests            2076\nPassing Tests    2076\nFailing Tests       0\nRisky/Pending       0\nAsserts        102845\nTime           468s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "f6f20503"
  }
 ]
