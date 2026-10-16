@@ -1,37 +1,5 @@
 [
  {
-  "time": "2026-10-12 03:08:36",
-  "epoch": 1791742116,
-  "type": "pass",
-  "title": "통과 — G-950 단계 2 (테스트가 TMPDIR 에 naru_dev_box_open_* 를 남긴다 (G-992 단계 6))",
-  "group": "G-950",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "test_dev_box_open.gd 의 after_all 이 게임을 치운 뒤 몇 프레임 흘리고 TempDir.clean 으로 지우며, 지운 뒤 다시 생기지 않는지도 단언한다 — 바뀐 곳만: 1 파일 3/3 통과 (단언 24)",
-   "approach": "naru_dev_box_open_* 를 만드는 곳은 tests/core/debug/test_dev_box_open.gd 하나다 (current.md 가 가리킨 test_dev_box_everything.gd 는 TMPDIR 를 쓰지 않는다). 그 파일은 이미 after_all 에서 TempDir.clean 을 불렀고 단독으로 돌리면 새지 않는다. 늦게 쓰는 길이 있는지도 봤다: 자동 저장 스레드는 game_root._exit_tree 가 끝까지 기다리고, 그 밖의 WorkerThreadPool · Thread 는 없다. 원인은 차선이 섞인 것으로 보인다 — naru-lane2(g/G-993) 에도 같은 이름 접두사를 쓰는 같은 테스트가 있고 같은 사용자 TMPDIR 를 쓴다. tools/test.sh 는 앞뒤 naru_* 목록을 비교하므로 lane2 가 돌리는 중인 폴더가 「새로 남았다」로 보인다. 이번 회차에 증거가 나왔다: tests/core/debug 만 돌렸는데 이 차선에서 만들지 않은 naru_from_empty_hands_2912778939 가 남았다고 나왔고, 조금 뒤 lane2 가 지워서 사라졌다. 그래도 이 테스트 쪽 틈은 막았다: 게임을 free 한 뒤 3 프레임 흘려 미뤄 둔 호출이 다 돈 다음 지우고, 다시 3 프레임 뒤 자리가 없는지 단언한다 — 늦게 쓰는 것이 생기면 이 테스트가 떨어진다. 경계를 넘는 것(G-994): 차선끼리 섞이지 않게 하려면 tools/test.sh 가 차선마다 다른 TMPDIR(또는 접두사)를 쓰게 해야 한다 — 두 차선이 같이 쓰는 도구이고 모든 테스트의 임시 경로에 걸린다.",
-   "why": "",
-   "files": [
-    "game/tests/core/debug/test_dev_box_open.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "테스트가 TMPDIR 에 naru_dev_box_open_* 를 남긴다 — test.log 끝에 naru_dev_box_open_2099798754 가 남았다고 나온다. dev box 를 여는 테스트(tests/core/debug/test_dev_box_everything.gd 쪽)가 만든 임시 폴더를 TempDir.clean 으로 지우게 고쳐라",
-     "evidence": "naru_dev_box_open_* 를 만드는 곳은 tests/core/debug/test_dev_box_open.gd 하나다. after_all 이 게임을 free 한 뒤 3 프레임 흘리고 TempDir.clean(지우고 남지 않았는지 단언)을 부르며, 다시 3 프레임 뒤 assert_false(TempDir.left(_dir)) 로 늦게 다시 생기지 않는지도 본다. 이번 test.log 는 전체(267 파일 · 2099 통과)이고 「TMPDIR 에 새로 남은 naru_*」 줄이 없다. 일부러 깨 봤다: TempDir.clean 바로 뒤에 DirAccess.make_dir_recursive_absolute(_dir) 를 넣어 늦게 쓰는 것을 흉내 내자 「1 assert(s) in before_all/after_all methods failed」로 그 파일이 떨어졌다 — 단언이 실제로 지킨다. 되돌렸고 흉내로 만든 폴더도 지웠다. 같은 돌림에서 이 차선이 만들지 않은 naru_move_* · naru_test_foods_* 가 「남았다」로 보였다 — report 의 「다른 차선(naru-lane2)이 같은 TMPDIR 를 써서 섞인다」는 진단을 뒷받침한다. 그 근본 수정(test.sh 가 차선마다 다른 TMPDIR)은 report 에 경계를 넘는 것(G-994)으로 적혀 있다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "k      1s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/build/test_rooms.gd\nok      2s  res://tests/build/test_room_overlay.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      0s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      0s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      0s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           267\nTests            2099\nPassing Tests    2099\nFailing Tests       0\nRisky/Pending       0\nAsserts        101719\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "48df9c26"
- },
- {
   "time": "2026-10-12 03:08:40",
   "epoch": 1791742120,
   "type": "stop",
@@ -10202,6 +10170,42 @@
   "group": "G-227",
   "step": "3",
   "attempt": "1",
+  "report": {
+   "problem": "처음 보는 몸은 STEADY_EVERY 번 내리 전부(이름·외형·입은 것)를 싣는다 — 첫 소식을 잃어도 다음 소식에 서 있다. performance.md 사람당 표를 고친 뒤 60초 한 재기로 갈았다. 바뀐 곳 17파일 90개 통과",
+   "approach": "서버는 처음 보는 몸에 전부를 한 번 싣고 곧바로 _told[id][who]=true 로 적었다. _snapshot 은 unreliable 이라 그 한 번을 잃으면 다음 소식에 n·a·e 가 없어 1초 동안 기본 외형 · 맨몸으로 그렸다. _told 의 값을 true 대신 「전부를 더 실을 횟수」로 바꿔 처음 보는 몸은 STEADY_EVERY(10)번 내리 전부를 싣는다 — 그 뒤는 전과 같다. 테스트하려고 보낼 것을 고르는 부분을 _outgoing(members, where, mine) 으로, 받는 쪽 채우기를 static _received 로 떼었다(보내는 내용 · 순서는 그대로). 새 테스트는 첫 _outgoing 결과를 버리고 2~9번째 소식마다 이름 · 외형 · 입은 것이 있는지, 그 소식으로 VisitorBody 를 그려 이름표 · 외형 · 입은 것 · 자리가 서는지, 10번이 지나면 다시 바이트 한 줄만 가는지 본다(고치기 전 코드면 두 번째 소식에 n 이 없어 떨어진다). QA 두 번째: NARU_PERF_SECONDS=60 으로 고친 뒤 다시 재어 「사람당」 표 전체를 그 한 재기 숫자로 갈았고(서버 보냄 4.0 KB/s · RPC 23.0/s · 받음 17.2/s, 참가자 보냄 0.53 · 받음 2.0 KB/s · RPC 받음 11.5/s), 고치기 전 5분 숫자는 표 아래 한 줄로 옮겼다. _snapshot 은 2.57 KB/s 로 고치기 전과 같다 — 1초 전부 싣기는 들어올 때뿐이다. 전체 테스트는 돌리지 않았다 — 바뀐 곳(changed_tests) 17파일 90개 통과",
+   "why": "",
+   "files": [
+    "game/core/net/net_bodies.gd",
+    "game/tests/multiplayer/test_send_less.gd",
+    "spec/00_core/performance.md",
+    "spec/11_multiplayer/netcode.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "몸 첫 소식을 잃으면 이름·외형이 1초 빈다 — net_bodies.gd _send_to_members 는 처음 보는 몸에 전부를 한 번 싣고 곧바로 _told[id][who]=true 로 적는데, _snapshot 은 unreliable 이라 그 한 번을 잃을 수 있다. … test_send_less 에 「첫 _snapshot 하나를 버린 뒤에도 이름표 · 외형이 다음 소식에 서 있다」 단언을 더하라",
+     "evidence": "_told 값이 남은 횟수(기본 STEADY_EVERY=10)가 되어 처음 보는 몸은 10번 내리 전부를 싣는다(left>0 검사가 먼 몸 분기보다 앞이라 먼 몸도 전부). 보내는 내용·순서는 그대로, _outgoing/_received 로 떼기만 했다. test_send_less::test_a_lost_first_snapshot_still_brings_name_and_look_next_time 은 _ticks=1(1초 차례 아님)의 첫 소식을 버리고 2~9번째마다 n·a·e 를 보고, VisitorBody.apply 로 이름표·외형·입은 것·placed() 를 보고, 10번 뒤에는 PackedByteArray 만 가는지 본다. 일부러 깨 봄: told.get(who, STEADY_EVERY) → told.get(who, 1)(고치기 전과 같은 꼴)로 바꾸니 이 테스트가 떨어졌다(8개 중 1개 실패) — 되돌린 뒤 diff 가 원래대로인지 확인했다. 전체 402파일 2969개 통과 · guard 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) performance.md 사람당 표에 창이 섞였다 — … 다음 재기 때 표 전체를 같은 창 · 같은 시점(고친 뒤) 숫자로 갈거나, 「RPC 받음」 열이 어느 재기(전/나)인지 표 아래 줄에 적어라",
+     "evidence": "표 제목이 「G-227.3 — 고친 뒤 60초 창 한 번, 표 전체가 같은 재기」로 바뀌고 다섯 열 모두 갈렸다. 고치기 전 5분 숫자는 표 아래 한 줄로 옮겼다. QA 가 NARU_PERF_SECONDS=60 으로 test_net_measure 를 다시 돌려 PERF 줄을 보니 서버 보냄 3999 · 받음 1065 B/s · RPC 23.0/s, 참가자 보냄 533 · 받음 1996~2005 B/s · RPC 받음 11.5~11.6/s, 참가자 RPC 보냄 8.6/s(서버 받음 17.2 = 8.6×2), _snapshot 2561 B/s — 표 숫자와 맞는다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "ests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/recipes/test_workbench_gear.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           402\nTests            2969\nPassing Tests    2969\nFailing Tests       0\nRisky/Pending       0\nAsserts        128632\nTime           739s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-16 11:04:02",
+  "epoch": 1792116242,
+  "type": "start",
+  "title": "루프 시작",
   "report": {
    "problem": "처음 보는 몸은 STEADY_EVERY 번 내리 전부(이름·외형·입은 것)를 싣는다 — 첫 소식을 잃어도 다음 소식에 서 있다. performance.md 사람당 표를 고친 뒤 60초 한 재기로 갈았다. 바뀐 곳 17파일 90개 통과",
    "approach": "서버는 처음 보는 몸에 전부를 한 번 싣고 곧바로 _told[id][who]=true 로 적었다. _snapshot 은 unreliable 이라 그 한 번을 잃으면 다음 소식에 n·a·e 가 없어 1초 동안 기본 외형 · 맨몸으로 그렸다. _told 의 값을 true 대신 「전부를 더 실을 횟수」로 바꿔 처음 보는 몸은 STEADY_EVERY(10)번 내리 전부를 싣는다 — 그 뒤는 전과 같다. 테스트하려고 보낼 것을 고르는 부분을 _outgoing(members, where, mine) 으로, 받는 쪽 채우기를 static _received 로 떼었다(보내는 내용 · 순서는 그대로). 새 테스트는 첫 _outgoing 결과를 버리고 2~9번째 소식마다 이름 · 외형 · 입은 것이 있는지, 그 소식으로 VisitorBody 를 그려 이름표 · 외형 · 입은 것 · 자리가 서는지, 10번이 지나면 다시 바이트 한 줄만 가는지 본다(고치기 전 코드면 두 번째 소식에 n 이 없어 떨어진다). QA 두 번째: NARU_PERF_SECONDS=60 으로 고친 뒤 다시 재어 「사람당」 표 전체를 그 한 재기 숫자로 갈았고(서버 보냄 4.0 KB/s · RPC 23.0/s · 받음 17.2/s, 참가자 보냄 0.53 · 받음 2.0 KB/s · RPC 받음 11.5/s), 고치기 전 5분 숫자는 표 아래 한 줄로 옮겼다. _snapshot 은 2.57 KB/s 로 고치기 전과 같다 — 1초 전부 싣기는 들어올 때뿐이다. 전체 테스트는 돌리지 않았다 — 바뀐 곳(changed_tests) 17파일 90개 통과",
