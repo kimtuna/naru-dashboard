@@ -1,72 +1,5 @@
 [
  {
-  "time": "2026-09-26 09:26:12",
-  "epoch": 1790382372,
-  "type": "pass",
-  "title": "통과 — G-150 단계 4 (설치물은 1칸 단위로 자유롭게 놓인다)",
-  "group": "G-150",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "설치물(밭)이 1칸(1m) 격자에 스냅된다 — 토대 두 장에 걸치고 한 토대 가운데에도 놓이며, 겹치면 미리보기가 빨갛고 안 놓인다. 바뀐 곳 42개 파일 323개 테스트 통과",
-   "approach": "밭이 2m 판 격자(Farmland.plate_of = floor(pos/2))에 묶여 토대의 네 사분면에만 들어갔다. 밭의 열쇠를 「첫 칸(1m)」으로 바꾸고, 놓을 자리는 짚은 점에서 가장 가까운 격자 교점(밭 한가운데)으로 스냅한다. 겹침은 네 칸(cells_of) 단위로 본다(overlaps) — can_till·till 둘 다 막는다. 밭을 들면 미리보기 판이 뜨고 겹침·물·절벽·설치물이면 Buildings.BAD_COLOR 로 빨갛다. 저장 키는 plate→origin 으로 바꾸고 옛 plate(2m)·cell(1칸) 저장본을 제자리로 읽는다(plate_in). 걸친 밭이 생기니 받침 검사(Buildings._held)가 한가운데 판 하나가 아니라 밭이 덮는 판 전부(_plates_under)를 보게 했다 — 안 그러면 경계에 걸친 밭이 토대를 다 부숴도 공중에 남았다(G-150.1 테스트가 이것을 잡아냈다). 제작대·상자는 이미 1m 칸 한가운데(Grid)로 스냅되고 있어 테스트만 더했다. QA 지적: 벽 위 하늘을 보는 지붕 테스트를 하나 더 뒀다 — 벽에서 1.2m 뒤에 서서 30° 로 올려보면 Aim.at 이 비고(sky.is_empty), _roof_level_crossing 이 그 토대 판을 짚는다. 눈에 띈 것(이 단계 밖): Chests.aimed_spot 은 놓인 것(토대 포함)을 짚으면 null 이라 상자를 토대 위에 놓을 수 없다 — 제작대는 놓인다. 다음 단계감이다.",
-   "why": "Farmland.PREVIEW_LIFT 0.03m — 미리보기 판을 흙판보다 띄우는 높이, 겹쳐 깜빡이지 않게 눈대중으로 잡은 값",
-   "files": [
-    "game/life/farming/farmland.gd",
-    "game/life/farming/crops.gd",
-    "game/build/buildings.gd",
-    "spec/04_life/farming.md",
-    "spec/06_build/building.md",
-    "game/tests/life/farming/test_field_free_grid.gd",
-    "game/tests/life/farming/test_farm_save.gd",
-    "game/tests/life/farming/test_farmland.gd",
-    "game/tests/life/farming/test_crops.gd",
-    "game/tests/build/test_size_4x4.gd",
-    "game/tests/build/test_building_roof_skyward.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "설치물(밭 · 제작대 · 상자 · 횃불 …)은 1칸(1m) 격자에 스냅된다 — 토대의 사분면 · 토대 경계에 묶이지 않는다 (테스트)",
-     "evidence": "test_field_free_grid.gd 의 test_the_field_snaps_to_the_one_meter_grid_not_to_a_two_meter_plate 가 진짜 조준·우클릭으로 홀수 좌표 교점 세 곳에 놓고 흙판 한가운데 = 가장 가까운 1m 교점임을 단언한다 (2m 판 한가운데가 아님을 대조). test_stations_and_chests_snap_… · test_chests_snap_… 이 제작대·상자가 1m 칸 한가운데(토대 한가운데에서 반 칸)에 스냅됨을 본다. plate_of 를 2m 격자로 되돌리자 4개가 깨졌다(되돌렸다)"
-    },
-    {
-     "ok": true,
-     "criterion": "밭 2×2 가 토대 두 장에 걸쳐 놓이고, 한 토대의 가운데에도 놓인다 (테스트)",
-     "evidence": "test_a_field_straddles_two_foundations 가 토대 두 장 경계(x=4)에 첫 칸 (3,1) 로 놓여 덮는 칸이 x=3·x=4 양쪽임을, test_a_field_sits_in_the_middle_of_one_foundation 가 토대 한가운데 = 흙판 한가운데이고 네 사분면에 한 칸씩 걸침을 단언한다. 걸친 밭의 받침도 test_a_field_straddling_…_falls_when_both_are_gone 이 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "겹쳐 놓이지는 않는다 — 이미 놓인 것과 칸이 겹치면 빨갛다 (테스트)",
-     "evidence": "test_overlapping_an_existing_field_turns_the_preview_red_and_places_nothing 이 반 칸 겹치는 자리에서 preview_color == BAD_COLOR, 우클릭해도 밭 수 1 · 가방에 그대로임을, 두 칸 옆은 OK_COLOR 로 놓임을 단언한다. overlaps 를 _fields.has 로 바꾸자 깨졌다(되돌렸다)"
-    },
-    {
-     "ok": true,
-     "criterion": "spec/06_build/building.md 또는 farming.md 에 「설치물은 1칸 격자 (사람 결정 2026-09-26)」를 적는다",
-     "evidence": "building.md 43~45줄 · farming.md 10~12줄에 적혔다. 사람 결정 줄은 지워진 것이 없고 두 md 모두 150줄 안쪽이다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 벽 윗면 테스트가 새 길을 지나지 않는다 — 벽 위 하늘을 보는 경우를 하나 더 두어 _roof_level_crossing 이 벽 꼭대기 자리를 짚는지 assert_true(sky.is_empty()) 대조와 함께 단언하라",
-     "evidence": "test_building_roof_skyward.gd 에 test_looking_up_at_the_sky_over_the_wall_top_shows_the_roof_on_that_foundation 이 더해졌다 — 벽에서 1.2m 뒤 30° 로 올려보며 Aim.at 이 비는 것(sky.is_empty)을 대조하고, _roof_level_crossing 이 그 토대 판·바닥 높이를 돌려주며 plan().ok · 우클릭으로 지붕이 얹힘을 단언한다. test.log 전체 1513개 통과"
-    }
-   ],
-   "issues": [
-    "상자를 토대 위에 놓을 수 없다 — game/world/storage/chests.gd aimed_spot 이 놓인 것(토대 포함)을 짚으면 null 을 돌려줘 상자가 토대 윗면에 안 놓인다. 제작대(Stations.aimed_spot)는 놓인다. 토대 윗면(BuildPiece.is_floor)을 짚으면 그 1m 칸 한가운데를 돌려주게 고치고, test_field_free_grid.gd 의 test_chests_snap_to_the_one_meter_grid 를 토대 위에서도 도는 것으로 넓혀라 (지금은 「맨땅에서 격자만 본다」고 주석으로 피해 갔다)"
-   ],
-   "good": [
-    "밭 미리보기 판(Farmland._preview · PREVIEW_LIFT) — 기준의 「빨갛다」를 보이려면 필요해 기준 안으로 본다. PREVIEW_LIFT 는 임시 표시가 있다",
-    "Buildings._plates_under — 걸친 밭의 받침 검사를 덮는 판 전부로 넓혔다. 이 단계에서 생긴 걸친 밭에 필요한 고침이라 덤이 아니다"
-   ]
-  },
-  "test": "en.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      2s  res://tests/build/test_rooms.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      0s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      0s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok    420s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           177\nTests            1513\nPassing Tests    1513\nFailing Tests       0\nPending             0\nAsserts         69245\nTime           420s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "a55a8f4"
- },
- {
   "time": "2026-09-26 09:59:18",
   "epoch": 1790384358,
   "type": "pass",
@@ -8651,5 +8584,48 @@
   },
   "test": "ok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           416\nTests            3043\nPassing Tests    3043\nFailing Tests       0\nRisky/Pending       0\nAsserts        131193\nTime           638s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "197e3ac6"
+ },
+ {
+  "time": "2026-10-16 21:55:13",
+  "epoch": 1792155313,
+  "type": "pass",
+  "title": "통과 — G-228 단계 6 ((앞 단계 QA) netcode.md 가 150줄 턱밑이다)",
+  "group": "G-228",
+  "step": "6",
+  "attempt": "1",
+  "report": {
+   "problem": "netcode.md(148줄)에서 「접속」·「섬 여럿」 절을 connect.md · islands.md 로 나눠 133줄로 줄이고, 긴 프레임에 등반 붙잡기가 풀리는지 보는 테스트를 짰다 (바뀐 곳만: 105개 파일 871개 테스트 통과)",
+   "approach": "netcode.md 가 148줄이라 한 줄만 더해도 150을 넘었다. 코드 주석이 「접속」 「섬 여럿」 이름으로 가리키는 두 절을 그대로 옮겨 connect.md · islands.md 를 새로 만들고(사람 결정 줄도 원문 그대로), netcode.md 에는 같은 제목에 옮긴 곳을 가리키는 한 줄씩만 남겼다. 그래서 주석이 가리키는 이름으로 찾아도 길이 끊기지 않는다. spec/README.md 목차에도 둘을 적었다. 등반: 벽 밑 땅 위에서 restore_hold 로 붙인 뒤(test_body_on_server 와 같은 꼴) step 에 0.25 · 1 · 5초짜리 delta 를 한 번에 주고, 프레임을 200ms 씩 멈춰 물리 틱이 몰리게도 해 봤다. 셋 다 손이 풀리지 않았다 — 가만히 있으면 기력이 줄지 않고, 움직이면 delta 만큼만 준다. 게다가 Godot 의 _physics_process delta 는 늘 고정 틱(1/60)이라, 프레임이 밀리면 틱이 여러 번 돌 뿐 긴 delta 가 들어오지 않는다. 그러니 서버장이 벽에서 떨어진 까닭은 climbing.gd 의 붙잡기가 아니라 다른 곳이다(그 테스트에서 몸 소식 · 다른 몸과의 부딪힘 따위). 거기까지는 찾지 않았다 — 이번 기준이 아니다.",
+   "why": "",
+   "files": [
+    "spec/11_multiplayer/netcode.md",
+    "spec/11_multiplayer/connect.md",
+    "spec/11_multiplayer/islands.md",
+    "spec/README.md",
+    "game/tests/life/climbing/test_grip_long_frame.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "netcode.md 가 150줄 턱밑이다 — spec/11_multiplayer/netcode.md 가 148줄이다. 다음에 한 줄만 더해도 넘으니, 표나 지난 기록 몇 줄을 옆 md(예: spec/11_multiplayer/ 아래 새 파일)로 나눠 두어라",
+     "evidence": "netcode.md 148→133줄. 「접속」 절은 connect.md(16줄), 「섬 여럿」 절은 islands.md(11줄)로 글자 그대로 옮겼고 사람 결정 줄(2026-10-14 · 10-15 · 10-16)도 원문 그대로 남았다. netcode.md 에는 같은 제목에 옮긴 곳을 가리키는 한 줄씩을 남겨 코드 주석(「netcode.md 「접속」」 · 「섬 여럿」)이 끊기지 않는다. spec/README.md 목차에도 둘을 적었다."
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 흔들리는 테스트를 테스트 쪽에서 눌렀다 — test_body_on_server.gd:374 는 기다리는 사이 서버장이 벽에서 떨어지면 다시 붙이고, test_from_empty_hands.gd:1748 은 겨누는 동안 사슴 물리를 끈다. 둘 다 보는 것(소식 · 산출)은 그대로라 받아들였지만, 서버장이 왜 벽에서 떨어지는지(여럿이 돌 때 물리 틱이 몰리면 붙잡기가 풀리는지)는 확인하지 않았다. climbing.gd 의 붙잡기가 한 프레임 긴 delta 에 풀리는지 보는 테스트를 하나 짜 두면 좋다",
+     "evidence": "tests/life/climbing/test_grip_long_frame.gd 세 테스트 — 가만히 0.25·1·5초 한 걸음, 움직이며 0.5초 한 걸음(기력이 delta 만큼만 준다), OS.delay_msec 로 프레임을 밀어 물리 틱이 몰리게 한 것. 일부러 깨 봤다: climbing.gd step() 맨 앞에 「delta>0.2 면 release()」를 넣자 이 파일만 FAIL, 되돌렸다(git status 깨끗). 전체 실행(3046개) 통과 · guard 통과."
+    }
+   ],
+   "issues": [
+    "서버장이 벽에서 떨어지는 까닭은 아직 모른다 — test_grip_long_frame.gd 로 climbing.gd 의 붙잡기(긴 delta · 몰린 틱)는 아님이 드러났다. test_body_on_server.gd:374 근처의 「다시 붙이기」를 잠시 빼고 떨어질 때 is_climbing 이 false 가 되는 자리(release 를 부르는 곳 — 몸 소식 받기 · 다른 몸과의 부딪힘 · restore_hold 덮어쓰기)에 로그를 달아 찾고, 찾은 원인을 고친 뒤 테스트 쪽 누름을 걷어라"
+   ],
+   "good": []
+  },
+  "test": "t_grid.gd\nok      1s  res://tests/core/net/test_acts_alone.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/multiplayer/test_islands_afar.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           417\nTests            3046\nPassing Tests    3046\nFailing Tests       0\nRisky/Pending       0\nAsserts        131215\nTime           636s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "19a016fe"
  }
 ]
