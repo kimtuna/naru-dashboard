@@ -3519,7 +3519,7 @@
   - 기준: (앞 단계 QA) 낡은 주석 둘 — game/core/game_root.gd 844줄 _depart 주석 「(sail_to → NetWorld.sail_crew)」는 실제로는 _sail_crew 를 부른다 → 「_sail_crew → NetWorld.sail_crew」로 고쳐라. game/ui/hud/notice.gd 6줄 「(core/game_root.gd 의 sail_to)」는 잠긴 섬 알림이 이제 open_dock_window 에서 뜨므로 그 이름으로 고쳐라
 - [x] 2. (앞 단계 QA) 되걷기 가지만 따로 지키는 테스트가 없다
   - 기준: 되걷기 가지만 따로 지키는 테스트가 없다 — player.gd:225 의 `if climb > 0.0 and (is_on_wall() or not is_on_floor()):` 되걷기를 `if false:` 로 꺼도 movement_controls 12개가 다 통과했다(_climb_along_floor 의 is_on_wall 막음이 먼저 걸러서). 둘을 같이 꺼야 test_slope_real_island 가 196/300 으로 깨진다. 되걷기가 정말 필요한 경우(이번 걸음에 처음 면에 닿아 is_on_wall 이 아직 false 인 걸음)를 짚는 단언을 test_slope_real_island 에 더하거나, 필요 없으면 되걷기를 걷고 주석을 하나로 모아라
-- [ ] 3. (앞 단계 QA) 주석 오타 '잼'
+- [x] 3. (앞 단계 QA) 주석 오타 '잼'
   - 기준: 주석 오타 '잼' — game/player/movement_controls/player.gd 의 _climb_along_floor 주석 '(본섬 0.8 cm · 유황 섬 0.05 cm, G-225-4.2 잼)' 의 '잼' 을 '잰 값' 으로 고쳐라
 
 ## [x] G-908 루프가 찾은 것 — 스스로 갚는다
