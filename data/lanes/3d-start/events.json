@@ -1,26 +1,5 @@
 [
  {
-  "time": "2026-10-12 05:10:52",
-  "epoch": 1791749452,
-  "type": "fail",
-  "title": "기계 검사 실패 — G-995 단계 5 (시도 2)",
-  "group": "G-995",
-  "step": "5",
-  "attempt": "2",
-  "report": {
-   "problem": "제작대 · 레시피 5 파일(897줄)을 다듬었다 — Stations._aim_hit 을 Aim.at 한 줄로 · REACH=Aim.REACH · 놓기/되돌리기 겹친 세우기를 _stand 로 · 낡은 주석 둘 · 앞 시도의 빈 줄 셋을 둘로",
-   "approach": "| 무엇 | 어디 | 종류 | 고친 것 |\n|---|---|---|---|\n| _aim_hit 이 Aim.at 의 광선을 줄마다 다시 적었다 (앞 단계 QA) | stations.gd _aim_hit | 겹친 코드 | DockBuilder 처럼 `if player == null or not is_inside_tree(): return {}` 뒤 `return Aim.at(player, get_world_3d().direct_space_state, REACH)` |\n| REACH := 4.0 을 Harvest 와 따로 적었다 | stations.gd REACH | 겹친 값 | `const REACH := Aim.REACH` (Harvest.REACH 와 같은 길) |\n| place_held · restore 가 make → add_child → global_position 세 줄을 똑같이 적었다 | stations.gd | 겹친 코드 | `_stand(kind, at)` 하나로 |\n| 「채취와 같은 방식이다 (life/harvest/harvest.gd)」 — 지금 광선은 aim.gd 에 있다 | stations.gd 머리 주석 | 낡은 주석 | aim.gd 를 가리킨다 |\n| GROUP 주석 「방 판정 · 저장이 나중에」 — 이미 Buildings.rooms · 밭이 훑는다 | crafting_station.gd GROUP | 낡은 주석 | 지금 훑는 쪽을 적었다 |\n| 앞 시도가 남긴 빈 줄 셋 (기계 검사 test_no_triple_blank_lines 가 떨어뜨림) | stations.gd:321 | 꼴 | 둘로 줄였다 |\n\n**고칠 것이 없다고 본 것**: station_catalog.gd(78) · recipe_catalog.gd(107) · hand_craft.gd(82) — 함수가 모두 20줄 안쪽이고, 공개 함수(keys · has · of · for_station · for_hand · HandCraft.of …)는 모두 stations.gd · bag.gd · dev_box.gd · ui_shots.gd 나 테스트가 부른다(죽은 코드 없음). load_from 두 벌(StationCatalog · RecipeCatalog)이 비슷하지만 읽는 줄의 꼴이 달라(_read 로 정규화 vs 그대로) 합치면 두 클래스를 잇는 새 틀이 생긴다 — 기능을 더하지 않는 선에서 두었다. 주석의 「임시」 · 「사람 결정」 표시는 하나도 지우지 않았다.\n\n**테스트 개수**: 앞 = G-995.4 뒤 루프 전체 그물 Passing 2099. 이 단계의 앞 시도 뒤 루프 전체 그물 = 2102 중 2100 통과 — 떨어진 둘은 test_no_triple_blank_lines(앞 시도의 빈 줄, 이번에 고쳤다)와 test_animal_walk(물가 걸음 — 이 단계 파일과 무관, 이번에 따로 돌리니 통과). 이번 회차에는 전체를 돌리지 않았다: 바뀐 곳 그물(changed_tests 52 파일) + 위 둘 = 54 파일 509/509 통과. 그러므로 전체 통과는 2100 + 고친 1 = 2101 이상으로 예상되며 2099 보다 줄지 않는다 — 확정 숫자는 루프의 전체 그물이 낸다.\n\n**경계를 넘는 것**: 없다 — 밖에서 부르는 이름은 바꾸지 않았다.",
-   "why": "",
-   "files": [
-    "game/craft/stations/stations.gd",
-    "game/craft/stations/crafting_station.gd",
-    "game/tests/craft/stations/test_stations_aim_one_path.gd"
-   ],
-   "decision": null
-  },
-  "test": "//tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\n\n================ 떨어진 파일: res://tests/life/hunting/test_animal_walk.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/life/hunting/test_animal_walk.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:176)\n         [1] _ready (res://world/terrain/test_island.gd:103)\n         [2] before_all (res://tests/life/hunting/test_animal_walk.gd:25)\n         [3] _call_before_all (res://addons/gut/gut.gd:684)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:813)\n         [5] test_scripts (res://addons/gut/gut.gd:1047)\n         [6] run_tests (res://addons/gut/gui/GutRunner.gd:198)\n         [7] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n         [8] main (res://addons/gut/cli/gut_cli.gd:297)\n         [9] _init (res://addons/gut/gut_cmdln.gd:39)\n* test_wanders_around_home\n* test_picked_spots_stay_within_the_wander_radius\n    집 (-370.0, 200.0) — 고른 곳 가장 멀리 19.95m\n    집 (-251.0, -240.0) — 고른 곳 가장 멀리 19.98m\n    집 (120.7662, 21.05808) — 고른 곳 가장 멀리 19.58m\n* test_picks_again_where_a_single_pick_lands_outside\n    집 (130.0, 27.39642) — 한 번 고르기 200번 중 7번 반경 밖 · 가장 멀리 23.17m\n* test_never_steps_into_water_even_when_sent_there\n    [Failed]:  ARRAY([(-256.0577, 21.78995, -246.0363), (-256.3357, 21.6653, -246.0346), (-256.4866, 21.5...46.1749)]) != ARRAY([]).\n    [(-256.0577, 21.78995, -246.0363), (-256...246.1749)] != []  3 of 3 indexes do not match.  연못 가운데로 보내도 물에 들어가지 않는다\n      at line 226\n    [Failed]:  ARRAY([(-257.7411, 21.55754, -247.3369)]) != ARRAY([]).\n    [(-257.7411, 21.55754, -247.3369)] != []  1 of 1 indexes do not match.  물가에서 놀아도 물에 들어가지 않는다\n      at line 234\n* test_does_not_fall_off_cliff_even_when_sent_below\n* test_nav_mesh_has_no_water_or_cliff\n* test_goes_around_trees_not_stuck\n* test_walk_values_live_in_one_place_marked_temporary\n7/8 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/life/hunting/test_animal_walk.gd\n- test_never_steps_into_water_even_when_sent_there\n    [Failed]:  ARRAY([(-256.0577, 21.78995, -246.0363), (-256.3357, 21.6653, -246.0346), (-256.4866, 21.5...46.1749)]) != ARRAY([]).\n    [(-256.0577, 21.78995, -246.0363), (-256...246.1749)] != []  3 of 3 indexes do not match.  연못 가운데로 보내도 물에 들어가지 않는다\n          at line 226\n    [Failed]:  ARRAY([(-257.7411, 21.55754, -247.3369)]) != ARRAY([]).\n    [(-257.7411, 21.55754, -247.3369)] != []  1 of 1 indexes do not match.  물가에서 놀아도 물에 들어가지 않는다\n          at line 234\n\nTotals\n------\nScripts               1\nTests                 8\nPassing Tests         7\nFailing Tests         1\nAsserts           257/259\nTime              56.55s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           268\nTests            2102\nPassing Tests    2101\nFailing Tests       1\nRisky/Pending       0\nAsserts        101679\nTime           477s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/life/hunting/test_animal_walk.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
- },
- {
   "time": "2026-10-12 05:29:45",
   "epoch": 1791750585,
   "type": "pass",
@@ -10157,6 +10136,34 @@
   "group": "G-225-4",
   "step": "3",
   "attempt": "1",
+  "report": {
+   "problem": "player.gd _climb_along_floor 주석의 오타 '잼' 을 '잰 값' 으로 고쳤다 (바뀐 곳만: 파일 238개 · 테스트 1954개 모두 통과)",
+   "approach": "주석 한 줄의 오타다. '(본섬 0.8 cm · 유황 섬 0.05 cm, G-225-4.2 잼)' 를 '… G-225-4.2 잰 값)' 으로 바꿨다. 코드가 바뀌지 않아 새 테스트는 짜지 않았다. 채점과 같은 그물(changed_tests.py, 파일 238개)을 돌려 1954개가 모두 통과했다.",
+   "why": "",
+   "files": [
+    "game/player/movement_controls/player.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "주석 오타 '잼' — game/player/movement_controls/player.gd 의 _climb_along_floor 주석 '(본섬 0.8 cm · 유황 섬 0.05 cm, G-225-4.2 잼)' 의 '잼' 을 '잰 값' 으로 고쳐라",
+     "evidence": "git diff 로 player.gd 254행이 '(본섬 0.8 cm · 유황 섬 0.05 cm, G-225-4.2 잰 값)' 으로 바뀐 것을 확인했다. 파일에 '잼' 은 더 남아 있지 않다(grep). 주석 한 줄만 바뀌고 코드는 그대로라 테스트로 볼 동작이 없다. 루프가 돌린 전체 테스트(412 파일 · 3007개)가 모두 통과했고 guard 도 통과했다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "_net_link_one_place.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/net/test_acts_alone.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/multiplayer/test_server_from_game.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      0s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      0s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           412\nTests            3007\nPassing Tests    3007\nFailing Tests       0\nRisky/Pending       0\nAsserts        130087\nTime           626s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-16 18:44:17",
+  "epoch": 1792143857,
+  "type": "start",
+  "title": "루프 시작",
   "report": {
    "problem": "player.gd _climb_along_floor 주석의 오타 '잼' 을 '잰 값' 으로 고쳤다 (바뀐 곳만: 파일 238개 · 테스트 1954개 모두 통과)",
    "approach": "주석 한 줄의 오타다. '(본섬 0.8 cm · 유황 섬 0.05 cm, G-225-4.2 잼)' 를 '… G-225-4.2 잰 값)' 으로 바꿨다. 코드가 바뀌지 않아 새 테스트는 짜지 않았다. 채점과 같은 그물(changed_tests.py, 파일 238개)을 돌려 1954개가 모두 통과했다.",
