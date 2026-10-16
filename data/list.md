@@ -3507,7 +3507,7 @@
 - spec: spec/11_multiplayer/netcode.md · spec/03_world/frontier-islands.md (선착장 · 배)
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다
 - 테스트는 headless 둘(셋)을 ENet 으로 · Steam 은 가짜(fake_steam.gd)로. **사람의 Steam 을 켜거나 로그인하지 않는다**
-- [ ] 1. 다른 섬에 다녀오면 느려진다
+- [x] 1. 다른 섬에 다녀오면 느려진다
   - 사람이 본 것 (2026-10-16): 「선착장에 와서 다른 섬으로 오니 이동속도가 느려지는 것 같음. 그리고 다시 본섬에 돌아와도 느린느낌 배고픔이랑 목마름 100%임에도」 — 서버장인지 참가자인지는 모른다
   - 짚어 볼 곳 (짐작이다 — 재현으로 가린다): player.gd:226 속도 = base_speed(목마름 0 이면 ×0.7, hunger_thirst.gd:153) · speed_multiplier(버프) · crouch_factor · slope_factor. 섬을 건널 때 player_state.gd remember/restore(12-61)가 웅크림 · 버프를 되살린다. 참가자는 net_vitals.gd `_vitals` 469-483 이 서버 사본으로 덮는다 · `_cross` 가 섬을 지을 때마다 `_fit_body`(game_root.gd:1239-1302)가 다시 붙인다(두 번 붙어 두 번 깎이나)
   - 기준: **재현부터** — 평지에서 걸은 속도를 재고, 섬을 갔다 와서(서버장 · 참가자 둘 다, 3단계 전 길이든 뒤 길이든) 같은 자리에서 다시 잰다. 느려지면 까닭을 고치고 테스트로 남긴다. 재현이 안 되면 report 에 잰 숫자를 남기고 사람에게 서버장 · 참가자 어느 쪽이었나 묻는다
@@ -3517,6 +3517,8 @@
     - 느려지는 것이 보이면 고치고 테스트로 남긴다. 보이지 않으면 잰 숫자를 report 에 남기고 **사람에게 다시 묻지 않는다** — 다음 사람 시험 판에서 F3(FPS)와 같이 보게 「사람 확인」으로 남긴다
   - 기준: (앞 단계 QA) sail_to 가 아직 모두를 끌고 간다 — game/core/game_root.gd sail_to(421~) 는 사람 길에서는 빠졌지만(Dock.boarded → open_dock_window) 여전히 net.members() 전부를 _sail_crew 에 넘긴다. 테스트(test_world_on_server · test_locked_island · test_autosave)만 쓰는 길이라 막는 것은 아니지만 「아무도 끌려가지 않는다」와 어긋난 공개 함수다. G-225.7 에서 막음을 걷을 때 sail_to 를 테스트 도우미로 이름을 바꾸거나 crew 를 인자로 받게 하고, 주석에 「사람 길 아님」을 적어라
   - 기준: (앞 단계 QA) 낡은 주석 둘 — game/core/game_root.gd 844줄 _depart 주석 「(sail_to → NetWorld.sail_crew)」는 실제로는 _sail_crew 를 부른다 → 「_sail_crew → NetWorld.sail_crew」로 고쳐라. game/ui/hud/notice.gd 6줄 「(core/game_root.gd 의 sail_to)」는 잠긴 섬 알림이 이제 open_dock_window 에서 뜨므로 그 이름으로 고쳐라
+- [ ] 2. (앞 단계 QA) 되걷기 가지만 따로 지키는 테스트가 없다
+  - 기준: 되걷기 가지만 따로 지키는 테스트가 없다 — player.gd:225 의 `if climb > 0.0 and (is_on_wall() or not is_on_floor()):` 되걷기를 `if false:` 로 꺼도 movement_controls 12개가 다 통과했다(_climb_along_floor 의 is_on_wall 막음이 먼저 걸러서). 둘을 같이 꺼야 test_slope_real_island 가 196/300 으로 깨진다. 되걷기가 정말 필요한 경우(이번 걸음에 처음 면에 닿아 is_on_wall 이 아직 false 인 걸음)를 짚는 단언을 test_slope_real_island 에 더하거나, 필요 없으면 되걷기를 걷고 주석을 하나로 모아라
 
 ## [x] G-908 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-lane2

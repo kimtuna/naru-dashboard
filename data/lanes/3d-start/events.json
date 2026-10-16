@@ -1,75 +1,5 @@
 [
  {
-  "time": "2026-10-12 03:45:47",
-  "epoch": 1791744347,
-  "type": "pass",
-  "title": "통과 — G-995 단계 2 (설 11 파일 (858줄) 을 다듬는다)",
-  "group": "G-995",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "설 메뉴 11 파일을 다듬었다 — 두 고르기 화면(SavedList) · 설정 창 안쪽 화면 열고 닫기 · 외형 선택지 찾기 · 오류 띄우기의 겹침을 하나로, 안 부르는 공개 이름 하나. QA 둘(NeedGauge 가 sweep() 그대로 그린다 · 가방 끌기 테스트가 게임을 먼저 걷고 지운다). 바뀐 곳 그물 53 파일: 고치기 전 459/459 → 고친 뒤 459/459 통과",
-   "approach": "**찾은 것과 고친 것** (game/ui/menu/ 11 파일, 858줄)\n\n| 파일 | 종류 | 무엇 | 어떻게 |\n|---|---|---|---|\n| character_select.gd · world_select.gd | 겹친 코드 | store 기본값 · 확인 단추(Yes/No) · Back 잇기 · refresh 의 줄 걷기 · Choose/Delete 줄 만들기 · _on_delete_pressed/_on_delete_confirmed/_hide_confirm · confirm_visible 이 글자까지 같았다 (다른 것은 store.delete_character/delete_world 한 줄) | 새 `saved_list.gd`(SavedList) 하나로 — 둘 다 `extends SavedList`, 각자 `_rows`(상자) · `_fill`(줄 달기) · `_delete`(지우기)만 적는다. back_requested · store · confirm_visible · refresh · slot_row · world_row · world_count 는 이름 그대로 |\n| pause_menu.gd | 겹친 코드 | 설정 · 월드 설정 화면을 열고 닫는 넷이 `add_child + _box 감추기` · `remove_child + queue_free + _box 보이기`(+「같은 까닭으로」 주석)를 각자 적었다 | `_show_inner` · `_drop_inner` 두 도우미로, 「바로 떼어 내는 까닭」 주석은 한 곳에 |\n| appearance_options.gd | 겹친 코드 | `choice` 와 `stepped` 가 선택지 key 를 각자 찾았다 | `_index_of(list, key)` 하나로 (없으면 −1 → 첫 선택지, 전과 같다) |\n| appearance_options.gd | 죽은 이름 | 공개 `item()` 을 밖에서 아무도 안 부른다 (choices 만 부른다) | `_item` 으로 |\n| character_create.gd · world_create.gd | 겹친 코드 | `_error.text = … / _error.visible = true` 가 파일마다 두 번 | 파일마다 `_show_error(key)` |\n| (앞 단계 QA) need_gauge.gd · fishing_window.gd | 따로 노는 셈 | sweep() 은 TAU*ratio 를 셈하는데 _draw 는 draw_ring 안에서 다시 셈했다 | `NeedGauge.sweep_of(ratio)` 하나로 셈하고, draw_ring 은 몫 대신 각도(angle)를 받는다. NeedGauge._draw 는 `sweep()` 을 그대로 넘기고 낚시 창은 `sweep_of(progress())` 를 넘긴다 — test_needs_gauges 의 sweep 단언이 이제 실제 그린 호를 지킨다 |\n| (앞 단계 QA) tests/ui/hud/test_bag_move_slots.gd | 임시 폴더 | after_each 는 이미 TempDir.clean 을 불렀다. 남을 수 있는 길은 하나 — 자동 해제(after_each 뒤)에 GameRoot._exit_tree 가 마저 쓰는 자동 저장이 지운 폴더를 도로 만드는 것 | after_each 에서 게임을 먼저 free 하고 지운다 (단언 값 · 개수는 그대로). 혼자 돌리면 남지 않는다. 앞 회차의 naru_move_376950170 은 차선 2(naru-lane2)가 같은 TMPDIR 에서 가방 테스트를 같이 돌린 것으로 보인다 — test.sh 도 그렇게 섞일 수 있다고 적어 둔다 |\n\n**본 뒤 그대로 둔 것**\n- 죽은 코드: 공개 함수 · 상수를 하나씩 grep 했다. keys · selection · preview · part_color · part_scale · set_character_name · set_world_name · set_seed_text · set_dev · error_visible · seed_from · death_penalty_button · settings_open · world_settings_screen · slot_row · world_row · world_count 는 테스트가 부르고, dev · set_host · set_rules · reset 은 game_root 가, has_color/color_of/has_scale/scale_of · default_selection · stepped 는 미리보기 · 생성 화면이 부른다\n- 낡은 주석: 「설정 화면 항목 미정」 · 「월드 슬롯 수 미정 F-10」 · 「항목은 데스 페널티 하나」 · 개발용 상자 · 막 색 임시를 spec/12_ui/menu.md · spec/01_settings/save.md · WorldSettings 와 맞춰 봤다 — 다 맞다\n- 너무 긴 함수: 가장 긴 MenuRoot._connect(26줄)는 화면마다 신호 잇기를 늘어놓은 표라 쪼개지 않았다. CharacterCreate._make_row(25줄)는 한 줄 만들기다\n- character_create · world_create 의 이름 확인 → 저장 → 실패 흐름이 닮았지만 씬 · 만드는 것(CharacterData/WorldData)이 달라 묶지 않았다. main_menu · settings_screen · world_settings_screen · character_preview · menu_root 는 겹침 · 죽은 코드를 못 찾았다\n- 「사람 결정」 · 「임시」 줄은 하나도 지우지 않았다. 고친 테스트는 test_bag_move_slots 의 after_each 하나(QA 기준)\n\n**경계를 넘는 것**: 없다 (draw_ring 을 부르는 쪽은 need_gauge · fishing_window 둘뿐이라 같이 고쳤다)\n\n**테스트 통과 개수**: 전체는 돌리지 않았다(묶음 마지막 단계에서 루프가 돈다). changed_tests.py 가 고른 같은 그물 53 파일을 **고치기 전 원본(HEAD)으로 되돌려** 돌리고, 고친 뒤 다시 돌렸다 — 앞 459/459 통과 → 뒤 459/459 통과. 단언 수는 앞 5025 → 뒤 5023: test_menu_text 가 ui/menu 파일에 따옴표로 적힌 번역 키마다 ko · en 단언 둘을 세는데, \"MENU_DELETE\" 가 두 파일 → saved_list 한 곳이 되어 둘 준다. 테스트 수 · 통과 수는 그대로다. 뒤 실행 끝에 TMPDIR 에 naru_island_game_709039547 · naru_villager_162485650 이 남았다고 나왔다 — 이 회차의 파일별 로그에 그 번호가 없고, 그때 naru-lane2 의 godot 이 돌고 있었다(차선 2 것)",
-   "why": "",
-   "files": [
-    "game/ui/menu/saved_list.gd",
-    "game/ui/menu/saved_list.gd.uid",
-    "game/ui/menu/character_select.gd",
-    "game/ui/menu/world_select.gd",
-    "game/ui/menu/pause_menu.gd",
-    "game/ui/menu/appearance_options.gd",
-    "game/ui/menu/character_create.gd",
-    "game/ui/menu/world_create.gd",
-    "game/ui/hud/need_gauge.gd",
-    "game/ui/hud/fishing_window.gd",
-    "game/tests/ui/hud/test_bag_move_slots.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "이 파일들에서 겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석을 찾아 report 에 표로 적고, 그 자리에서 고친다 (찾아만 두지 않는다)",
-     "evidence": "report 의 표에 적은 것이 diff 에 다 있다: character_select · world_select 의 겹침을 saved_list.gd(SavedList)로 합쳤고(+ .uid), pause_menu 는 _show_inner/_drop_inner, appearance_options 는 _index_of 를 두고 item→_item 으로 바꿨으며(grep 해 보니 밖에서 .item( 을 부르는 곳이 없다), character_create · world_create 에 _show_error 를 두었다. 밖에서 부르는 이름(store · refresh · confirm_visible · slot_row · world_row · world_count · back_requested)은 그대로 남았다"
-    },
-    {
-     "ok": true,
-     "criterion": "고칠 것이 없으면 없다고 적는다 — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다",
-     "evidence": "report 의 「본 뒤 그대로 둔 것」에 공개 이름을 하나씩 grep 한 결과, 낡은 주석을 spec 과 맞춰 본 것, 긴 함수(_connect 26줄 · _make_row 25줄)를 쪼개지 않은 까닭, 겹침을 못 찾은 다섯 파일을 적었다"
-    },
-    {
-     "ok": true,
-     "criterion": "전체 테스트 통과 개수가 줄지 않았다 — report 에 앞뒤 숫자를 적는다",
-     "evidence": "report 에 같은 그물 53 파일을 HEAD 로 되돌려 돌린 앞 459/459 → 뒤 459/459 를 적었다. 단언 수가 5025→5023 으로 준 까닭(MENU_DELETE 가 두 파일에서 한 파일로)도 밝혔고 맞는 설명이다. 루프의 test.log(바뀐 곳 69 파일)도 649/649 통과다. 전체 실행은 묶음 마지막 단계에서 루프가 돈다"
-    },
-    {
-     "ok": true,
-     "criterion": "이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)",
-     "evidence": "test.log: 69 파일 649/649 통과, guard 통과. tests/ui/menu 의 test_character_select · test_world_select(Delete → confirm_visible → Yes/No 흐름을 실제 단추로 누른다) · test_pause_menu · test_character_create · test_world_create · test_menu_text · test_menu_navigation · test_enter_game, hud 의 test_needs_gauges 가 들어 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 테스트가 TMPDIR 에 naru_move_* 를 남긴다 — … after_each 에서 TempDir.clean 을 부르게 하라",
-     "evidence": "after_each 가 이미 TempDir.clean 을 부르고 있었다. 남는 길은 GameRoot._exit_tree → _finish_autosave 가 자동 해제 때 폴더를 도로 만드는 것뿐이라(game_root.gd:172-174 에서 확인) game.free() 를 먼저 하도록 고쳤다. 단언은 건드리지 않았다. 이번 test.log 에는 남은 naru_ 폴더 줄이 하나도 없다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) NeedGauge.sweep() 가 그리기와 따로 논다 — … draw_ring 에 각도를 넘기거나(sweep() 을 _draw 에서 쓰기) …",
-     "evidence": "draw_ring 이 이제 몫 대신 각도를 받는다. NeedGauge._draw 는 sweep() 을 그대로 넘기고 fishing_window 는 NeedGauge.sweep_of(progress()) 를 넘긴다. 그래서 test_needs_gauges 의 sweep 단언이 실제로 그린 호를 지킨다. draw_ring 을 부르는 곳은 이 둘뿐이다(grep). test_needs_gauges 통과"
-    }
-   ],
-   "issues": [
-    "report 가 test.sh 에 적었다는 말이 없다 — report.how 는 「test.sh 도 그렇게 섞일 수 있다고 적어 둔다」(두 차선이 같은 TMPDIR 을 같이 쓴다)라고 하지만 tools/test.sh 는 바뀌지 않았다. tools/test.sh 의 임시 폴더 검사 근처에 「다른 차선(naru-lane2)이 같은 TMPDIR 에서 돌면 남의 naru_* 가 섞여 보일 수 있다」는 주석을 달거나, 차선마다 TMPDIR 을 따로 주게 하라. 하네스 쪽이라면 사람에게 보낼 일이다",
-    "SavedList 는 delete_id 가 비면 Delete 단추를 안 단다 — 전에는 WorldSelect 가 월드마다 Delete 를 늘 달았다. 지금은 w.id 가 빈 월드에는 Delete 가 없다. WorldData.id 가 늘 차 있으면 상관없지만, 그렇다면 saved_list.gd 의 _make_row 주석에 「빈 칸(새 캐릭터)만 id 가 비어 있다」고 적어 뜻을 못박아 두라"
-   ],
-   "good": []
-  },
-  "test": "ui_shots.gd\nok     45s  res://tests/combat/tools_as_weapons/test_tranq_ammo.gd\nok     12s  res://tests/life/farming/test_water_and_fertilizer.gd\nok      9s  res://tests/automation/villagers/test_villager_home.gd\nok      6s  res://tests/life/fishing/test_bait_zone.gd\nok      6s  res://tests/life/fishing/test_minigame.gd\nok      5s  res://tests/ui/layout/test_window_layout.gd\nok      6s  res://tests/build/test_blueprint.gd\nok      3s  res://tests/ui/hud/test_station_output.gd\nok      5s  res://tests/ui/hud/test_bag_hand_craft.gd\nok     22s  res://tests/life/climbing/test_climbing.gd\nok      5s  res://tests/ui/hud/test_target_bars.gd\nok      5s  res://tests/ui/menu/test_pause_menu.gd\nok      3s  res://tests/ui/hud/test_map_window.gd\nok      4s  res://tests/player/hunger_thirst/test_cup.gd\nok      3s  res://tests/ui/hud/test_room_window.gd\nok      2s  res://tests/core/test_game_root_tidy.gd\nok      3s  res://tests/ui/hud/test_station_window.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_sips.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      3s  res://tests/ui/hud/test_bag.gd\nok      3s  res://tests/ui/hud/test_map_coords.gd\nok      3s  res://tests/ui/hud/test_map_pin.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      3s  res://tests/ui/hud/test_room_names.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/hud/test_villager_window_release.gd\nok     33s  res://tests/automation/villagers/test_villager_watering.gd\nok      2s  res://tests/combat/damage_death/test_death_chest_owner.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            69\nTests             649\nPassing Tests     649\nFailing Tests       0\nRisky/Pending       0\nAsserts         12944\nTime           74s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "c22faa63"
- },
- {
   "time": "2026-10-12 04:16:25",
   "epoch": 1791746185,
   "type": "pass",
@@ -10226,5 +10156,72 @@
    "good": []
   },
   "test": "s  res://tests/build/test_build_piece_tidy.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      0s  res://tests/core/net/test_net_link_one_place.gd\nok      0s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           411\nTests            3006\nPassing Tests    3006\nFailing Tests       0\nRisky/Pending       0\nAsserts        130079\nTime           625s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-16 14:25:03",
+  "epoch": 1792128303,
+  "type": "pass",
+  "title": "통과 — G-225-4 단계 1 (다른 섬에 다녀오면 느려진다)",
+  "group": "G-225-4",
+  "step": "1",
+  "attempt": "2",
+  "report": {
+   "problem": "섬 오가기 전후 속도는 같다. 대신 땅 오르막에서 엔진이 한 번 더 깎던 몫(cos²θ)을 없앴고, 가파른 면에 붙잡혀 뜨던 것과 서버장이 오갈 때마다 참가자 섬에 짐승 · 주민이 쌓이던 것을 고쳤다. 바뀐 곳만: 257개 파일 2065개 테스트 통과",
+   "approach": "앞 회차는 오르막 엔진 손실 고침 · 가파른 면 되걷기 · 짐승/주민 쌓임 고침 · 벽시계 재기(g2254_wall2.log: 물리 초당 58.8~60.1번 · 게임 속도와 실제 거리 차 0.12 m/s 안쪽 — 벽시계로는 안 느려진다)까지 해 두었다. 이번 회차는 QA 가 짚은 숫자를 탐침(tests/probe_g2254, 다 쓰고 지웠다)으로 재고, 그 길에서 새로 찾은 것 하나를 고쳤다.\n\n(가) 앞 회차 5.21 · 5.40 자리 = 스폰에서 yaw 0 · 10걸음 서 있다가 40걸음. 고치기 전 코드(HEAD)로 다시 재면 진짜 섬 5.210 m/s 가 그대로 나와 같은 자리임을 확인했다. 고친 뒤 5.235 m/s(시험 평판 5.400 대비 −3.1%). 남은 차이는 고장이 아니다: 그 스폰은 평지가 아니라 4.5% 오르막이다(바닥 법선 y 0.9957 · 40걸음에 0.235 m 오름). slope_factor 가 그만큼 늦춘 몫이다(규칙대로 = 1 − 0.5×0.045). 유황 섬 스폰은 4.308 → 4.649 m/s(오르막 12°).\n\n(나) 사람 길 손실을 m/s 로 갈라 적었다(걸음 평균 · 고치기 전 → 뒤). 진짜 섬 = 스폰→숲→마을→언덕→선착장, 약 170초.\n| 몫 | 진짜 섬 | 유황 섬(선착장→스폰→언덕→선착장) |\n|---|---|---|\n| 비탈배율 slope_factor | 0.157 → 0.122 | 0.473 → 0.422 |\n| 붙는 속력(가속 · 꺾기) | 0.228 → 0.237 | 0.976 → 1.160 |\n| 엔진 미끄럼(땅 위 want−moved) | 0.147 → 0.018 | 0.453 → 0.205 |\n| relief/_step_up | 0 (0걸음) → 0 | −0.009 (2걸음) → 0 (0걸음) |\n| 공중 | 39걸음 → 41걸음 | 18걸음 → 0걸음 |\n| can_walk_to 로 0 | 0걸음 → 0 | 0걸음 → 0 |\n비탈배율 몫이 줄어든 것은 같은 거리를 더 빨리 가 오르막에 머문 걸음이 줄어서다. 유황 섬의 「붙는 속력」이 큰 것은 곧은 줄로 언덕을 가다 절벽에 막혀 720걸음(12초)을 벽에 밀고 섰기 때문이다(사람이면 돌아간다).\n\n(다) 길 전체 평균 수평 속도 / config.move_speed(6.0): 진짜 섬 5.467 → 5.624 m/s = 91.1% → 93.7%. 유황 섬 4.058 → 4.213 = 67.6% → 70.2%. 절벽에 막힌 구간을 빼면 5.34 → 5.75 = 89.0% → 95.8%.\n\n새로 찾은 것: 유황 섬 언덕(188, 22.5, 67.3)에서 턱 오르기(_step_up)가 걸을 수 없는 56° 면 위로 몸을 들어 올렸다 → 미끄러져 떨어짐 → 다시 들어 올림이 되풀이됐다(닿고 3초 동안 600걸음에 99번 떠 있었다). 고치기 전 코드에도 있던 흠이다(35~52/300). _step_up 이 디딜 곳 법선을 보고, 걸을 수 없는 면이면 오르지 않게 했다 → 0/300. 계단 · 턱 테스트(test_step_up · test_stairs_speed)는 그대로 통과한다. QA 지적대로 test_slope_real_island 머리에서 from 앞 15 m 안에 걸을 수 없는 면이 있는지 단언한다(본섬 면은 12 m 앞에 있다). 섬을 테스트 몸통에서 세우면 엔진의 낡은 함수 경고가 테스트를 떨어뜨려서 before_all 에서 세운다. 그래서 유황 섬은 같은 몸통을 이어받은 파일(test_slope_sulfur_island.gd)로 나눴다.\n\n사람 확인: 고친 뒤에도 섬 오가기 전후 · 벽시계 어디서도 느려짐이 보이지 않는다. 사람이 느낀 「내내 느림」은 오르막에서 엔진이 한 번 더 깎던 몫(진짜 섬 길 −2.6% p · 유황 섬 길 최대 −7% p)이 컸을 것으로 본다. 다음 시험 판에서 F3(FPS)와 같이 체감이 나아졌는지 봐 주면 된다.",
+   "why": "",
+   "files": [
+    "game/player/movement_controls/player.gd",
+    "game/core/net/net_world.gd",
+    "game/tests/multiplayer/test_speed_after_sailing.gd",
+    "game/tests/multiplayer/beast_world_island.gd",
+    "game/tests/player/movement_controls/test_slope_ground_speed.gd",
+    "game/tests/player/movement_controls/test_slope_real_island.gd",
+    "game/tests/player/movement_controls/test_slope_sulfur_island.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "재현부터 — 평지에서 걸은 속도를 재고, 섬을 갔다 와서(서버장 · 참가자 둘 다, 3단계 전 길이든 뒤 길이든) 같은 자리에서 다시 잰다. 느려지면 까닭을 고치고 테스트로 남긴다. 재현이 안 되면 report 에 잰 숫자를 남기고 사람에게 서버장 · 참가자 어느 쪽이었나 묻는다",
+     "evidence": "tests/multiplayer/test_speed_after_sailing.gd 가 서버장 · 참가자 둘을 ENet 으로 띄워 오가기 전후 걸은 속력을 비교한다(앞 회차 것 + sail_to 두 번 오가기). 새 test_guest_beasts_do_not_pile_up_when_host_sails_alone 은 벽시계 판에서 찾은 쌓임(몸 86→92→98)을 막는다 — net_world.gd 의 _send_animals/_send_folk 다시 보내기를 pass 로 바꾸자 짐승·주민 수가 2·3·4·5 로 늘며 9개 단언이 깨졌다. 사람 답이 이미 와서 다시 묻지 않은 것도 맞다"
+    },
+    {
+     "ok": true,
+     "criterion": "① 진짜 섬 5.21 m/s vs 시험 섬 5.40 m/s (−3.5%) — 평지라 고른 자리에서도 빠진다. 그 3.5% 가 어디서 오나(slope_factor · 잔 턱 relief · 땅에 걸리는 미끄럼 · can_walk_to 로 0 이 되는 프레임) 프레임마다 갈라 적는다. 진짜 섬 · 유황 섬을 사람이 걷는 길(스폰 → 숲 → 마을 → 선착장, 언덕 포함)로 걸려 평균 속도를 잰다 — 그 길에서 config.move_speed 보다 얼마나 덜 가나",
+     "evidence": "report.how 에 (가) 같은 자리 재측정 HEAD 5.210 → 고친 뒤 5.235(−3.1%, 그 자리는 4.5% 오르막 · 법선 y 0.9957 이라 slope_factor 몫) (나) 진짜 섬 · 유황 섬 사람 길 손실을 slope_factor · 가속 · 엔진 미끄럼 · relief/_step_up · 공중 · can_walk_to 0 으로 가른 고치기 전/뒤 표 (다) 평균/move_speed 91.1%→93.7% · 67.6%→70.2% 가 적혀 있다. 고친 것은 테스트로 남았다: test_slope_ground_speed(climb 을 0 으로 끄면 15/25/35° 에서 4.83/3.77/2.61 vs 5.20/4.60/3.90 으로 깨짐), test_slope_sulfur_island(_step_up 법선 검사를 끄면 뜬 걸음 99/300 으로 깨짐), test_slope_real_island(_climb_along_floor 의 is_on_wall 막음과 되걷기를 같이 끄면 196/300 으로 깨짐 · 머리에서 앞 15 m 안 걸을 수 없는 면을 단언). 탐침 tests/probe_* 는 지워졌다"
+    },
+    {
+     "ok": true,
+     "criterion": "② 벽시계 속도 — 창 있는 판에서 서버장 + 참가자, 건너기 전 · 유황섬 · 돌아온 뒤 각각 물리 시간 · 프레임 시간 · 벽시계 거리/초를 잰다. 옛 섬이 풀리지 않고 남는가(노드 수 · 물리 바디 수 전후)도 본다",
+     "evidence": ".loop/out/g2254_wall2.log 에 서버장 · 참가자 각 단계(건너기 전 · 유황섬 · 돌아온 뒤 · 갈라섬 · 다시 모임) game/wall m/s · 물리 초당 58.8~60.1 · fps · worst_frame · 노드 수 · 몸 수가 있다. 몸 수가 86→92→98 로 느는 것을 찾아 고치고 테스트로 남겼다(기준 1 근거). 벽시계로는 느려지지 않음 → report 에 「사람 확인」(F3)으로 남겼고 다시 묻지 않았다"
+    },
+    {
+     "ok": true,
+     "criterion": "느려지는 것이 보이면 고치고 테스트로 남긴다. 보이지 않으면 잰 숫자를 report 에 남기고 사람에게 다시 묻지 않는다 — 다음 사람 시험 판에서 F3(FPS)와 같이 보게 「사람 확인」으로 남긴다",
+     "evidence": "보인 것(오르막 cos² 손실 · 가파른 면 붙잡힘 · 유황 섬 턱 오르기 되풀이 · 짐승/주민 쌓임)은 고치고 위 네 테스트로 남겼고, 깨 보아 모두 실패함을 확인했다. needs_decision null · report 끝에 「사람 확인」 문단이 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) sail_to 가 아직 모두를 끌고 간다 — sail_to 를 테스트 도우미로 이름을 바꾸거나 crew 를 인자로 받게 하고, 주석에 「사람 길 아님」을 적어라",
+     "evidence": "game/core/game_root.gd:536 sail_to(to_island, crew: Array[int] = []) — ME 와 부르는 쪽이 적은 crew 만 _sail_crew 에 넘긴다. 주석 531줄 「사람 길이 아니다」 (3d-start 합치기 c6850dc7 로 들어왔다)"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 낡은 주석 둘 — game_root.gd _depart 주석 · notice.gd 6줄",
+     "evidence": "game_root.gd:981 「(_sail_crew → NetWorld.sail_crew)」, ui/hud/notice.gd:6 「(core/game_root.gd 의 open_dock_window)」로 고쳐져 있다"
+    }
+   ],
+   "issues": [
+    "되걷기 가지만 따로 지키는 테스트가 없다 — player.gd:225 의 `if climb > 0.0 and (is_on_wall() or not is_on_floor()):` 되걷기를 `if false:` 로 꺼도 movement_controls 12개가 다 통과했다(_climb_along_floor 의 is_on_wall 막음이 먼저 걸러서). 둘을 같이 꺼야 test_slope_real_island 가 196/300 으로 깨진다. 되걷기가 정말 필요한 경우(이번 걸음에 처음 면에 닿아 is_on_wall 이 아직 false 인 걸음)를 짚는 단언을 test_slope_real_island 에 더하거나, 필요 없으면 되걷기를 걷고 주석을 하나로 모아라"
+   ],
+   "good": [
+    "유황 섬 언덕 _step_up 이 56° 면 위로 들어 올리던 흠과 서버장이 오갈 때 참가자 섬에 짐승 · 주민 그림이 쌓이던 흠을 같이 고쳤다 — 둘 다 이 단계가 시킨 재기에서 나온 「느려짐」 까닭 후보라 기준 안으로 본다"
+   ]
+  },
+  "test": "k      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/build/test_placers_comment.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           412\nTests            3007\nPassing Tests    3007\nFailing Tests       0\nRisky/Pending       0\nAsserts        130087\nTime           633s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "ef33772e"
  }
 ]
