@@ -1,55 +1,5 @@
 [
  {
-  "time": "2026-09-26 07:42:11",
-  "epoch": 1790376131,
-  "type": "pass",
-  "title": "통과 — G-150 단계 1 (토대를 부수면 그 위 설치물도 무너진다)",
-  "group": "G-150",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "토대(와 그 위 지붕)를 부수면 밭과 그 작물까지 설치물 전부가 무너져 바닥에 떨어진다 — 놓이는 것 전부를 한 곳(Buildings.everything_placed)에서 훑고, 테스트는 프로젝트 클래스 목록에서 placed_item() 을 가진 것을 모두 끌어와 표에 빠진 것이 없는지 센다",
-   "approach": "문제: 밭(FieldPatch)은 놓인 것들의 무리(Placeable.GROUP)에 일부러 안 든다 — 겹쳐 놓기 · 방 판정이 그 무리를 훑는데 밭은 땅처럼 밟는 것이라서. 그런데 무너짐(Buildings.collapse · held_up)도 그 무리만 훑어서 토대를 부숴도 밭이 공중에 남았다. 제작대 계열 · 상자는 이미 그 무리에 들어 잘 무너졌다 (test_building_collapse.gd). 푼 것: Buildings.everything_placed() 하나가 Placeable.GROUP + FieldPatch.GROUP 을 합쳐 주고, collapse · held_up · link_count · _link_for 가 전부 그것만 쓴다. 밭이 무너지면 그 위 작물은 FieldPatch.contents() → Farmland.spill → Crops.spill 로 (덜 자랐으면 씨앗, 다 자랐으면 수확물을) 떼어 내 상자 내용물과 같은 길로 바닥에 쏟는다 — 그냥 두면 밭이 맨땅으로 돌아갈 때 작물이 뽑혀 씨앗이 가방으로 갔다 (무너진 것은 바닥에, spec). 테스트는 「놓이는 것 전부」가 헛말이 안 되게 ProjectSettings 의 class_name 목록에서 placed_item() 을 선언한 클래스를 전부 찾아 표(제작대 다섯 · 상자 · 밭)나 「토대 위에 안 서는 것」(선착장 · 건축물 자체)에 다 있는지 센다 — 횃불 같은 것이 놓이게 되면 표에 넣기 전엔 통과 못 한다. 고친 것을 잠깐 되돌려 보니 밭 관련 단언 15개가 떨어졌다 (테스트가 정말 문다). 찍기: shots.gd 에 collapse_before · collapse_after 자리를 더했다 — .loop/out/shots/collapse/ 두 장. 부순 뒤 남은 것 0 · 공중에 아무것도 없다. 새 상태는 없다 — 무너진 밭 · 작물은 standing() 에서 그대로 빠져 저장에 안 남는다. 바뀐 곳 그물 49파일 406개 통과 (7분, test_from_empty_hands 가 421초).",
-   "why": "",
-   "files": [
-    "game/build/buildings.gd",
-    "game/build/placeable.gd",
-    "game/life/farming/field_patch.gd",
-    "game/life/farming/farmland.gd",
-    "game/life/farming/crops.gd",
-    "game/core/debug/shots.gd",
-    "game/tests/build/test_collapse_takes_everything_placed.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "토대(와 그 위 지붕 · 2층 바닥)를 부수면 그 위에 놓인 모든 설치물(밭 · 제작대 계열 전부 · 상자 · 횃불 · 앞으로 생길 것)이 같이 무너져 바닥에 떨어진다 — 놓이는 것 전부에서 끌어와 검사한다. 하나라도 떠 있으면 실패 (테스트)",
-     "evidence": "tests/build/test_collapse_takes_everything_placed.gd — test_the_table_covers_every_class_that_can_be_placed 가 ProjectSettings 의 class_name 전부에서 placed_item() 을 선언한 클래스를 찾아 표(COVERED_CLASSES: CraftingStation · StorageChest · FieldPatch) 또는 NOT_ON_FLOORS(Dock · BuildPiece, 까닭 붙음)에 다 있는지 세고, 제작대는 stations.json 의 종류 전부가 _placers 에 있는지 센다. Placeable.GROUP 에 add_to_group 하는 곳은 CraftingStation · StorageChest · Dock · BuildPiece 뿐이고 전부 placed_item() 이 있어 빠진 것이 없다 (횃불은 아직 놓이는 클래스가 없다 — 생기면 표에 넣기 전엔 이 테스트가 막는다). test_everything_on_a_foundation_falls_when_the_foundation_breaks · test_everything_on_a_roof_falls_to_the_ground_when_the_foundation_breaks · test_everything_on_a_roof_falls_when_the_wall_holding_it_breaks 가 각각 토대 위 · 지붕 위(토대 부술 때 · 벽 헐 때)를 보며 _standing 이 false 인지, 그 자리 밑 바닥(땅 0 · 남은 토대 윗면)에 떨어졌는지, _expect_nothing_floating(held_up + 발밑 레이캐스트)으로 떠 있는 것이 없는지 본다. 대조로 test_what_stands_on_bare_ground_next_to_the_foundation_stays 가 맨땅 것은 그대로임을 본다. 손으로 지붕을 직접 부수는 길도 hit_piece → collapse(piece) 로 같은 연쇄를 탄다. 일부러 everything_placed 에서 FieldPatch.GROUP 을 빼고 이 파일만 돌리니 4 테스트 · 단언 15개가 떨어졌다 (되돌렸고 git diff 가 원래와 같다)"
-    },
-    {
-     "ok": true,
-     "criterion": "밭에 심긴 작물도 같이 사라지거나 떨어진다 — 떠 있는 작물이 없다 (테스트)",
-     "evidence": "test_crops_on_a_collapsing_field_fall_to_the_ground_and_none_is_left_floating — 토대 위 밭 둘(갓 심은 밀 · 다 자란 밀)과 맨땅 밭 하나를 두고 토대를 부순 뒤: 토대 위 두 칸이 is_tilled · is_planted 모두 false, 작물 노드가 is_instance_valid false, planted_cells 가 맨땅 칸 하나뿐, 남은 작물은 제 밭 위에 딱 붙어 선다(높이 단언), 바닥 드롭이 정확히 {farm_plot 2, wheat_seed 1, wheat 수확량} 이고 DroppedItem.LIFT 높이에 있으며 가방에는 0 개. 일부러 깨 보니 이 테스트의 단언 8개가 떨어졌다. 코드는 FieldPatch.contents → Farmland.spill → Crops.spill 로 vanish 직전에 작물을 떼어 내 Placeable.fall 이 바닥에 쏟는다"
-    },
-    {
-     "ok": true,
-     "criterion": "찍어서 확인한다 — 토대를 부순 뒤 공중에 남은 것이 없다",
-     "evidence": ".loop/out/shots/collapse/collapse_before.png · collapse_after.png (2026-09-26 07:24). before 에는 토대 위(제작대 · 상자 · 작물 심긴 밭)와 벽 위 지붕 위(제작대 · 상자 · 밭)가 서 있고, after 에는 건축물 · 설치물 · 밭이 하나도 없이 떨어진 덩어리들만 땅에 있다. shots.gd 의 _set_up_collapse 가 everything_placed().size() 와 남은 밭 · 작물 수를 찍는다 (0 이어야 한다)"
-    }
-   ],
-   "issues": [
-    "spec 무너짐 줄에 밭이 빠져 있다 — spec/06_build/building.md 60줄 「그 위에 놓인 설치물(제작대 · 상자 · 횃불)까지 연쇄로 내려앉는다」에 밭(과 그 작물이 바닥에 쏟아진다)을 한 단어 더해라. 코드(Buildings.everything_placed)와 테스트는 밭까지 무너뜨리는데 spec 문장만 옛것이다"
-   ],
-   "good": []
-  },
-  "test": "--- 바뀐 곳만: 49 개 ---\ntest.sh: 파일 49 개를 6 개씩 한꺼번에 돌린다\nok     16s  res://tests/core/debug/test_dev_box.gd\nok     17s  res://tests/build/test_building_sockets.gd\nok     27s  res://tests/world/terrain/test_island_walk.gd\nok     15s  res://tests/craft/stations/test_stations.gd\nok     14s  res://tests/build/test_building_walls.gd\nok     34s  res://tests/world/frontier_islands/test_voyage.gd\nok     40s  res://tests/settings/save/test_round_trip.gd\nok     13s  res://tests/life/hunting/test_butchery.gd\nok     13s  res://tests/build/test_building_roof_stairs.gd\nok     13s  res://tests/life/hunting/test_carry_cage.gd\nok     11s  res://tests/player/pickup/test_pickup.gd\nok     10s  res://tests/life/farming/test_crops.gd\nok     11s  res://tests/life/farming/test_farmland.gd\nok      8s  res://tests/build/test_building_pillar.gd\nok      8s  res://tests/build/test_building_stairs_plate.gd\nok      9s  res://tests/life/hunting/test_sedation_capture.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      8s  res://tests/world/day_night/test_day_in_world.gd\nok      9s  res://tests/core/debug/test_dev_box_open.gd\nok      7s  res://tests/world/storage/test_chest_break.gd\nok      8s  res://tests/world/storage/test_chest_place.gd\nok      3s  res://tests/build/test_building_grades.gd\nok      5s  res://tests/build/test_building_preview.gd\nok      6s  res://tests/build/test_blueprint.gd\nok      5s  res://tests/build/test_building_stairs_roof.gd\nok      7s  res://tests/world/frontier_islands/test_dock_building.gd\nok      2s  res://tests/build/test_building_collapse.gd\nok      4s  res://tests/build/test_foundation_wheel_attach.gd\nok      3s  res://tests/build/test_building_downgrade.gd\nok      2s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      4s  res://tests/build/test_foundation_attach.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_placeable.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      3s  res://tests/build/test_building_link_count.gd\nok      1s  res://tests/core/debug/test_ui_shots.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/build/test_rooms.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      2s  res://tests/life/food/test_food.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok    421s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            49\nTests             406\nPassing Tests     406\nFailing Tests       0\nPending             0\nAsserts          7040\nTime           421s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "2e56be8"
- },
- {
   "time": "2026-09-26 08:04:14",
   "epoch": 1790377454,
   "type": "fail",
@@ -8644,5 +8594,67 @@
   },
   "test": "     2s  res://tests/life/medicine/test_medicine.gd\nok      2s  res://tests/multiplayer/test_islands_afar.gd\nok      2s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      2s  res://tests/multiplayer/test_looks_seen.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/player/movement_controls/test_aim_water_surface.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/settings/test_translation.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      3s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      3s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      1s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           291\nTests            2271\nPassing Tests    2271\nFailing Tests       0\nRisky/Pending       0\nAsserts        107220\nTime           503s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "dcd226a4"
+ },
+ {
+  "time": "2026-10-16 20:32:00",
+  "epoch": 1792150320,
+  "type": "pass",
+  "title": "통과 — G-228 단계 3 (나이 — 주민은 이미 있다 · 생포한 짐승만 더한다)",
+  "group": "G-228",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "생포한 짐승에게만 나이(태어난 날 born)를 달아 칸 · 상자 · 축사 · 저장 · 멀티로 따라가게 하고, 칸 오른쪽 아래 · 축사 창에 보이게 했다. 해체 막대를 찍는 자리(butcher)를 더했다. 바뀐 곳만: 168개 파일 1387개 테스트 통과",
+   "approach": "주민 나이는 이미 있어 손대지 않았다. 짐승 나이는 칸에 '태어난 날(born, GameClock 의 날)' 하나만 담고 나이는 오늘에서 센다(Captives.age_of). 그래서 칸 사전을 그대로 옮기는 상자 · 저장 · 멀티(가방 · 축사 목록 동기화)가 따로 고칠 것 없이 따라가고, 어디에 두든 같이 나이가 든다(나이를 매 프레임 깎는 방식이었다면 상자에선 멈췄다). 시계를 쥐지 않은 칸 그림이 날을 읽을 수 있게 GameClock.today(마지막으로 움직인 시계의 날, static)를 두었다. 생포 = 가방에 넣을 때(서버의 pick_up_for)라 멀티에서도 서버가 정한다. 깨어 도망가면 칸과 함께 나이도 사라진다. 축사(Herd)는 들일 때 born 을 받아 담고 저장하며, 축사에서 난 새끼는 그날이 태어난 날(0살)이다. 나이 전 저장본의 칸 · 가축은 나이가 없다(지어내지 않는다). 표시: 칸 오른쪽 아래(잡은 짐승은 한 칸에 하나라 개수 자리가 빈다)에 「3살」, 축사 창 가축 줄 아래에 「닭 2살 · 염소 4살」 — 가축 이름 키 LIVESTOCK_* 를 새로 만들었다. 칸의 나이 글자는 말이 바뀌면 다시 옮긴다(SlotCount). (앞 단계 QA) ui_shots 에 butcher 자리를 더했다 — 주검 곁에서 begin(held) 로 누르고 있는 채 막대를 60% 채워 두고 찍는 동안 더 차지 않게 했다. 찍어 보니 막대가 단추 바로 아래에 맞게 그려진다. 찍으면서 점수표 글자가 앞 사진의 말(영어)로 남는 것을 봐서 말마다 창을 다시 그리게 했다. barn · bag 사진에도 나이가 보이게 가축 · 잡은 사슴을 넣었고 ko · en 둘 다 잘리지 않는다.",
+   "why": "Captives.AGE_MIN~AGE_MAX = 1~5살 — 잡을 때의 나이 범위. 사람이 안 정했다; Captives.DAYS_PER_YEAR = 7 — 게임 7일(실제 4시간 40분)에 한 살. 나이가 드는 빠르기를 사람이 안 정했다; 축사에서 난 새끼는 0살에서 시작 — 기준에 없던 자리라 그날을 태어난 날로 두었다",
+   "files": [
+    "game/life/hunting/captives.gd",
+    "game/life/ranching/herd.gd",
+    "game/craft/stations/stations.gd",
+    "game/world/day_night/game_clock.gd",
+    "game/ui/hud/item_slot.gd",
+    "game/ui/hud/station_window.gd",
+    "game/ui/hud/station_window.tscn",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "spec/04_life/hunting.md",
+    "game/tests/life/hunting/test_captive_age.gd",
+    "game/tests/ui/hud/test_barn_window.gd",
+    "game/tests/core/debug/test_ui_shots.gd",
+    "game/tests/multiplayer/test_hunt_on_server.gd",
+    "game/tests/multiplayer/test_station_on_server.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "**생포한 짐승에게만** 나이를 단다 (풀린 짐승 · 사체에는 없다). 생포할 때 정해지고 · 칸(captive_* 아이템) · 상자 · 축사 · 저장 · 멀티로 따라간다 (테스트)",
+     "evidence": "test_captive_age.gd — 생포(pick_up)하면 칸에 born 이 생기고 1~5살 범위 · 풀린 짐승/주검/깨어 도망간 짐승엔 없음 · 상자 왕복과 상자 저장본 JSON · 축사 put_animal + Herd.to_dict/restore JSON · 캐릭터 SaveStore 저장/불러오기. 멀티: test_hunt_on_server 가 서버가 정한 born 이 참가자 가방 칸에 같은 값으로 오는지, test_station_on_server 가 born=-20 이 서버 축사와 참가자 축사 사본 둘 다에 있는지 본다. QA 가 Herd.restore 에서 born 을 null 로 바꿔 돌리자 test_captive_age 가 떨어졌다(9/10) — 껍데기가 아니다. 되돌림 확인"
+    },
+    {
+     "ok": true,
+     "criterion": "생포한 짐승을 보는 곳(칸 설명 · 축사)에 나이가 보인다. 나이 범위 · 나이가 드는 빠르기는 **임시**. 나이로 무엇이 달라지는지는 사람이 안 정했다 — 만들지 않는다",
+     "evidence": "test_the_slot_shows_the_age(칸 오른쪽 아래 「N살」, 말 바꾸면 다시 옮김, 여느 칸은 개수 그대로) · test_the_barn_window_shows_each_animals_age(염소 3살 · 나이 없는 닭은 이름만 · 제작대엔 줄 없음) · test_the_age_keys_are_translated(ko/en 둘 다). AGE_MIN/AGE_MAX/DAYS_PER_YEAR 는 코드 주석과 spec/04_life/hunting.md 에 임시라고 적혀 있다. 나이로 달라지는 효과는 없다. 사진 /tmp/naru_g228_3/bag_en.png 에 'Age 3', barn_ko.png 에 '닭 2살 · 닭 0살 · 염소 4살 · 양 1살' 이 잘리지 않고 보인다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 해체 막대를 그림으로 본 적이 없다 — … shot.sh 에 주검 옆에서 단추를 누르고 있는 자리를 하나 더해 막대가 단추 아래 제대로 그려지는지 찍어 두어라",
+     "evidence": "UiShots.PLACES 에 butcher 가 생겼고 _butcher 가 바닥 · 주검을 세워 begin(held)로 누른 채 60% 채운다. test_butcher_shot_holds_the_button_with_the_bar_under_it 가 창 · 막대가 보이고 값 0.6 · 막대 위끝이 단추 아래끝 밑 · 화면 안인지 본다. QA 가 /tmp/naru_g228_3/butcher_ko.png 를 직접 봤다 — 「도축 (우클릭)」 단추 바로 아래 막대가 반쯤 차 있다"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "축사에서 난 새끼에게 그날을 태어난 날로 준다(0살) — 기준엔 없지만 축사로 나이가 따라가는 데서 나온 자리. spec 에 임시가 아닌 줄로 적혔다(「축사에서 난 새끼는 0살」)",
+    "가축 이름 번역 키 LIVESTOCK_* 8개를 새로 만들었다 (축사 나이 줄에 쓴다)",
+    "butcher 사진에서 점수표 글자가 앞 말로 남던 것을 말마다 다시 그리게 했다 · bag/barn 사진에 잡은 사슴 · 가축을 넣었다"
+   ]
+  },
+  "test": "p_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      3s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           315\nTests            2403\nPassing Tests    2403\nFailing Tests       0\nRisky/Pending       0\nAsserts        117972\nTime           525s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "0a266f7b"
  }
 ]
