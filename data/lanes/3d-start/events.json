@@ -1,74 +1,5 @@
 [
  {
-  "time": "2026-10-12 07:41:44",
-  "epoch": 1791758504,
-  "type": "pass",
-  "title": "통과 — G-995 단계 12 (뼈대 나머지 (594줄) 을 다듬는다)",
-  "group": "G-995",
-  "step": "12",
-  "attempt": "1",
-  "report": {
-   "problem": "뼈대 나머지 10 파일을 다듬었다 — PathWalk.clear 를 _end 로 모으고 안에서만 쓰는 next · HOTBAR_PREFIX 를 안쪽 이름으로, 낚시 게이지의 돌아서기 시간을 _turn_time 으로, 탄의 _strike 두 갈래를 하나로. 바뀐 곳 그물 120 파일 1089/1089 통과",
-   "approach": "뼈대 나머지 10 파일(path_walk · grid · input_actions · pointer · ui_theme · fishing_gauge · field_patch · watering_can · projectile · aiming, 745줄)을 다 읽고, 공개 이름마다 game/ · game/tests 를 뒤져 부르는 곳을 찾았고, 머리 주석이 가리키는 경로 · 이름(thread_path · Villagers._bake_home · AnimalNav.FOLK_LAYERS · Buildings.everything_placed · rooms · Inventory.of · SlotMove.plain · test_island._build_aiming · 테마 타입 변형 19개)이 코드와 맞는지 확인했다.\n\n| 종류 | 자리 | 무엇 | 어떻게 |\n|---|---|---|---|\n| 겹친 코드 | path_walk.gd clear · _end | clear() 가 _end 와 같은 세 줄(길 비우기 · 번호 0 · state)을 따로 적었다 | clear() 가 _end(NO_PATH) 를 부른다. _end 에 설명 한 줄을 붙였다 |\n| 밖으로 샌 이름 | path_walk.gd var next | 공개 변수지만 game/ · tests 어디서도 안 읽는다 (path · state · arrive · layers 는 밖에서 쓴다) | _next 로 |\n| 밖으로 샌 이름 | input_actions.gd HOTBAR_PREFIX | 부르는 곳이 hotbar_action() 하나뿐 | _HOTBAR_PREFIX 로 |\n| 겹친 코드 | fishing_gauge.gd start · swim | 「_rng.randf_range(FISH_TURN[0], FISH_TURN[1])」가 두 벌 | 안쪽 함수 _turn_time() 하나로 |\n| 겹친 코드 | projectile.gd _strike | 마취탄 갈래와 여느 갈래가 hit.emit · queue_free 를 따로 적고 앞 갈래는 return 으로 빠졌다 | taken 을 0 으로 두고 마취탄이면 Tranq.hit, 아니면 Health.deal — 소리 · 신호 · 사라짐은 한 번만. 마취탄은 taken 0 이라 소리가 나지 않는 것도 그대로 |\n\n**괜찮다고 본 것**\n- grid.gd: 15줄, CELL_SIZE · cell_to_world · world_to_cell 다 쓰인다.\n- pointer.gd: simulate_* · clear_simulation · is_captured 다 shots · game_root · 테스트가 쓴다. LOOP.md 2절 주석 맞다.\n- ui_theme.gd: slot_constant · slot_font_size · back_color 다 item_slot · map_window · need_gauge 가 쓴다. 머리 주석의 타입 변형 이름이 naru_theme.tres 에 다 있다. 「전부 임시」 · menu.md 미정 맞다.\n- fishing_gauge.gd: push_bar · swim · fill · fish_in_bar 는 test_minigame, fish_dir 은 fishing_window 가 쓴다. 「임시」 줄 그대로.\n- field_patch.gd · watering_can.gd: 머리 주석의 Placeable.GROUP 빼기 · FieldPatch.GROUP 으로 방 판정 · everything_placed · Farmland.spill · untill · Inventory.of · SlotMove.plain 다 맞다. 함수가 짧다.\n- aiming.gd: begin · release · is_aiming · ZOOM 다 쓰인다 (ui_shots · target_bars · attack). 「맨 뒤에 붙는다」는 test_island._build_aiming 주석과 맞다.\n- path_walk.gd plan 주석: 곧장 가는 두 경우가 Villagers._bake_home(shape 없으면 굽지 않는다) · map_ready 와 맞다. step 은 20줄 남짓 한 가지 일.\n- input_actions.gd: 키 주석이 spec/01_settings/input.md 와 맞다 (Tab · E 등). 「사람 결정」 · 「임시」 줄 그대로.\n- 경계를 넘는 것: 없다. 밖에서 부르는 이름은 하나도 바꾸지 않았다.\n\n**테스트 개수**\n- 앞: 2103/2103 (G-995.11 뒤 루프가 돌린 전체 그물).\n- 뒤: 루프 전체 그물로 확인. 이번 회차는 바뀐 곳 그물(changed_tests.py 120 파일)만 돌렸고 1089/1089 통과 — test_path_walk · test_minigame · test_gun_stats · test_tranq_ammo · test_aiming · test_debug_keys · test_project_setup · test_villager_* 등이 들어 있다. 테스트를 지우거나 고친 것은 없다.",
-   "why": "",
-   "files": [
-    "game/core/path_walk.gd",
-    "game/core/input/input_actions.gd",
-    "game/life/fishing/fishing_gauge.gd",
-    "game/combat/tools_as_weapons/projectile.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "이 파일들에서 겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석을 찾아 report 에 표로 적고, 그 자리에서 고친다 (찾아만 두지 않는다)",
-     "evidence": "report 에 표 5줄 — path_walk.clear 가 _end(NO_PATH) 를 부르게 함, next→_next, HOTBAR_PREFIX→_HOTBAR_PREFIX, fishing_gauge 의 randf_range 두 벌을 _turn_time() 하나로, projectile._strike 두 갈래를 하나로. git diff 와 표가 맞는다. 바꾼 이름은 grep 으로 game/ 전체에 밖에서 부르는 곳이 없음을 확인. _strike 는 마취탄이면 taken 0 → 소리 없음 · hit.emit(body,0) · queue_free 로 앞과 같은 행동이다"
-    },
-    {
-     "ok": true,
-     "criterion": "고칠 것이 없으면 없다고 적는다 — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다",
-     "evidence": "report 「괜찮다고 본 것」에 grid · pointer · ui_theme · field_patch · watering_can · aiming 등 파일마다 무엇을 보고 왜 괜찮은지(부르는 곳 · 주석이 가리키는 이름 · 임시/사람 결정 줄 보존) 적었다. 「사람 결정」 · 「임시」 줄은 diff 에서 지워지지 않았다"
-    },
-    {
-     "ok": true,
-     "criterion": "전체 테스트 통과 개수가 줄지 않았다 — report 에 앞뒤 숫자를 적는다",
-     "evidence": "report 앞 2103/2103. test.log 는 「전체」 그물(수정 07:24 뒤 07:41 에 돈 것) — 268 파일 2103/2103 통과, 실패 0. 줄지 않았다. 테스트 파일은 하나도 바뀌지 않았다"
-    },
-    {
-     "ok": true,
-     "criterion": "이 파일들과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)",
-     "evidence": "기능을 더하지 않는 다듬기라 기존 테스트가 지킨다 — test_path_walk · test_villager_* · test_minigame · test_tranq_ammo · test_gun_stats · test_aiming · test_ui_theme · test_debug_keys 를 포함한 전체 2103/2103 통과, guard 통과"
-    }
-   ],
-   "issues": [
-    "report 의 뒤 숫자가 바뀐 곳 그물뿐이다 — 「뒤」 칸에 1089/1089 (바뀐 곳) 만 적고 전체 숫자는 루프에 맡겼다. 이번엔 루프 전체 그물이 2103/2103 이라 문제없지만, 다음 단계부터는 test.log 의 전체 숫자를 받은 뒤 report 에 「뒤: 2103/2103」처럼 같은 단위로 적어라 (막는 것은 아니다)"
-   ],
-   "good": []
-  },
-  "test": " res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           268\nTests            2103\nPassing Tests    2103\nFailing Tests       0\nRisky/Pending       0\nAsserts        101770\nTime           479s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "33dbf85c"
- },
- {
-  "time": "2026-10-12 07:58:45",
-  "epoch": 1791759525,
-  "type": "fail",
-  "title": "기계 검사 실패 — G-995 단계 13 (시도 1)",
-  "group": "G-995",
-  "step": "13",
-  "attempt": "1",
-  "report": {
-   "problem": "코드는 고치지 않았다 — 바뀐 곳 그물이 비어 전체를 한 번 돌렸고, 앞뒤를 같은 단위(전체)로 적는다: 앞 2103/2103 · 뒤 2103/2103",
-   "approach": "단계 12 report 가 「뒤」를 바뀐 곳 그물(1089/1089)로만 적어 앞(전체 2103/2103)과 단위가 달랐다. 이번 단계는 코드 변경이 없어 harness/changed_tests.py 가 빈 목록을 냈다 — 규칙대로 그때만 전체를 돌렸다. tools/test.sh 전체: 파일 268 · 테스트 2103 · 통과 2103 · 실패 0 · 491s, All tests passed. 그래서 앞: 2103/2103 (단계 12 뒤 루프 전체 그물, 커밋 33dbf85c) · 뒤: 2103/2103 (이번 test.log 전체). 다음 단계부터도 「뒤」는 test.log 의 전체 숫자를 받아 같은 단위로 적는다 — 바뀐 곳 그물만 돌렸으면 그 숫자는 「바뀐 곳: n/n」으로 따로 적고 「뒤」 칸에 넣지 않는다.",
-   "why": "",
-   "files": [],
-   "decision": null
-  },
-  "test": "es://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n================ 떨어진 파일: res://tests/life/hunting/test_animal_walk.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/life/hunting/test_animal_walk.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:176)\n         [1] _ready (res://world/terrain/test_island.gd:103)\n         [2] before_all (res://tests/life/hunting/test_animal_walk.gd:25)\n         [3] _call_before_all (res://addons/gut/gut.gd:684)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:813)\n         [5] test_scripts (res://addons/gut/gut.gd:1047)\n         [6] run_tests (res://addons/gut/gui/GutRunner.gd:198)\n         [7] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n         [8] main (res://addons/gut/cli/gut_cli.gd:297)\n         [9] _init (res://addons/gut/gut_cmdln.gd:39)\n* test_wanders_around_home\n* test_picked_spots_stay_within_the_wander_radius\n    집 (-370.0, 200.0) — 고른 곳 가장 멀리 19.95m\n    집 (-251.0, -240.0) — 고른 곳 가장 멀리 20.00m\n    집 (120.7662, 21.05808) — 고른 곳 가장 멀리 19.93m\n* test_picks_again_where_a_single_pick_lands_outside\n    집 (130.0, 27.39642) — 한 번 고르기 200번 중 7번 반경 밖 · 가장 멀리 23.17m\n* test_never_steps_into_water_even_when_sent_there\n    [Failed]:  ARRAY([(-256.0938, 21.76704, -245.9435), (-256.1306, 21.7674, -246.0782), (-256.2752, 21.6...46.1233)]) != ARRAY([]).\n    [(-256.0938, 21.76704, -245.9435), (-256...246.1233)] != []  4 of 4 indexes do not match.  물가에서 놀아도 물에 들어가지 않는다\n      at line 234\n* test_does_not_fall_off_cliff_even_when_sent_below\n* test_nav_mesh_has_no_water_or_cliff\n* test_goes_around_trees_not_stuck\n* test_walk_values_live_in_one_place_marked_temporary\n7/8 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/life/hunting/test_animal_walk.gd\n- test_never_steps_into_water_even_when_sent_there\n    [Failed]:  ARRAY([(-256.0938, 21.76704, -245.9435), (-256.1306, 21.7674, -246.0782), (-256.2752, 21.6...46.1233)]) != ARRAY([]).\n    [(-256.0938, 21.76704, -245.9435), (-256...246.1233)] != []  4 of 4 indexes do not match.  물가에서 놀아도 물에 들어가지 않는다\n          at line 234\n\nTotals\n------\nScripts               1\nTests                 8\nPassing Tests         7\nFailing Tests         1\nAsserts           258/259\nTime              56.709s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           268\nTests            2103\nPassing Tests    2102\nFailing Tests       1\nRisky/Pending       0\nAsserts        101769\nTime           475s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/life/hunting/test_animal_walk.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
- },
- {
   "time": "2026-10-12 08:17:41",
   "epoch": 1791760661,
   "type": "fail",
@@ -10157,6 +10088,126 @@
   "group": "G-230",
   "step": "1",
   "attempt": "2",
+  "report": {
+   "problem": "제작 창: 맨 위 진행 막대 · 타이머를 없애고 남은 초는 대기열 줄 이름 바로 뒤에만 · 검색칸은 표 너비 안, 그 옆에 분류 고르기 · 긴 이름 + 타이머여도 대기열 줄이 꺾이지 않는다 (바뀐 곳만: 155 파일 · 1259 테스트 통과)",
+   "approach": "앞 시도의 QA 흠: 대기열 줄(QueueLine)이 HFlowContainer 라 영어 「Double-barrel shotgun 4.6s − 3 + ×」가 340px 칸에서 「×」를 아랫줄로 보냈다. QueueLine 을 꺾이지 않는 HBoxContainer 로 바꾸고 이름(Item)은 clip_text + 말줄임 + 최소 너비 1 로 두었다. 이름이 칸을 채우면 남은 초가 줄 끝으로 밀려 「목재 옆」이 아니게 되어, QueueLine.fit_name 이 남은 초가 뜨는 줄은 이름을 제 글자 너비(넘치면 남는 자리)만큼만 주고 남은 초가 나머지를 채우게 한다 — 크기 · 말 · 남은 초 글자가 바뀔 때 다시 잰다. 새 테스트는 en 로캘로 쌍발 산탄총(만드는 중) · 대물 저격총 줄의 Item·Left·Less·Count·More·Drop 중심 y 가 같고 Drop 이 오른쪽 칸 안인지 본다. ui_shots workbench 자리의 대기열 첫 줄을 쌍발 산탄총(만드는 중)으로 두었다. 1280×720 · 1920×1080 · ko · en 으로 workbench · workbench_search · workbench_tags · smelter 를 찍어 열어 보았다 — 영어는 「Double-barrel shot… 4.6s − 3 + ×」 한 줄, 한국어는 「이중총열 샷건 4.7초」, 넘치거나 겹친 곳 없음 (.loop/out/shots_g230_720 · shots_g230_1080). spec 미정 줄에 분류 일곱 · 배정은 「사람이 보고 고른다」를 적었다.",
+   "why": "제작대 분류 일곱(가구·설치/도구/무기·탄/방어구/시설/씨앗/재료)과 줄마다의 배정 — Claude 가 정했다, 사람이 보고 고른다; 남은 초의 꼴 「%.1f초」(STATION_QUEUE_LEFT) — Claude 가 정했다; 오른쪽 칸 너비 station_side_width 340 — 그대로",
+   "files": [
+    "game/ui/hud/queue_line.gd",
+    "game/ui/hud/station_window.gd",
+    "game/ui/hud/station_window.tscn",
+    "game/ui/theme/naru_theme.tres",
+    "game/core/debug/ui_shots.gd",
+    "game/craft/recipes/recipe_catalog.gd",
+    "game/craft/recipes/workbench.json",
+    "game/craft/stations/crafting_station.gd",
+    "game/i18n/en.po",
+    "game/i18n/ko.po",
+    "game/tests/ui/hud/test_station_g230_look.gd",
+    "game/tests/ui/hud/test_station_output.gd",
+    "game/tests/ui/hud/test_station_queue_side.gd",
+    "game/tests/ui/hud/test_station_window_frame_cost.gd",
+    "game/tests/ui/hud/test_station_window_temporary_note.gd",
+    "game/tests/ui/layout/test_window_layout.gd",
+    "spec/05_craft/crafting-stations.md",
+    "spec/12_ui/hud.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "맨 위의 **진행 바와 타이머를 둘 다 없앤다** — 맨 위에는 아무 진행 표시도 없다 · 목록 줄 옆에도 타이머를 달지 않는다 (사람 고침 2026-10-16: 「맨위에 그냥 바랑 타이머 다 없애게 하고 대기열에 있는게 목재면 목재 옆에 타이머만 나오게」)",
+     "evidence": "test_station_g230_look: test_there_is_no_progress_bar_and_no_time_on_top 가 만드는 중에 창 안 ProgressBar 0개 · 보이는 「n초」 글자가 한 곳뿐이고 그 부모가 QueueLine 인지 단언. test_recipe_rows_carry_no_timer 가 표의 침대 줄에 Left 노드 · 「초」 글자가 없음을 본다. 사진(720 · 1080, ko · en)에도 맨 위 진행 표시 없음"
+    },
+    {
+     "ok": true,
+     "criterion": "「이름으로 찾기」 칸이 목록 너비를 넘지 않는다. **검색칸 옆에 분류(카테고리)** 를 놓는다. 그 아래 목록은 지금 그대로",
+     "evidence": "test_the_search_stays_within_the_list_and_the_category_sits_beside_it 가 검색 칸 · 분류 global_rect 가 목록(scroll) 좌우 끝 안, 분류가 검색 칸 오른쪽 같은 높이(±2), 둘 다 목록 위인지 단언. test_picking_a_category_keeps_only_its_rows(분류 · 검색어 함께 거름) · test_the_category_names_are_translated_keys(ko · en 번역) · test_a_station_without_categories_hides_the_picker_and_reopening_resets_it. 표 머리줄 · 줄 꼴은 사진상 그대로"
+    },
+    {
+     "ok": true,
+     "criterion": "남은 시간은 **오른쪽 대기열에만** — 대기열 줄의 이름 옆에 타이머만 보인다(대기열에 목재가 있으면 「목재」 옆에 타이머). 바는 뺀다 (G-225 의 「용광로 − 칸 + ×」 줄은 그대로)",
+     "evidence": "test_the_time_left_sits_next_to_the_queue_lines_name 가 Left 가 Item 바로 다음 순번 · 같은 높이 · 이름 글자 끝에서 12px 안 · 숫자가 craft_left() 와 맞음 · Less/Count/More/Drop 그대로를 단언. test_the_waiting_line_has_no_timer_and_the_time_goes_away_when_done 가 기다리는 줄엔 타이머 없음 · 줄어듦 · 끝나면 사라짐을 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "1280×720 · 1920×1080 · 한국어 · 영어 화면 찍기(ui_shots)로 넘치거나 겹치는 곳이 없다",
+     "evidence": "앞 QA 의 흠(긴 이름 + 타이머로 × 가 꺾임)을 QueueLine 을 HBoxContainer + 이름 말줄임으로 고쳤다. test_a_long_name_with_a_timer_stays_on_one_line_within_the_side 가 en 로캘에서 double_barrel_shotgun(만드는 중) · anti_materiel_rifle 줄의 Item·Left·Less·Count·More·Drop 중심 y 가 같고 Drop.end.x ≤ Side.end.x 인지 단언 — QueueLine 을 HFlowContainer 로 되돌리자 이 테스트가 떨어졌다(되돌려 놓음). ui_shots workbench 자리 첫 줄이 쌍발 산탄총 만드는 중. .loop/out/shots_g230_720 · shots_g230_1080 의 workbench · workbench_tags · smelter (ko · en) 를 열어 보았다 — 영어 「Double-barrel shot… 4.6s − 3 + ×」 한 줄, 넘침 · 겹침 없음. 전체 테스트 3036 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           415\nTests            3036\nPassing Tests    3036\nFailing Tests       0\nRisky/Pending       0\nAsserts        130963\nTime           634s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-17 19:37:53",
+  "epoch": 1792233473,
+  "type": "start",
+  "title": "루프 시작",
+  "report": {
+   "problem": "제작 창: 맨 위 진행 막대 · 타이머를 없애고 남은 초는 대기열 줄 이름 바로 뒤에만 · 검색칸은 표 너비 안, 그 옆에 분류 고르기 · 긴 이름 + 타이머여도 대기열 줄이 꺾이지 않는다 (바뀐 곳만: 155 파일 · 1259 테스트 통과)",
+   "approach": "앞 시도의 QA 흠: 대기열 줄(QueueLine)이 HFlowContainer 라 영어 「Double-barrel shotgun 4.6s − 3 + ×」가 340px 칸에서 「×」를 아랫줄로 보냈다. QueueLine 을 꺾이지 않는 HBoxContainer 로 바꾸고 이름(Item)은 clip_text + 말줄임 + 최소 너비 1 로 두었다. 이름이 칸을 채우면 남은 초가 줄 끝으로 밀려 「목재 옆」이 아니게 되어, QueueLine.fit_name 이 남은 초가 뜨는 줄은 이름을 제 글자 너비(넘치면 남는 자리)만큼만 주고 남은 초가 나머지를 채우게 한다 — 크기 · 말 · 남은 초 글자가 바뀔 때 다시 잰다. 새 테스트는 en 로캘로 쌍발 산탄총(만드는 중) · 대물 저격총 줄의 Item·Left·Less·Count·More·Drop 중심 y 가 같고 Drop 이 오른쪽 칸 안인지 본다. ui_shots workbench 자리의 대기열 첫 줄을 쌍발 산탄총(만드는 중)으로 두었다. 1280×720 · 1920×1080 · ko · en 으로 workbench · workbench_search · workbench_tags · smelter 를 찍어 열어 보았다 — 영어는 「Double-barrel shot… 4.6s − 3 + ×」 한 줄, 한국어는 「이중총열 샷건 4.7초」, 넘치거나 겹친 곳 없음 (.loop/out/shots_g230_720 · shots_g230_1080). spec 미정 줄에 분류 일곱 · 배정은 「사람이 보고 고른다」를 적었다.",
+   "why": "제작대 분류 일곱(가구·설치/도구/무기·탄/방어구/시설/씨앗/재료)과 줄마다의 배정 — Claude 가 정했다, 사람이 보고 고른다; 남은 초의 꼴 「%.1f초」(STATION_QUEUE_LEFT) — Claude 가 정했다; 오른쪽 칸 너비 station_side_width 340 — 그대로",
+   "files": [
+    "game/ui/hud/queue_line.gd",
+    "game/ui/hud/station_window.gd",
+    "game/ui/hud/station_window.tscn",
+    "game/ui/theme/naru_theme.tres",
+    "game/core/debug/ui_shots.gd",
+    "game/craft/recipes/recipe_catalog.gd",
+    "game/craft/recipes/workbench.json",
+    "game/craft/stations/crafting_station.gd",
+    "game/i18n/en.po",
+    "game/i18n/ko.po",
+    "game/tests/ui/hud/test_station_g230_look.gd",
+    "game/tests/ui/hud/test_station_output.gd",
+    "game/tests/ui/hud/test_station_queue_side.gd",
+    "game/tests/ui/hud/test_station_window_frame_cost.gd",
+    "game/tests/ui/hud/test_station_window_temporary_note.gd",
+    "game/tests/ui/layout/test_window_layout.gd",
+    "spec/05_craft/crafting-stations.md",
+    "spec/12_ui/hud.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "맨 위의 **진행 바와 타이머를 둘 다 없앤다** — 맨 위에는 아무 진행 표시도 없다 · 목록 줄 옆에도 타이머를 달지 않는다 (사람 고침 2026-10-16: 「맨위에 그냥 바랑 타이머 다 없애게 하고 대기열에 있는게 목재면 목재 옆에 타이머만 나오게」)",
+     "evidence": "test_station_g230_look: test_there_is_no_progress_bar_and_no_time_on_top 가 만드는 중에 창 안 ProgressBar 0개 · 보이는 「n초」 글자가 한 곳뿐이고 그 부모가 QueueLine 인지 단언. test_recipe_rows_carry_no_timer 가 표의 침대 줄에 Left 노드 · 「초」 글자가 없음을 본다. 사진(720 · 1080, ko · en)에도 맨 위 진행 표시 없음"
+    },
+    {
+     "ok": true,
+     "criterion": "「이름으로 찾기」 칸이 목록 너비를 넘지 않는다. **검색칸 옆에 분류(카테고리)** 를 놓는다. 그 아래 목록은 지금 그대로",
+     "evidence": "test_the_search_stays_within_the_list_and_the_category_sits_beside_it 가 검색 칸 · 분류 global_rect 가 목록(scroll) 좌우 끝 안, 분류가 검색 칸 오른쪽 같은 높이(±2), 둘 다 목록 위인지 단언. test_picking_a_category_keeps_only_its_rows(분류 · 검색어 함께 거름) · test_the_category_names_are_translated_keys(ko · en 번역) · test_a_station_without_categories_hides_the_picker_and_reopening_resets_it. 표 머리줄 · 줄 꼴은 사진상 그대로"
+    },
+    {
+     "ok": true,
+     "criterion": "남은 시간은 **오른쪽 대기열에만** — 대기열 줄의 이름 옆에 타이머만 보인다(대기열에 목재가 있으면 「목재」 옆에 타이머). 바는 뺀다 (G-225 의 「용광로 − 칸 + ×」 줄은 그대로)",
+     "evidence": "test_the_time_left_sits_next_to_the_queue_lines_name 가 Left 가 Item 바로 다음 순번 · 같은 높이 · 이름 글자 끝에서 12px 안 · 숫자가 craft_left() 와 맞음 · Less/Count/More/Drop 그대로를 단언. test_the_waiting_line_has_no_timer_and_the_time_goes_away_when_done 가 기다리는 줄엔 타이머 없음 · 줄어듦 · 끝나면 사라짐을 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "1280×720 · 1920×1080 · 한국어 · 영어 화면 찍기(ui_shots)로 넘치거나 겹치는 곳이 없다",
+     "evidence": "앞 QA 의 흠(긴 이름 + 타이머로 × 가 꺾임)을 QueueLine 을 HBoxContainer + 이름 말줄임으로 고쳤다. test_a_long_name_with_a_timer_stays_on_one_line_within_the_side 가 en 로캘에서 double_barrel_shotgun(만드는 중) · anti_materiel_rifle 줄의 Item·Left·Less·Count·More·Drop 중심 y 가 같고 Drop.end.x ≤ Side.end.x 인지 단언 — QueueLine 을 HFlowContainer 로 되돌리자 이 테스트가 떨어졌다(되돌려 놓음). ui_shots workbench 자리 첫 줄이 쌍발 산탄총 만드는 중. .loop/out/shots_g230_720 · shots_g230_1080 의 workbench · workbench_tags · smelter (ko · en) 를 열어 보았다 — 영어 「Double-barrel shot… 4.6s − 3 + ×」 한 줄, 넘침 · 겹침 없음. 전체 테스트 3036 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           415\nTests            3036\nPassing Tests    3036\nFailing Tests       0\nRisky/Pending       0\nAsserts        130963\nTime           634s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-17 19:37:53",
+  "epoch": 1792233473,
+  "type": "fail",
+  "title": "차선 합치기 실패 — 3d-lane2(243c2a30) → 3d-start",
   "report": {
    "problem": "제작 창: 맨 위 진행 막대 · 타이머를 없애고 남은 초는 대기열 줄 이름 바로 뒤에만 · 검색칸은 표 너비 안, 그 옆에 분류 고르기 · 긴 이름 + 타이머여도 대기열 줄이 꺾이지 않는다 (바뀐 곳만: 155 파일 · 1259 테스트 통과)",
    "approach": "앞 시도의 QA 흠: 대기열 줄(QueueLine)이 HFlowContainer 라 영어 「Double-barrel shotgun 4.6s − 3 + ×」가 340px 칸에서 「×」를 아랫줄로 보냈다. QueueLine 을 꺾이지 않는 HBoxContainer 로 바꾸고 이름(Item)은 clip_text + 말줄임 + 최소 너비 1 로 두었다. 이름이 칸을 채우면 남은 초가 줄 끝으로 밀려 「목재 옆」이 아니게 되어, QueueLine.fit_name 이 남은 초가 뜨는 줄은 이름을 제 글자 너비(넘치면 남는 자리)만큼만 주고 남은 초가 나머지를 채우게 한다 — 크기 · 말 · 남은 초 글자가 바뀔 때 다시 잰다. 새 테스트는 en 로캘로 쌍발 산탄총(만드는 중) · 대물 저격총 줄의 Item·Left·Less·Count·More·Drop 중심 y 가 같고 Drop 이 오른쪽 칸 안인지 본다. ui_shots workbench 자리의 대기열 첫 줄을 쌍발 산탄총(만드는 중)으로 두었다. 1280×720 · 1920×1080 · ko · en 으로 workbench · workbench_search · workbench_tags · smelter 를 찍어 열어 보았다 — 영어는 「Double-barrel shot… 4.6s − 3 + ×」 한 줄, 한국어는 「이중총열 샷건 4.7초」, 넘치거나 겹친 곳 없음 (.loop/out/shots_g230_720 · shots_g230_1080). spec 미정 줄에 분류 일곱 · 배정은 「사람이 보고 고른다」를 적었다.",
