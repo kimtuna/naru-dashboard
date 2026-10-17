@@ -3783,7 +3783,7 @@
   - 기준: npc-villagers.md 직업 표 — 청소부 · 관리인 두 줄을 「관리인(청소 · 정리 · 수리)」 한 줄로 · 「비료는 아직 제작대에서」 줄이 지금(약제 작업대에도 있다)과 맞는지 고친다
   - 기준: (앞 단계 QA) reach 테스트의 걸음 표시가 틀린 배를 찍는다 — test_villager_reach.gd:469 _plant_from_outside_the_wall 의 stride 를 give_job(:479) 전에 재서 pace() 에 농사 숙련도가 안 들어가, stride_1_05 · _1_10 테스트의 실패 글에 「걸음 1.00 배」가 찍힌다(QA 가 깨 보니 1.05 판이 1.00 으로 보였다). stride 계산을 give_job 뒤로 옮기고, 판마다 기대 배(1.05 · 1.10 · 1.15)와 walk_speed()/WALK_SPEED 가 같은지 assert_almost_eq 로 단언하라 — 지금은 숙련도 → 걸음 배가 바뀌어도 그 테스트가 원하는 걸음으로 걷는지 아무도 안 본다
   - 기준: (앞 단계 QA) PathWalk.BACK_ON 에 「임시」 표시가 없다 — report temporary 에는 임시라고 했지만 game/core/path_walk.gd 의 const BACK_ON := 0.05 주석에 **임시** 가 없다. 주석 끝에 「**임시**.」를 붙여라
-- [ ] 5. (앞 단계 QA) 비료 레시피 둘이 하나처럼 읽힌다
+- [x] 5. (앞 단계 QA) 비료 레시피 둘이 하나처럼 읽힌다
   - 기준: 비료 레시피 둘이 하나처럼 읽힌다 — spec/07_automation/npc-villagers.md 농부 줄의 「(apothecary_bench — 석회 2 · 똥 2)」는 한 레시피에 석회 2와 똥 2가 함께 드는 것처럼 읽힌다. 실제로는 apothecary_bench.json:6-7 의 레시피 둘(fertilizer = 석회 2 / fertilizer_from_manure = 똥 2)이다. 「석회 2 또는 똥 2」로 고쳐라
 
 ## [ ] G-233 주민의 상태가 움직인다 — 수면 · 스트레스 · 배고픔 · 목마름
