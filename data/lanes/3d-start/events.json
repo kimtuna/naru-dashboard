@@ -1,43 +1,5 @@
 [
  {
-  "time": "2026-10-12 12:25:31",
-  "epoch": 1791775531,
-  "type": "pass",
-  "title": "통과 — G-950 단계 5 (넷의 REACH 상수가 이제 쓰이지 않는다 (G-950 단계 3))",
-  "group": "G-950",
-  "step": "5",
-  "attempt": "1",
-  "report": {
-   "problem": "놓는 곳 넷(Stations · Chests · Torches · Beds)의 REACH 주석에 「겨누는 거리는 Placer(Aim.REACH) — 이 값은 기록용」을 적고 test_placer 가 그 글과 Placer 의 조준을 함께 지킨다",
-   "approach": "기준의 두 길 중 주석 쪽을 골랐다. Stations.REACH 는 Buildings · Butchery · DockBuilder 가 제 거리로 따라 쓰고 Chests.REACH 는 테스트 여럿이 읽어서, 지우면 기능 아닌 곳까지 번진다. 네 파일의 const REACH 바로 위 ## 주석에 그 줄을 넣고(stations.gd 에는 건물 · 도축 · 선착장 짓기가 이 값을 따른다는 말도), test_placer 에 각 주석이 그 줄을 담는지와 placer.gd 가 정말 Aim.REACH 로 겨누는지를 함께 보는 검사를 더했다. test_reach_temporary_notes(임시 · 미정 표시)는 여전히 참이라 그대로 뒀다. 바뀐 곳만 골라 돌림: 71개 파일 647개 테스트 통과.",
-   "why": "",
-   "files": [
-    "game/craft/stations/stations.gd",
-    "game/world/storage/chests.gd",
-    "game/world/lighting/torches.gd",
-    "game/build/beds/beds.gd",
-    "game/tests/build/test_placer.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "넷의 REACH 상수가 이제 쓰이지 않는다 — Chests/Torches/Beds.REACH(:= Stations.REACH)와 Stations.REACH 는 조준에 안 쓰이고 Placer 가 Aim.REACH 로 겨눈다. test_reach_temporary_notes 가 그 주석을 읽어서 남겼다. 차선 2 와 합친 뒤 그 검사를 Placer 쪽으로 옮기고 네 상수를 지우든지, 주석에 「겨누는 거리는 Placer(Aim.REACH) — 이 값은 기록용」이라고 적어라",
-     "evidence": "기준이 허락한 두 길 중 주석 쪽을 골랐다. stations.gd · chests.gd · torches.gd · beds.gd 의 const REACH 바로 위 ## 주석에 「겨누는 거리는 Placer(Aim.REACH) — 이 값은 기록용이다」가 들어갔다 (git diff 로 확인). test_placer.gd::test_every_placer_reach_says_it_is_only_a_record 가 PLACERS 네 파일마다 const REACH 줄을 찾아 그 위에 붙은 ## 줄만 모아 정확한 문구를 담는지 단언하고 (한 파일에서 줄을 빼면 그 파일 이름으로 실패한다 — 붙은 주석만 읽으니 떨어진 곳에 적어도 못 속인다), placer.gd 가 정말 Aim.at(..., Aim.REACH) 로 겨누는지도 함께 본다 (placer.gd:112 에 그 줄이 있다). 네 파일에 Aim.at( 이 다시 나오지 않는 것은 기존 test_the_four_placers_stand_on_one_frame 의 SHARED 가 지킨다. 지워진 줄 없음 — 기존 임시 · 미정 주석은 그대로라 test_reach_temporary_notes 도 그대로 참. test.log: 전체 274 파일 2129 테스트 통과, guard 통과"
-    }
-   ],
-   "issues": [
-    "Stations.REACH 주석이 「기록용」이라며 쓰인다고 한다 — game/craft/stations/stations.gd:33 은 「이 값은 기록용이다 (건물 · 도축 · 선착장 짓기가 이 값을 따라 쓴다)」라고 적었다. 실제로 Buildings.REACH(build/buildings.gd:70 → 770줄 Aim.at) · Butchery.REACH(life/hunting/butchery.gd:21, Captives 도 따른다) · DockBuilder.REACH(world/frontier_islands/dock_builder.gd:29 → 202줄 Aim.at)가 이 값을 진짜 조준 거리로 쓰니 「기록용」은 제작대를 놓는 조준에만 참이다. 문구를 「제작대를 놓는 조준은 Placer(Aim.REACH) 가 한다 — 이 값은 건물 · 도축 · 선착장 짓기가 거리로 쓴다」처럼 고치고, test_placer.gd 의 문구 단언은 stations.gd 만 그 문구로 따로 보게 바꿔라 (넷 다 같은 문구를 요구하는 지금 단언을 갈라야 한다)"
-   ],
-   "good": []
-  },
-  "test": "lding_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      0s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      0s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      0s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           274\nTests            2129\nPassing Tests    2129\nFailing Tests       0\nRisky/Pending       0\nAsserts        101907\nTime           476s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "bf4275ba"
- },
- {
   "time": "2026-10-12 12:43:06",
   "epoch": 1791776586,
   "type": "pass",
@@ -10390,5 +10352,98 @@
   },
   "test": "ipes.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/medicine/test_medicine.gd\nok      2s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_barn_window.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           197\nTests            1466\nPassing Tests    1466\nFailing Tests       0\nRisky/Pending       0\nAsserts         96017\nTime           324s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "f2099dc8"
+ },
+ {
+  "time": "2026-10-18 05:20:27",
+  "epoch": 1792268427,
+  "type": "pass",
+  "title": "통과 — G-232 단계 2 (숙련도가 오르고 일이 빨라진다)",
+  "group": "G-232",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "직업마다 올리는 숙련도를 jobs.gd 한 곳에 적고, 일을 한 번 마칠 때마다 경험이 붙어 레벨이 오르며 5레벨마다 pace() 가 5% 빨라진다 · 천부적인 재능 숙련도 1.5배 · 주민 창에 보인다. 바뀐 곳만 돌린 304 파일 · 2325 개 가운데 2324 통과, 떨어진 하나(test_unseen_work_goes_on)는 고쳐 따로 다시 돌려 통과",
+   "approach": "숙련도 표는 Jobs.LIST 줄마다 skill(농부→농사 · 나무꾼→벌목 · 광부→채광 · 관리인→없음 · 제작자→제작)과 제작자 시설 표 CRAFTER_SKILLS(조리대 · 훈연기 · 양조통 · 증류기→요리 · 약제 작업대→의학 · 연구대→연구)에 두고, 묻는 길은 Jobs.skill_of 하나다. 일(JobWork)은 Jobs.make 가 넣은 직업 id 로 skill() 을 답하고, 제작자 일은 가려는 · 붙은 시설의 kind 로 가른다. 경험은 Villager.practice/learn — 나무 한 그루 · 돌 한 덩이를 다 거둘 때(HarvestWork._pick_up), 밭에 물 · 심기 · 거두기 · 비료가 해내졌을 때(FieldCare._do_field, 물뿌리개 꺼내기 · 채우기는 아니다), 시설이 하나를 다 만들었을 때 붙어 있던 제작자에게(Stations.tick_crafts — craft_tick 앞뒤로 crafting() 이 꺼졌나 본다) 붙는다. pace() 는 스트레스 느려짐에 Persona.skill_pace(맡은 일 숙련도 레벨) 를 곱해 걸음 · 손대는 사이 · 시설 타이머(Stations.pace_of)가 같이 빨라진다. 천부적인 재능은 들어올 때(Villagers.settle) 숙련도 하나(gift)를 굴리고, 옛 저장본에 없으면 읽을 때 정한다. xp · gift 는 to_dict/from_dict 로 저장되고 snapshot/mirror 로 참가자 화면에 따라간다. 테스트를 짜다 mirror 의 '창을 다시 그릴까'(_shown)가 skills · traits 를 사본이 아닌 같은 것으로 쥐어 레벨이 올라도 바뀐 줄 몰랐던 것을 찾아 사본으로 고쳤다. 주민 창은 특성 줄에 「천부적인 재능(벌목)」/「Gifted (Woodcutting)」로 보인다 — ui_shots villagers ko · en 두 장을 열어 보아 넘치지 않음을 확인했다. 들어올 때 굴린 숙련도(0~10)가 5 를 넘으면 빨라지므로 정확한 빠르기 · 같은 시간을 보던 기존 테스트 셋(제작자 스트레스 둘 · test_unseen_work_goes_on)은 숙련도를 0 으로 맞췄다 — 마지막 것은 바뀐 곳 그물에서 떨어져(두 판이 12.5초 · 13.7초로 갈렸다) 고친 뒤 그 파일만 다시 돌려 통과했다. 앞 단계 QA 의 「스텟」 낡은 줄(창 · 입력 · ui_shots 주석, 창 테스트, input.md V 줄, villager-persona.md 제목)을 숙련도로 고쳤고, 사람 결정 줄(level-skills.md 힘 스텟 · villager-persona.md 스텟 절)은 지우지 않고 「→ 2026-10-17 숙련도로 합쳤다」를 붙였다. 조리용 화로(cook_stove)는 기준의 목록에 없어 「그 밖→제작」으로 두었다.",
+   "why": "Persona.XP_PER_DEED 1 · XP_PER_LEVEL 10 — 일 열 번에 한 레벨, 오르는 빠르기는 spec 에 없다; Persona.PACE_PER_STEP 0.05 — 「5레벨마다 +n%」의 n 을 사람이 정하지 않았다 (레벨 100 이면 2배); Persona.GIFTED_XP 1.5 — 「그 직업 경험치 증가」의 얼마나는 정하지 않았다",
+   "files": [
+    "game/automation/villagers/jobs.gd",
+    "game/automation/villagers/job_work.gd",
+    "game/automation/villagers/crafting_work.gd",
+    "game/automation/villagers/harvest_work.gd",
+    "game/automation/villagers/field_care.gd",
+    "game/automation/villagers/persona.gd",
+    "game/automation/villagers/villager.gd",
+    "game/automation/villagers/villagers.gd",
+    "game/craft/stations/stations.gd",
+    "game/ui/hud/villager_window.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/core/input/input_actions.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/tests/automation/villagers/test_villager_skills.gd",
+    "game/tests/automation/villagers/test_villager_crafter.gd",
+    "game/tests/automation/villagers/test_villager_gathering.gd",
+    "game/tests/automation/villagers/test_villager_harvesting.gd",
+    "game/tests/automation/villagers/test_villager_watering.gd",
+    "game/tests/core/test_unseen_work_goes_on.gd",
+    "game/tests/ui/hud/test_villager_window.gd",
+    "spec/07_automation/villager-persona.md",
+    "spec/02_player/level-skills.md",
+    "spec/01_settings/input.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "jobs.gd LIST 의 줄마다 그 직업이 올리는 숙련도를 적는다(농부→농사 · 나무꾼→벌목 · 광부→채광 · 관리인→없음). 제작자는 붙은 시설로 가른다 — 조리대 · 훈연기 · 양조통 · 증류기→요리 · 약제 작업대→의학 · 연구대→연구 · 그 밖→제작. 이 표는 한 곳이다",
+     "evidence": "jobs.gd LIST 줄마다 skill, CRAFTER_SKILLS 표, 묻는 길 Jobs.skill_of 하나(CraftingWork.skill · Stations._practiced 가 이것을 부른다). test_villager_skills: test_each_job_names_the_skill_it_raises_in_one_table(직업 다섯 + NONE), test_the_crafter_skill_follows_the_station(시설 아홉이 catalog 에 있는 이름인지 + 기대 숙련도 · 농부는 시설로 안 가름 · CraftingWork._target 따라 바뀜), test_the_table_is_written_in_one_place(다른 파일에 숙련도 이름을 따로 안 적음)"
+    },
+    {
+     "ok": true,
+     "criterion": "그 일을 한 번 마칠 때마다(한 그루 · 한 덩이 · 한 번 물 주기 · 하나 만들기) 그 숙련도에 경험이 붙고 차면 레벨이 오른다. 오르는 빠르기는 임시. 저장 · 멀티로 따라간다 (테스트)",
+     "evidence": "진짜 일로 본다 — test_villager_gathering 두 그루에 정확히 2(한 대마다가 아님) · 한 덩이에 채광 1, test_villager_harvesting 밭 셋에 3, test_villager_watering 물뿌리개 꺼내기는 0 · 물 셋에 3, test_villager_crafter 제작대 의자 둘에 제작 2 · 조리대 밀빵에 요리 1(제작은 그대로). HarvestWork._pick_up 은 _work_on 이 is_gone 일 때만 불린다. 레벨: test_experience_fills_and_raises_the_level(9번은 0 · 10번째에 1 · 넘침 이월) · test_the_level_stops_at_the_top. 저장: test_experience_and_the_gift_are_saved(왕복 · 빈 것은 줄 없음 · 넘친 값 자르기 · 모르는 id 버림). 멀티: test_the_picture_on_a_guest_machine_follows_skills_experience_and_gift(snapshot→mirror 레벨 · xp · gift · 창 다시 그림 true — _shown 사본 버그도 함께 고쳤다). XP_PER_DEED · XP_PER_LEVEL 에 임시 표시"
+    },
+    {
+     "ok": true,
+     "criterion": "5레벨마다 그 일이 5% 빨라진다(「5레벨마다 +n%」 사람 결정 2026-09-28 · 5% 는 임시) — villager.gd pace() 가 맡은 직업의 숙련도를 곱한다(스트레스 느려짐과 같이). 레벨 0 과 50 의 같은 일 시간이 다르다 (테스트)",
+     "evidence": "Villager.pace = 스트레스 배 × Persona.skill_pace(맡은 일 skill 레벨), PACE_PER_STEP 0.05 임시 표시. test_every_five_levels_the_job_is_five_percent_faster(0·4=1 · 5·9=1.05 · 50=1.5 · 100=2), test_pace_uses_the_skill_of_the_job_it_holds_with_the_stress(다른 숙련도는 안 듣는다 · 스트레스와 곱 · 직업 바꾸면 따라감 · 관리인/없음 1), test_the_crafter_pace_follows_the_station_skill(제작대 0 · 조리대 50 · Stations.pace_of 같음), test_villager_crafter test_the_same_chair_takes_less_time_at_level_50_than_at_0(실제 시설 타이머 1.02배 → 1.50배를 잰다)"
+    },
+    {
+     "ok": true,
+     "criterion": "「천부적인 재능」(persona.gd TRAITS gifted, 「그 직업 경험치 증가」) — 들어올 때 숙련도 하나가 정해지고 그 숙련도 경험이 1.5배(임시). 주민 창에 어느 숙련도인지 보인다",
+     "evidence": "Villagers.settle 이 roll_gift, 옛 저장본은 _load_persona 가 정함 · 재능 없으면 비움. test_the_gifted_skill_learns_one_and_a_half_times(요리 1.5 · 농사 1), test_a_newcomer_with_the_gift_gets_one_skill(마흔 번 from_dict 로 재능 있으면 열셋 가운데 하나 · 없으면 빈 값), test_villager_window test_the_gifted_trait_shows_which_skill(「천부적인 재능(벌목)」 · 「Gifted (Woodcutting)」 정확히). GIFTED_XP 임시 표시, 번역 키 VILLAGERS_TRAIT_GIFTED_IN ko · en 둘 다"
+    },
+    {
+     "ok": true,
+     "criterion": "레벨로 새로 열리는 일(직업 레벨이 하던 「쓸 수 있는 것이 늘어난다」)은 이번에 만들지 않는다 — 열 것이 아직 없다",
+     "evidence": "diff 에 레벨로 여는 갈래가 없다. spec villager-persona.md 에 「레벨로 새로 열리는 일은 아직 없다」 한 줄"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 주민 창 · 입력 주석에 「스텟」이 남았다 — game/ui/hud/villager_window.gd:6 「스텟 다섯(레벨)」 → 「숙련도 열셋(레벨)」, game/core/input/input_actions.gd:47 「스텟 · 특성」 → 「숙련도 · 특성」, game/core/debug/ui_shots.gd:119 「스텟 · 특성」 → 「숙련도 · 특성」, game/tests/ui/hud/test_villager_window.gd:2 「스텟 다섯」 · :50 「스텟 · 특성」 → 숙련도로 고쳐라 (막는 것은 아니다)",
+     "evidence": "다섯 곳 모두 diff 로 고쳐졌다. grep 으로 남은 「스텟」은 옛 저장본 stats 를 버리는 것을 말하는 주석 · 테스트뿐(맞는 쓰임)"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) spec 의 「스텟」 줄이 낡았다 — spec/01_settings/input.md:22 V 줄의 「스텟」 → 「숙련도」, spec/07_automation/villager-persona.md:1 제목 「… 특성 · 스텟」 → 「… 특성 · 숙련도」. spec/02_player/level-skills.md:22 「주민은 힘 스텟이 채광 속도를 정한다 (사람 결정 2026-09-28)」와 villager-persona.md:26~40 의 스텟 절은 사람 결정 줄이라 지우지 말고, 옆에 「→ 2026-10-17 숙련도로 합쳤다(채광 숙련도)」 한 줄을 붙여 낡은 것임을 표시하라",
+     "evidence": "input.md V 줄 · persona.md 제목 고쳤다. level-skills.md 힘 스텟 줄 · persona.md 「직업 레벨 · 스텟」 절은 지우지 않고 「→ 2026-10-17 숙련도로 합쳤다」를 붙였다. 사람 결정 줄 삭제 없음, md 모두 150줄 안(persona 52)"
+    }
+   ],
+   "issues": [
+    "villager-persona.md 목록 들여쓰기가 깨졌다 — spec/07_automation/villager-persona.md:14 에 넣은 「맡은 일의 숙련도가 빠르게 하는 것도 같은 곳에서 곱한다」가 두 칸 들여쓰기라 「지금 게임:」 하위 항목(네 칸) 사이에 끼어 그 아래 「얼마나 느린가(0.5 배)는 임시」 줄이 엉뚱한 줄에 붙는다. 그 줄을 네 칸으로 들여 앞 줄(:13) 뒤에 잇거나 :15 다음으로 옮겨라",
+    "재능 정하기를 글자로만 본다 — test_villager_skills test_a_newcomer_with_the_gift_gets_one_skill 은 from_dict 길만 실제로 돌리고 Villagers.settle 은 파일에 「Persona.roll_gift」 글자가 있는지만 본다. Villagers 를 하나 만들어 settle 을 여러 번 불러 gifted 특성이 있는 이는 Persona.SKILLS 안의 gift, 없는 이는 &\"\" 인지 단언하는 테스트로 바꿔라 (막는 것은 아니다 — 지금 코드는 맞다)"
+   ],
+   "good": [
+    "심기 · 비료에도 농사 경험을 준다(FieldCare._do_field) — 기준 예시는 물 주기였지만 같은 「한 번 해낸 일」이라 기준 안쪽으로 본다",
+    "Villager._shown 이 skills · traits 사본을 쥐도록 고쳤다 — 멀티로 따라가는 기준을 지키려다 찾은 버그",
+    "ui_shots villagers 장면의 고른 주민에게 천부적인 재능(벌목)을 주어 창에 보이게 했다"
+   ]
+  },
+  "test": "s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      1s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      0s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      0s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/automation/villagers/test_job_work_shared.gd\nok      1s  res://tests/automation/villagers/test_villager_skills.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           304\nTests            2325\nPassing Tests    2325\nFailing Tests       0\nRisky/Pending       0\nAsserts        116610\nTime           541s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "549d6fd8"
  }
 ]
