@@ -3846,7 +3846,7 @@
   - 기준: G-234 의 갈라짐 · 희귀 굴림을 나무도 쓴다 — 같은 표 파일에 pine · broadleaf 줄: **씨앗 70 · 꿀 30**(**임시**). 씨앗은 crops.json 의 씨앗 가운데 무작위 하나(**임시** — 밀 · 보리처럼 흔한 것에 무게를 더 준다) (테스트)
   - 기준: 제작대의 씨앗 레시피는 그대로 둔다(**임시** — 없앨지는 사람이 플레이해 보고)
   - 기준: (앞 단계 QA) swing 의 조준 자리 넘김을 보는 테스트가 없다 — Harvest.swing() 이 Aim 광선의 hit["position"] 을 strike/ask 에 넘기는 길은 테스트마다 strike(..., at) 를 직접 불러 건너뛴다. 플레이어를 나무 앞에 세워 약점 쪽을 보게 하고 swing() 한 대가 GOOD_HIT×CRIT_MULT 를 깎는지, 반대쪽을 보면 GOOD_HIT 인지 보는 테스트를 tests/life/harvest/test_tree_weak_spot.gd 에 더하라
-- [ ] 3. spec
+- [x] 3. spec
   - 기준: logging.md 에 약점 · 크리티컬 · 희귀 드롭을 사람 원문 · 날짜와 함께. farming.md 미정 「씨앗을 어디서 얻나」에 「나무 희귀 드롭 · 수확(G-236)」 한 줄
 
 ## [ ] G-236 농사 — 거두면 씨앗이 돌아온다
