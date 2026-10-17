@@ -3679,7 +3679,7 @@
 - [x] 1. 새 테스트가 옆 테스트의 머리 주석을 가로챘다 (G-912 단계 2)
   - 기준: 새 테스트가 옆 테스트의 머리 주석을 가로챘다 — game/tests/multiplayer/test_islands_split.gd 에서 test_guest_drops_bodies_of_the_island_left_behind 를 test_each_strike_stays_on_its_own_island 의 머리 주석(「## 각자 제 섬에서 친 것은 제 섬에만 남는다 …」 두 줄)과 그 func 사이에 끼워 넣었다. 그래서 그 두 줄이 이제 새 테스트 위에 붙어 엉뚱한 설명이 되었고, test_each_strike 는 주석을 잃었으며, 새 테스트가 「# ── 바람은 바란 사람이 선 섬에 ──」 칸 아래에 들어갔다. 새 테스트(와 그 주석 세 줄)를 test_split_two_do_not_receive_each_others_bodies_or_beasts 바로 뒤, 「바람은 바란 사람이 선 섬에」 칸 머리 앞으로 옮기고, 「각자 제 섬에서 친 것은…」 두 줄은 test_each_strike_stays_on_its_own_island 바로 위에 남겨라
 
-## [ ] G-231 장비 모듈 — 무기 · 장비 제작대 · 모듈 탭 · 세트 모듈 · 스코프 배율
+## [x] G-231 장비 모듈 — 무기 · 장비 제작대 · 모듈 탭 · 세트 모듈 · 스코프 배율
 - 차선: 3d-start
 - 순서: G-230 뒤 (attack.gd · aiming.gd · iron_sight.gd 를 G-229 와 같이 만진다)
 - spec: spec/02_player/equipment.md, spec/08_combat/tools-as-weapons.md → 새 spec/02_player/equipment-modules.md
