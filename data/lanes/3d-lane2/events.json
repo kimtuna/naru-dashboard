@@ -1,56 +1,5 @@
 [
  {
-  "time": "2026-09-26 16:01:15",
-  "epoch": 1790406075,
-  "type": "pass",
-  "title": "통과 — G-152 단계 2 (밭 거르기가 지형 확인이 아닌 제외 목록이다 (G-134 단계 2))",
-  "group": "G-152",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "밭 거르기를 받아들일 땅(지형 층 · Terrain3D · 토대/지붕) 목록으로 바꾸고, 가득 찬 물뿌리개로 민물을 겨눌 때 「밭이 아니다」를 안 띄우며, spec 규칙 세 줄 · 미정 한 줄을 더했다 — 바뀐 곳만: 24개 파일 208개 통과",
-   "approach": "is_field_ground 가 몸통 · 설치물 · 높이로 빼는 방식이라 윗면 0.3m 인 낮은 바위를 쳐도 밭이 깎였다. 섬 지형은 이미 Climbing.TERRAIN_LAYER 층에 서고(나무 · 자원 · 약초 몸통은 층 1 뿐) 광선은 Terrain3D 노드를 돌려주므로, Farmland.is_ground_body 를 두어 Terrain3D · 지형 층 몸통 · 바닥 건축물(토대 · 지붕)만 받아들이게 했다. 토대도 설치물이라 옛 규칙으로는 토대 위 밭을 부술 수 없었던 것을 같이 풀었고 테스트를 더했다. 농사 테스트의 가짜 땅은 지형 층에 두었다. 섬 위에서 부서지는지는 test_island_walk 가 통과로 확인했다. crops.interact 는 물뿌리개로 밭 아닌 곳을 겨눴을 때 민물이면 fill_held 만 하고 _no_field 를 부르지 않는다. spec 「규칙」에 물뿌리개 · 비료 · 까닭 한 줄 세 규칙을, 「미정」에 비료 효과 크기 · 물뿌리개 한 통 크기를 적고, 적힌 수가 코드와 같은지 보는 테스트를 더했다. 농사 폴더 85개 통과, 바뀐 곳만 24개 파일 208개 통과.",
-   "why": "",
-   "files": [
-    "game/life/farming/farmland.gd",
-    "game/life/farming/crops.gd",
-    "spec/04_life/farming.md",
-    "game/tests/life/farming/test_farmland.gd",
-    "game/tests/life/farming/test_crops.gd",
-    "game/tests/life/farming/test_field_free_grid.gd",
-    "game/tests/life/farming/test_water_and_fertilizer.gd",
-    "game/tests/life/farming/test_farming_temporary_notes.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "밭 거르기가 지형 확인이 아닌 제외 목록이다 — 낮은 StaticBody3D(높이 0.3m)를 밭 위에 세우고 HITS 번 쳐도 is_tilled 가 참인지 보는 테스트를 더하라 (또는 받아들일 것을 지형으로 좁혀라)",
-     "evidence": "farmland.gd 의 is_field_ground 가 이제 Farmland.is_ground_body(Terrain3D · 지형 층(Climbing.TERRAIN_LAYER) 몸통 · 바닥 BuildPiece)만 받아들인다. test_farmland.gd::test_hitting_a_low_body_on_a_field_leaves_the_field_alone 가 0.3m 몸통을 HITS 번 쳐 is_tilled 참 · hits_left 그대로 · 떨어진 것 없음을 본다. 옛 제외 목록 코드로 되돌려 돌렸더니 이 테스트가 실패했다(되돌려 놓음). 섬 위 실제 Terrain3D 에서 밭이 부서지는 것은 test_island_walk.gd(358~360줄)가 지킨다 — 전체 실행 통과."
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) spec 에 새 규칙이 안 적혔다 — 「규칙」에 물뿌리개(민물 우클릭 · 바닷물 안 됨) · 비료 두 단계 · 까닭 한 줄 세 줄, 「미정」에 비료 효과 크기(임시 2배) · 물뿌리개 한 통(임시 5번치)",
-     "evidence": "spec/04_life/farming.md 「규칙」에 세 줄, 「미정」에 한 줄이 더해졌다(지운 줄 없음, 45줄). test_farming_temporary_notes.gd 의 두 테스트가 절 본문에서 문장을 찾고, 미정 줄의 숫자를 CROPS.FERTILIZED_GROWTH · WateringCan.CAPACITY 로 만들어 코드와 맞는지 본다."
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 가득 찬 물뿌리개로 물을 겨누면 「밭이 아니다」가 뜬다 — 민물을 겨눴을 때는 _no_field 를 부르지 않고, test_filling_the_can_does_not_also_drink 끝에 last_said 가 FARM_NO_FIELD 가 아니다 단언",
-     "evidence": "crops.gd interact() 가 Drinking.aims_at_fresh_water 이면 fill_held() 만 돌려준다. test_water_and_fertilizer.gd::test_filling_the_can_does_not_also_drink 끝에 assert_ne(crops.last_said, Crops.SAY_NO_FIELD) 가 더해졌다. 옛 `fill_held() or _no_field(ground)` 로 되돌리자 이 테스트가 실패했다(되돌려 놓음)."
-    }
-   ],
-   "issues": [],
-   "good": [
-    "토대 · 지붕(BuildPiece.is_floor) 위 밭도 부서지게 했다 — 옛 규칙은 토대를 설치물로 빼서 토대 위 밭을 못 부쉈다. test_a_field_on_a_foundation_still_breaks 로 지킨다. 받아들이는 목록으로 바꾸면 따라오는 일이라 괜찮다"
-   ]
-  },
-  "test": "s_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      2s  res://tests/world/storage/test_throw_out.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/build/test_rooms.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/test_guard.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      0s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      0s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    424s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           183\nTests            1570\nPassing Tests    1570\nFailing Tests       0\nPending             0\nAsserts         73288\nTime           424s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "c82d551"
- },
- {
   "time": "2026-09-26 16:01:19",
   "epoch": 1790406079,
   "type": "stop",
@@ -8568,5 +8517,37 @@
   },
   "test": "  7s  res://tests/life/harvest/test_ores_on_island.gd\nok      7s  res://tests/multiplayer/test_chest_on_server.gd\nok      6s  res://tests/multiplayer/test_send_less.gd\nok      6s  res://tests/multiplayer/test_station_on_server.gd\nok      7s  res://tests/multiplayer/test_harvest_on_server.gd\nok      8s  res://tests/world/frontier_islands/test_lime.gd\nok      6s  res://tests/multiplayer/test_world_on_server.gd\nok      5s  res://tests/automation/villagers/test_villager_g218_floor_stuck.gd\nok      6s  res://tests/core/debug/test_dev_box.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      5s  res://tests/multiplayer/test_death_on_server.gd\nok      5s  res://tests/multiplayer/test_dock_crew.gd\nok      5s  res://tests/core/debug/test_dev_box_open.gd\nok      7s  res://tests/world/terrain/test_island_in_game.gd\nok      5s  res://tests/core/net/test_net_two_processes.gd\nok      5s  res://tests/multiplayer/test_fish_on_server.gd\nok      6s  res://tests/core/debug/test_ui_shots.gd\nok      4s  res://tests/multiplayer/test_folk_on_server.gd\nok      3s  res://tests/core/net/test_steam_quit.gd\nok      5s  res://tests/multiplayer/test_islands_split.gd\nok      5s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      3s  res://tests/world/day_night/test_day_in_world.gd\nok      2s  res://tests/core/net/test_net_session.gd\nok      6s  res://tests/world/day_night/test_day_light.gd\nok      2s  res://tests/core/net/test_steam_game.gd\nok      5s  res://tests/multiplayer/test_farm_on_server.gd\nok      2s  res://tests/core/net/test_steam_server_gone.gd\nok      2s  res://tests/multiplayer/test_islands_afar.gd\nok      3s  res://tests/multiplayer/test_guild_on_server.gd\nok      3s  res://tests/core/test_far_cull.gd\nok      2s  res://tests/multiplayer/test_traces_on_server.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      3s  res://tests/world/terrain/test_foundation_hides_grass.gd\nok      2s  res://tests/build/test_placeable.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/world/terrain/test_terrain_occluder.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/net/test_acts_alone.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      1s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok    436s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            92\nTests             720\nPassing Tests     720\nFailing Tests       0\nRisky/Pending       0\nAsserts         32015\nTime           436s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "08e33438"
+ },
+ {
+  "time": "2026-10-18 05:44:12",
+  "epoch": 1792269852,
+  "type": "pass",
+  "title": "통과 — G-234 단계 3 (spec)",
+  "group": "G-234",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "spec/04_life/mining.md 에 갈라짐 · 희귀 굴림 · 희귀 표 · 숙련도 덤을 사람 원문 · 날짜와 함께 적고, 미정 「내구도 · 드롭 수량」을 지금 임시 값에 맞췄다. 바뀐 곳만: 2파일 29개 통과",
+   "approach": "앞 단계에서 갈라짐 · 희귀 규칙은 이미 몇 줄 적혀 있었지만 사람 원문 인용이 없었고, 표는 rare_drops.json 에만 있었고, 미정 줄은 「내구도 · 드롭 수량 미정」으로 지금 코드에 임시 값이 있다는 것을 말하지 않았다. 사람 결정 2026-10-18 의 세 말을 원문 그대로 붙이고, 세션이 다듬어 사람이 받은 것(갈라질 때마다 굴림 · 반짝임/소리 · 새 아이템 없음 · 실제 지질 짝 · 숙련도가 확률을 올림)을 「너가 다듬어준 그대로 해도 좋은거 같아」와 함께 묶었다. rare_drops.json 과 같은 값으로 희귀 표(바위 → 무게 · 까닭)를 넣고, 광산 방(06_build/mine-room.md)은 아직 게임에 없으니 생기면 같은 표를 쓴다는 한 줄을 넣었다. 수치 절에 harvest.gd 의 지금 값(내구도 나무 100 · 돌 150 · 광물 200, 한 대 곡괭이 25 · 그 밖 5, 드롭 나무 4 · 돌 3 + 흙 2 · 광물 2, 갈라짐 25% · 희귀 3% · 희귀 1개 · 숙련도 덤 5레벨마다 +0.5%p)을 전부 임시로 적고, 미정 줄을 「지금은 위 수치(임시)로 돈다, 확정 값은 미정」으로 맞췄다. persona.gd 에 SKILLS 가 아직 없어(G-232 미합류) 숙련도 덤은 미정에 그대로 둔다. 문서만 바꿔 새 테스트는 없다 — changed_tests 그물(test_harvest · test_bag_hand_craft)을 돌려 29개 통과.",
+   "why": "",
+   "files": [
+    "spec/04_life/mining.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "mining.md 에 갈라짐 · 희귀 굴림 · 표 · 숙련도를 사람 원문 · 날짜와 함께 적는다. 미정 「내구도 · 드롭 수량」 줄을 지금과 맞춘다. 광산 방(mine-room.md)은 아직 없으니 「생기면 같은 표를 쓴다」 한 줄",
+     "evidence": "문서 단계라 테스트 대신 spec 을 코드와 대조했다. 갈라짐(22-26줄)·희귀(27-35줄)에 current.md 의 사람 원문 세 마디와 「너가 다듬어준 그대로 해도 좋은거 같아」가 2026-10-18 날짜와 함께 그대로 있다. 희귀 표(36-48줄)는 game/life/harvest/rare_drops.json 열 줄과 무게까지 하나하나 같다(rock 석탄50·철30·유황20 … tin·limestone 비움). 숙련도 덤은 규칙 35줄과 미정 68줄에 있다. 수치 절의 내구도 100/150/200 · GOOD_HIT 25 · POOR_HIT 5 · 드롭 4/3+흙2/2 · CRACK_STEP 0.25 · RareDrops.CHANCE 0.03 · RARE_COUNT 1 이 harvest.gd:31-53 · rare_drops.gd:10 과 맞고, 전부 임시로 적혔다. 미정 줄은 「지금은 위 수치(임시)로 돈다. 확정 값은 미정」으로 맞췄고 곡괭이 등급 줄은 따로 남겼다. 광산 방 한 줄은 50줄. 지워진 사람 결정 줄은 없다(바뀐 '-' 줄 셋은 원문을 덧붙인 고쳐 쓰기). 파일 69줄. test.log 는 전체 432파일 3169개 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      0s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      0s  res://tests/ui/test_scene_roots_survive_export.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           432\nTests            3169\nPassing Tests    3169\nFailing Tests       0\nRisky/Pending       0\nAsserts        134905\nTime           646s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "86e1602c"
  }
 ]
