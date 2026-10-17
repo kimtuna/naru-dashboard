@@ -3778,11 +3778,13 @@
   - 기준: 주민에게 **체력(HP)** — 최대 100(**임시**) · 저장 · 주민 창에 보인다. 아직 다치는 길은 없다(습격 · 다침이 생길 때). 튼튼함이 최대를 올린다 (테스트)
   - 기준: (앞 단계 QA) villager-persona.md 목록 들여쓰기가 깨졌다 — spec/07_automation/villager-persona.md:14 에 넣은 「맡은 일의 숙련도가 빠르게 하는 것도 같은 곳에서 곱한다」가 두 칸 들여쓰기라 「지금 게임:」 하위 항목(네 칸) 사이에 끼어 그 아래 「얼마나 느린가(0.5 배)는 임시」 줄이 엉뚱한 줄에 붙는다. 그 줄을 네 칸으로 들여 앞 줄(:13) 뒤에 잇거나 :15 다음으로 옮겨라
   - 기준: (앞 단계 QA) 재능 정하기를 글자로만 본다 — test_villager_skills test_a_newcomer_with_the_gift_gets_one_skill 은 from_dict 길만 실제로 돌리고 Villagers.settle 은 파일에 「Persona.roll_gift」 글자가 있는지만 본다. Villagers 를 하나 만들어 settle 을 여러 번 불러 gifted 특성이 있는 이는 Persona.SKILLS 안의 gift, 없는 이는 &"" 인지 단언하는 테스트로 바꿔라 (막는 것은 아니다 — 지금 코드는 맞다)
-- [ ] 4. spec 을 한 장으로
+- [x] 4. spec 을 한 장으로
   - 기준: villager-persona.md 「직업 레벨 · 스텟」 절을 위 「이 세션이 짠 한 장」으로 고쳐 쓴다 — 사람 원문 · 날짜를 붙이고, 스텟 다섯이 숙련도로 합쳐졌다는 것과 회피 · 낙하 감소를 없앤 까닭을 한 줄씩. 150줄 안
   - 기준: npc-villagers.md 직업 표 — 청소부 · 관리인 두 줄을 「관리인(청소 · 정리 · 수리)」 한 줄로 · 「비료는 아직 제작대에서」 줄이 지금(약제 작업대에도 있다)과 맞는지 고친다
   - 기준: (앞 단계 QA) reach 테스트의 걸음 표시가 틀린 배를 찍는다 — test_villager_reach.gd:469 _plant_from_outside_the_wall 의 stride 를 give_job(:479) 전에 재서 pace() 에 농사 숙련도가 안 들어가, stride_1_05 · _1_10 테스트의 실패 글에 「걸음 1.00 배」가 찍힌다(QA 가 깨 보니 1.05 판이 1.00 으로 보였다). stride 계산을 give_job 뒤로 옮기고, 판마다 기대 배(1.05 · 1.10 · 1.15)와 walk_speed()/WALK_SPEED 가 같은지 assert_almost_eq 로 단언하라 — 지금은 숙련도 → 걸음 배가 바뀌어도 그 테스트가 원하는 걸음으로 걷는지 아무도 안 본다
   - 기준: (앞 단계 QA) PathWalk.BACK_ON 에 「임시」 표시가 없다 — report temporary 에는 임시라고 했지만 game/core/path_walk.gd 의 const BACK_ON := 0.05 주석에 **임시** 가 없다. 주석 끝에 「**임시**.」를 붙여라
+- [ ] 5. (앞 단계 QA) 비료 레시피 둘이 하나처럼 읽힌다
+  - 기준: 비료 레시피 둘이 하나처럼 읽힌다 — spec/07_automation/npc-villagers.md 농부 줄의 「(apothecary_bench — 석회 2 · 똥 2)」는 한 레시피에 석회 2와 똥 2가 함께 드는 것처럼 읽힌다. 실제로는 apothecary_bench.json:6-7 의 레시피 둘(fertilizer = 석회 2 / fertilizer_from_manure = 똥 2)이다. 「석회 2 또는 똥 2」로 고쳐라
 
 ## [ ] G-233 주민의 상태가 움직인다 — 수면 · 스트레스 · 배고픔 · 목마름
 - 차선: 3d-start
