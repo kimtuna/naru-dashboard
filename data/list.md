@@ -3745,7 +3745,7 @@
 - [x] 1. 개발용 상자에 체력 모듈이 드는지 보는 테스트가 없다 (G-231 단계 2)
   - 기준: 개발용 상자에 체력 모듈이 드는지 보는 테스트가 없다 — dev_box 테스트(tests/core/debug/ 쪽 contents 검사)에 DevBox.contents() 에 health_module 이 있는지 단언 한 줄을 더하라
 
-## [ ] G-232 주민 한 장 — 스텟과 직업 레벨을 숙련도 하나로 합친다
+## [x] G-232 주민 한 장 — 스텟과 직업 레벨을 숙련도 하나로 합친다
 - 차선: 3d-start
 - 순서: G-231 뒤 (i18n · 주민 창을 같이 만진다)
 - spec: spec/07_automation/villager-persona.md, npc-villagers.md
