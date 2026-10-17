@@ -3733,7 +3733,7 @@
   - 기준: 새 파일 spec/02_player/equipment-modules.md 에 이 묶음의 규칙(칸 · 돌려받기 · 세트 · 총 칸 · 배율 · 시험용 모듈은 임시 · 만들지 않은 것)을 사람 원문과 함께 적는다. spec/README.md 목차 · tools-as-weapons.md 미정의 「총에 파츠를 붙이고 강화한다 — 나중에」를 이 파일로 잇는다(강화는 그대로 미정). 150줄 안
   - 기준: (앞 단계 QA) 서버 문이 시설 갈래를 안 본다 — core/net/acts.gd:398 의 MOD_HOLD 검사는 ArmorModules.has_slots 만 봐서, 참가자가 문으로 직접 바라면 장비 제작대 창에서도 총을(무기 제작대에서 방어구를) 자리에 올릴 수 있다. 막는 것은 UI(ModulePage.ArmorSpot._can_drop_data 의 for_bench)뿐이다. 칸 규칙(fits)은 그대로 지켜져 해는 작지만, Kit 에 지금 연 시설의 modules 갈래를 두고 MOD_HOLD 에서 ArmorModules.for_bench(item, what) 로 거절하게 하고, Acts 로 MOD_HOLD 를 장비 제작대 갈래에서 revolver 로 바라 false 인지 보는 테스트를 더하라
   - 기준: (앞 단계 QA) ArmorModules 이름이 낡았다 — 총의 칸도 이제 armor_modules.gd 의 ArmorModules 가 맡는데 이름 · fits(armor_item, …) 인자 이름이 방어구만 말한다. 이름을 EquipModules 등으로 바꾸거나 최소한 fits 의 armor_item 인자를 item 으로 고치고 클래스 머리 주석 첫 줄에 「방어구 · 총」을 적어라
-- [ ] 6. (앞 단계 QA) 창을 닫아도 bench_what 이 남는다
+- [x] 6. (앞 단계 QA) 창을 닫아도 bench_what 이 남는다
   - 기준: 창을 닫아도 bench_what 이 남는다 — ModulePage._tell_gate 가 kind == "" 이면 문에 알리지 않아, 시설 창을 닫은 뒤에도 Kit.bench_what 이 armor/weapon 그대로다. 그래서 창이 닫힌 채 문으로 MOD_HOLD 를 바라면 자리에 놓인다(spec 「안 열었으면 아무것도 안 놓인다」와 어긋남). 창이 닫힐 때(station_window 닫기 · GameRoot._put_bench_back 근처) Acts.MOD_BENCH [""] 를 보내거나 do_mod_return 에서 kit.bench_what = "" 로 비우고, 닫은 뒤 MOD_HOLD 가 false 인지 보는 테스트를 더하라
   - 기준: (앞 단계 QA) ui_shots.gd 가 Aiming._process 를 직접 부른다 — _shoulder 의 aiming._process(2.0) 은 밑줄 붙은 내부 함수를 찍기 코드가 부른다. Aiming 에 finish_now() 같은 공개 함수(조준 시간을 다 흘린다)를 두고 ui_shots.gd · test_scope.gd 가 그것을 부르게 하라
 
