@@ -1,55 +1,5 @@
 [
  {
-  "time": "2026-09-26 16:01:19",
-  "epoch": 1790406079,
-  "type": "stop",
-  "title": "루프 끝 — 이 차선(3d-lane2) 몫을 다 했다. 다른 차선 몫으로 남은 것: G-151 · G-154 · G-910 · G-911 · G-990",
-  "group": "G-152",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "밭 거르기를 받아들일 땅(지형 층 · Terrain3D · 토대/지붕) 목록으로 바꾸고, 가득 찬 물뿌리개로 민물을 겨눌 때 「밭이 아니다」를 안 띄우며, spec 규칙 세 줄 · 미정 한 줄을 더했다 — 바뀐 곳만: 24개 파일 208개 통과",
-   "approach": "is_field_ground 가 몸통 · 설치물 · 높이로 빼는 방식이라 윗면 0.3m 인 낮은 바위를 쳐도 밭이 깎였다. 섬 지형은 이미 Climbing.TERRAIN_LAYER 층에 서고(나무 · 자원 · 약초 몸통은 층 1 뿐) 광선은 Terrain3D 노드를 돌려주므로, Farmland.is_ground_body 를 두어 Terrain3D · 지형 층 몸통 · 바닥 건축물(토대 · 지붕)만 받아들이게 했다. 토대도 설치물이라 옛 규칙으로는 토대 위 밭을 부술 수 없었던 것을 같이 풀었고 테스트를 더했다. 농사 테스트의 가짜 땅은 지형 층에 두었다. 섬 위에서 부서지는지는 test_island_walk 가 통과로 확인했다. crops.interact 는 물뿌리개로 밭 아닌 곳을 겨눴을 때 민물이면 fill_held 만 하고 _no_field 를 부르지 않는다. spec 「규칙」에 물뿌리개 · 비료 · 까닭 한 줄 세 규칙을, 「미정」에 비료 효과 크기 · 물뿌리개 한 통 크기를 적고, 적힌 수가 코드와 같은지 보는 테스트를 더했다. 농사 폴더 85개 통과, 바뀐 곳만 24개 파일 208개 통과.",
-   "why": "",
-   "files": [
-    "game/life/farming/farmland.gd",
-    "game/life/farming/crops.gd",
-    "spec/04_life/farming.md",
-    "game/tests/life/farming/test_farmland.gd",
-    "game/tests/life/farming/test_crops.gd",
-    "game/tests/life/farming/test_field_free_grid.gd",
-    "game/tests/life/farming/test_water_and_fertilizer.gd",
-    "game/tests/life/farming/test_farming_temporary_notes.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "밭 거르기가 지형 확인이 아닌 제외 목록이다 — 낮은 StaticBody3D(높이 0.3m)를 밭 위에 세우고 HITS 번 쳐도 is_tilled 가 참인지 보는 테스트를 더하라 (또는 받아들일 것을 지형으로 좁혀라)",
-     "evidence": "farmland.gd 의 is_field_ground 가 이제 Farmland.is_ground_body(Terrain3D · 지형 층(Climbing.TERRAIN_LAYER) 몸통 · 바닥 BuildPiece)만 받아들인다. test_farmland.gd::test_hitting_a_low_body_on_a_field_leaves_the_field_alone 가 0.3m 몸통을 HITS 번 쳐 is_tilled 참 · hits_left 그대로 · 떨어진 것 없음을 본다. 옛 제외 목록 코드로 되돌려 돌렸더니 이 테스트가 실패했다(되돌려 놓음). 섬 위 실제 Terrain3D 에서 밭이 부서지는 것은 test_island_walk.gd(358~360줄)가 지킨다 — 전체 실행 통과."
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) spec 에 새 규칙이 안 적혔다 — 「규칙」에 물뿌리개(민물 우클릭 · 바닷물 안 됨) · 비료 두 단계 · 까닭 한 줄 세 줄, 「미정」에 비료 효과 크기(임시 2배) · 물뿌리개 한 통(임시 5번치)",
-     "evidence": "spec/04_life/farming.md 「규칙」에 세 줄, 「미정」에 한 줄이 더해졌다(지운 줄 없음, 45줄). test_farming_temporary_notes.gd 의 두 테스트가 절 본문에서 문장을 찾고, 미정 줄의 숫자를 CROPS.FERTILIZED_GROWTH · WateringCan.CAPACITY 로 만들어 코드와 맞는지 본다."
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 가득 찬 물뿌리개로 물을 겨누면 「밭이 아니다」가 뜬다 — 민물을 겨눴을 때는 _no_field 를 부르지 않고, test_filling_the_can_does_not_also_drink 끝에 last_said 가 FARM_NO_FIELD 가 아니다 단언",
-     "evidence": "crops.gd interact() 가 Drinking.aims_at_fresh_water 이면 fill_held() 만 돌려준다. test_water_and_fertilizer.gd::test_filling_the_can_does_not_also_drink 끝에 assert_ne(crops.last_said, Crops.SAY_NO_FIELD) 가 더해졌다. 옛 `fill_held() or _no_field(ground)` 로 되돌리자 이 테스트가 실패했다(되돌려 놓음)."
-    }
-   ],
-   "issues": [],
-   "good": [
-    "토대 · 지붕(BuildPiece.is_floor) 위 밭도 부서지게 했다 — 옛 규칙은 토대를 설치물로 빼서 토대 위 밭을 못 부쉈다. test_a_field_on_a_foundation_still_breaks 로 지킨다. 받아들이는 목록으로 바꾸면 따라오는 일이라 괜찮다"
-   ]
-  },
-  "test": "s_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      2s  res://tests/world/storage/test_throw_out.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/build/test_rooms.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/test_guard.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      0s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      0s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    424s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           183\nTests            1570\nPassing Tests    1570\nFailing Tests       0\nPending             0\nAsserts         73288\nTime           424s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-09-26 16:06:42",
   "epoch": 1790406402,
   "type": "start",
@@ -8549,5 +8499,63 @@
   },
   "test": "1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      0s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      0s  res://tests/ui/test_scene_roots_survive_export.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           432\nTests            3169\nPassing Tests    3169\nFailing Tests       0\nRisky/Pending       0\nAsserts        134905\nTime           646s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "86e1602c"
+ },
+ {
+  "time": "2026-10-18 06:08:55",
+  "epoch": 1792271335,
+  "type": "pass",
+  "title": "통과 — G-235 단계 1 (약점 — 맞히면 크리티컬)",
+  "group": "G-235",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "벌목 약점 — 도끼로 처음 친 나무에 약점 표시가 뜨고, 조준점이 그 둘레를 맞히면 크리티컬(피해 2배 · 딱 소리 · 많이 튀는 조각) 후 약점이 옮긴다. 서버가 맞힌 자리를 가리고, 주민 나무꾼은 5% 로 굴린다. 바뀐 곳에 걸리는 테스트 135파일 961개 통과(전체는 안 돌렸다)",
+   "approach": "약점은 서버(혼자 · 서버장)의 Harvest 가 나무마다 쥔다(_weak: 그루 자리에서 줄기 겉까지의 offset, 높이 0.6~2.0m · 방향 무작위). 좌클릭은 이제 조준 광선이 맞힌 자리를 같이 넘기고(swing → strike(hit) / 참가자는 ask(handle, at) → _strike RPC 에 at), 서버가 그 자리와 제 약점의 거리를 WEAK_RADIUS 와 견줘 크리티컬을 정한다 — 참가자가 약점을 몰라도 판정은 서버 것이다. 크리티컬이면 피해 ×2 · crit 신호(참가자에게 소리 · 조각) · 약점을 반대쪽 반 바퀴 안의 새 자리로 옮기고 weak_moved 로 참가자 표시도 옮긴다. 쓰러지면(서버 _break · 참가자 set_dent 0) 약점과 표시를 걷는다. 주민은 조준이 없어 strike_blind 로 crit_chance(5%)+crit_bonus 를 굴린다 — 나무만. 숙련도(G-232)는 이 줄기에 없어 logging.md 미정에 crit_bonus 자리로 한 줄 남겼다. 약점은 몇 대 사이의 과녁이라 저장하지 않는다(save.md 「목록에 없이 담지 않는다」에 까닭 — 맨손으로 치는 왕복 검사에는 약점이 안 떠 DONT_SAVE 에 넣으면 낡았다고 걸린다). 주민 크리티컬 굴림 탓에 대 수로 시간을 재는 test_villager_gather_close 가 흔들릴 수 있어 그 테스트만 crit_chance 0 으로 잰다. test_islands_split 의 _strike RPC 직접 호출에 새 인자를 넣었다. 그림 tree_weak_spot(harness/shot.sh)로 고리가 줄기 겉에 붙어 보이는 것을 확인했다.",
+   "why": "크리티컬 피해 2배 (Harvest.CRIT_MULT) — 사람 결정 「조금 더 많이」의 첫 값; 약점 둘레 반지름 0.35m (Harvest.WEAK_RADIUS) — 줄기 지름(0.6~0.7m)의 반쯤, 조준점으로 노리면 맞을 만한 크기; 약점 높이 0.6~2.0m (WEAK_LOW · WEAK_HIGH) — 부딪히는 줄기(땅 아래 0.5 ~ 위 2.5m) 안에서 서서 노리는 높이; 주민 크리티컬 확률 5% (Harvest.CRIT_CHANCE) — current.md 의 기본값; 크리티컬 소리 0.2초 · 520Hz (HitSound.CRIT) · 조각 28개 (ResourceView.CHIPS_CRIT) — 에셋이 오면 바뀐다",
+   "files": [
+    "game/life/harvest/harvest.gd",
+    "game/life/harvest/hit_sound.gd",
+    "game/world/terrain/resource_view.gd",
+    "game/core/net/net_world.gd",
+    "game/automation/villagers/harvest_work.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/life/harvest/test_tree_weak_spot.gd",
+    "game/tests/multiplayer/test_harvest_on_server.gd",
+    "game/tests/multiplayer/test_islands_split.gd",
+    "game/tests/automation/villagers/test_villager_gather_close.gd",
+    "spec/04_life/logging.md",
+    "spec/01_settings/save.md",
+    "spec/11_multiplayer/netcode.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "도끼를 든 플레이어가 나무를 처음 치면 줄기의 한 자리(높이 · 방향 무작위)에 약점 표시가 뜬다. 조준점이 약점 둘레(반지름 임시)를 맞히면 크리티컬 — 피해 2배(임시) · 다른 소리 · 튀는 조각. 크리티컬이 나면 약점이 다른 자리로 옮긴다",
+     "evidence": "test_tree_weak_spot.gd — first_axe_blow(도끼 첫 대에 약점 · 높이 WEAK_LOW~HIGH · 줄기 겉 · 표시 1개, 맨손 · 바위엔 안 뜸), hitting_the_weak_spot(피해 GOOD_HIT×CRIT_MULT, 둘레 안/밖 경계), critical_sounds_different(CRIT 소리 1 · CHIPS_CRIT 조각이 약점 자리에 · weak_moved 1번 · 새 자리가 WEAK_RADIUS 밖 · 표시 옮김 · 빗맞히면 그대로). 임시 값은 harvest.gd 주석과 logging.md 수치에 「임시」로 적혀 있다. CRIT_MULT 를 1 로 바꿔 돌리니 이 파일이 떨어졌다(되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "약점은 치는 사람 화면에만 보여도 된다. 피해는 서버가 정한다(맞힌 자리를 서버가 검사) (테스트: 약점을 맞힌 대와 빗맞힌 대의 깎인 내구도가 다르다)",
+     "evidence": "test_harvest_on_server.gd::test_the_server_judges_a_guest_hit_on_the_weak_spot — 참가자가 ask(handle, at)로 빗맞힌 자리를 보내면 75→50, 서버 약점 자리를 보내면 50→0. net_world._strike 가 at 을 버리고 NO_AIM 으로 치게 바꿔 보니 이 테스트가 떨어졌다(되돌림). game_root 의 ask = w.strike 가 (handle, at) 를 받는다"
+    },
+    {
+     "ok": true,
+     "criterion": "주민 나무꾼은 조준이 없다 — 크리티컬 확률(기본 5%, 임시)로 굴린다. 벌목 숙련도 덤(5레벨마다 +2%p, 임시)은 G-232 가 이 줄기에 있으면 붙이고, 없으면 spec 미정에 한 줄",
+     "evidence": "harvest_work._work_on → strike_blind. test_villagers_roll_the_critical_by_chance(기본 0.05 · 확률 1 이면 2배 · 바위엔 없음 · crit_bonus 가 더해짐), test_the_villager_chance_is_about_five_percent(2000대에 60~140). G-232 는 이 줄기에 없어 logging.md 미정에 한 줄 남겼다"
+    }
+   ],
+   "issues": [
+    "swing 의 조준 자리 넘김을 보는 테스트가 없다 — Harvest.swing() 이 Aim 광선의 hit[\"position\"] 을 strike/ask 에 넘기는 길은 테스트마다 strike(..., at) 를 직접 불러 건너뛴다. 플레이어를 나무 앞에 세워 약점 쪽을 보게 하고 swing() 한 대가 GOOD_HIT×CRIT_MULT 를 깎는지, 반대쪽을 보면 GOOD_HIT 인지 보는 테스트를 tests/life/harvest/test_tree_weak_spot.gd 에 더하라"
+   ],
+   "good": [
+    "core/debug/shots.gd 에 tree_weak_spot 그림 자리 — 확인용이라 해롭지 않다"
+   ]
+  },
+  "test": "ultiplayer/test_dock_crew.gd\nok      6s  res://tests/multiplayer/test_fish_on_server.gd\nok      5s  res://tests/multiplayer/test_islands_split.gd\nok      5s  res://tests/multiplayer/test_folk_on_server.gd\nok      3s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      5s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      3s  res://tests/core/test_far_cull.gd\nok      3s  res://tests/world/terrain/test_terrain_occluder.gd\nok      2s  res://tests/build/test_placeable.gd\nok      3s  res://tests/ui/hud/test_room_names.gd\nok      4s  res://tests/automation/villagers/test_villager_chest_detour.gd\nok      2s  res://tests/core/net/test_net_session.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/core/net/test_steam_server_gone.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      3s  res://tests/core/net/test_steam_quit.gd\nok      2s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      3s  res://tests/multiplayer/test_guild_on_server.gd\nok      3s  res://tests/world/day_night/test_day_in_world.gd\nok      4s  res://tests/ui/hud/test_room_window.gd\nok      1s  res://tests/automation/villagers/test_job_work_shared.gd\nok      2s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      3s  res://tests/world/terrain/test_foundation_hides_grass.gd\nok      2s  res://tests/automation/villagers/test_villager_door.gd\nok      1s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/net/test_acts_alone.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/core/net/test_steam_game.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      1s  res://tests/life/harvest/test_tree_weak_spot.gd\nok      2s  res://tests/multiplayer/test_islands_afar.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/multiplayer/test_traces_on_server.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      0s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    436s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           135\nTests             961\nPassing Tests     961\nFailing Tests       0\nRisky/Pending       0\nAsserts         37383\nTime           436s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "a02dff70"
  }
 ]
