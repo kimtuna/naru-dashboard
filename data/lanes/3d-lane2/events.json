@@ -1,37 +1,5 @@
 [
  {
-  "time": "2026-09-26 17:32:13",
-  "epoch": 1790411533,
-  "type": "pass",
-  "title": "통과 — G-154 단계 4 ((앞 단계 QA) 받침 한 벌 테스트의 무너짐 단언이 헛돈다)",
-  "group": "G-154",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "받침 한 벌 테스트가 무너진 C 를 실제로 가른다 — 붙은 판에 토대 E 를 두고 stairs_floor_under 를 무너진 C 를 담은 무리로 직접 부른다",
-   "approach": "무너짐 단언이 헛돈 까닭은 둘이었다 — 계단이 닿는 판에 아무것도 없어 옛 규칙이어도 개수가 안 생겼고, stairs_host 는 트리에 선 C 를 보니 옛 반복문이어도 같은 답이었다. 계단이 닿는 판에 한 층 위 토대 E 를 두어(올림 눈금 0.25 가 한 층 3.2 에 안 맞아 높이는 테스트에서 옮겨 둔다) 서 있는 바닥만 보는 규칙이면 계단이 E 로 옮겨 가 개수를 얻게 했다. C 를 뺀 무리로는 stairs_floor_under 가 거짓, 무너진 C 를 담은 무리로는 참임을 직접 단언한다. _link_counts 의 색인을 서 있는 것만으로 바꿔 보니 이 테스트가 떨어졌다(되돌렸다). 바뀐 곳만: test_building_stairs_flip.gd 10개 통과",
-   "why": "",
-   "files": [
-    "game/tests/build/test_building_stairs_flip.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "받침 한 벌 테스트의 무너짐 단언이 헛돈다 — test_building_stairs_flip.gd::test_stairs_host_and_link_count_read_one_floor_rule 은 C 를 _link_counts 의 무너짐 표({c: true})에만 넣는다. C 노드는 트리에 그대로 서 있다. 그래서 그 뒤의 assert_eq(s.stairs_host(), own, \"…두 판정이 어긋나지 않는다\") 는 옛 「서 있는 바닥만」 반복문으로 되돌려도 그대로 통과한다. 무너짐을 흉내 내려면 C 를 트리에서 떼거나(remove_child · 무너짐 처리 중 상태), 무너진 C 를 담은 pieces 로 stairs_floor_under 를 직접 불러 true 인지 단언하라. 그 단언이 있어야 이름대로 「한 규칙」을 지킨다. 기준 3 자체는 코드상 하나로 모였으므로 막는 것은 아니다",
-     "evidence": "test_building_stairs_flip.gd 201~219행 — 계단이 닿는 판에 위층 높이 토대 E 를 두어 두 규칙이 갈리는 판을 만들었다. C 를 뺀 무리 [s, e] 로 stairs_floor_under 가 false, 무너진 C 를 담은 무리 [c, s, e] 로 true 임을 직접 단언하고(기준이 허락한 두 번째 길), _link_counts(…, {c: true}) 에서 E 는 개수가 있고 s 는 없음을 단언한다. 일부러 깨 봤다: buildings.gd::_link_counts 의 색인을 _link_index(_pieces_of(all)) → _link_index(pieces)(서 있는 것만)로 바꾸자 이 테스트가 떨어졌다(8 통과 · 2 실패로 보고). 되돌렸고 buildings.gd 는 diff 가 없다. 전체 테스트 1612/1612 통과 · guard 통과(test.log)."
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "land.gd\nok      1s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      2s  res://tests/build/test_rooms.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/debug/test_ui_shots.gd\nok      0s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           189\nTests            1612\nPassing Tests    1612\nFailing Tests       0\nPending             0\nAsserts         74330\nTime           285s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "824ec14"
- },
- {
   "time": "2026-09-26 17:42:36",
   "epoch": 1790412156,
   "type": "pass",
@@ -8623,5 +8591,69 @@
    "good": []
   },
   "test": "aim_water_surface.gd\nok      3s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      4s  res://tests/world/day_night/test_day_in_world.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      3s  res://tests/world/terrain/test_foundation_hides_grass.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/recipes/test_recipe_tags.gd\nok      1s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      2s  res://tests/craft/stations/test_barn.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_cook_table.gd\nok      2s  res://tests/craft/stations/test_loom.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/automation/villagers/test_villager_skills.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok    435s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           128\nTests            1133\nPassing Tests    1133\nFailing Tests       0\nRisky/Pending       0\nAsserts         35599\nTime           435s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-18 08:10:14",
+  "epoch": 1792278614,
+  "type": "pass",
+  "title": "통과 — G-237 단계 1 (물고기 종류와 움직임)",
+  "group": "G-237",
+  "step": "1",
+  "attempt": "2",
+  "report": {
+   "problem": "물고기 여섯 종(민물 셋 · 바다 셋, 흔함/드묾/희귀)과 종마다 다른 미니게임 움직임 · 물 종류 가르기 · @fish 태그 — QA 가 짚은 멈칫 · 돌아서기 테스트를 진짜로 지키게 고쳤다. 바뀐 곳 그물(128 파일 · 1134 테스트) 통과",
+   "approach": "QA 지적: 멈칫 테스트가 moved == 0.0 을 세어 pause 를 0 으로 놓아도 통과했다. FishingGauge 에 is_paused() · is_darting() 을 두고, 테스트는 is_paused() 인 걸음만 센다 — 희귀 종의 멈칫 걸음이 흔한 종보다 많다 · 멈칫 몫 0 인 고등어는 0 걸음이다를 단언한다. 돌아서기도 단언했는데, 처음엔 fish_dir 바뀐 횟수를 다 세서 turn 을 FISH_TURN 으로 고정해도 통과했다(빠른 종이 줄 끝에 자주 튕기고 무작위 차이도 있다). 그래서 줄 끝 튕김은 빼고 세며 희귀 종이 흔한 종의 1.3배를 넘어야 한다고 잡았다(지금 값: 민물 331→582 · 바다 380→672, turn 고정 시 355/367 · 362/367). 직접 바꿔 봤다: start 에서 pause = 0.0 으로 두면 멈칫 단언 셋이 떨어지고, turn = FISH_TURN 으로 두면 돌아서기 단언이 떨어진다 — 둘 다 되돌렸다. 바뀐 곳 그물(changed_tests.py, 128 파일 · 1134 테스트) 전부 통과.",
+   "why": "fish.json 의 종 여섯 · 희귀도 · 움직임 값(speed · turn · dart · pause) · 나올 몫(60/30/10) — 종류 목록은 사람이 나중에 알려 준다(fishing.md). 흔한 종은 옛 한 종(0.3 · 0.5~1.6초)과 비슷하게, 희귀할수록 거칠게만 잡았다; 테스트의 돌아서기 여유 1.3배 — 무작위 차이를 넘는 만큼으로 잡았다",
+   "files": [
+    "game/life/fishing/fish.json",
+    "game/life/fishing/fish_kinds.gd",
+    "game/life/fishing/fishing.gd",
+    "game/life/fishing/fishing_gauge.gd",
+    "game/craft/recipes/tags.json",
+    "game/craft/recipes/cook_table.json",
+    "game/craft/recipes/smoker.json",
+    "game/player/inventory_hotbar/weights.json",
+    "game/settings/save/old_items.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/world/terrain/test_island.gd",
+    "game/tests/life/fishing/test_fish_kinds.gd",
+    "game/tests/life/fishing/test_bait_zone.gd",
+    "game/tests/life/fishing/test_minigame.gd",
+    "spec/04_life/fishing.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "물고기 종류 (임시 — 사람이 목록을 주면 바꾼다, fishing.md 「종류 목록은 사람이 나중에 알려 준다」): 민물 셋(붕어 · 잉어 · 메기) · 바다 셋(고등어 · 농어 · 도미) — 종마다 흔함 / 드묾 / 희귀 한 단계. 표는 한 곳(예: life/fishing/fish.json)",
+     "evidence": "game/life/fishing/fish.json 한 곳에 여섯 종(water · rarity · 움직임)과 _temporary 표시. test_three_fresh_and_three_sea_kinds_one_per_rarity 가 물마다 셋 · 희귀도 하나씩 · 모두 여섯을 단언, test_every_kind_is_an_item 이 무게 · ko 번역을 확인, test_rare_kinds_are_picked_less_often 이 몫 차례를 확인. ko.po · en.po 둘 다 ITEM_ 여섯 + TAG_fish 있음. spec/04_life/fishing.md 에 임시로 적힘"
+    },
+    {
+     "ok": true,
+     "criterion": "종마다 미니게임 움직임이 다르다 — 빠르기 · 방향 바꾸는 간격 · 확 튀기(잠깐 빨라짐) · 멈칫(잠깐 섬). 흔한 것은 지금과 비슷하고 희귀할수록 거칠다(값 임시) (테스트: 희귀 종의 한 판 움직임이 흔한 종보다 크다)",
+     "evidence": "fishing_gauge.gd 가 start(motion) 으로 speed · turn · dart · pause 를 인스턴스 값으로 받고 swim 이 튀기 · 멈칫을 돈다. test_rare_fish_moves_more_in_a_round_than_common_fish 가 민물 · 바다 각각 이동 합 · 최고 빠르기 · 튄 걸음 · is_paused() 걸음 · 제때 돌아선 횟수(줄 끝 튕김 제외, 1.3배)를 단언. 직접 깨 봤다: start 에서 pause = 0.0 → 멈칫 단언 셋(민물 · 바다 · 도미) 떨어짐, turn = FISH_TURN → 돌아서기 단언 둘 떨어짐(367 vs 461.5/470.6). 둘 다 되돌림(cmp 확인). test_kind_without_pause_never_pauses 가 멈칫 몫 0 인 고등어 0 걸음을 단언, test_common_fish_moves_like_before 가 흔한 종이 옛 0.3 과 비슷함을 확인"
+    },
+    {
+     "ok": true,
+     "criterion": "던진 자리가 민물이면 민물 종 · 바다면 바다 종만 문다 (테스트)",
+     "evidence": "fishing.gd water_of 가 fresh_water_level(섬: island_shape.fresh_water_level_at, 민물 없으면 -INF)로 가르고 spread_at 이 FishKinds.pick(water) 로 그 물의 종만 생성. test_fresh_water_bait_brings_only_fresh_water_fish · test_sea_bait_brings_only_sea_fish 가 30 영역씩 모든 물고기의 물을 단언, test_hooking_starts_the_gauge_with_the_biting_fish 가 문 물고기 움직임으로 게이지가 도는지 확인"
+    },
+    {
+     "ok": true,
+     "criterion": "옛 아이템 fish 를 쓰던 레시피는 모든 물고기를 받는 태그(tags.json, 예: @fish)로 바꾼다 · 옛 저장본의 fish 는 깨지지 않는다(남기거나 한 종으로 옮긴다 — old_items.gd)",
+     "evidence": "cook_table grilled_fish · smoker smoked_fish 가 @fish, tags.json fish 갈래에 여섯 종 + 옛 fish. test_fish_recipes_take_every_kind_through_the_tag 가 모든 레시피에 이름 fish 가 없고 @fish 사용처 2 임을 단언, test_grilled_fish_from_a_sea_bream 이 도미로 실제 구워짐을 확인, test_old_save_fish_stays 가 OldItems 가 fish 를 버리지도 바꾸지도 않음을 확인(old_items.gd 에 남기는 까닭 주석)"
+    }
+   ],
+   "issues": [
+    "쓰지 않는 is_darting() — game/life/fishing/fishing_gauge.gd 의 is_darting() 을 부르는 곳이 코드 · 테스트 어디에도 없다. 테스트의 darted 세기를 g.is_darting() 으로 바꿔 쓰거나(그러면 dart_boost=1.0 이어도 튀기를 셀 수 있다) 함수를 지워라"
+   ],
+   "good": []
+  },
+  "test": " 3s  res://tests/player/inventory_hotbar/test_bag_twenty_island.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      3s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      1s  res://tests/automation/villagers/test_villager_skills.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      3s  res://tests/world/terrain/test_foundation_hides_grass.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/build/test_room_overlay.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_recipe_tags.gd\nok      1s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      1s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      3s  res://tests/craft/stations/test_cook_table.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/fishing/test_fish_kinds.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok    436s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           128\nTests            1134\nPassing Tests    1134\nFailing Tests       0\nRisky/Pending       0\nAsserts         35601\nTime           436s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "b1e60ded"
  }
 ]
