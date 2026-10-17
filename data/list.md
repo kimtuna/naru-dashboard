@@ -3720,7 +3720,7 @@
   - 기준: spec/02_player/equipment.md 「세트 효과 — 부위를 모으면」 줄을 「세트 칸에 같은 세트 모듈을 n 부위」로 고치고 새 파일로 잇는다
   - 기준: (앞 단계 QA) 자리 따로 테스트가 늘 참이다 — test_armor_modules.gd::test_each_person_has_their_own_spot 은 Kit 객체 둘을 새로 만들어 a.bench 에 넣고 b.bench 가 비었는지만 본다(서로 다른 객체라 늘 참). 실제 보장은 test_modules_on_server.gd 가 하니 이 테스트는 지우거나, Acts 하나에 두 사람(who=1 · who=2 kit)을 두고 do_mod_hold(2, …) 뒤 kit_of(1).bench 가 그대로인지 보도록 바꿔라
   - 기준: (앞 단계 QA) 시설이 부서져 닫힐 때의 테스트가 없다 — test_module_page.gd 는 stations.close() 만 부른다. 기준은 통과(Stations.hit_station 도 같은 close()→open_changed 길)지만, 자리에 방어구를 둔 채 그 장비 제작대를 부숴(stations.hit_station 을 HITS 번) 창이 닫히고 방어구가 모듈을 안은 채 가방으로 돌아오는지 보는 테스트를 test_module_page.gd 에 더하라. 죽을 때(창이 열린 채 맞아 죽음) 자리의 방어구가 어디로 가는지도 같이 보면 좋다
-- [ ] 4. 총에 칸 — 스코프 1 · 패시브 모듈 1 · 액티브 모듈 1(자리만)
+- [x] 4. 총에 칸 — 스코프 1 · 패시브 모듈 1 · 액티브 모듈 1(자리만)
   - 기준: 모든 총(tools-as-weapons.md 표의 열여섯)에 **스코프 칸 1 · 패시브 모듈 칸 1 · 액티브 모듈 칸 1** — 2단계와 같은 끼우기 · 빼기 · 돌려받기 · 저장 · 멀티 · 상자 길을 쓴다(따로 짜지 않는다). 총에 든 남은 탄과 같이 따라간다 (테스트)
   - 기준: **액티브 칸은 넣는 칸만 하나 있다** — 「액티브모듈은 넣는 칸만 하나 만들어놔」(사람 결정 2026-10-17). 끼울 액티브 모듈은 아직 없다. 패시브 · 스코프는 그 칸에 안 들어간다 (테스트)
   - 기준: 시험용 패시브 모듈 하나 — 「반동 완화」(반동 −20%, **임시** — 사람이 목록을 줄 때까지 시험용). 개발용 상자에 있다
@@ -3731,6 +3731,8 @@
   - 기준: **높은 배율이 무조건 낫지 않다** — 저배율은 퍼짐을 더 줄이고 조준에 드는 시간이 짧다, 고배율은 멀리 보이지만 퍼짐 보정이 작고 조준에 드는 시간이 길다. 2배 스코프 퍼짐 −10%(사람 예시), 3배 · 6배 값과 조준 시간은 **임시**. 흔들림(숨 고르기)은 그대로 — 좁은 시야라 크게 보이는 것이 맞다
   - 기준: 테스트 — 2 · 3 · 6배를 낀 채 조준하면 시야각이 위 식대로다 · 스코프를 빼면 아이언사이트로 돌아온다 · 서버가 받는 퍼짐 상한(net_vitals.gd:446 근처)이 가장 큰 값을 막지 않는다
   - 기준: 새 파일 spec/02_player/equipment-modules.md 에 이 묶음의 규칙(칸 · 돌려받기 · 세트 · 총 칸 · 배율 · 시험용 모듈은 임시 · 만들지 않은 것)을 사람 원문과 함께 적는다. spec/README.md 목차 · tools-as-weapons.md 미정의 「총에 파츠를 붙이고 강화한다 — 나중에」를 이 파일로 잇는다(강화는 그대로 미정). 150줄 안
+  - 기준: (앞 단계 QA) 서버 문이 시설 갈래를 안 본다 — core/net/acts.gd:398 의 MOD_HOLD 검사는 ArmorModules.has_slots 만 봐서, 참가자가 문으로 직접 바라면 장비 제작대 창에서도 총을(무기 제작대에서 방어구를) 자리에 올릴 수 있다. 막는 것은 UI(ModulePage.ArmorSpot._can_drop_data 의 for_bench)뿐이다. 칸 규칙(fits)은 그대로 지켜져 해는 작지만, Kit 에 지금 연 시설의 modules 갈래를 두고 MOD_HOLD 에서 ArmorModules.for_bench(item, what) 로 거절하게 하고, Acts 로 MOD_HOLD 를 장비 제작대 갈래에서 revolver 로 바라 false 인지 보는 테스트를 더하라
+  - 기준: (앞 단계 QA) ArmorModules 이름이 낡았다 — 총의 칸도 이제 armor_modules.gd 의 ArmorModules 가 맡는데 이름 · fits(armor_item, …) 인자 이름이 방어구만 말한다. 이름을 EquipModules 등으로 바꾸거나 최소한 fits 의 armor_item 인자를 item 으로 고치고 클래스 머리 주석 첫 줄에 「방어구 · 총」을 적어라
 
 ## [ ] G-914 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-start
