@@ -1,46 +1,5 @@
 [
  {
-  "time": "2026-10-12 10:10:09",
-  "epoch": 1791767409,
-  "type": "pass",
-  "title": "통과 — G-950 단계 1 (창 위 여백 TOP_MARGIN 을 창 셋이 각자 (G-994 단계 1))",
-  "group": "G-950",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "창 위 여백을 UiTheme.WINDOW_TOP 하나로 모으고 상자 · 주민 · 방 · 제작대 창이 그것만 쓴다 — 바뀐 곳만(55개 파일) 507개 통과",
-   "approach": "상자 · 주민 · 방 창이 각자 static var TOP_MARGIN = UiTheme.window(&\"chest_top\") 를 두었고 제작대 창은 테마를 직접 읽었다. UiTheme 에 레이아웃 상수 WINDOW_TOP 하나를 두고 네 창의 TOP_MARGIN 을 지워 그 값을 쓰게 했다. test_window_layout 에 새 테스트: 네 창의 $Center offset_top 이 WINDOW_TOP 과 같은지 재고, 창 스크립트에 TOP_MARGIN · chest_top 이 다시 적히지 않는지 본다. test_chest_window_scroll 은 지워진 ChestWindow.TOP_MARGIN 대신 UiTheme.WINDOW_TOP 을 읽는다(단언 값은 그대로). changed_tests 그물(55개 파일) 507개 통과 — 전체는 안 돌렸다.",
-   "why": "",
-   "files": [
-    "game/ui/theme/ui_theme.gd",
-    "game/ui/hud/chest_window.gd",
-    "game/ui/hud/villager_window.gd",
-    "game/ui/hud/room_window.gd",
-    "game/ui/hud/station_window.gd",
-    "game/tests/ui/layout/test_window_layout.gd",
-    "game/tests/ui/hud/test_chest_window_scroll.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "창 위 여백 TOP_MARGIN 을 창 셋이 각자 — G-994 그 다음 단계(표 9번). chest_window · villager_window 등 ui 창이 같은 여백을 따로 적는다. ui 쪽 한 곳(레이아웃 상수)으로 모으고 test_window_layout 류에서 셋이 같은 값을 쓰는지 단언해라",
-     "evidence": "UiTheme.WINDOW_TOP(ui_theme.gd:57, Window chest_top 에서 읽음, 「임시」 표시 있음) 하나로 모였고 chest · villager · room · station 창 넷이 모두 그것만 쓴다 — game/ 아래 TOP_MARGIN · chest_top 을 읽는 창 스크립트가 더 없음을 grep 으로 확인. test_window_layout.gd::test_windows_share_one_top_margin 이 네 창의 실제 $Center.offset_top == WINDOW_TOP 을 재고, 창 스크립트에 TOP_MARGIN · chest_top 이 다시 적히지 않는지 본다. 일부러 깨 봄: villager_window 의 offset_top 을 WINDOW_TOP + 8 로 바꾸자 그 테스트가 떨어졌다(23 중 1 실패) — 되돌린 뒤 diff 원래대로. test.log(바뀐 곳만 55개 파일) 507/507 통과 · guard 통과"
-    }
-   ],
-   "issues": [
-    "숫자로 베낀 여백은 못 잡는다 — test_windows_share_one_top_margin 은 offset_top 값이 같은지와 TOP_MARGIN · chest_top 글자만 본다. 창 스크립트가 center.offset_top = 44.0 처럼 숫자를 직접 적어도 지금 값이 같으면 통과한다. test_window_layout.gd 의 그 테스트에서 네 창 스크립트의 offset_top 대입 줄이 UiTheme.WINDOW_TOP 을 쓰는지(예: 'offset_top =' 가 든 줄마다 'WINDOW_TOP' 포함) 단언을 더하라",
-    "알림 기록 위 여백 44 가 따로 있다 — game/ui/hud/alert_log.tscn:9 의 offset_top = 44.0 이 Window chest_top(44) 과 같은 값을 손으로 적었다. 같은 안내 줄 자리를 비우는 것이면 UiTheme.WINDOW_TOP 으로 이어 주거나, 다른 까닭이면 그 까닭을 주석으로 적어라"
-   ],
-   "good": []
-  },
-  "test": "--- 바뀐 곳만: 55 개 ---\ntest.sh: 파일 55 개를 6 개씩 한꺼번에 돌린다\nok     16s  res://tests/craft/stations/test_stations.gd\nok     17s  res://tests/automation/villagers/test_villager_many_fields.gd\nok     17s  res://tests/automation/villagers/test_villager_jobs.gd\nok     23s  res://tests/automation/villagers/test_villager_can_churn.gd\nok      9s  res://tests/automation/villagers/test_villager_home.gd\nok     10s  res://tests/core/debug/test_ui_shots.gd\nok     11s  res://tests/world/storage/test_chest_place.gd\nok      5s  res://tests/ui/hud/test_target_bars.gd\nok      5s  res://tests/ui/layout/test_window_layout.gd\nok     10s  res://tests/core/debug/test_dev_box_open.gd\nok     34s  res://tests/automation/villagers/test_villager_watering.gd\nok     34s  res://tests/automation/villagers/test_villager_chests_full.gd\nok      9s  res://tests/world/storage/test_chest_break.gd\nok      3s  res://tests/ui/hud/test_bag.gd\nok      2s  res://tests/ui/hud/test_map_window.gd\nok      2s  res://tests/core/test_game_root_tidy.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      5s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      3s  res://tests/ui/hud/test_map_pin.gd\nok      3s  res://tests/ui/hud/test_room_names.gd\nok      3s  res://tests/ui/hud/test_room_window.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      3s  res://tests/ui/hud/test_station_output.gd\nok      4s  res://tests/ui/hud/test_station_window.gd\nok      2s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      0s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            55\nTests             507\nPassing Tests     507\nFailing Tests       0\nRisky/Pending       0\nAsserts         12141\nTime           49s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "7f1b2594"
- },
- {
   "time": "2026-10-12 10:31:16",
   "epoch": 1791768676,
   "type": "pass",
@@ -10448,5 +10407,87 @@
    "decision": null
   },
   "test": ".gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      0s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n================ 떨어진 파일: res://tests/core/tools/test_no_triple_blank_lines.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/core/tools/test_no_triple_blank_lines.gd\n* test_no_script_under_game_has_three_blank_lines_in_a_row\n    [Failed]:  ARRAY([\"tests/multiplayer/test_modules_on_server.gd:108\"]) != ARRAY([]).\n    [\"tests/multiplayer/test_modules_on_serv...r.gd:108\"] != []  1 of 1 indexes do not match.  빈 줄이 셋 이상 이어진다 — 함수 사이는 둘, 파일 끝은 줄바꿈 하나:\n    tests/multiplayer/test_modules_on_server.gd:108\n      at line 46\n* test_the_check_catches_three_blank_lines\n* test_the_check_passes_two_blank_lines\n2/3 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/core/tools/test_no_triple_blank_lines.gd\n- test_no_script_under_game_has_three_blank_lines_in_a_row\n    [Failed]:  ARRAY([\"tests/multiplayer/test_modules_on_server.gd:108\"]) != ARRAY([]).\n    [\"tests/multiplayer/test_modules_on_serv...r.gd:108\"] != []  1 of 1 indexes do not match.  빈 줄이 셋 이상 이어진다 — 함수 사이는 둘, 파일 끝은 줄바꿈 하나:\n    tests/multiplayer/test_modules_on_server.gd:108\n          at line 46\n\nTotals\n------\nScripts               1\nTests                 3\nPassing Tests         2\nFailing Tests         1\nAsserts             7/8\nTime              0.495s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           425\nTests            3107\nPassing Tests    3106\nFailing Tests       1\nRisky/Pending       0\nAsserts        132771\nTime           630s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/core/tools/test_no_triple_blank_lines.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-17 22:51:17",
+  "epoch": 1792245077,
+  "type": "pass",
+  "title": "통과 — G-231 단계 5 (스코프 — 배율로 줌 · 배율마다 쓰임이 다르다)",
+  "group": "G-231",
+  "step": "5",
+  "attempt": "2",
+  "report": {
+   "problem": "스코프 2·3·6배 — 배율대로 시야각을 좁히고 조준선을 보인다 · 저배율이 퍼짐 보정이 크고 조준이 빠르다 · 서버 문이 연 시설 갈래(MOD_BENCH)로 MOD_HOLD 를 거절 · fits 인자 item 으로 · spec equipment-modules.md 에 배율 절. 바뀐 곳만: 333 파일 2556 테스트 통과",
+   "approach": "앞 시도는 기능을 다 만들었으나 전체 검사에서 test_modules_on_server.gd:108 에 빈 줄이 넷 이어져(test_no_triple_blank_lines) 떨어졌다 — 둘로 줄였다. 스코프는 ArmorModules.MODULES 의 scope_2x/3x/6x(zoom · spread · aim_time), Aiming.begin 이 scoped_fov 로 tan 식대로 좁히고 aim_time 동안 고르게 좁히며 IronSight 가 스코프 조준선을 그린다. QA 흠: Kit.bench_what 를 두고 ModulePage 가 시설을 열 때 MOD_BENCH 로 알리며 do_mod_hold 가 ArmorModules.for_bench 로 거절한다. 바뀐 곳 그물(changed_tests.py 332 + 빈 줄 검사) 333 파일 2556 테스트 모두 통과.",
+   "why": "3배 스코프 퍼짐 −6% · 6배 −3% (2배 −10% 만 사람 예시) — 사람이 쏴 보고 정한다; 조준 시간 2배 0.15초 · 3배 0.3초 · 6배 0.5초 — 임시",
+   "files": [
+    "game/combat/tools_as_weapons/aiming.gd",
+    "game/combat/tools_as_weapons/attack.gd",
+    "game/combat/tools_as_weapons/iron_sight.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "game/core/net/acts.gd",
+    "game/i18n/en.po",
+    "game/i18n/ko.po",
+    "game/player/equipment/armor_modules.gd",
+    "game/player/inventory_hotbar/weights.json",
+    "game/player/movement_controls/player.gd",
+    "game/tests/combat/tools_as_weapons/test_gun_module_recoil.gd",
+    "game/tests/core/debug/test_ui_shots.gd",
+    "game/tests/multiplayer/test_modules_on_server.gd",
+    "game/tests/player/equipment/test_armor_modules.gd",
+    "game/tests/player/equipment/test_gun_modules.gd",
+    "game/ui/hud/module_page.gd",
+    "spec/02_player/equipment-modules.md",
+    "spec/08_combat/tools-as-weapons.md",
+    "spec/README.md",
+    "game/tests/combat/tools_as_weapons/test_scope.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "스코프 셋 — 2배 · 3배 · 6배. 스코프를 낀 총으로 조준하면 1인칭에서 가늠쇠 대신 스코프 조준선이 보이고, 시야각은 tan(새 FOV/2) = tan(기본 FOV/2) / 배율 로 좁힌다(aiming.gd:60 의 ZOOM 자리). 안 끼면 지금 아이언사이트 그대로",
+     "evidence": "ArmorModules.MODULES 에 scope_2x/3x/6x(KIND_SCOPE) · scoped_fov 가 tan 식 · Aiming.begin 이 zoom>0 이면 scoped_fov, 아니면 기존 camera_fov/ZOOM · IronSight 가 Reticle 을 보이고 가늠쇠를 숨긴다. test_scope.gd test_aiming_with_each_scope_narrows_the_view_by_its_power 가 세 배율마다 tan 식 · shown_scope · Reticle 보임 · Front 숨김을 본다. QA 가 scoped_fov 를 base_fov/zoom 으로 바꿔 돌리니 세 배율 모두 떨어졌다(되돌림). test_the_three_scopes_go_in_the_scope_slot_and_the_dev_box 가 스코프 칸에만 들고 개발용 상자에 있는지 본다. 번역 키 ITEM_scope_2x/3x/6x 가 ko · en 둘 다 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "높은 배율이 무조건 낫지 않다 — 저배율은 퍼짐을 더 줄이고 조준에 드는 시간이 짧다, 고배율은 멀리 보이지만 퍼짐 보정이 작고 조준에 드는 시간이 길다. 2배 스코프 퍼짐 −10%(사람 예시), 3배 · 6배 값과 조준 시간은 임시. 흔들림(숨 고르기)은 그대로",
+     "evidence": "spread −0.10/−0.06/−0.03 · aim_time 0.15/0.3/0.5 — armor_modules.gd 주석과 spec 표에 임시 표시(2배 퍼짐만 사람 예시). Attack.spread_degrees 가 AIM_SPREAD×scope_spread_factor 를 progress 만큼 붙인다. test_a_lower_power_aims_faster_and_tightens_the_spread_more 가 2배 = 아이언 조준 ×0.9 · 2배<3배<6배<맨 총 퍼짐 · 0.15초에 2배는 다 들고 6배<3배<1 을 본다. test_the_view_narrows_over_the_aim_time 이 시야가 시간에 따라 좁아지는지 본다. 흔들림 코드는 건드리지 않았고 조준선이 IronSight 노드에 붙어 흔들림을 탄다"
+    },
+    {
+     "ok": true,
+     "criterion": "테스트 — 2 · 3 · 6배를 낀 채 조준하면 시야각이 위 식대로다 · 스코프를 빼면 아이언사이트로 돌아온다 · 서버가 받는 퍼짐 상한(net_vitals.gd:446 근처)이 가장 큰 값을 막지 않는다",
+     "evidence": "test_scope.gd 세 테스트: 식(위) · test_taking_the_scope_off_brings_back_the_iron_sight(문 MOD_HOLD/PUT/TAKE 로 6배를 끼웠다 빼고, 뺀 뒤 shown_scope '' · Front 보임 · Reticle 숨김 · 시야 base/ZOOM · 스코프는 가방으로) · test_the_server_spread_limit_does_not_cut_any_scope(net_vitals.gd:451 이 쓰는 Attack.spread_limit 을 맨 총 · 세 배율 × 걷기/서기 × 조준 진행 0~2초 모두 넘지 않고, 가장 큰 값=상한). 전체 테스트(test.log) 3107 개 모두 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "새 파일 spec/02_player/equipment-modules.md 에 이 묶음의 규칙(칸 · 돌려받기 · 세트 · 총 칸 · 배율 · 시험용 모듈은 임시 · 만들지 않은 것)을 사람 원문과 함께 적는다. spec/README.md 목차 · tools-as-weapons.md 미정의 「총에 파츠를 붙이고 강화한다 — 나중에」를 이 파일로 잇는다(강화는 그대로 미정). 150줄 안",
+     "evidence": "equipment-modules.md 85줄 — 사람 원문(「2배 3배 6배 이런식으로」 · 「(2m 스코프) 2m 줌 탄퍼짐 -10」 · 「모듈을 뺄땐 돌려 받는거지」 등) · 두 제작대 · 칸 · 세트 · 총 칸 · 스코프 배율 절(임시 표) · 시험용 모듈 임시(미정) · 만들지 않는 것. README 02_player 줄에 목차 · tools-as-weapons.md 미정 줄이 이 파일로 잇고 「강화는 그대로 미정」. 사람 원문 줄은 지워지지 않고 늘었다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 서버 문이 시설 갈래를 안 본다 — … Kit 에 지금 연 시설의 modules 갈래를 두고 MOD_HOLD 에서 ArmorModules.for_bench(item, what) 로 거절하게 하고, Acts 로 MOD_HOLD 를 장비 제작대 갈래에서 revolver 로 바라 false 인지 보는 테스트를 더하라",
+     "evidence": "Acts.Kit.bench_what · MOD_BENCH(모르는 갈래 거절) · do_mod_hold 가 for_bench 로 거절 · ModulePage.set_what/set_kit 이 문에 알린다(station_window.gd:682 가 set_what 을 부른다). test_gun_modules.gd test_the_gate_refuses_what_the_open_bench_does_not_take 가 안 연 상태 · armor 갈래의 revolver · weapon 갈래의 iron_armor 거절과 weapon 의 revolver 허용을 본다. QA 가 do_mod_hold 를 옛 has_slots 로 되돌려 돌리니 이 테스트가 떨어졌다(되돌림). 다인 경로는 test_modules_on_server.gd 가 MOD_BENCH 를 서버로 보낸 뒤 MOD_HOLD 가 지나는지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) ArmorModules 이름이 낡았다 — … 최소한 fits 의 armor_item 인자를 item 으로 고치고 클래스 머리 주석 첫 줄에 「방어구 · 총」을 적어라",
+     "evidence": "armor_modules.gd 머리 첫 줄 「방어구 · 총의 모듈 칸 — …」 · 둘째 줄에 이름 내력 · fits(item, slot, module). spec 미정에도 이름 내력을 적었다"
+    }
+   ],
+   "issues": [
+    "창을 닫아도 bench_what 이 남는다 — ModulePage._tell_gate 가 kind == \"\" 이면 문에 알리지 않아, 시설 창을 닫은 뒤에도 Kit.bench_what 이 armor/weapon 그대로다. 그래서 창이 닫힌 채 문으로 MOD_HOLD 를 바라면 자리에 놓인다(spec 「안 열었으면 아무것도 안 놓인다」와 어긋남). 창이 닫힐 때(station_window 닫기 · GameRoot._put_bench_back 근처) Acts.MOD_BENCH [\"\"] 를 보내거나 do_mod_return 에서 kit.bench_what = \"\" 로 비우고, 닫은 뒤 MOD_HOLD 가 false 인지 보는 테스트를 더하라",
+    "ui_shots.gd 가 Aiming._process 를 직접 부른다 — _shoulder 의 aiming._process(2.0) 은 밑줄 붙은 내부 함수를 찍기 코드가 부른다. Aiming 에 finish_now() 같은 공개 함수(조준 시간을 다 흘린다)를 두고 ui_shots.gd · test_scope.gd 가 그것을 부르게 하라"
+   ],
+   "good": [
+    "ui_shots 에 shoulder_scope 찍기 자리(3배 스코프 조준) — 기준에 없지만 화면을 확인하는 찍기라 해가 없다"
+   ]
+  },
+  "test": "es://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      0s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           425\nTests            3107\nPassing Tests    3107\nFailing Tests       0\nRisky/Pending       0\nAsserts        132771\nTime           630s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "43128715"
  }
 ]
