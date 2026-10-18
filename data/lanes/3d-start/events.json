@@ -1,76 +1,5 @@
 [
  {
-  "time": "2026-10-13 09:08:21",
-  "epoch": 1791850101,
-  "type": "pass",
-  "title": "통과 — G-206 단계 3 (가구 · 저장)",
-  "group": "G-206",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "제작대에 나무 통 · 의자 · 테이블 · 사다리를 더했다(침대 · 나무컵은 원래 줄, 상자는 맨손 그대로). 가구를 놓는 곳(Furnitures)을 새로 두고, 나무 통은 상자와 같은 보관함으로 지었다. 사다리는 붙어 W 로 오르고 S 로 내려간다. equipment.md 의 「방어」 줄을 장비칸 묶음 뒤로 옮겼다",
-   "approach": "【만든다】 일곱 가운데 침대 · 나무컵은 제작대 레시피가 이미 있었고, 상자는 맨손 레시피(목재 8)였다. 그래서 나무 통 · 의자 · 테이블 · 사다리 넷만 제작대에 더했다. 재료는 판자이고, 사다리만 기둥재 2 + 판자 2 다. 기둥재는 쓰임이 없던 제재소 산출물이다. 원자재에서 2단이다. 상자는 건드리지 않았다. 테스트가 「상자를 내는 레시피는 맨손 하나뿐, 재료는 목재 8 그대로」인지 본다. 【놓는다】 침대와 같은 길로 지었다. Furniture 는 의자 · 테이블 · 사다리의 표(몸 크기 · 빛깔)를 가진 하나의 클래스이고, 놓는 곳 Furnitures 는 Placer 를 잇는다. 미리보기 · 칸 겹침 막기 · 세 대에 부서짐 · 섬마다 저장(IslandState.STANDING 의 furniture, 남은 대수까지)이 모두 이 길을 탄다. 나무 통은 「저장」이라 상자와 같은 보관함으로 지었다. StorageChest 에 종류(item)를 두었고, Chests 가 상자 · 나무 통 둘을 놓는다. 저장본에 종류를 적고, 종류가 없는 옛 저장본은 상자로 되돌린다. 칸 수 10 은 나무 상자와 같다(임시). 【사다리】 Player._physics_process 에 사다리 판의 일을 넣었다. 판에서 0.6m 안에 있고 발이 바닥과 꼭대기+0.4m 사이에 있으면 W 로 오르고 S 로 내려간다. 손을 떼면 중력 없이 그 자리에 멈춰 있고, 점프하면 뛰어내린다. 판은 얇은 몸이라 밀면 막혀 붙어 있게 된다. climbing.md 의 「스파이크가 있어야 오른다 · 기력」은 절벽 벽면(지형 층)의 규칙이다. 사다리는 놓은 것이라 지형 층에 들지 않는다. 그래서 스파이크도 기력도 들지 않고, 절벽 등반(Climbing.has_hold)도 켜지지 않는다. 테스트는 진짜 캐릭터에 진짜 W 를 눌러 1.5m 넘게 오르는지, 기력이 그대로인지, 손을 떼면 멈추는지, S 로 내려가는지, 사다리가 없으면 뜨지 않는지 본다. 【QA】 equipment.md 의 「- **방어** …」 두 줄을 「장비칸은 저장본에 담긴다」 하위 줄 다음으로 옮겼다. 사람 결정 줄은 그대로다. 【곁가지】 놓이는 것 · 놓는 곳을 전부 훑는 검사 넷이 새 클래스를 표에 넣으라고 떨어졌다. test_collapse_takes_everything_placed(무너짐 표에 나무 통 · 가구 셋), test_placers_comment(PLACERS 주석 목록 — placeable.gd 주석도 고쳤다), test_placeable_previews(가구 놓는 곳 세우기 · 찬 칸 빨강), test_villager_nav_everything_placed(주민 길 굽기에 Furniture)다. 넷 다 「하나 늘면 여기 걸린다」고 만든 검사라 표를 넓혔다. 【테스트】 changed_tests 그물은 245개 파일로 한 번 돌렸다: 2087 가운데 2086 통과. 떨어진 1개 파일(test_villager_nav_everything_placed — 위의 표 누락)을 고친 뒤 그 파일만 다시 돌려 6/6 통과했다. 245개 전체는 다시 돌리지 않았다. 그 전에 test_furniture · test_collapse · test_placers_comment · test_placeable_previews 넷을 따로 돌렸다(26 가운데 25 통과, 남은 1개 test_placers_comment 는 고친 뒤 3/3).",
-   "why": "가구 재료 — 나무 통 판자 4 · 의자 판자 2 · 테이블 판자 4 · 사다리 기둥재 2 + 판자 2 (workbench.json): 제작대에서 목재 가공품으로 만든다는 것만 사람 결정; 무게 — 나무 통 6 · 의자 3 · 테이블 6 · 사다리 4 kg (weights.json); 나무 통 10칸 · 몸 0.6×0.8×0.6m — 상자 종류마다의 칸 수는 미정 (storage.md 미정); 가구 몸 크기 · 빛깔 — 의자 0.5×0.9×0.5 · 테이블 0.95×0.75×0.95 · 사다리 0.8×3.2×0.1 m (furniture.gd KINDS): 한 칸에 드는 크기로 눈대중; 사다리 오르는 속력 2.5m/s (절벽 붙어 오르기와 같게) · 붙는 거리 0.6m · 꼭대기 너머 0.4m (furniture.gd); 사다리 방향은 돌리지 않는다 — 늘 같은 쪽(판이 X 축을 따라)으로 선다",
-   "files": [
-    "game/build/furniture/furniture.gd",
-    "game/build/furniture/furnitures.gd",
-    "game/world/storage/storage_chest.gd",
-    "game/world/storage/chests.gd",
-    "game/player/movement_controls/player.gd",
-    "game/world/terrain/test_island.gd",
-    "game/world/frontier_islands/island_state.gd",
-    "game/settings/save/world_data.gd",
-    "game/build/placeable.gd",
-    "game/craft/recipes/workbench.json",
-    "game/player/inventory_hotbar/weights.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/build/test_furniture.gd",
-    "game/tests/build/test_collapse_takes_everything_placed.gd",
-    "game/tests/build/test_placers_comment.gd",
-    "game/tests/build/test_placeable_previews.gd",
-    "game/tests/automation/villagers/test_villager_nav_everything_placed.gd",
-    "spec/05_craft/facilities.md",
-    "spec/02_player/equipment.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "나무 통 · 상자 · 침대 · 의자 · 테이블 · 나무컵 · 사다리가 만들어진다 (테스트)",
-     "evidence": "test_furniture.gd test_six_are_made_at_the_workbench 가 진짜 제작대(Stations.start_craft → craft_tick → collect)로 barrel · bed · chair · table · wooden_cup · ladder 를 하나씩 만들어 가방에 들어오는지 본다. 상자는 맨손 레시피(test_the_chest_stays_a_bare_hand_recipe)이고 빈손에서 만드는 길은 test_from_empty_hands 가 덮는다. 이름(ko/en) · 무게 · 놓을 수 있음 · 부수면 돌아옴 · 섬 저장(나무 통 종류 · 안의 것 · 맞은 대수까지)도 각각 테스트가 있다. 전체 300파일 2373개 통과(test.log 「전체」)"
-    },
-    {
-     "ok": true,
-     "criterion": "**맨손 상자는 그대로 둔다** (맨손 레시피는 셋 — 사람 결정 2026-09-21). 판자 상자를 더하려면 그 결정을 먼저 뒤집어야 하니 **건드리지 않는다**",
-     "evidence": "workbench.json 에 chest 줄이 없고 hand 레시피는 diff 에 없다. test_the_chest_stays_a_bare_hand_recipe 가 chest 레시피 station=hand · inputs={wood:8} · 상자를 내는 레시피가 맨손 하나뿐임을 단언한다"
-    },
-    {
-     "ok": true,
-     "criterion": "사다리로 오를 수 있다 (04_life/climbing.md 와 어긋나지 않는다) (테스트)",
-     "evidence": "test_a_ladder_is_climbed_without_spikes_or_stamina 가 진짜 Player 앞에 사다리를 세우고 진짜 MOVE_UP 입력으로 60프레임 뒤 y>1.5 인지, 절벽 등반(has_hold)이 켜지지 않고 기력이 그대로인지, 손을 떼면 멈추는지, S 로 내려가는지 본다. test_without_a_ladder_w_does_not_lift 가 막아야 할 경우(사다리 없음)를 넣었다. test_climbing_spec_rules_are_for_cliffs_only 가 사다리가 지형 층이 아님을 본다. 절벽 벽면은 한 단 약 28m(cliff_step 55 × 0.52)라 3.2m 사다리로 스파이크 규칙을 우회하지 못한다 — climbing.md 「절벽 벽면은 스파이크 · 갈고리총이 있어야」와 어긋나지 않는다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) spec equipment.md 들여쓰기가 깨졌다 — 「- **방어** …」 두 줄을 「장비칸은 저장본에 담긴다 …」 하위 줄 다음으로 옮겨라",
-     "evidence": "git diff spec/02_player/equipment.md — 「방어」 두 줄이 「장비칸은 저장본에 담긴다 …」 하위 줄 뒤, 「가방칸에 가방을 끼우면」 앞으로 옮겨졌다. 사람 결정 줄(2026-09-26 등)은 그대로다. 파일 39줄"
-    }
-   ],
-   "issues": [
-    "사다리를 돌려 놓을 수 없다 — game/build/furniture/furniture.gd 의 사다리 판은 늘 X 축을 따라 선다(report temporary 에 적힘). Z 축으로 뻗은 벽 · 위층 바닥 가장자리에 대려면 판 방향이 맞지 않는다. 건축물 돌리기(game/build/buildings.gd 의 rotate)와 같은 길로 놓을 때 방향을 고르게 하고, Furniture.ladder_of 의 local 판정이 돌린 판에서도 맞는지 보는 테스트(돌린 사다리 앞에서 W → y>1.5)를 더하라. spec/05_craft/facilities.md 가구 줄에 「방향은 돌리지 않는다(임시)」가 없으니 적어 두거나 고쳐라"
-   ],
-   "good": [
-    "나무 통을 상자와 같은 보관함(StorageChest.item = barrel)으로 지어 저장본에 종류(item)를 더했다 — 「저장」 갈래라 기준 범위 안으로 본다",
-    "PLACERS 를 훑는 검사 넷(test_collapse_takes_everything_placed · test_placers_comment · test_placeable_previews · test_villager_nav_everything_placed)의 표에 새 클래스를 넣었다 — 새 놓는 곳이 생기면 넣으라는 검사라 정당하다"
-   ]
-  },
-  "test": ".gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      0s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok    545s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           300\nTests            2373\nPassing Tests    2373\nFailing Tests       0\nRisky/Pending       0\nAsserts        122168\nTime           545s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "91b6b4b7"
- },
- {
   "time": "2026-10-13 09:32:56",
   "epoch": 1791851576,
   "type": "pass",
@@ -10101,5 +10030,38 @@
   },
   "test": "--- 바뀐 곳만: 17 개 ---\ntest.sh: 파일 17 개를 6 개씩 한꺼번에 돌린다\nok      3s  res://tests/life/fishing/test_rod_grades.gd\nok      4s  res://tests/player/inventory_hotbar/test_bag_twenty_island.gd\nok      4s  res://tests/build/test_bed.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      5s  res://tests/craft/stations/test_salt_pan.gd\nok      2s  res://tests/life/fishing/test_bait_grades.gd\nok      3s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      9s  res://tests/build/test_furniture.gd\nok     11s  res://tests/player/inventory_hotbar/test_weight.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            17\nTests             148\nPassing Tests     148\nFailing Tests       0\nRisky/Pending       0\nAsserts          3896\nTime           11s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "04b7b1d6"
+ },
+ {
+  "time": "2026-10-19 02:13:12",
+  "epoch": 1792343592,
+  "type": "pass",
+  "title": "통과 — G-916 단계 2 (날렵한 주민이 문짝에 2.5초 처박힌다 (G-239 단계 6))",
+  "group": "G-916",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "날렵한 주민이 문에서 비킨 뒤 열린 문짝에 2.53초 처박히던 것을 고쳤다 — 비키기를 마치면 지금 자리에서 길을 다시 묻는다. 바뀐 곳만 돌린 30개 파일 171개 테스트 통과",
+   "approach": "_settle 이 특성을 받게 하고 NIMBLE 을 안 · 밖 · 먼저 난 차례로 네 판 돌려 보니, 안쪽이 먼저 나고 바깥이 날렵한 판만 2.53초를 비볐다. 걸음을 찍어 보니 날렵한 주민은 문에 일찍 닿아 문 바깥 점(20.9, 10)을 이미 지난 뒤에 비켜섰고(20.8, 8.2), 상대가 지나가자 다음 점인 문 안 점(19.1, 10)으로 비스듬히 가다 열린 문짝(20.34, 9.73)에 처박혀, 끼임 시계가 길을 다시 물을 때까지(2초 + α) 비볐다. PathWalk._give_way 에서 비키기를 마치면(상대가 지나갔다 · YIELD_MAX) 지금 자리에서 길을 다시 물어(끼여 다시 물을 때처럼 첫 점부터) 잇게 했다 — 걸음 빠르기와 상관없다. 끼인 것이 아니라 replans 는 세지 않는다(트인 땅 마주침의 replans==0 단언 그대로). 날렵한 쪽이 비키는 두 판을 테스트로 남겼고, 고치기 전에는 바깥 판이 2.53초로 떨어졌다.",
+   "why": "",
+   "files": [
+    "game/core/path_walk.gd",
+    "game/tests/automation/villagers/test_villager_g218_give_way.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "날렵한 주민이 문짝에 2.5초 처박힌다 — 구현 세션이 찾았다: 날렵함(NIMBLE ×1.15) 주민이 G-218 양보 장면에서 문을 엇갈리면 열린 문짝에 2.53초 비빈다. give_way 테스트는 특성을 비워 피했을 뿐 게임 쪽 흠은 그대로다. test_villager_g218_give_way.gd 에 v.traits = [Persona.NIMBLE] 를 박은 판을 하나 더 두고(비빈 시간 < 0.6초 단언) 문 엇갈림/양보 코드를 걸음 빠르기에 상관없이 비키게 고쳐라",
+     "evidence": "_settle 이 traits 를 받아 v.traits = [Persona.NIMBLE] 를 박고 걸음이 WALK_SPEED*pace*stride_of(traits) 인지 단언한다. test_a_nimble_villager_outside_gives_way_at_the_door_without_rubbing_the_door_leaf · test_a_nimble_villager_inside_… 가 _cross_the_door 로 둘 다 ARRIVED 와 pressed 합 < PRESS_LIMIT(0.6) 을 단언한다. 고친 곳(PathWalk._give_way 의 `if _yielded:` 갈래 — 비키기를 마치면 지금 자리에서 _ask 로 길을 다시 묻는다)을 `if false and _yielded:` 로 꺼 TESTS=…g218_give_way.gd 로 돌리니 날렵한 바깥 판이 '0.00초 · 2.53초 expected < 0.6' 으로 떨어졌고, 되돌린 뒤 diff 로 원본과 같음을 확인했다. 고친 코드는 걸음 빠르기를 보지 않는다. test.log 바뀐 곳만 47개 파일 319개 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 47 개 ---\ntest.sh: 파일 47 개를 6 개씩 한꺼번에 돌린다\nok     54s  res://tests/automation/villagers/test_villager_g217_every_job.gd\nok     59s  res://tests/automation/villagers/test_villager_stairs.gd\nok     28s  res://tests/automation/villagers/test_villager_chest_saved_room.gd\nok     39s  res://tests/automation/villagers/test_villager_no_straight.gd\nok     94s  res://tests/automation/villagers/test_villager_chest_wall.gd\nok     97s  res://tests/automation/villagers/test_villager_g215_human_save.gd\nok    101s  res://tests/automation/villagers/test_villager_gathering.gd\nok     18s  res://tests/automation/villagers/test_villager_room_doors.gd\nok     26s  res://tests/automation/villagers/test_villager_reach.gd\nok     16s  res://tests/automation/villagers/test_villager_as_played.gd\nok     15s  res://tests/automation/villagers/test_villager_jobs_detour.gd\nok     25s  res://tests/automation/villagers/test_villager_g218_give_way.gd\nok      8s  res://tests/automation/villagers/test_villager_smooth_motion.gd\nok     10s  res://tests/player/inventory_hotbar/test_weight.gd\nok      9s  res://tests/automation/villagers/test_villager_torch_detour.gd\nok     14s  res://tests/automation/villagers/test_villager_body_slope.gd\nok      8s  res://tests/build/test_furniture.gd\nok      3s  res://tests/build/test_bed.gd\nok      8s  res://tests/core/test_unseen_work_goes_on.gd\nok      6s  res://tests/core/test_path_walk_replan.gd\nok      5s  res://tests/craft/stations/test_salt_pan.gd\nok      4s  res://tests/core/test_far_cull.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      3s  res://tests/core/test_game_root_tidy.gd\nok      3s  res://tests/automation/villagers/test_villager_chest_detour.gd\nok      2s  res://tests/life/fishing/test_rod_grades.gd\nok      4s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      1s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      3s  res://tests/player/inventory_hotbar/test_bag_twenty_island.gd\nok      2s  res://tests/core/test_window_fit.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/fishing/test_bait_grades.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      1s  res://tests/core/test_grid.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok    140s  res://tests/automation/villagers/test_villager_g217_real_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            47\nTests             319\nPassing Tests     319\nFailing Tests       0\nRisky/Pending       0\nAsserts          8454\nTime           140s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "94663d59"
  }
 ]

@@ -4095,7 +4095,7 @@
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
 - [x] 1. weights.json 의 새 captive_* 줄이 차례에서 벗어났다 (G-239 단계 1)
   - 기준: weights.json 의 새 captive_* 줄이 차례에서 벗어났다 — captive_angora_rabbit … captive_porcupine 열 줄이 captive_bear 앞에 몰려 있어 이름 차례(captive_badger · captive_bear · captive_boar …)가 깨졌다. 다른 줄처럼 이름 차례로 끼워 넣어라 (막는 것은 아니다)
-- [ ] 2. 날렵한 주민이 문짝에 2.5초 처박힌다 (G-239 단계 6)
+- [x] 2. 날렵한 주민이 문짝에 2.5초 처박힌다 (G-239 단계 6)
   - 기준: 날렵한 주민이 문짝에 2.5초 처박힌다 — 구현 세션이 찾았다: 날렵함(NIMBLE ×1.15) 주민이 G-218 양보 장면에서 문을 엇갈리면 열린 문짝에 2.53초 비빈다. give_way 테스트는 특성을 비워 피했을 뿐 게임 쪽 흠은 그대로다. test_villager_g218_give_way.gd 에 v.traits = [Persona.NIMBLE] 를 박은 판을 하나 더 두고(비빈 시간 < 0.6초 단언) 문 엇갈림/양보 코드를 걸음 빠르기에 상관없이 비키게 고쳐라
 - [ ] 3. 벌집 치기에 휘두르기 간격이 없다 (G-241 단계 1)
   - 기준: 벌집 치기에 휘두르기 간격이 없다 — WildHives.swing 은 좌클릭마다 곧바로 한 대라 연타로 순식간에 턴다(평타 · 캐기는 도구 휘두르기 빠르기를 따른다, tests/combat/tools_as_weapons/test_fire_rate.gd). 같은 간격을 걸지 사람이 볼 일이 아니면 Attack 의 휘두르기 간격을 재사용해 막고 테스트로 확인해라
