@@ -3972,7 +3972,7 @@
 - [x] 5. spec
   - 기준: hunting.md 에 열한 종 · 크기 · 먹이표 · 도축 산출표 · 사람 원문 날짜 · 「곰은 기를 수 없다(사람 2026-10-18, G-238 의 곰 키우기를 바꿨다)」 · ranching-breeding.md 의 곰 줄을 맞춘다. 150줄 안
   - 기준: (앞 단계 QA) 들판으로 옮긴 곰이 restore 두 번에 겹친다 — game/life/ranching/ranch.gd restore 는 「두 번 불러도 겹치지 않게」 Ranch 자식만 치우는데, _to_field 는 곰을 scope()(섬) 아래에 세우므로 같은 저장본으로 restore 를 두 번 부르면 들판 곰이 둘 선다. 지금 게임 길에서 두 번 부르는지는 확인 못 했다(옛 저장본에서 한 번뿐이라 막는 것은 아니다). _to_field 로 세운 곰에 표(meta 나 그룹)를 달아 restore 머리에서 함께 치우고, test_ranch_place.gd 에 restore 를 두 번 불러도 곰이 하나인지 보는 단언을 더하라
-- [ ] 6. (앞 단계 QA) 앙고라토끼 표기가 둘로 갈렸다
+- [x] 6. (앞 단계 QA) 앙고라토끼 표기가 둘로 갈렸다
   - 기준: 앙고라토끼 표기가 둘로 갈렸다 — game/i18n/ko.po 691행 ITEM_captive_angora_rabbit 는 칸 줄바꿈을 피하려 「잡은 앙고라 토끼」로 띄었지만 2001행 짐승 이름은 「앙고라토끼」 그대로다. 한쪽으로 맞춰라(이름도 「앙고라 토끼」로 띄우거나, 칸 맞춤 쪽을 다른 방법으로). test_item_slot_fit 이 계속 통과하는지 확인
   - 기준: (앞 단계 QA) give_way 테스트가 부하에 흔들린다 — test.log 의 앞선 전체 실행에서 game/tests/automation/villagers/test_villager_g218_give_way.gd 가 6개 동시 실행 중 2.53초 > 0.6초로 한 번 떨어졌다(마지막 전체 실행은 3400/3400 통과). 시간 문턱을 벽시계가 아니라 물리 프레임 수로 재거나 여유를 두어 동시 실행에서도 흔들리지 않게 하라
 
@@ -4077,6 +4077,8 @@
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
 - [ ] 1. weights.json 의 새 captive_* 줄이 차례에서 벗어났다 (G-239 단계 1)
   - 기준: weights.json 의 새 captive_* 줄이 차례에서 벗어났다 — captive_angora_rabbit … captive_porcupine 열 줄이 captive_bear 앞에 몰려 있어 이름 차례(captive_badger · captive_bear · captive_boar …)가 깨졌다. 다른 줄처럼 이름 차례로 끼워 넣어라 (막는 것은 아니다)
+- [ ] 2. 날렵한 주민이 문짝에 2.5초 처박힌다 (G-239 단계 6)
+  - 기준: 날렵한 주민이 문짝에 2.5초 처박힌다 — 구현 세션이 찾았다: 날렵함(NIMBLE ×1.15) 주민이 G-218 양보 장면에서 문을 엇갈리면 열린 문짝에 2.53초 비빈다. give_way 테스트는 특성을 비워 피했을 뿐 게임 쪽 흠은 그대로다. test_villager_g218_give_way.gd 에 v.traits = [Persona.NIMBLE] 를 박은 판을 하나 더 두고(비빈 시간 < 0.6초 단언) 문 엇갈림/양보 코드를 걸음 빠르기에 상관없이 비키게 고쳐라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
