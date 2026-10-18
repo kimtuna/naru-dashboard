@@ -3786,7 +3786,7 @@
 - [x] 5. (앞 단계 QA) 비료 레시피 둘이 하나처럼 읽힌다
   - 기준: 비료 레시피 둘이 하나처럼 읽힌다 — spec/07_automation/npc-villagers.md 농부 줄의 「(apothecary_bench — 석회 2 · 똥 2)」는 한 레시피에 석회 2와 똥 2가 함께 드는 것처럼 읽힌다. 실제로는 apothecary_bench.json:6-7 의 레시피 둘(fertilizer = 석회 2 / fertilizer_from_manure = 똥 2)이다. 「석회 2 또는 똥 2」로 고쳐라
 
-## [ ] G-233 주민의 상태가 움직인다 — 수면 · 스트레스 · 배고픔 · 목마름
+## [x] G-233 주민의 상태가 움직인다 — 수면 · 스트레스 · 배고픔 · 목마름
 - 차선: 3d-start
 - 순서: G-232 뒤
 - spec: spec/07_automation/villager-persona.md 「수면 · 스트레스」
