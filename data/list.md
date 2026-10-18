@@ -4104,7 +4104,7 @@
 - [x] 1. 주민 테스트 주석이 HIT_EVERY 를 사람 빠르기라 부른다 (G-916 단계 4)
   - 기준: 주민 테스트 주석이 HIT_EVERY 를 사람 빠르기라 부른다 — tests/automation/villagers/test_villager_gather_close.gd:158 · 168 · 181 이 사람 쪽 셈에 HarvestWork.HIT_EVERY 를 쓴다(값은 같아 막지 않음). 사람 몫(person 계산 · 158줄 주석)은 Attack.SWING_EVERY 로 바꾸고 주민 몫(181줄)만 HarvestWork.HIT_EVERY 로 두어라
 
-## [ ] G-245 동물이 나오는 기믹 — 바위 속 굴 · 나무 위 담비 · 올빼미 나무 · 디스폰
+## [x] G-245 동물이 나오는 기믹 — 바위 속 굴 · 나무 위 담비 · 올빼미 나무 · 디스폰
 - 차선: 3d-lane2 (3d-start 몫이었는데 시작 전이라 가져왔다) · 시작 2026-10-19 02:17
 - 순서: G-241 뒤
 - spec: spec/04_life/hunting.md, spec/04_life/mining.md
