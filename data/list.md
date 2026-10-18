@@ -3809,7 +3809,7 @@
   - 기준: villager-persona.md · npc-villagers.md 미정의 「주민이 언제 먹나」를 위 규칙으로 옮겨 적는다(「이 세션이 정함 · 임시」 표시)
   - 기준: (앞 단계 QA) 두 농부 물주기 테스트가 흔들린다 — 앞 시도에서 test_villager_watering.gd 의 test_two_farmers_in_one_room_never_hold_the_same_field_and_nothing_doubles_or_vanishes 가 394·398·400 줄에서 떨어졌다가 이번엔 통과했다. 구현 세션은 「시간 흔들림」으로 보고 넘겼다. 거두기가 없는 판이라 씨앗 굴림(G-236.1)과 무관하다 — 기다리는 끝이 빠듯한지, 두 농부가 같은 밭을 두고 엇갈려 시간을 버리는지 찾아 원인을 고치고, 같은 시드로 여러 번 돌려 안 떨어지는 것을 확인하라
   - 기준: (앞 단계 QA) 경고 줄의 이름이 올릴 때의 언어로 굳는다 — villager.gd _watch_stress 가 tr(name_key) 를 인자로 넘겨, 언어를 바꾸면 틀만 바뀌고 이름은 앞 언어로 남는다(주석에 적혀 있다). 다른 알림이 이름을 키로 넘겨 다시 옮기는 길이 있으면 그 길(Notice 인자 번역)을 따르게 하라
-- [ ] 4. (앞 단계 QA) 알림 글 인자를 모두 번역 키로 본다
+- [x] 4. (앞 단계 QA) 알림 글 인자를 모두 번역 키로 본다
   - 기준: 알림 글 인자를 모두 번역 키로 본다 — Notice.text_of 가 String 인자를 전부 TranslationServer.translate 에 넣는다. 사람이 지은 방 이름이 우연히 번역 키(예: 「VILLAGERS_HP」)와 같으면 엉뚱한 글로 바뀐다. 막는 것은 아니다. 고치려면 키를 StringName 으로 넘길 때만 옮기거나(_watch_stress 에서 StringName(name_key)), 「VILLAGER_NAME_」처럼 알려진 앞머리일 때만 옮기게 하고, test_villager_stress_warn.gd 에 키 모양의 방 이름이 그대로 남는지 보는 단언을 더하라
 
 ## [x] G-234 채광 — 바위가 갈라지고 희귀 광물이 나온다
