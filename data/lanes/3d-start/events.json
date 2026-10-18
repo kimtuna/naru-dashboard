@@ -1,52 +1,5 @@
 [
  {
-  "time": "2026-10-13 04:33:48",
-  "epoch": 1791833628,
-  "type": "fail",
-  "title": "차선 합치기 실패 — 3d-lane2(dff125dc) → 3d-start",
-  "group": "G-203",
-  "step": "5",
-  "attempt": "1",
-  "report": {
-   "problem": "사슴 몸통이 창자 대신 내장(offal)을 내고 작업대에서 내장 1 → 창자 1 · 기름 등 이름 테스트를 ko/en 번역으로 확인 · 훈제 소시지 무게 0.3 → 0.4 (바뀐 곳만 66개 파일 652개 테스트 통과)",
-   "approach": "사슴 BODY 산출에 gut 이 바로 들어 있어 plan G-204.3(도축 → 내장, 작업대에서 내장 → 창자)과 어긋났다. 산출을 offal 1 로 바꾸고, workbench.json 에 내장 1 → 창자 1 줄을 더하고, 무게 · ko/en 이름(내장 · Offal)을 적었다. 창자 테스트는 도축 산출 → 작업대에서 실제로 만들어 받는 데까지 돌린다. 창자가 한 단 늘어 훈제 소시지는 원자재에서 3단이 됐다(한도 안). 이 수치를 단언하던 테스트도 3으로 고쳤다. 이름 테스트는 키마다 ko · en 로케일로 tr() 해서 번역이 있는지, 두 말의 이름이 다른지 본다. 훈제 소시지 무게는 훈제 고기 · 생선과 같은 0.4 로 맞췄다. 확인은 changed_tests.py 로 고른 66개 파일 652개 테스트만 돌렸고 전부 통과했다. 전체는 돌리지 않았다.",
-   "why": "내장(offal) 무게 0.5 — 지어낸 값이다; 작업대 내장 1 → 창자 1 · 5초 — 개수와 시간이 미정이다; 훈제 소시지 무게 0.4 — 훈제 고기 · 생선에 맞췄다. 여전히 임시다",
-   "files": [
-    "game/life/hunting/animal_kinds.gd",
-    "game/craft/recipes/workbench.json",
-    "game/player/inventory_hotbar/weights.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/craft/stations/test_smoker.gd",
-    "spec/05_craft/facilities.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "창자를 사슴에서 바로 낸다 — G-204 와 어긋난다: plan/list.md G-204 기준은 「도축 → 내장, 작업대에서 내장 → 창자」인데 이번에 game/life/hunting/animal_kinds.gd 사슴 BODY 에 gut 1 을 바로 넣었다. G-204 단계에서 사슴 몸통 산출을 gut → 내장(offal 등)으로 바꾸고 작업대 레시피 내장 → 창자를 더한 뒤 test_smoker.gd test_butchering_a_deer_gives_gut 를 「도축 → 내장 → 작업대 → 창자」로 고쳐라",
-     "evidence": "animal_kinds.gd 사슴 BODY 가 offal 1 을 내고 gut 은 없다. workbench.json 에 offal 1 → gut 1 줄(임시 표시 _temporary 에 추가). test_butchering_a_deer_gives_offal_and_the_workbench_turns_it_into_gut 가 몸통에 offal>0 · gut 없음 · 창자 레시피가 하나뿐이고 workbench · 재료에 offal, 그리고 도축량만큼 가방에 넣고 작업대 CraftingStation 에서 start_craft → craft_tick → collect 로 실제 창자를 받는 데까지 돌린다. 깊이 테스트도 3단(한도 안)으로 고쳤다. 전체 2265/2265 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 기름 이름 테스트가 무게만 본다 — test_smoker.gd test_oil_has_names_and_weight 는 이름에 names 를 걸었지만 ItemWeights 만 확인한다. ko.po · en.po 에 ITEM_oil · ITEM_gut · ITEM_sausage · ITEM_smoked_* 가 있는지 TranslationServer 로 확인하는 단언을 더하거나 테스트 이름을 test_oil_has_weight 로 고쳐라",
-     "evidence": "키마다 TranslationServer.set_locale(ko/en) 후 tr(ITEM_x) 가 키 그대로가 아닌지 · 두 말이 다른지 단언하고 로케일을 되돌린다 (oil · offal · gut · sausage · smoked_meat · smoked_fish · smoked_sausage). 깨 보기: ko.po 에서 ITEM_offal 을 지우고 tests/craft/stations 를 돌리니 「offal 의 이름이 말마다 다르다」로 실패했다 — 되돌렸다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 훈제 소시지가 소시지보다 가볍다 — weights.json 에서 sausage 0.4 · smoked_sausage 0.3 이다. 훈제 고기·생선(0.4)과 맞추든 소시지와 같게 두든, 임시 값이라도 뒤집혀 있지 않게 고쳐라",
-     "evidence": "weights.json smoked_sausage 0.3 → 0.4. test_smoked_sausage_is_not_lighter_than_sausage 가 smoked_sausage == smoked_meat · smoked_sausage >= sausage 를 단언한다. weights.json _temporary 가 총 표 밖은 전부 임시라고 적고 있다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "ests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      0s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      0s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok    498s  res://tests/craft/test_from_empty_hands.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           289\nTests            2265\nPassing Tests    2265\nFailing Tests       0\nRisky/Pending       0\nAsserts        110928\nTime           499s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-13 04:33:50",
   "epoch": 1791833630,
   "type": "fail",
@@ -10300,5 +10253,46 @@
   },
   "test": "uild/test_placeable_tidy.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      0s  res://tests/combat/damage_death/test_health.gd\nok      0s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/player/equipment/test_armor_health.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           459\nTests            3402\nPassing Tests    3402\nFailing Tests       0\nRisky/Pending       0\nAsserts        150916\nTime           677s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "d3c4de48"
+ },
+ {
+  "time": "2026-10-18 21:44:34",
+  "epoch": 1792327474,
+  "type": "pass",
+  "title": "차선 합치기 — 3d-lane2(3678fd93) → 3d-start",
+  "group": "G-239",
+  "step": "6",
+  "attempt": "1",
+  "report": {
+   "problem": "앙고라토끼 표기를 「앙고라 토끼」 하나로 맞추고(잡은 짐승 이름 = 「잡은 」+ 짐승 이름 검사), give_way 테스트가 흔들린 진짜 까닭(제비로 뽑는 날렵함 특성)을 찾아 주민 특성을 비웠다 — 바뀐 곳만: 2파일 9개 통과, 함께 test_item_slot_fit 포함 3파일 14개 통과",
+   "approach": "① ko.po 의 짐승 이름 LIVESTOCK_angora_rabbit 를 「앙고라 토끼」로 띄어 칸 맞춤 쪽(「잡은 앙고라 토끼」)과 맞췄다. 다른 잡은 짐승 스무 개가 모두 「잡은 」+ 짐승 이름이라 그 규칙을 test_captive_names 로 묶었다 — 다시 갈리면 떨어진다. test_item_slot_fit 그대로 통과. ② give_way 가 「부하에 흔들린다」고 적혔지만 비빈 시간은 게임 delta 로 잰다(WalkToWork.pressed) — 벽시계가 아니다. 12개 동시로 재현했더니(12번에 2번) 늘 똑같이 2.53초여서 갈래가 하나라고 보고 위치 · 빠르기를 찍었다. 떨어진 판만 바깥 주민의 걸음이 1.725m/s(나머지 1.5) — settle 이 특성을 제비로 뽑아 날렵함(NIMBLE ×1.15)이 나온 판이었다. 날렵함을 박아 넣으니 부하 없이 한 번에 2.53초로 떨어졌다(원인 확정). 처음엔 땅 굽기의 벽시계 예산(FolkGround.BUDGET_MS)을 의심해 다 구울 때까지 기다리게 했지만 그래도 떨어져 되돌렸다. 테스트의 _settle 에서 특성 · 재능을 비우고 걸음이 특성 없는 빠르기인지 단언한다 — 고친 뒤 16개 동시 16/16 통과. 덧: 날렵한 주민이 문을 엇갈릴 때 열린 문짝에 2.5초 처박히는 것은 게임 쪽 흠으로 남아 있다 (이번 기준 밖이라 손대지 않았다).",
+   "why": "",
+   "files": [
+    "game/i18n/ko.po",
+    "game/tests/life/hunting/test_captive_names.gd",
+    "game/tests/automation/villagers/test_villager_g218_give_way.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "앙고라토끼 표기가 둘로 갈렸다 — game/i18n/ko.po 691행 ITEM_captive_angora_rabbit 는 칸 줄바꿈을 피하려 「잡은 앙고라 토끼」로 띄었지만 2001행 짐승 이름은 「앙고라토끼」 그대로다. 한쪽으로 맞춰라(이름도 「앙고라 토끼」로 띄우거나, 칸 맞춤 쪽을 다른 방법으로). test_item_slot_fit 이 계속 통과하는지 확인",
+     "evidence": "ko.po 2001행 LIVESTOCK_angora_rabbit 가 「앙고라 토끼」로 바뀌어 ko.po 안의 「앙고라」 두 줄이 같은 표기다. 새 test_captive_names.gd 가 모든 ITEM_captive_* 이 「잡은 」+ LIVESTOCK_* 인지 본다 — QA 가 2001행을 「앙고라토끼」로 되돌려 tests/life/hunting 을 돌리니 test_captive_names 2개가 떨어졌다(되돌려 놓았다). 전체 실행(3402/3402)에서 test_item_slot_fit · test_captive_names 둘 다 ok. en.po 는 원래 「angora rabbit」 하나다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) give_way 테스트가 부하에 흔들린다 — test.log 의 앞선 전체 실행에서 game/tests/automation/villagers/test_villager_g218_give_way.gd 가 6개 동시 실행 중 2.53초 > 0.6초로 한 번 떨어졌다(마지막 전체 실행은 3400/3400 통과). 시간 문턱을 벽시계가 아니라 물리 프레임 수로 재거나 여유를 두어 동시 실행에서도 흔들리지 않게 하라",
+     "evidence": "구현 세션이 원인을 부하가 아니라 settle 의 제비뽑기 특성(날렵함 NIMBLE_WALK 1.15)으로 짚었다 — 비빈 시간은 이미 게임 delta 로 잰다. _settle 에서 traits · gift 를 비우고 walk_speed()==WALK_SPEED*pace() 를 단언해 판마다 같은 걸음이 되게 했다(persona.gd:177 walk 배 · villager.gd:758 확인). 흔들림의 원천(난수)을 없앴으니 문턱을 늘리는 것보다 낫다. 이번 전체 실행(6개 동시)에서 ok 19s"
+    }
+   ],
+   "issues": [
+    "날렵한 주민이 문짝에 2.5초 처박힌다 — 구현 세션이 찾았다: 날렵함(NIMBLE ×1.15) 주민이 G-218 양보 장면에서 문을 엇갈리면 열린 문짝에 2.53초 비빈다. give_way 테스트는 특성을 비워 피했을 뿐 게임 쪽 흠은 그대로다. test_villager_g218_give_way.gd 에 v.traits = [Persona.NIMBLE] 를 박은 판을 하나 더 두고(비빈 시간 < 0.6초 단언) 문 엇갈림/양보 코드를 걸음 빠르기에 상관없이 비키게 고쳐라"
+   ],
+   "good": []
+  },
+  "test": "uild/test_placeable_tidy.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      0s  res://tests/combat/damage_death/test_health.gd\nok      0s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/player/equipment/test_armor_health.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           459\nTests            3402\nPassing Tests    3402\nFailing Tests       0\nRisky/Pending       0\nAsserts        150916\nTime           677s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "53920676"
  }
 ]
