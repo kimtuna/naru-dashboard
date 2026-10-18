@@ -1,75 +1,5 @@
 [
  {
-  "time": "2026-10-13 03:10:16",
-  "epoch": 1791828616,
-  "type": "fail",
-  "title": "차선 합치기 실패 — 3d-lane2(dff125dc) → 3d-start",
-  "group": "G-202",
-  "step": "2",
-  "attempt": "2",
-  "report": {
-   "problem": "제재소가 목재로 판자 · 기둥재(beam) · 자루를 만들고, 철괴 · 유황에 연료 칸(@fuel)을 달았으며 깊이 계산에서 연료를 뺐다. 바뀐 곳만 돌린 테스트 30개 파일 285개가 모두 통과했다",
-   "approach": "앞 시도는 기준을 다 만들었지만, 전체 검사에서 test_no_shovel.gd 의 「빈손에서 총까지」가 떨어졌다. 철괴에 @fuel 을 달자 그 테스트의 길 찾기(_path_to)가 '@fuel' 을 아이템 이름으로 보고 레시피를 찾지 못했다. 그래서 _path_to 가 재료가 갈래(태그)면 RecipeTags.members 로 펼쳐, 그 갈래의 아이템 하나(숯)에라도 닿으면 길이 이어진 것으로 보게 고쳤다. 그 파일은 7/7 통과했다. changed_tests 로 고른 30개 파일(test_no_shovel 포함)도 285/285 통과했다. 전체 검사는 돌리지 않았다.",
-   "why": "제재소: 판자(목재 2 → 1) · 기둥재 beam(목재 2 → 1) · 자루 handle(목재 1 → 2) — 시설 표의 수량은 전부 임시다(사람 2026-10-12); 용광로: 철괴 · 유황의 연료 칸 @fuel 1 — 다른 주괴와 같은 임시 값이다",
-   "files": [
-    "game/craft/recipes/sawmill.json",
-    "game/craft/recipes/smelter.json",
-    "game/i18n/en.po",
-    "game/i18n/ko.po",
-    "game/player/inventory_hotbar/weights.json",
-    "game/tests/combat/tools_as_weapons/test_no_shovel.gd",
-    "game/tests/craft/recipes/recipe_depth.gd",
-    "game/tests/craft/recipes/test_recipes.gd",
-    "game/tests/craft/recipes/test_smelter_recipes.gd",
-    "game/tests/craft/recipes/test_tool_recipes.gd",
-    "game/tests/craft/recipes/test_sawmill_recipes.gd",
-    "game/tests/craft/test_from_empty_hands.gd",
-    "game/tests/ui/layout/test_window_layout.gd",
-    "spec/05_craft/facilities.md",
-    "spec/05_craft/recipes.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "목재 → **판자 · 기둥 · 자루** (테스트). 개수는 임시다",
-     "evidence": "sawmill.json 에 plank · beam · handle 셋(목재만). test_sawmill_recipes.gd 의 test_wood_becomes_plank_beam_and_handle_at_the_sawmill 이 진짜 제재소를 세워 가방 목재로 start_craft → craft_tick 후 버퍼에 그 아이템이 적힌 개수만큼 나오고 목재가 다 들어갔는지 본다. test_the_sawmill_makes_only_wood_intermediates 가 다른 줄이 없는지 본다. sawmill.json _temporary · facilities.md 수치에 임시 표시가 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "판자를 쓰던 곳(건축 재료)이 끊기지 않는다 — 건축 비용은 그대로 둔다 (테스트)",
-     "evidence": "test_building_cost_is_unchanged_and_paid_in_planks 가 Blueprint.COST 를 building.md 값과 견주고 나무 조각마다 판자 비용을 본다. test_planks_from_the_sawmill_pay_for_a_wooden_wall 이 제재소에서 켠 판자로 Blueprint.pay 가 나무 벽 값을 치르는지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "**종이 · 도면 줄은 건드리지 않는다** — 종이를 없앴으니 도면은 지금처럼 맨손 목재 1 이다 (사람 결정 2026-10-12)",
-     "evidence": "diff 에 hand 레시피 · 도면 줄 변경이 없다. test_blueprint_is_still_one_wood_by_hand_and_there_is_no_paper 가 도면 = 맨손 · {wood:1} 이고 paper 를 내는 레시피가 없는지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "기둥은 **아이템**이고 건축의 기둥 조각과 **이름이 겹치지 않는다** (테스트)",
-     "evidence": "키 beam(기둥재). test_beam_is_an_item_not_a_build_piece 가 BuildPiece.is_piece 거짓 · 무게 있음 · 가방에 넣어도 판자로 환급되지 않음을 본다. test_beam_name_does_not_clash_with_the_pillar_pieces 가 등급별 pillar 조각 키와 다르고, ko/en 둘 다에서 ITEM_beam 이 있고 BUILD_*_pillar · 다른 ITEM_* 이름과 겹치지 않는지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 철괴만 연료 없이 굽는다 — smelter.json 의 iron_ingot(과 sulfur)은 @fuel 이 없어 구리 · 주석 · 금 · 은괴와 어긋난다. spec 표의 용광로 「연료: 초반 숯 → 나중 석탄」과도 맞지 않는다. 까닭이 「빈손 테스트 길을 그대로 두려고」인데 석재 블록처럼 test_from_empty_hands.gd 에 숯 굽는 줄과 소나무를 더하면 풀린다 — iron_ingot 에 \"@fuel\": 1 을 달고 빈손 테스트의 목재 셈(숯 = 철괴 수만큼)을 고친 뒤, facilities.md 수치 줄 · smelter.json _temporary 의 「철괴 · 유황은 연료 없이」 문장을 지워라",
-     "evidence": "iron_ingot · sulfur 에 @fuel 1. test_every_ore_is_smelted_with_fuel 이 숯 · 강철괴 말고 모든 용광로 줄에 연료 칸이 있고 철괴 · 유황이 숯 없이 안 돌며 숯으로는 도는지 본다. test_from_empty_hands.gd 가 숯 25(철괴 17 · 유황 4 · 석재 4)를 굽고 소나무 11그루를 더했으며 목재 셈 주석(201)이 맞다. 전체 검사(test.log, 283 파일 2213 테스트)가 모두 통과했다. facilities.md · smelter.json 의 해당 문장이 지워졌다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 청동괴가 이미 3단이다 — 숯(1단)을 연료로 세면 연료 든 주괴는 2단, 청동괴는 3단이라 청동으로 무엇을 만들면 3단 한도를 넘는다(facilities.md 수치 줄에 적혀 있다). 연료를 깊이에 세지 않는 쪽이 spec 의 뜻(원자재에서 몇 번 가공하나)에 맞다 — 깊이 검사(tests/craft/recipes/test_recipes.gd 쪽)가 @fuel 을 깊이 계산에서 빼게 하고, 그걸 05_craft/recipes.md 깊이 규칙에 한 줄로 적어라",
-     "evidence": "recipe_depth.gd steps_of 가 @fuel 을 건너뛴다. test_fuel_is_not_counted_in_depth 가 숯 1 · 연료 든 주괴 · 유황 · 석재 · 유리 1 · 청동 · 강철 2 를 단언한다. 일부러 건너뛰기를 꺼 보니 tests/craft/recipes 에서 8개가 떨어졌다(되돌렸다). recipes.md 깊이 규칙에 한 줄이 들어갔다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "//tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok    498s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           283\nTests            2213\nPassing Tests    2213\nFailing Tests       0\nRisky/Pending       0\nAsserts        108287\nTime           498s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-13 03:14:41",
   "epoch": 1791828881,
   "type": "pass",
@@ -10417,5 +10347,64 @@
   },
   "test": "ng_collapse.gd\nok      4s  res://tests/core/test_far_cull.gd\nok      3s  res://tests/life/fishing/test_rod_grades.gd\nok      3s  res://tests/craft/stations/test_salt_pan_island.gd\nok      3s  res://tests/life/food/test_food.gd\nok      3s  res://tests/life/gathering/test_herb_regrowth.gd\nok      2s  res://tests/life/hunting/test_captive_age.gd\nok      2s  res://tests/life/hunting/test_animal_traces.gd\nok      3s  res://tests/life/hunting/test_body_parts.gd\nok      3s  res://tests/life/hunting/test_wild_kinds.gd\nok      3s  res://tests/life/ranching/test_pen_yields.gd\nok      3s  res://tests/player/inventory_hotbar/test_bag_twenty_island.gd\nok      4s  res://tests/ui/hud/test_room_names.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      3s  res://tests/world/day_night/test_day_in_world.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      3s  res://tests/world/terrain/test_foundation_hides_grass.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/life/fishing/test_bait_grades.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/life/ranching/test_troughs.gd\nok      3s  res://tests/life/ranching/test_ranch_escape.gd\nok      2s  res://tests/multiplayer/test_wild_kinds_on_server.gd\nok      2s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      3s  res://tests/world/frontier_islands/test_locked_island.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      0s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok    435s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           129\nTests            1170\nPassing Tests    1170\nFailing Tests       0\nRisky/Pending       0\nAsserts         29853\nTime           435s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "935d9771"
+ },
+ {
+  "time": "2026-10-18 20:05:35",
+  "epoch": 1792321535,
+  "type": "pass",
+  "title": "통과 — G-239 단계 3 (도축 산출 — 사람이 정한 수)",
+  "group": "G-239",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "도축 산출을 사람이 정한 수로 바꾸고(사슴 고기 3·녹용 2 · 곰 고기 20·곰발바닥 · 열 종 고기) 새 아이템 여섯과 쓰임 셋(오소리 기름→화상 연고 · 거위 깃털→침대 · 곰발바닥→찜)을 더했다 — 바뀐 곳만: 139개 파일 1219개 테스트 통과",
+   "approach": "animal_kinds.gd 의 KINDS 를 사람이 정한 수로 고쳤다 — 사슴 머리는 뿔 대신 녹용(deer_antler) 2 · 고기 3, 곰 고기 20 · 곰발바닥, 멧돼지 하급 가죽 · 꿩 깃털 · 오소리 기름 · 담비 가죽 1 · 거위 깃털 5 · 고슴도치 가죽. 새 열 종의 뼈 · 내장은 먹이 사슬 크기(BODY)를 따라 대형·중형 뼈 2·내장 1, 소형 뼈 1·내장 1(임시). 새 아이템 일곱(산출 여섯 + 곰발바닥 찜)에 무게 · ko/en 이름을 달았다. 오소리 기름은 새 재료 갈래 @oil(기름 · 오소리 기름)로 화상 연고의 기름 자리에 들게 했다 — 훈연기의 기름도 그대로 든다. 거위 깃털은 제작대의 침대 줄 하나(goose_down_bed: 판자 4 + 거위 깃털 5 → 침대)로 — 고급 침대가 따로 하는 일이 아직 없어 새 놓을 것을 만들지 않고 같은 침대가 나오게 했다. 곰발바닥은 조리대 곰발바닥 찜(곰발바닥 1 + 아무 채소 1). spec 산출표를 새 수로 고치고 미정에 고슴도치 가죽 · 담비 가죽 · 하급 가죽 레시피를 적었다. 사슴 뿔을 보던 테스트 둘(test_part_yields · test_butchery)은 녹용으로, test_wild_kinds 의 거위 깃털은 goose_feather 로 바꿨다. test_cook_table 의 「모든 요리를 만든다」가 요리 하나가 늘자 마지막 따뜻한 우유에서 가방이 차 떨어져, 요리마다 가방을 비우게 했다. 바뀐 곳 그물 139개 파일 1219개 테스트가 통과했다.",
+   "why": "곰발바닥 2 · 멧돼지 하급 가죽 2 · 꿩 깃털 2 · 오소리 기름 2 · 고슴도치 가죽 1 — 사람은 종류만 정했다; 새 열 종의 뼈 · 내장 — 크기 따라 대·중 뼈 2·내장 1, 소 뼈 1·내장 1; 거위 깃털 침대 재료 판자 4 + 거위 깃털 5 — 고급 침대 재료라는 것만 사람 결정; 곰발바닥 찜 재료(곰발바닥 1 + 아무 채소 1) · 배고픔 0.8 · 스트레스 12 — 고급 요리에 맞춰 지었다; 새 아이템 무게(하급 가죽 0.8 · 오소리 기름 0.3 · 담비 가죽 0.4 · 거위 깃털 0.02 · 고슴도치 가죽 0.2 · 곰발바닥 1.5 · 곰발바닥 찜 0.8)",
+   "files": [
+    "game/life/hunting/animal_kinds.gd",
+    "game/player/inventory_hotbar/weights.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/craft/recipes/apothecary_bench.json",
+    "game/craft/recipes/tags.json",
+    "game/craft/recipes/workbench.json",
+    "game/craft/recipes/cook_table.json",
+    "game/life/food/foods.json",
+    "spec/04_life/hunting.md",
+    "game/tests/life/hunting/test_wild_yield_uses.gd",
+    "game/tests/life/hunting/test_butcher_yields.gd",
+    "game/tests/life/hunting/test_wild_kinds.gd",
+    "game/tests/life/hunting/test_part_yields.gd",
+    "game/tests/life/hunting/test_butchery.gd",
+    "game/tests/craft/stations/test_cook_table.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "고기 — 멧돼지 5 · 꿩 1 · 매 1 · 오소리 1 · 담비 1 · 거위 1 · 올빼미 1 · 앙고라토끼 1 · 호저 1 · 고슴도치 1 · 사슴 3(지금 4 에서) · 곰 20(지금 6 에서). 뼈 · 내장 등은 크기 따라 임시",
+     "evidence": "animal_kinds.gd KINDS 가 그 수대로다. test_butcher_yields.gd 의 SPEC 에 열두 종(사슴 3 · 곰 20 · 멧돼지 5 · 나머지 1)이 들어 test_the_data_is_the_spec_table 이 데이터 전체 사전을 assert_eq 로 견주고, test_every_animal_is_butchered_in_place 가 진짜 주검을 우클릭 도축해 가방 내용 전체를 견준다. 들판 짐승 WILD 가 다 SPEC 에 있는지도 단언한다. 뼈 · 내장은 크기 따라 대·중 2·1 / 소 1·1 이고 animal_kinds.gd · spec 에 임시라고 적혔다. test.log 에서 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "새 아이템 — 하급 가죽(멧돼지) · 깃털(꿩 — 있는 feather) · 오소리 기름 · 담비 가죽(고급 모피, 1) · 거위 깃털(5) · 고슴도치 가죽 · 곰발바닥. 사슴 머리는 녹용 2(G-238 의 deer_antler). 이름 · 무게 · 번역 키 ko · en (테스트: 종마다 도축 산출표)",
+     "evidence": "low_hide · badger_fat · marten_pelt 1 · goose_feather 5 · hedgehog_hide · bear_paw 가 산출에 있고 꿩은 feather, 사슴 머리는 deer_antler 2. weights.json 에 무게, ko.po · en.po 에 ITEM_ 키가 있다. test_new_yields_have_names_and_weights 가 일곱 아이템 + deer_antler 의 ko·en 키와 무게>0 을 보고, 종마다 산출표는 위 SPEC 견줌이 본다. test_wild_kinds 의 거위 깃털 5 단언도 goose_feather 로 바뀌었다"
+    },
+    {
+     "ok": true,
+     "criterion": "쓰임 — 오소리 기름은 화상 연고(apothecary_bench burn_ointment)의 기름 자리에 넣을 수 있다 · 거위 깃털은 고급 침대 재료(침대 레시피 하나 · 재료 임시) · 곰발바닥은 요리대 요리 하나(임시) · 고슴도치 가죽 · 담비 가죽의 레시피는 사람이 정할 때(spec 미정 한 줄)",
+     "evidence": "tags.json 에 @oil(oil · badger_fat), burn_ointment 가 @oil 을 받는다. test_wild_yield_uses.gd 가 진짜 Stations 로 오소리 기름 · 기름 각각으로 화상 연고를 만들고, 거위 깃털 줄(goose_down_bed, 판자4+거위깃털5 → bed)로 침대를, 곰발바닥 찜(곰발바닥1+@vegetable1)으로 요리를 만들어 결과 · 재료 소모 · 음식 등록 · 이름 · 무게를 본다. 고슴도치 가죽 · 담비 가죽이 든 레시피가 없고 spec 미정에 두 이름이 있는지도 본다. 재료 · 수치 임시가 workbench · cook_table · foods.json _temporary 에 적혔다. test.log 에서 통과"
+    }
+   ],
+   "issues": [
+    "spec 산출표 머리줄이 「개수 전부 임시」로 낡았다 — spec/04_life/hunting.md 의 「도축 산출표 (G-204.3 …) — 개수 전부 임시」 줄은 이제 고기 수 · 녹용 2 · 담비 가죽 1 · 거위 깃털 5 가 사람 결정이다. 「개수는 아래 사람 결정 줄 밖의 것만 임시」로 고쳐라 (표 아래 사람 결정 줄이 있어 막는 것은 아니다)"
+   ],
+   "good": []
+  },
+  "test": "d\nok      1s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/craft/stations/test_station_queue.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/fishing/test_bait_grades.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/multiplayer/test_wild_kinds_on_server.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/equipment/test_armor.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      3s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      3s  res://tests/ui/hud/test_station_queue_window.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/automation/villagers/test_villager_skills.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok    436s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           210\nTests            1820\nPassing Tests    1820\nFailing Tests       0\nRisky/Pending       0\nAsserts        117627\nTime           436s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "842eeec2"
  }
 ]
