@@ -4019,7 +4019,7 @@
   - 기준: (앞 단계 QA) 털기 길을 실제 걸음으로 본 테스트가 없다 — test_hive_raid.gd 는 길찾기 지도가 없는 땅이라 짐승을 손으로 REACH 안에 옮겨 닿게 한다. walk_to 로 정말 벌통 2m 안까지 걸어가는지(지은 섬 · 벌통이 설치물 몸통이라 길을 막는 경우)는 아무도 보지 않는다. 길찾기가 있는 섬 테스트(tests/automation/villagers 의 실제 섬 받침처럼)에서 오소리를 벌통 10m 곁에 놓고 시간을 흘려 colony.honey == 0 이 되는지 보는 테스트를 더해라 — 못 닿으면 REACH 를 벌통 몸 크기에 맞춰라
 - [x] 5. spec
   - 기준: ranching-breeding.md 에 꿀벌 흐름 · 사람 원문 · 「온도는 뺐다 · 100% 상한 · 습격(사람 2026-10-18)」 · facilities.md 벌집 줄을 맞춘다
-- [ ] 6. (앞 단계 QA) 습격 GIVE_UP 60초가 spec 수치에 없다
+- [x] 6. (앞 단계 QA) 습격 GIVE_UP 60초가 spec 수치에 없다
   - 기준: 습격 GIVE_UP 60초가 spec 수치에 없다 — game/life/ranching/hive_raid.gd:32 GIVE_UP := 60.0 (노리다 못 닿으면 놓는 시간으로 보인다)이 spec/04_life/ranching-breeding.md 수치의 꿀벌 줄에 안 적혔다. 「습격: … 쫓기면 120초」 뒤에 「· 못 닿으면 60초에 놓는다」를 더하고 코드 주석에 임시 표시가 있는지 본다 (막는 것은 아니다)
 
 ## [x] G-242 주민 장비 — 갑옷 · 무기 · 탄약 · 주민 설정 창
