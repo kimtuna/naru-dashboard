@@ -4139,8 +4139,16 @@
   - 기준: hunting.md 에 기믹 · 디스폰 · 사람 원문 · 날짜 · 이 세션이 다듬은 것(바위 자리 · 한 번 굴림 · 플레이어만 · 호저 경고 · 게임 하루 + 안 보일 때 · 펠릿) · mining.md 에 바위에서 동물이 나온다 한 줄
   - 기준: (앞 단계 QA) hunting.md 가 딱 150줄이다 — 이번에 디스폰 · 집 번호 설명을 기존 줄 끝에 길게 이어 붙여 줄 수를 맞췄다(:42 · :45 가 한 줄에 여러 문장). 다음에 한 줄만 더해도 넘는다. 디스폰 · 재생 단락을 spec/04_life/ 아래 따로 파일(예: animal-spawn.md)로 떼고 hunting.md 에서 가리키게 해 줄을 비워 두어라
   - 기준: (앞 단계 QA) Stations.guarded 가 남의 _prey 를 들여다본다 — game/craft/stations/stations.gd guarded() 가 다른 Stations 노드의 비공개 사전 here._prey 를 읽는다. Stations 에 prey_of(s) 같은 공개 함수를 두고 그것을 쓰게 바꿔라 (동작은 같다)
-- [ ] 6. (앞 단계 QA) spec 가리킴이 낡았다 (흔적 · 디스폰)
+- [x] 6. (앞 단계 QA) spec 가리킴이 낡았다 (흔적 · 디스폰)
   - 기준: spec 가리킴이 낡았다 (흔적 · 디스폰) — 흔적 · 디스폰 · 재생 단락이 animal-spawn.md 로 옮겨졌는데 아직 hunting.md 「흔적」 · 「디스폰」을 가리키는 곳이 남았다: game/life/hunting/animal_traces.gd:3 · game/life/hunting/animal_trace.gd:3 · game/tests/multiplayer/test_traces_on_server.gd:3 · game/i18n/ko.po:699(「흔적」), game/tests/multiplayer/test_despawn_on_server.gd:2(「디스폰」), game/tests/settings/save/test_round_trip.gd:64 · game/tests/craft/test_from_empty_hands.gd:1490(「다시 난다」). 주석의 spec/04_life/hunting.md 를 spec/04_life/animal-spawn.md 로 바꿔라. grep -rn 'hunting.md' game | grep '흔적\|디스폰\|다시 난다' 결과가 비어야 한다
+
+## [ ] G-917 루프가 찾은 것 — 스스로 갚는다
+- 차선: 3d-lane2
+- QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
+  루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
+- 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
+- [ ] 1. 올빼미 밤 배회 테스트가 흔들린다 (G-245 단계 6)
+  - 기준: 올빼미 밤 배회 테스트가 흔들린다 — 앞 전체 실행에서 game/tests/life/hunting/test_owl_trees.gd:183(밤에 10초 안에 4m 넘게 돌아다닌다)이 떨어졌고 이번 전체 실행에선 통과했다. godot 6개를 같이 돌릴 때 실제 시간 10초 대기가 모자라는 것으로 보인다. 실제 시간을 기다리지 말고 물리 프레임 수(또는 Engine.time_scale · 직접 _physics_process(delta) 부르기)로 게임 시간을 밀어 같은 단언을 하게 고쳐라 — 부하와 상관없이 같은 결과가 나와야 한다
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
