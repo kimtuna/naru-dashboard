@@ -4038,7 +4038,7 @@
   - 기준: (앞 단계 QA) 체력 0 이면 안 나선다는 단언이 hp 검사를 안 지킨다 — villager.gd _mind_fight 의 둘째 줄에서 `hp <= 0.0 or` 를 빼도 test_at_zero_hp_the_beast_stops_and_the_villager_does_not_fight 가 그대로 통과했다(짐승이 죽은 몸을 안 쫓아 spot 이 애초에 아무것도 못 찾기 때문). 체력 0 인 주민 곁에서 짐승이 다른 주민(mate, join_fights=false)을 물게 하고 assert_false(v.fighting()) 를 거는 경우를 더해라. 기준 밖(쓰러짐 규칙 없음)이라 지적만
   - 기준: (앞 단계 QA) 사람을 지키는 길은 단위 단언뿐이다 — test_it_guards_people 는 VillagerFight.guards(person) 만 본다. Player.GROUP 에 든 몸을 짐승이 provoke 로 쫓게 하고 곁의 주민이 fighting() 이 되는지 보는 경우를 더해 두면 좋다 (막는 것은 아니다 — spot 의 길은 주민 · 가축과 같다)
 
-## [ ] G-243 새장 · 사냥새 · 망원경 — 매와 올빼미가 진짜로 사냥한다
+## [x] G-243 새장 · 사냥새 · 망원경 — 매와 올빼미가 진짜로 사냥한다
 - 차선: 3d-lane2 · 시작 2026-10-18 20:48
 - 순서: G-239 뒤 · G-242 뒤
 - spec: spec/04_life/hunting.md, spec/04_life/ranching-breeding.md
