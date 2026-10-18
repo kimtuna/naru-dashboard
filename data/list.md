@@ -4143,7 +4143,7 @@
   - 기준: spec 가리킴이 낡았다 (흔적 · 디스폰) — 흔적 · 디스폰 · 재생 단락이 animal-spawn.md 로 옮겨졌는데 아직 hunting.md 「흔적」 · 「디스폰」을 가리키는 곳이 남았다: game/life/hunting/animal_traces.gd:3 · game/life/hunting/animal_trace.gd:3 · game/tests/multiplayer/test_traces_on_server.gd:3 · game/i18n/ko.po:699(「흔적」), game/tests/multiplayer/test_despawn_on_server.gd:2(「디스폰」), game/tests/settings/save/test_round_trip.gd:64 · game/tests/craft/test_from_empty_hands.gd:1490(「다시 난다」). 주석의 spec/04_life/hunting.md 를 spec/04_life/animal-spawn.md 로 바꿔라. grep -rn 'hunting.md' game | grep '흔적\|디스폰\|다시 난다' 결과가 비어야 한다
 
 ## [ ] G-917 루프가 찾은 것 — 스스로 갚는다
-- 차선: 3d-lane2
+- 차선: 3d-lane2 · 시작 2026-10-19 06:38
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
