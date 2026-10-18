@@ -4093,7 +4093,7 @@
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
-- [ ] 1. weights.json 의 새 captive_* 줄이 차례에서 벗어났다 (G-239 단계 1)
+- [x] 1. weights.json 의 새 captive_* 줄이 차례에서 벗어났다 (G-239 단계 1)
   - 기준: weights.json 의 새 captive_* 줄이 차례에서 벗어났다 — captive_angora_rabbit … captive_porcupine 열 줄이 captive_bear 앞에 몰려 있어 이름 차례(captive_badger · captive_bear · captive_boar …)가 깨졌다. 다른 줄처럼 이름 차례로 끼워 넣어라 (막는 것은 아니다)
 - [ ] 2. 날렵한 주민이 문짝에 2.5초 처박힌다 (G-239 단계 6)
   - 기준: 날렵한 주민이 문짝에 2.5초 처박힌다 — 구현 세션이 찾았다: 날렵함(NIMBLE ×1.15) 주민이 G-218 양보 장면에서 문을 엇갈리면 열린 문짝에 2.53초 비빈다. give_way 테스트는 특성을 비워 피했을 뿐 게임 쪽 흠은 그대로다. test_villager_g218_give_way.gd 에 v.traits = [Persona.NIMBLE] 를 박은 판을 하나 더 두고(비빈 시간 < 0.6초 단언) 문 엇갈림/양보 코드를 걸음 빠르기에 상관없이 비키게 고쳐라

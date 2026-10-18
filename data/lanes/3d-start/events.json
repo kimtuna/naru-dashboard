@@ -1,61 +1,5 @@
 [
  {
-  "time": "2026-10-13 08:37:00",
-  "epoch": 1791848220,
-  "type": "pass",
-  "title": "통과 — G-206 단계 2 (갑옷 — 장비 칸이 모자라다)",
-  "group": "G-206",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "제작대에 가죽 · 청동 · 철 · 강철 갑옷 · 투구 · 각반 · 방패 열여섯을 더했다. 장비칸은 여덟 그대로 두고 갑옷 · 투구 · 각반은 상의 · 모자 · 바지칸에, 방패는 손에 든다. 입으면(방패는 들면) 맞는 피해가 준다",
-   "approach": "【입을 자리 결정】 칸을 더하지 않았다. 갑옷 → 상의칸, 투구 → 모자칸, 각반 → 바지(하의)칸 (Equipment.FITS). 장비칸 여덟은 사람 결정(2026-09-26)이라 그대로 둔다. 방패는 여덟 칸 어디에도 맞지 않으므로 칸에 넣지 않고 손에 든다. 핫바에서 골라 들고 있는 동안만 막는다. 【방어】 새 파일 armor.gd 에 한 벌마다 방어 점수를 두었다. 점수 1 이 피해 1% 를 덜고, 입은 것과 든 방패의 점수를 더하며 천장은 80% 다. 같은 금속의 네 벌은 점수가 같다(포인트 예산제). 플레이어에게 take_hit 을 붙여 Health.deal(평타 · 투사체가 쓰는 길)이 이리로 오게 했고, 동물이 무는 것도 Health.take 를 바로 부르던 것을 Health.deal 로 바꿔 갑옷이 덜게 했다. 낙하 피해는 덜지 않는다. 장비칸은 이미 저장본에 담기므로 새로 생긴 상태는 없다. 【레시피】 처음에는 가죽끈을 재료로 넣었다. 그런데 test_butcher_yields 가 막았다: 가죽끈은 산출물로만 두고 쓰임은 사람이 정한다. 그래서 가죽 벌은 가죽만, 금속 벌은 주괴 + 가죽, 방패는 판자 + 가죽 또는 주괴로 바꿨다. 【곁가지】 test_building_grades 는 「ITEM_hammer 가 번역에 없다」를 보고 있었는데, G-206.1 이 제작용 망치를 들인 뒤로 떨어졌다. 이 테스트가 보려던 것은 「건축 올리기에 도구가 필요 없다」이므로 hammer 는 빼고 building_hammer · build_hammer 만 본다. 【테스트】 changed_tests 그물은 202개 파일로 한 번 돌렸다: 1774 가운데 1772 통과. 떨어진 2개 파일(test_building_grades · test_butcher_yields)은 위처럼 고쳤다. 고친 뒤에는 그 둘에 test_armor · test_tool_recipes · test_workbench_gear 를 더한 5개 파일만 다시 돌려 44/44 통과했다. 202개 전체는 다시 돌리지 않았다.",
-   "why": "갑옷 한 벌의 방어 점수: 가죽 5 · 청동 8 · 철 11 · 강철 14 (%), 천장 80% — 장비마다의 스탯이 미정이다 (armor.gd); 갑옷 · 투구 · 각반 · 방패의 재료 · 개수: 덮는 곳이 클수록 많게만 잡았다 (workbench.json); 무게: 가죽 3 · 1 · 2 · 2kg, 금속 8 · 2 · 5 · 5kg (weights.json); 맞으면 적어도 1 은 받는다 (armor.gd reduce)",
-   "files": [
-    "game/player/equipment/armor.gd",
-    "game/player/equipment/equipment.gd",
-    "game/player/movement_controls/player.gd",
-    "game/life/hunting/animal.gd",
-    "game/craft/recipes/workbench.json",
-    "game/player/inventory_hotbar/weights.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "spec/02_player/equipment.md",
-    "game/tests/player/equipment/test_armor.gd",
-    "game/tests/build/test_building_grades.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "가죽 · 청동 · 철 · 강철 갑옷 · 투구 · 각반 · 방패가 만들어진다 (테스트)",
-     "evidence": "test_armor.gd test_every_piece_is_made_at_the_workbench — 열여섯 벌 모두 workbench 레시피를 찾아 가방에 재료를 넣고 Stations.start_craft → craft_tick 로 실제로 만들어 버퍼에 그 아이템이 나오는지, 재료가 다 빠졌는지, 무게 · ko/en 번역 키가 있는지 본다. test_metal_pieces_take_that_metal 이 금속 벌에 그 금속 주괴가 드는지 본다. test.log 에서 ok"
-    },
-    {
-     "ok": true,
-     "criterion": "**입을 자리가 있다** — 지금 장비 칸은 신발 · 바지 · 상의 · 모자 · 귀걸이 · 목걸이 · 반지 · 가방 여덟이고 **갑옷 칸이 없다**. 갑옷 · 투구 · 각반을 상의 · 모자 · 바지에 끼울지, 칸을 더할지 정해 **report 에 적고** 그대로 짓는다 (테스트)",
-     "evidence": "report.how 【입을 자리 결정】에 「칸을 더하지 않는다 — 갑옷 → 상의 · 투구 → 모자 · 각반 → 바지, 방패는 손에 든다」를 적었고 Equipment.FITS 에 그대로 지었다. test_still_eight_slots(여덟 그대로), test_armor_helmet_leggings_fit_top_hat_pants(나머지 일곱 칸은 Equipment.equip 이 거부하고 equip_where_it_fits 가 맞는 칸에 넣는다 — 막아야 할 경우 포함), test_shield_fits_no_slot_but_the_hand. spec/02_player/equipment.md 에도 적었다"
-    },
-    {
-     "ok": true,
-     "criterion": "방어가 실제로 듣는다 — 입으면 받는 피해가 준다 (테스트)",
-     "evidence": "test_naked_takes_the_full_hit · test_each_worn_piece_cuts_damage · test_better_metal_cuts_more · test_held_shield_cuts_damage_only_while_held · test_shield_adds_to_worn_armor · test_armor_in_the_bag_does_nothing · test_animal_bite_is_cut_by_armor — 모두 실제 Player 에 Health.deal(평타 · 투사체가 쓰는 길)과 Animal._bite 로 피해를 주고 체력이 덜 깎이는지 본다. 일부러 깨 봤다: Armor.reduce 를 `return amount` 로 바꾸자 test_armor 5개가 떨어졌다(되돌림 확인, cmp 같음). 동물의 _prey 는 Player.GROUP 에서만 고르므로 물기를 Health.deal 로 바꾼 것이 다른 동물 부위 계산으로 번지지 않는다"
-    }
-   ],
-   "issues": [
-    "spec equipment.md 들여쓰기가 깨졌다 — spec/02_player/equipment.md 규칙 절에서 새 「- **방어** …」 줄을 「장비칸은 여덟」 줄의 하위 줄들 사이에 끼워 넣어, 그 뒤의 「가방 창의 인벤토리 칸 위에 있다 (사람 결정 2026-09-26)」 · 「장비칸은 저장본에 담긴다」 하위 줄이 이제 「방어」 아래에 매달린 것처럼 읽힌다. 「- **방어** …」 두 줄을 「장비칸은 저장본에 담긴다 …」 하위 줄 다음(「장비칸」 묶음이 끝난 뒤)으로 옮겨라. 사람 결정 줄 자체는 지워지지 않았다"
-   ],
-   "good": [
-    "test_building_grades.gd 의 「hammer 가 번역에 없다」 단언을 뺐다 — G-206.1 이 도구 망치를 들여 생긴 낡은 단언이라 고친 것이고, building_hammer · build_hammer 는 그대로 본다. 기준 밖이지만 정당한 수리다"
-   ]
-  },
-  "test": "test_room_kinds.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/build/test_room_overlay.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      2s  res://tests/craft/recipes/test_recipe_tags.gd\nok      1s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/craft/recipes/test_smelter_recipes.gd\nok      1s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_barn.gd\nok      1s  res://tests/craft/stations/test_brewing.gd\nok      2s  res://tests/craft/stations/test_loom.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/life/medicine/test_medicine.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      1s  res://tests/settings/test_translation.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/movement_controls/test_aim_water_surface.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_barn_window.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_health_bar.gd\nok      1s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      3s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    546s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           211\nTests            1823\nPassing Tests    1823\nFailing Tests       0\nRisky/Pending       0\nAsserts        109231\nTime           546s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "b5153161"
- },
- {
   "time": "2026-10-13 09:08:21",
   "epoch": 1791850101,
   "type": "pass",
@@ -10124,5 +10068,38 @@
    "good": []
   },
   "test": "k      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      0s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/fishing/test_fish_kinds.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      0s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      1s  res://tests/core/net/test_room_code.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           471\nTests            3518\nPassing Tests    3518\nFailing Tests       0\nRisky/Pending       0\nAsserts        155429\nTime           702s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-19 02:00:09",
+  "epoch": 1792342809,
+  "type": "pass",
+  "title": "통과 — G-916 단계 1 (weights.json 의 새 captive_* 줄이 차례에서 벗어났다 (G-239 단계 1))",
+  "group": "G-916",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "weights.json 의 captive_* 스무 줄을 이름 차례로 다시 늘어놓고, 그 차례를 지키는 테스트를 넣었다 (바뀐 곳에 걸리는 17개 파일 148개 테스트 통과)",
+   "approach": "G-239.1 에서 넣은 잡은 짐승 열 줄(captive_angora_rabbit … captive_porcupine)이 기존 captive_bear 앞에 몰려 있었다. captive_* 묶음 스무 줄을 이름 차례로 정렬했다(값은 그대로). 파일 전체는 이름 차례가 아니어서(물고기 · 낚싯대 묶음) 테스트는 captive_* 묶음만 본다 — JSON 으로 읽으면 차례를 장담할 수 없어 줄을 그대로 읽고, 이름 차례인지 · 한 묶음으로 붙어 있는지 확인한다.",
+   "why": "",
+   "files": [
+    "game/player/inventory_hotbar/weights.json",
+    "game/tests/player/inventory_hotbar/test_weights_captive_order.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "weights.json 의 새 captive_* 줄이 차례에서 벗어났다 — captive_angora_rabbit … captive_porcupine 열 줄이 captive_bear 앞에 몰려 있어 이름 차례(captive_badger · captive_bear · captive_boar …)가 깨졌다. 다른 줄처럼 이름 차례로 끼워 넣어라 (막는 것은 아니다)",
+     "evidence": "git diff 에서 weights.json 은 captive_* 아홉 줄을 옮기기만 했다 (값은 안 바뀌었고 JSON 도 읽힌다). 지금 스무 줄이 angora_rabbit · badger · bear · boar · buffalo … porcupine · sheep 이름 차례다. test_weights_captive_order.gd 의 test_captive_lines_in_name_order 가 줄을 그대로 읽어 정렬본과 비교하고, test_captive_lines_together 는 captive_* 줄이 이어져 있는지 본다. 일부러 깨 보았다 — HEAD 의 weights.json(옛 차례)을 넣고 돌리니 test_captive_lines_in_name_order 가 '17 of 20 indexes do not match' 로 떨어졌다. 그 뒤 원래대로 되돌렸다. test.log 기준 바뀐 곳에 걸린 17개 파일 148개 테스트가 다 통과했고 guard 도 통과했다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 17 개 ---\ntest.sh: 파일 17 개를 6 개씩 한꺼번에 돌린다\nok      3s  res://tests/life/fishing/test_rod_grades.gd\nok      4s  res://tests/player/inventory_hotbar/test_bag_twenty_island.gd\nok      4s  res://tests/build/test_bed.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      5s  res://tests/craft/stations/test_salt_pan.gd\nok      2s  res://tests/life/fishing/test_bait_grades.gd\nok      3s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      9s  res://tests/build/test_furniture.gd\nok     11s  res://tests/player/inventory_hotbar/test_weight.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            17\nTests             148\nPassing Tests     148\nFailing Tests       0\nRisky/Pending       0\nAsserts          3896\nTime           11s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "04b7b1d6"
  }
 ]
