@@ -4101,7 +4101,7 @@
   - 기준: 벌집 치기에 휘두르기 간격이 없다 — WildHives.swing 은 좌클릭마다 곧바로 한 대라 연타로 순식간에 턴다(평타 · 캐기는 도구 휘두르기 빠르기를 따른다, tests/combat/tools_as_weapons/test_fire_rate.gd). 같은 간격을 걸지 사람이 볼 일이 아니면 Attack 의 휘두르기 간격을 재사용해 막고 테스트로 확인해라
 - [x] 4. (앞 단계 QA) 벌집 간격이 주민 상수를 빌린다
   - 기준: 벌집 간격이 주민 상수를 빌린다 — life/gathering/wild_hives.gd 의 SWING_EVERY 가 automation/villagers/harvest_work.gd 의 HIT_EVERY 를 가리켜 생활 쪽이 주민 자동화에 기댄다. 사람 휘두르기 간격이 정해지면 Attack(또는 도구 데이터) 쪽 한 곳에 두고 벌집 · 주민이 그것을 읽게 옮겨라
-- [ ] 1. 주민 테스트 주석이 HIT_EVERY 를 사람 빠르기라 부른다 (G-916 단계 4)
+- [x] 1. 주민 테스트 주석이 HIT_EVERY 를 사람 빠르기라 부른다 (G-916 단계 4)
   - 기준: 주민 테스트 주석이 HIT_EVERY 를 사람 빠르기라 부른다 — tests/automation/villagers/test_villager_gather_close.gd:158 · 168 · 181 이 사람 쪽 셈에 HarvestWork.HIT_EVERY 를 쓴다(값은 같아 막지 않음). 사람 몫(person 계산 · 158줄 주석)은 Attack.SWING_EVERY 로 바꾸고 주민 몫(181줄)만 HarvestWork.HIT_EVERY 로 두어라
 
 ## [ ] G-245 동물이 나오는 기믹 — 바위 속 굴 · 나무 위 담비 · 올빼미 나무 · 디스폰
