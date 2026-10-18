@@ -1,95 +1,5 @@
 [
  {
-  "time": "2026-09-28 02:15:23",
-  "epoch": 1790529323,
-  "type": "pass",
-  "title": "통과 — G-158 단계 3 (물면 미니게임으로 낚는다)",
-  "group": "G-158",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "물면 팰월드식 미니게임 창(초록 바 · 왔다 갔다 하는 물고기 · 동그란 게이지)이 뜨고, 100%면 가방(차면 발밑)에 들고 0이면 그 한 마리를 놓친다(영역은 남는다). 새 테스트 10개 통과, 바뀐 곳 그물 148파일 1250개 통과",
-   "approach": "앞 단계는 물면 곧바로 한 마리를 건졌다(임시). 그 사이에 미니게임을 끼웠다. ① life/fishing/fishing_gauge.gd(FishingGauge, RefCounted) — 자리와 시간만: bar(초록 바 가운데) · fish · progress. push_bar(누르면 →, 놓으면 ←, 줄 끝에서 멈춤) · swim(때때로 · 끝에서 돌아섬) · fill(바 안이면 FILL_RATE로 오르고 밖이면 DRAIN_RATE로 준다, 1이면 CAUGHT · 0이면 ESCAPED). 채집 SkillCheck 처럼 계산과 그림을 나눠 「자리를 넣고 값을 잰다」를 화면 없이 잰다. ② Fishing — cast_at 이 영역 안이면 hook(n): 게이지를 열고 hooked 를 쏜다. 문 영역은 번호가 아니라 그 칸 자체를 쥔다(다른 영역이 10분으로 끝나면 번호가 밀린다). 좌클릭 누름/뗌은 _input 에서 받는다 — 창이 뜨면 커서가 풀려 GUI 가 먼저 먹기 때문이고, 물고 있는 동안은 그 클릭을 여기서 끝낸다. play(delta)가 _process 에서 게이지를 돌려 CAUGHT → land(가방, 차면 발밑 — 기존 _give), ESCAPED → 새 lose(n): 한 마리 빼고 FISH_LOST 한 줄, 영역은 남아 다시 던질 수 있다. 마지막 한 마리까지 놓치면 ALL_GONE 으로 끝난다. Esc · 죽음 · 영역 소멸은 let_go(아무것도 잃지 않는다). ③ ui/hud/fishing_window(.tscn) — 줄 · 초록 바 · 물고기(가는 쪽을 봄) · 12시부터 시계 방향으로 차는 원 게이지 + % 글자 + 안내 줄(FISH_GAME_HINT). 색은 테마 Palette(fish_*)에. ④ 조작 잠금은 다른 창과 같은 길 — GameRoot $Window 에 달고 window_open() 에 fishing_open() 을 넣어 _block_game_input 이 LOCK_WINDOW 를 건다(조준점 · 걷기 안내도 같이 숨음). GameRoot 가 node_added 로 Fishing 을 잡아 hooked/unhooked/tree_exited 에 창을 맞춘다. Esc 는 창부터 닫는 규칙대로 줄을 거두고, E · M 은 낚는 동안 안 열린다. ⑤ 재는 검사(test_window_layout)가 새 창을 저절로 잡아 조준점 겹침으로 떨어질 자리라, _open 에 「게임이 여는 길」(낚시를 달고 hook)을 더했다 — 창 8개 · 어긋난 곳 0. ⑥ test_bait_zone 의 「던지면 곧바로 한 마리」를 「미니게임이 뜨고 아직 안 건졌다」로 고쳤다. ⑦ 찍기: ui_shots 에 fishing · fishing_full · fishing_caught 를 더해 찍어 봤다 — 오르는 중(62%) · 다 찬 순간(100%) · 낚은 뒤(창 닫힘, 핫바에 물고기, 알림). 처음엔 100% 글자가 원에 붙어 반지름을 26→32 로 넓혔다. 테스트 중 걸린 것: 창 단축키는 _shortcut_input 이라 InputEventAction 은 안 닿는다 — Esc/E 를 진짜 키 이벤트로 바꿨다. 돌린 것: tests/life/fishing 25개 통과 · tests/ui/layout 22개 통과 · changed_tests 그물 148파일 1250개 통과 · guard 통과. 전체는 돌리지 않았다. 저장: 미니게임 상태는 몇 초짜리라 담지 않고 save.md 에 까닭을 적었다(껐다 켜면 줄을 거둔 것과 같다 — 물고기는 영역에 남는다).",
-   "why": "FishingGauge.BAR_WIDTH 0.26 (줄 길이에 대한 몫) — spec 에 없다, 찌가 넓힐 자리; FishingGauge.BAR_SPEED 0.55/초 — 누르면 →, 놓으면 ← 같은 빠르기; FishingGauge.FISH_SPEED 0.3/초 · FISH_TURN 0.5~1.6초마다 돌아섬; FishingGauge.FILL_RATE 0.25/초 · DRAIN_RATE 0.1/초 · START 50% — 0에서 시작하면 뜨자마자 놓친다; 조작: 좌클릭 꾹 = 초록 바 →, 놓으면 ← (팰월드와 같다, spec/01_settings/input.md); Esc = 줄 거두기(물고기는 영역에 남는다) — spec 에 규칙이 없어 다른 창 「Esc 는 창부터 닫는다」를 따랐다; FishingWindow 크기 · 색(TRACK_SIZE 420×44, GAUGE_RADIUS 32, 테마 fish_* 색)",
-   "files": [
-    "game/life/fishing/fishing_gauge.gd",
-    "game/life/fishing/fishing.gd",
-    "game/ui/hud/fishing_window.gd",
-    "game/ui/hud/fishing_window.tscn",
-    "game/core/game_root.gd",
-    "game/core/game_root.tscn",
-    "game/ui/theme/naru_theme.tres",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/tests/life/fishing/test_minigame.gd",
-    "game/tests/life/fishing/test_bait_zone.gd",
-    "game/tests/ui/layout/test_window_layout.gd",
-    "game/tests/core/debug/test_ui_shots.gd",
-    "spec/01_settings/input.md",
-    "spec/01_settings/save.md",
-    "spec/04_life/fishing.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "물면 미니게임 창이 뜬다 — 초록 바 · 왔다 갔다 하는 물고기 · 동그란 게이지가 다 보인다 (테스트)",
-     "evidence": "test_minigame.gd test_bite_opens_the_window_with_bar_fish_and_gauge — 진짜 우클릭 둘(떡밥 → 낚싯대)로 물린 뒤 창이 보이고, Track · Gauge 가 화면 안에 자리를 차지하며, bar_rect · fish_point 가 줄 안에, 퍼센트 글자가 게이지 값과 같은지 본다. test_the_fish_swims_back_and_forth 가 물고기가 좌우 둘 다로 움직이는지 본다. 찍은 사진(/tmp/fishshots2/fishing_ko.png)에도 셋이 다 보인다"
-    },
-    {
-     "ok": true,
-     "criterion": "물고기가 바 안이면 게이지가 오르고, 밖이면 내린다 (테스트 — 자리를 넣어 값을 잰다)",
-     "evidence": "test_gauge_rises_inside_the_bar_and_falls_outside — 바 경계 안(0.4×너비)·밖(0.6×너비)에 물고기를 놓고 1초 fill 뒤 +FILL_RATE / -DRAIN_RATE 를 잰다. fishing_gauge.gd 의 조건을 일부러 뒤집어(not fish_in_bar) 돌리니 이 테스트와 낚기·놓치기 테스트가 모두 떨어졌다 — 껍데기가 아니다 (되돌렸다)"
-    },
-    {
-     "ok": true,
-     "criterion": "**100%면 물고기가 가방에 든다** — 가방이 차면 발밑에 떨어진다 (다른 것과 같은 규칙) (테스트)",
-     "evidence": "test_full_gauge_puts_the_fish_in_the_bag — unhooked(CAUGHT) · 가방 fish 1 · 영역 수 -1 · 창 닫힘 · 알림. test_full_bag_drops_the_fish_at_the_feet — 가방을 돌로 채우고 낚으면 가방엔 0, DroppedItem 물고기 1개가 발밑 0.5m 안. 기존 _give 경로를 쓴다"
-    },
-    {
-     "ok": true,
-     "criterion": "**0이면 그 물고기 한 마리를 놓친다** — 영역의 남은 수가 하나 줄고, 떡밥 영역은 남는다 (테스트)",
-     "evidence": "test_empty_gauge_loses_one_fish_and_the_zone_stays — unhooked(ESCAPED) · lost 신호 · 가방 0 · 영역 1개 그대로 · 남은 수 -1 · 그림자 -1 · 알림, 그리고 같은 영역에 다시 던져 물리는 것까지 본다. test_losing_the_last_fish_ends_the_zone 이 마지막 한 마리를 놓치면 영역이 끝나는 것도 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "초록 바를 **무엇으로 움직이나**를 정해 `spec/01_settings/input.md` 표에 한 줄 더한다. 지금은 **임시**로 둔다 — 마우스 왼쪽을 누르고 있으면 오른쪽, 놓으면 왼쪽으로 밀린다 (팰월드와 같다)",
-     "evidence": "input.md 표에 「좌클릭 꾹 … (**임시** — 팰월드와 같다)」 한 줄이 더해졌다. test_holding_left_click_pushes_the_bar_right_and_letting_go_left 가 진짜 좌클릭 누름/뗌 이벤트로 바가 오른쪽/왼쪽으로 가는지, 줄 끝에서 멈추는지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "바 너비 · 물고기 속도 · 게이지가 차고 빠지는 속도는 전부 **임시**다 — 코드와 report 에 「임시」를 적는다",
-     "evidence": "fishing_gauge.gd 의 BAR_WIDTH · BAR_SPEED · FISH_SPEED · FISH_TURN · FILL_RATE · DRAIN_RATE · START 주석마다 **임시**. report.json temporary 에 모두 있고 fishing.md 수치에도 「전부 임시」로 적혔다"
-    },
-    {
-     "ok": true,
-     "criterion": "창이 떠 있는 동안 조작이 잠긴다 — 다른 창과 같은 규칙 (테스트)",
-     "evidence": "test_controls_are_locked_while_the_window_is_open — window_open() 참, LOCK_WINDOW 잠금, controls_enabled 거짓, 조준점 숨김, MOVE_UP 눌러도 안 걷고, 떡밥 우클릭이 안 먹고, E 로 가방이 안 열리며, 낚은 뒤 조작이 돌아온다. GameRoot.window_open() 에 fishing_open() 을 넣어 다른 창과 같은 _block_game_input 길을 탄다"
-    },
-    {
-     "ok": true,
-     "criterion": "찍어서 확인한다 — 게이지가 오르는 중 · 다 찬 뒤 두 장",
-     "evidence": "ui_shots 에 fishing · fishing_full · fishing_caught 자리가 더해졌고 /tmp/fishshots2 에 ko · en 사진이 있다. 62% 로 오르는 중, 100% 다 찬 창, 낚은 뒤(창 닫힘 · 핫바 7번에 물고기 · 알림)를 눈으로 확인했다"
-    }
-   ],
-   "issues": [
-    "낚시 사진의 알림이 다른 말로 찍힌다 — /tmp/fishshots2/fishing_en.png 에 「떡밥을 풀었다 — 물고기 5마리가 모인다」(한국어), fishing_full_ko.png 에 「Spread the groundbait — 3 fish gather」(영어)가 찍혔다. game/core/debug/ui_shots.gd 가 fishing_caught 만 again 으로 알림을 다시 띄우고 fishing · fishing_full 은 안 띄운다. fishing · fishing_full 에도 again = Notice.say(get_tree(), Fishing.SAY_SPREAD, [마리 수]) 를 달거나, 사진에 안 필요하면 _fishing() 끝에서 알림을 지워라. 막는 것은 아니다 — 창 자체는 두 말 다 맞게 찍혔다"
-   ],
-   "good": [
-    "Esc 로 줄을 거두기(let_go — 낚지도 놓치지도 않음)와 안내 줄의 「Esc 줄 거두기」 — 기준에 없다. 다른 창의 「Esc 는 창부터 닫는다」를 따랐고 fishing.md 에 (임시)로 적혔다",
-    "놓쳐서 마지막 물고기까지 떠나면 영역이 끝나는 ALL_GONE 과 그 알림 FISH_ZONE_ALL_GONE — 「다 잡거나 10분」 규칙을 놓침에까지 넓힌 것이다. fishing.md 에 적혔다",
-    "ui_shots 의 세 번째 사진 fishing_caught (기준은 두 장)"
-   ]
-  },
-  "test": "r_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      0s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/build/test_placeable.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      0s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      0s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      0s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           221\nTests            1818\nPassing Tests    1818\nFailing Tests       0\nRisky/Pending       0\nAsserts         81841\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "39c7406"
- },
- {
   "time": "2026-09-28 02:25:05",
   "epoch": 1790529905,
   "type": "pass",
@@ -8872,5 +8782,37 @@
   },
   "test": "st_placers_file_end.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      0s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/farming/test_seed_back.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           469\nTests            3506\nPassing Tests    3506\nFailing Tests       0\nRisky/Pending       0\nAsserts        155517\nTime           700s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "3cafeb27"
+ },
+ {
+  "time": "2026-10-19 00:34:00",
+  "epoch": 1792337640,
+  "type": "pass",
+  "title": "통과 — G-243 단계 5 ((앞 단계 QA) 옮기며 같이 하는 판 망원경 줄이 빠졌다)",
+  "group": "G-243",
+  "step": "5",
+  "attempt": "1",
+  "report": {
+   "problem": "hunting.md 「사냥새 · 망원경」 세부에 옮기며 빠진 두 까닭(우클릭이 불러들이기라 누르는 조준이 아니다 · 같이 하는 판은 서버가 받는다)을 되붙였다 — 150줄 그대로",
+   "approach": "옛 ranching-breeding.md 망원경 문단을 hunting.md 로 옮기며 150줄에 맞추느라 「들면 곧 1인칭」의 까닭과 같이 하는 판 줄이 빠졌다. 줄을 새로 늘리지 않고 기존 세부 줄 안에 붙였다 — 「들면 곧 1인칭」 뒤에 (우클릭이 불러들이기라 누르는 조준이 아니다), 끝 (`life/hunting/telescope.gd`) 앞에 「같이 하는 판은 손이 닿지 않아도 서버가 받는다」. 문서만 바뀌어 새 테스트는 없다. 바뀐 곳만 골라 돌린 11개 파일 131개 테스트 통과.",
+   "why": "",
+   "files": [
+    "spec/04_life/hunting.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "옮기며 같이 하는 판 망원경 줄이 빠졌다 — 옛 ranching-breeding.md 망원경 문단의 「같이 하는 판은 손이 닿지 않아도 서버가 받는다」와 「들면 곧 1인칭 — 우클릭이 불러들이기라 누르는 조준이 아니다」의 까닭이 hunting.md 「사냥새 · 망원경」 세부에 안 옮겨졌다(150줄이라 줄였다). 막는 것은 아니다 — hunting.md 세부 줄 끝 (`life/hunting/telescope.gd`) 앞에 「같이 하는 판은 서버가 받는다」를 붙이고, 줄 수는 이웃 줄을 합쳐 150 안에 맞춰라",
+     "evidence": "git diff spec/04_life/hunting.md — 세부 첫 줄 「들면 곧 1인칭」 뒤에 「(우클릭이 불러들이기라 누르는 조준이 아니다)」, 셋째 줄 끝 (`life/hunting/telescope.gd`) 바로 앞에 「같이 하는 판은 손이 닿지 않아도 서버가 받는다」가 붙었다. 옛 ranching-breeding.md(HEAD~1) 문단 원문과 같은 말이다. 줄을 늘리지 않고 기존 줄 안에 넣어 wc -l 150 그대로. 지운 줄 둘은 같은 줄의 고친 판일 뿐 「사람 결정」 줄은 하나도 빠지지 않았다. 문서만 바뀐 단계라 테스트가 걸릴 기준이 아니다. test.log 전체 469 파일 3506 테스트 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "    1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/core/net/test_acts_alone.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      0s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      1s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           469\nTests            3506\nPassing Tests    3506\nFailing Tests       0\nRisky/Pending       0\nAsserts        155520\nTime           694s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "4076397b"
  }
 ]
