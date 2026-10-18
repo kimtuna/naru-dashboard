@@ -3986,13 +3986,15 @@
 - [x] 1. 가위로 깎는다
   - 기준: 아이템 **가위**(작업대 · 재료 **임시**). 들고 앙고라토끼 · 호저를 누르면 털(**앙고라 털**) · 가시(**호저 가시**)가 나온다 — 개수 **임시**. 깎고 나면 다시 자랄 때까지(주기 **임시**) 못 깎고, 자라는 정도가 겨누면 보인다 · 모양도 바뀐다(털이 줄어든다)
   - 기준: **온순함 100 이거나 묶인 짐승만** 깎인다 — 야생은 「가만히 있지 않는다」 한 줄 · 저장 · 멀티 (테스트)
-- [ ] 2. 털 → 천 · 가시 → 고급 찌
+- [x] 2. 털 → 천 · 가시 → 고급 찌
   - 기준: 베틀에서 앙고라 털 → 천(있는 아이템 · 수 **임시**) · 작업대에서 호저 가시 → **고급 찌**(무기 작업대 모듈 탭의 찌 칸 · 입질 +60% **임시**) (테스트)
   - 기준: 조련사 주민이 맡은 우리의 다 자란 짐승을 가위로 깎는다(가위가 방 상자에 있으면) (테스트)
   - 기준: (앞 단계 QA) weights.json _temporary 문장이 꼬였다 — game/player/inventory_hotbar/weights.json 의 _temporary 에서 「곰발바닥 찜(G-239.3)도 임시다.」 뒤에 가위 문장을 끼워 넣어, 원래 곰발바닥 쪽 설명이던 「— 가죽 · 깃털 · 기름에 견주어 잡았다」가 가위 문장 꼬리에 붙었다. 「…곰발바닥 찜(G-239.3)도 임시다 — 가죽 · 깃털 · 기름에 견주어 잡았다. 가위 · 앙고라 털 · 호저 가시(G-240.1)는 칼 · 양털에 견주어 잡은 임시 값이다.」 순으로 고쳐라
   - 기준: (앞 단계 QA) 서버가 가위를 '들었나' 대신 '가방에 있나'로 본다 — net_world.gd _shear_animal 은 kit.inventory.count_of(Shearing.ITEM) > 0 만 본다. 손에 다른 것을 들고 가방 어딘가에 가위만 있어도 서버는 깎아 준다(참가자 쪽 Shearing.press 가 holds 로 막으니 정상 길에선 안 난다). 사본 가방의 고른 칸(held_item 에 해당하는 것)으로 보거나, Taming 의 서버 검사와 같은 꼴인지 맞춰 주석으로 까닭을 적어라
 - [ ] 3. spec
   - 기준: ranching-breeding.md 에 가위 · 「털깎기 시설은 안 만든다(사람 2026-10-18)」 · 찌 줄(fishing.md)에 고급 찌
+  - 기준: (앞 단계 QA) test_shear_goods 가 로케일을 안 돌려놓는다 — game/tests/life/ranching/test_shear_goods.gd 마지막에 TranslationServer.set_locale("ko") 한 뒤 되돌리지 않는다. 파일마다 따로 돌아 지금은 괜찮지만, 앞 로케일을 받아 두고 끝에 되돌리거나 after_each 에서 되돌려라
+  - 기준: (앞 단계 QA) 새 서버 테스트가 낡은 wait_frames 를 쓴다 — game/tests/multiplayer/test_hunt_on_server.gd 의 test_the_server_shears_only_with_scissors_in_hand 의 await wait_frames(30) 이 GUT DEPRECATED 경고를 낸다. wait_physics_frames(30) 으로 바꿔라
 
 ## [ ] G-241 꿀벌 — 야생 벌집 · 여왕벌 · 벌통 창 · 곰과 오소리의 습격
 - 차선: 3d-start
