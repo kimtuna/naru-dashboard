@@ -3996,7 +3996,7 @@
   - 기준: (앞 단계 QA) test_shear_goods 가 로케일을 안 돌려놓는다 — game/tests/life/ranching/test_shear_goods.gd 마지막에 TranslationServer.set_locale("ko") 한 뒤 되돌리지 않는다. 파일마다 따로 돌아 지금은 괜찮지만, 앞 로케일을 받아 두고 끝에 되돌리거나 after_each 에서 되돌려라
   - 기준: (앞 단계 QA) 새 서버 테스트가 낡은 wait_frames 를 쓴다 — game/tests/multiplayer/test_hunt_on_server.gd 의 test_the_server_shears_only_with_scissors_in_hand 의 await wait_frames(30) 이 GUT DEPRECATED 경고를 낸다. wait_physics_frames(30) 으로 바꿔라
 
-## [ ] G-241 꿀벌 — 야생 벌집 · 여왕벌 · 벌통 창 · 곰과 오소리의 습격
+## [x] G-241 꿀벌 — 야생 벌집 · 여왕벌 · 벌통 창 · 곰과 오소리의 습격
 - 차선: 3d-start · 시작 2026-10-18 23:18
 - 순서: G-240 뒤
 - spec: spec/04_life/ranching-breeding.md, spec/05_craft/facilities.md
