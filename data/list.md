@@ -3942,7 +3942,7 @@
 - [x] 1. 관리인 바꿈에서 조사가 틀렸다 (G-232 단계 3)
   - 기준: 관리인 바꿈에서 조사가 틀렸다 — game/automation/villagers/villagers.gd:136 「관리인가 똥을 치울」→「관리인이 똥을 치울」, game/automation/villagers/crafting_work.gd:86 「제작자와 관리인(축사)가 같이 쓴다」→「…관리인(축사)이 같이 쓴다」로 고쳐라
 
-## [ ] G-239 내 섬 야생 동물 열한 종 — 크기 · 먹이 · 도축 산출
+## [x] G-239 내 섬 야생 동물 열한 종 — 크기 · 먹이 · 도축 산출
 - 차선: 3d-start · 시작 2026-10-18 18:53
 - 순서: 차선 1 첫 묶음 (차선 2 의 G-242 와 나란히 · G-243 · G-244 가 이 묶음 뒤)
 - spec: spec/04_life/hunting.md, spec/04_life/ranching-breeding.md
