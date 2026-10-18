@@ -36,3 +36,9 @@
 - 어디서: 차선 합치기 (3d-lane2)
 - 무엇: 부딪힌다: game/core/debug/ui_shots.gd game/craft/recipes/workbench.json game/craft/stations/crafting_station.gd game/craft/stations/stations.gd game/craft/stations/stations.json — 이 줄기(3d-lane2)에서 `git merge 3d-start` 을 손으로 풀어 커밋해 달라. 풀릴 때까지 이 차선은 3d-start 없이 돈다
 - **사람이 답할 것**: 
+
+## 물음 — 평타 · 캐기에 휘두르기 간격이 없다
+- 물은 때: 2026-10-19 02:31:31
+- 어디서: G-916 단계 3
+- 무엇: 평타 · 캐기에 휘두르기 간격이 없다 — 이번 기준은 「평타 · 캐기는 도구 휘두르기 빠르기를 따른다」고 했지만 Attack.swing/strike · Harvest.swing 에는 쿨다운이 없고 test_fire_rate.gd 는 총(Magazine.fire_delay)만 본다. 연타하면 평타 · 캐기도 프레임마다 나간다. 사람 휘두르기에 간격을 걸지 · 도구마다 다르게 할지 · 몇 초로 할지 spec 에 규칙이 없다. 벌집은 임시로 HarvestWork.HIT_EVERY 0.6초를 빌렸으니 정해지면 WildHives.SWING_EVERY 도 그 값으로 바꿔야 한다
+- **사람이 답할 것**: 
