@@ -3997,7 +3997,7 @@
   - 기준: (앞 단계 QA) 새 서버 테스트가 낡은 wait_frames 를 쓴다 — game/tests/multiplayer/test_hunt_on_server.gd 의 test_the_server_shears_only_with_scissors_in_hand 의 await wait_frames(30) 이 GUT DEPRECATED 경고를 낸다. wait_physics_frames(30) 으로 바꿔라
 
 ## [ ] G-241 꿀벌 — 야생 벌집 · 여왕벌 · 벌통 창 · 곰과 오소리의 습격
-- 차선: 3d-start
+- 차선: 3d-start · 시작 2026-10-18 23:18
 - 순서: G-240 뒤
 - spec: spec/04_life/ranching-breeding.md, spec/05_craft/facilities.md
 - **사람 결정 2026-10-18** (원문): 「꿀벌을 보이게 만들진 않고 그냥 개체수로만 나오게 함. 야생 꿀벌집을 털면 꿀이랑 밀랍이 나오고 낮은 확률로 여왕벌이 나옴. 밀랍으로 벌집을 만들 수 있음. 벌집에 여왕벌을 넣으면 알아서 개체수가 늘어남. 벌집도 ui를 따로 만들어서 개체수가 보여지고 꿀도 계속해서 생산되는 빈칸들을 만듦 … 여왕벌의 생사도. 개체수가 100%에 가까워질수록 꿀의 생산 속도는 빨라지지만 … 여왕벌이 죽는다면 개체수는 바로 0」
