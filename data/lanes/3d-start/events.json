@@ -1,57 +1,5 @@
 [
  {
-  "time": "2026-10-13 03:50:51",
-  "epoch": 1791831051,
-  "type": "pass",
-  "title": "통과 — G-203 단계 3 (염전 — 물가에 선다)",
-  "group": "G-203",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "염전이 바닷가(한가운데 2.5m 안에 바다)에 서면 60초마다 소금이 저절로 나오고, 바닷가가 아니면 아무것도 안 내며 창에 「바닷가가 아니다」 까닭이 뜬다 — 바뀐 곳만(changed_tests) 142개 파일 1287/1287 통과",
-   "approach": "벌집이 쓰던 '레시피 없이 저절로 나오는 것'(stations.json 의 yields)에 자리 조건 near 를 더했다 — 염전은 yields={item: salt, count 1, seconds 60, near: sea}. 바다는 낚시의 물 영역과 같은 꼴의 물음(자리 → 물 높이, 아니면 -INF)을 Stations.sea_level 로 받는다. 섬(TestIsland)은 땅이 바다 높이 아래인 곳만 바다로 넣어 준다 — spec 이 '바닷물'이라 연못 · 개울(민물)은 치지 않는다. Stations.is_seaside 는 한가운데와 둘레 두 바퀴(1.25m · 2.5m, 8방향)를 짚어 한 곳이라도 바다면 물가로 친다. 멈춘 까닭은 Stations.why_idle 한 곳에서 정하고(STATION_NEEDS_SEA), tick_yields 는 까닭이 있으면 시간을 흘리지 않으며, 제작 창(station_window)은 안내 줄에 그 까닭을 띄운다. 소금 아이템(번역 · 무게 0.2)을 더했고 바닷물은 아이템으로 만들지 않았다(테스트가 지킨다). 새 상태는 없다 — 남은 초(yield_left)는 이미 저장되고 물가인지는 자리에서 다시 잰다. test_twelve_facilities 가 염전을 '레시피 없는 빈 시설'로 보던 단언을, 저절로 나오는 시설이면 STATION_YIELDS 나 멈춘 까닭을 보도록 고쳤다. ui_shots 에 salt_pan 자리를 더해 찍어 보니 ko · en 둘 다 까닭 글자가 창 안에 잘리지 않고 들어간다. 테스트: test_salt_pan.gd · test_salt_pan_island.gd 를 포함한 stations 폴더 11개 파일 95/95, 바뀐 곳만(changed_tests) 142개 파일 1287/1287 통과.",
-   "why": "염전 60초에 소금 1 — 벌집과 같은 값으로 두었다 (spec 수치 절: 전부 임시); 물가 거리 Stations.WATERSIDE 2.5m — '물가에 둔다'만 사람 결정이고, 염전 한 변(1.6m)보다 조금 넉넉히 잡았다; 소금 무게 0.2kg — weights.json 의 지어낸 임시 값",
-   "files": [
-    "game/craft/stations/stations.json",
-    "game/craft/stations/station_catalog.gd",
-    "game/craft/stations/stations.gd",
-    "game/ui/hud/station_window.gd",
-    "game/world/terrain/test_island.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/player/inventory_hotbar/weights.json",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/tests/craft/stations/test_salt_pan.gd",
-    "game/tests/craft/stations/test_salt_pan_island.gd",
-    "game/tests/craft/stations/test_twelve_facilities.gd",
-    "spec/05_craft/facilities.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "염전을 **물가에 놓으면** 시간이 지나 **소금**이 나온다 (테스트). 바닷물은 아이템이 아니다",
-     "evidence": "test_salt_pan.gd: test_by_the_sea_salt_comes_out_as_time_passes (바다 2m 앞 → 반 시간 0개 · 다 지나 1개 · 2배 더 3개), test_time_flows_by_itself_by_the_sea (부르지 않아도 섬 시간대로 나온다), test_placed_inland_..._by_the_sea_it_yields (GameRoot 에 진짜 우클릭으로 놓은 뒤 물가가 되면 소금 1). test_salt_pan_island.gd: 진짜 TestIsland 바닷가에서 소금 1, 섬이 sea_level 을 넣어 준다. test_seawater_is_not_an_item 이 weights.json 에 seawater/brine/water 등이 없음을 확인, 레시피 0개. 일부러 깨 봄: why_idle 이 늘 \"\" 를 돌려주게 바꾸자 test_salt_pan.gd 3개 · test_salt_pan_island.gd 1개가 실패했다(되돌림 확인). test.log 바뀐 곳만 177파일 1452/1452 통과, guard 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "물가가 아니면 아무것도 내지 않고, **왜 안 되는지 보인다** (테스트)",
-     "evidence": "test_away_from_the_sea_nothing_comes_and_the_reason_is_named (WATERSIDE+1 너머 바다 → why_idle=STATION_NEEDS_SEA, 5배 시간에도 0개, 남은 초도 안 흐름, 옮기면 나옴), test_without_a_sea_on_the_island_nothing_comes, test_salt_pan_island 의 섬 한가운데 0개 + 까닭, test_placed_inland_the_window_says_why 가 제작 창 안내 줄이 보이고 글자가 STATION_NEEDS_SEA 임을, 물가가 되면 STATION_YIELDS 로 바뀜을 확인. ko.po · en.po 둘 다 STATION_NEEDS_SEA · ITEM_salt 가 있다. 위 깨 보기에서 이 단언들이 실패했다"
-    }
-   ],
-   "issues": [],
-   "good": [
-    "ui_shots 에 salt_pan 찍는 자리를 더했다 (창 글자가 잘리지 않는지 보는 용도 — 기준을 돕는 것이라 흠은 아니다)"
-   ]
-  },
-  "test": "inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      1s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_job_work_shared.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      0s  res://tests/world/terrain/test_deprecated_call_source.gd\nok    498s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           177\nTests            1452\nPassing Tests    1452\nFailing Tests       0\nRisky/Pending       0\nAsserts         71324\nTime           498s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "c63b8dc4"
- },
- {
   "time": "2026-10-13 04:13:17",
   "epoch": 1791832397,
   "type": "pass",
@@ -10355,5 +10303,27 @@
    "decision": null
   },
   "test": "cks.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n================ 떨어진 파일: res://tests/ui/hud/test_item_slot_fit.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/ui/hud/test_item_slot_fit.gd\n* test_every_item_name_fits_its_slot_in_korean\n    [Failed]:  [\"잡은 앙고라토끼: 낱말 가운데서 줄이 바뀌었다 ([\"잡은 앙고라토\", \"끼\"])\"] expected to equal [\"\"]:  [ko] captive_angora_rabbit 칸이 넘치지 않는다\n      at line -1\n* test_every_item_name_fits_its_slot_in_english\n* test_the_long_names_did_overflow_at_the_plain_font_size\n* test_short_names_keep_their_size_and_labels_clip\n* test_two_line_names_clear_the_slot_number_and_count\n4/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/ui/hud/test_item_slot_fit.gd\n- test_every_item_name_fits_its_slot_in_korean\n    [Failed]:  [\"잡은 앙고라토끼: 낱말 가운데서 줄이 바뀌었다 ([\"잡은 앙고라토\", \"끼\"])\"] expected to equal [\"\"]:  [ko] captive_angora_rabbit 칸이 넘치지 않는다\n          at line -1\n\nTotals\n------\nScripts               1\nTests                 5\nPassing Tests         4\nFailing Tests         1\nAsserts           591/592\nTime              2.194s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           458\nTests            3400\nPassing Tests    3399\nFailing Tests       1\nRisky/Pending       0\nAsserts        150852\nTime           688s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/ui/hud/test_item_slot_fit.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-18 20:58:25",
+  "epoch": 1792324705,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-239 단계 5 (시도 2)",
+  "group": "G-239",
+  "step": "5",
+  "attempt": "2",
+  "report": {
+   "problem": "hunting.md 에 열두 종 · 크기 · 먹이표 · 도축 산출표 · 사람 원문(2026-10-18) · 「곰은 기를 수 없다」를 맞췄고, 들판으로 옮긴 곰에 표를 달아 restore 두 번에 겹치지 않게 했다 · 「잡은 앙고라토끼」 칸 넘침을 고쳤다",
+   "approach": "① spec — hunting.md 에 사람 원문 날짜 · 요약과 「곰은 기를 수 없다(사람 2026-10-18, G-238 의 곰 키우기를 바꿨다)」를 넣었다. ranching-breeding.md 의 곰 줄은 이미 맞았다 (143줄). ② restore 는 Ranch 자식만 치웠는데 _to_field 는 곰을 섬(scope) 아래에 세워 두 번째 restore 에 곰이 둘 섰다 — 세운 곰에 meta ranch_field 를 달고 restore 머리에서 섬 자식 가운데 그 표가 있는 짐승도 치운다. ③ 전체 검사가 떨어뜨린 칸 넘침 — 「앙고라토끼」는 다섯 음절 한 낱말이라 가장 작은 글자로도 칸에 들지 않아 낱말 가운데서 줄이 바뀌었다. ko.po 의 칸 이름만 「잡은 앙고라 토끼」로 띄어 썼다(띄어 써도 맞는 말). 시험: 바뀐 곳만 26개 파일 278개 통과 · test_item_slot_fit 따로 통과.",
+   "why": "",
+   "files": [
+    "spec/04_life/hunting.md",
+    "game/life/ranching/ranch.gd",
+    "game/tests/life/ranching/test_ranch_place.gd",
+    "game/i18n/ko.po"
+   ],
+   "decision": null
+  },
+  "test": "/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\n\n================ 떨어진 파일: res://tests/automation/villagers/test_villager_g218_give_way.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/automation/villagers/test_villager_g218_give_way.gd\n* test_two_villagers_walking_head_on_in_the_open_pass_each_other\n* test_a_villager_following_one_the_same_way_does_not_walk_faster_than_it\n* test_a_villager_does_not_push_one_standing_in_the_door_and_ends_stuck\n* test_two_villagers_cross_a_narrow_door_when_the_one_inside_gives_way\n    [Failed]:  [2.53333333333333] expected to be < than [0.6]:  안쪽이 먼저 났다 — 문에서 서로 비비지 않았다 (0.00초 · 2.53초)\n      at line -1\n* test_two_villagers_cross_a_narrow_door_when_the_one_outside_gives_way\n* test_two_villagers_heading_for_one_chest_do_not_rub_and_both_reach_it\n* test_giving_way_lives_in_path_walk_and_jobs_only_say_where\n6/7 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/automation/villagers/test_villager_g218_give_way.gd\n- test_two_villagers_cross_a_narrow_door_when_the_one_inside_gives_way\n    [Failed]:  [2.53333333333333] expected to be < than [0.6]:  안쪽이 먼저 났다 — 문에서 서로 비비지 않았다 (0.00초 · 2.53초)\n          at line -1\n\nTotals\n------\nScripts               1\nTests                 7\nPassing Tests         6\nFailing Tests         1\nAsserts           214/215\nTime              18.348s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           458\nTests            3400\nPassing Tests    3399\nFailing Tests       1\nRisky/Pending       0\nAsserts        150861\nTime           679s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/automation/villagers/test_villager_g218_give_way.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
