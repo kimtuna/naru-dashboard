@@ -4081,7 +4081,7 @@
   - 기준: 역할이 **공격**인 동물은 반경에 든 적대 짐승에게 곧장 달려가 싸운다 — 지금은 테스트용 종으로만 확인한다(늑대는 사람이 넣을 때) (테스트)
   - 기준: (앞 단계 QA) ui_shots 의 시험 땅 만들기가 겹친다 — game/core/debug/ui_shots.gd 의 _guard_pen · _guard_pen_held 가 200×1×200 StaticBody3D 땅 만드는 코드를 그대로 두 번 적었다(다른 자리에도 같은 꼴이 있으면 함께). _shot_ground() 같은 도움 함수 하나로 묶어라 (막는 것은 아니다)
   - 기준: (앞 단계 QA) 팀 번호는 아직 하는 일이 없다 — Animal.guard_team 은 저장 · 동기화 · 창 표시만 되고 경비 행동은 팀과 상관없다. spec/04_life/ranching-breeding.md 에 「팀은 지금 묶기만 한다 — 팀마다 무엇을 하나는 다음 단계」로 적혀 있으니, 그 다음 단계가 이 묶음 목록에 실제로 있는지 확인하고 없으면 spec 「미정」 줄로 옮겨 적어라
-- [ ] 3. 울음을 들은 주민이 싸운다
+- [x] 3. 울음을 들은 주민이 싸운다
   - 기준: 거위가 울면 반경 둘레(**임시**)의 주민 가운데 「싸움에 나서기」가 켜진 주민(G-242)이 하던 일을 멈추고 그 짐승에게 가서 싸운다 · 끝나면 돌아간다 (테스트)
   - 기준: (앞 단계 QA) _detour_house 의 머리 주석이 밀려났다 — game/core/debug/ui_shots.gd 에서 _shot_ground 를 _detour_house 바로 위에 끼우면서 원래 _detour_house 의 주석 「## 판 plate 부터 size 판만큼 토대 · 둘레 벽 · 지붕을 놓아 막은 건물 (문 없음) — 바닥 높이를 돌려준다.」가 _shot_ground 주석 위에 남았고 _detour_house 는 주석이 없다. 그 한 줄을 func _detour_house 바로 위로 옮겨라
   - 기준: (앞 단계 QA) 오소리 · 성난 멧돼지가 거위를 쫓는 끝까지는 테스트가 없다 — test_guard_watch.gd 는 오소리 · 멧돼지를 threatens() 로만 보고, 울기 · 어그로 · 물려 죽기까지 실제로 도는 것은 곰 하나다. 오소리는 적대가 아니라 _foe/_rage 길(fierce 가 성으로 켜진다)을 타므로 길이 다르다. QA 탐침(오소리 4.2 m · 거위 체력 3 · 6초)으로는 울고 죽었다. 같은 꼴로 test_a_badger_is_drawn_by_the_goose 를 더해 cry_count>0 · badger.foe()==goose · goose.is_carcass() 를 단언해라
