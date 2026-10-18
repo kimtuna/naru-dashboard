@@ -4085,7 +4085,7 @@
   - 기준: 거위가 울면 반경 둘레(**임시**)의 주민 가운데 「싸움에 나서기」가 켜진 주민(G-242)이 하던 일을 멈추고 그 짐승에게 가서 싸운다 · 끝나면 돌아간다 (테스트)
   - 기준: (앞 단계 QA) _detour_house 의 머리 주석이 밀려났다 — game/core/debug/ui_shots.gd 에서 _shot_ground 를 _detour_house 바로 위에 끼우면서 원래 _detour_house 의 주석 「## 판 plate 부터 size 판만큼 토대 · 둘레 벽 · 지붕을 놓아 막은 건물 (문 없음) — 바닥 높이를 돌려준다.」가 _shot_ground 주석 위에 남았고 _detour_house 는 주석이 없다. 그 한 줄을 func _detour_house 바로 위로 옮겨라
   - 기준: (앞 단계 QA) 오소리 · 성난 멧돼지가 거위를 쫓는 끝까지는 테스트가 없다 — test_guard_watch.gd 는 오소리 · 멧돼지를 threatens() 로만 보고, 울기 · 어그로 · 물려 죽기까지 실제로 도는 것은 곰 하나다. 오소리는 적대가 아니라 _foe/_rage 길(fierce 가 성으로 켜진다)을 타므로 길이 다르다. QA 탐침(오소리 4.2 m · 거위 체력 3 · 6초)으로는 울고 죽었다. 같은 꼴로 test_a_badger_is_drawn_by_the_goose 를 더해 cry_count>0 · badger.foe()==goose · goose.is_carcass() 를 단언해라
-- [ ] 4. spec
+- [x] 4. spec
   - 기준: ranching-breeding.md(또는 새 파일)에 경비 우리 · 역할 · 사람 원문 날짜 · 「이름은 사람이 정한다」
 
 ## [ ] G-916 루프가 찾은 것 — 스스로 갚는다
