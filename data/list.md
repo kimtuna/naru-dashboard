@@ -4135,10 +4135,12 @@
   - 기준: 들판 짐승이 없어진 집 자리는 지금의 재생(next_day)으로 다시 찬다 · 올빼미는 집 나무가 남았으면 그 나무에 다시 난다 · 저장 · 멀티 (테스트)
   - 기준: (앞 단계 QA) 옛 저장본의 집 번호가 하나 당겨진다 — island_blueprint.gd wild_dens 에서 owl 을 지워 뒤의 hedgehog 집 번호가 하나 앞으로 왔다. 옛 저장본의 「오늘 비운 집」 번호가 하루 동안 다른 집을 가리킬 수 있다(하루 뒤 저절로 맞아 막는 것은 아니다). spec/01_settings/save.md 의 옛 저장본 줄이나 hunting.md 에 한 줄 적어 두거나, 집 번호 대신 종+자리로 담도록 바꿔라
   - 기준: (앞 단계 QA) 밤에 나와 있는 올빼미를 치는 길에 테스트가 없다 — island_animals.gd _on_struck 의 `elif _lives_at(i): flee_from(...)` 가지를 꺼도 test_owl_trees.gd 가 지키지 않는다. 22시에 나온 올빼미 곁에서 harvest.strike 한 뒤 mode()==Animal.FLEE 를 단언하는 테스트를 더해라
-- [ ] 5. spec
+- [x] 5. spec
   - 기준: hunting.md 에 기믹 · 디스폰 · 사람 원문 · 날짜 · 이 세션이 다듬은 것(바위 자리 · 한 번 굴림 · 플레이어만 · 호저 경고 · 게임 하루 + 안 보일 때 · 펠릿) · mining.md 에 바위에서 동물이 나온다 한 줄
   - 기준: (앞 단계 QA) hunting.md 가 딱 150줄이다 — 이번에 디스폰 · 집 번호 설명을 기존 줄 끝에 길게 이어 붙여 줄 수를 맞췄다(:42 · :45 가 한 줄에 여러 문장). 다음에 한 줄만 더해도 넘는다. 디스폰 · 재생 단락을 spec/04_life/ 아래 따로 파일(예: animal-spawn.md)로 떼고 hunting.md 에서 가리키게 해 줄을 비워 두어라
   - 기준: (앞 단계 QA) Stations.guarded 가 남의 _prey 를 들여다본다 — game/craft/stations/stations.gd guarded() 가 다른 Stations 노드의 비공개 사전 here._prey 를 읽는다. Stations 에 prey_of(s) 같은 공개 함수를 두고 그것을 쓰게 바꿔라 (동작은 같다)
+- [ ] 6. (앞 단계 QA) spec 가리킴이 낡았다 (흔적 · 디스폰)
+  - 기준: spec 가리킴이 낡았다 (흔적 · 디스폰) — 흔적 · 디스폰 · 재생 단락이 animal-spawn.md 로 옮겨졌는데 아직 hunting.md 「흔적」 · 「디스폰」을 가리키는 곳이 남았다: game/life/hunting/animal_traces.gd:3 · game/life/hunting/animal_trace.gd:3 · game/tests/multiplayer/test_traces_on_server.gd:3 · game/i18n/ko.po:699(「흔적」), game/tests/multiplayer/test_despawn_on_server.gd:2(「디스폰」), game/tests/settings/save/test_round_trip.gd:64 · game/tests/craft/test_from_empty_hands.gd:1490(「다시 난다」). 주석의 spec/04_life/hunting.md 를 spec/04_life/animal-spawn.md 로 바꿔라. grep -rn 'hunting.md' game | grep '흔적\|디스폰\|다시 난다' 결과가 비어야 한다
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
