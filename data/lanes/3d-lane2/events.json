@@ -1,62 +1,5 @@
 [
  {
-  "time": "2026-09-26 18:12:24",
-  "epoch": 1790413944,
-  "type": "pass",
-  "title": "통과 — G-911 단계 5 (섬 저장본(island_cache)이 옛 판을 안 지운다 (2026-09-24 대화 세션 점검))",
-  "group": "G-911",
-  "step": "5",
-  "attempt": "1",
-  "report": {
-   "problem": "섬 저장본 이름에 섬(설계 값 파일)을 넣어, 새로 구워 저장할 때 같은 섬의 옛 판과 섬 이름 없는 옛 형식을 지운다 · 임시 폴더 지킴 테스트가 변수마다 TempDir.erase 에 닿는지 본다. 바뀐 곳만 돌림: 7 파일 · 81 테스트 통과",
-   "approach": "저장본 이름이 「판_해시.bin」뿐이라 어느 섬 것인지 몰라 옛 판을 가려 지울 수 없었다. 이름을 「판_섬_해시.bin」(섬 = 설계 값 .tres 경로, 파일 없는 설계 값은 unnamed)으로 바꾸고, save 가 임시 파일을 이름 바꾸기에 성공한 뒤 prune 으로 같은 섬의 다른 .bin 과 섬 이름 없는 옛 형식(이제 아무도 안 읽는다)을 지운다. 다른 섬 · .tmp(남이 쓰는 중)는 두고, 남이 읽는 중에 지워도 열린 파일은 끝까지 읽히며, 없어졌으면 load_into 가 false 라 다시 굽는다 — 테스트는 진짜 저장본 대신 임시 폴더에서 돈다(save · load_into · path_for 에 dir 인자). 실제 user://island_cache 는 24 개에서 1 개로 줄었다. 임시 폴더 지킴은 글자 한 번 있으면 통과하던 것을, OS.get_temp_dir() 로 만든 자리(변수)마다 TempDir.erase 에 닿는지(옮겨 담기 · 목록 · for 까지 따라감) 보게 바꾸고, 둘 만들고 하나만 지우면 잡는지 검사기 자체를 시험한다. $TMPDIR 의 옛 naru_* 643 개 가운데 1시간 넘은 것을 지웠다(39 개 남음 — 다른 체크아웃이 쓰는 중일 수 있는 최근 것). 참고: 옛 코드를 도는 다른 차선은 옛 형식 이름으로 저장하므로, 합치기 전까지는 이 차선이 새로 구울 때 그 저장본을 지워 저쪽이 한 번 다시 굽는다 — 틀리지는 않고 느려질 뿐이다.",
-   "why": "",
-   "files": [
-    "game/world/terrain/island_cache.gd",
-    "game/tests/world/terrain/test_island_cache.gd",
-    "game/tests/test_temp_dir.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "새로 구워 저장할 때 **같은 섬의 옛 판**을 지운다 — 섬마다 최신 하나만 남는다 (테스트)",
-     "evidence": "test_island_cache.gd:test_save_erases_older_versions_of_the_same_island — 같은 섬의 옛 판 둘(해시 다름 · VERSION 다름)과 섬 이름 없는 옛 형식을 깔고 save 뒤 폴더에 최신 하나만 남는지 assert_eq 로 본다. QA 가 prune 의 조건을 `if false:`(안 지움)로 깨 보니 이 테스트가 떨어졌다(되돌림 확인)"
-    },
-    {
-     "ok": true,
-     "criterion": "다른 섬(개척 섬 · 시험 섬)의 저장본은 지우지 않는다 (테스트)",
-     "evidence": "test_save_leaves_other_islands_alone — 유황 섬(개척 섬) 저장본과 unnamed 저장본을 두고 save 뒤 셋 다 남는지 본다. QA 가 prune 조건을 `if true:`(모든 .bin 지움)로 깨 보니 떨어졌다(되돌림 확인). test_file_name_carries_the_island 가 이름에 섬이 드는지도 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "여러 godot 이 한꺼번에 돌 때(tools/test.sh) 남이 쓰는 중인 파일을 지워 터지지 않는다 — 없으면 다시 굽는 것으로 족하다",
-     "evidence": "test_save_leaves_files_being_written_by_others(.tmp 는 안 지운다) · test_erasing_while_another_reads_does_not_break(열린 파일은 지워져도 끝까지 읽히고, 없는 파일을 또 prune 해도 조용하다) · test_missing_file_means_bake_again(없으면 load_into 가 false → IslandShape._init 이 다시 굽는다). prune 은 rename 이 OK 일 때만 돈다. test.log 에서 154 파일을 godot 6 개로 한꺼번에 돌려 전부 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 임시 폴더 지킴 테스트가 글자만 본다 — test_temp_dir.gd:test_every_test_that_makes_temp_erases_it_through_one_place 는 파일에 「TempDir.erase(」 글자가 한 번이라도 있으면 통과라, 한 파일이 임시 폴더를 둘 만들고 하나만 지워도 못 잡는다. 지금 57 개 파일은 맞게 고쳐져 있어 막는 것은 아니다. 더 굳히려면 before_all/after_all 에서 $TMPDIR 의 naru_* 목록을 테스트 앞뒤로 비교하는 식(또는 OS.get_temp_dir() 가 나온 횟수 ≤ erase 가 닿는 변수 수)을 검토하라",
-     "evidence": "검사가 OS.get_temp_dir() 로 만든 변수마다 TempDir.erase 에 닿는지(옮겨 담기 · append · for 까지 따라감) 보도록 바뀌었다(_unerased · _reaches_erase). test_checker_catches_a_second_temp_left_behind 가 검사기 자체를 시험한다 — 둘 만들고 하나만 지우면 [\"_b\"] 를 잡고, 앞부분만 같은 이름(_a · _ab)을 지운 것으로 치지 않으며, 변수 없이 쓴 자리도 잡는다. 실제 테스트 폴더 전체에 대해서도 통과(checked > 30)"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 이미 쌓인 옛 임시 폴더가 남아 있다 — $TMPDIR 에 naru_locked_* · naru_key_* · naru_island_animals_* 가 수백 개 남았다(보고서: 639개). 새 코드는 더 쌓지 않지만 옛 것은 손으로 지워야 한다: rm -rf \"$TMPDIR\"/naru_* (다른 체크아웃의 테스트가 돌지 않을 때)",
-     "evidence": "QA 가 세어 보니 $TMPDIR 의 naru_* 는 44 개(수백 개 → 44). 1시간 넘은 것은 5 개로 모두 17:03~17:09 에 생긴 것 — 구현 세션이 지운 뒤 옛 코드를 도는 다른 체크아웃(차선)이 만든 것이고, 최근 것은 돌고 있는 테스트가 쓰는 중일 수 있어 남긴 판단이 맞다"
-    }
-   ],
-   "issues": [
-    "코드로 만든 설계 값이 저장본 한 칸을 나눠 쓴다 — IslandCache.island_key 가 resource_path 가 빈 설계 값을 모두 「unnamed」 하나로 쳐서, 캐시를 켠(use_cache=true) 서로 다른 코드 설계 값 둘이 번갈아 저장하면 서로의 저장본을 옛 판이라며 지운다. 지금은 캐시를 켜는 곳(test_island.gd · test_lime · test_volcano · test_island_resources · test_dock_building · test_hunger_thirst)이 모두 .tres 를 load 한 것이라 드러나지 않는다(막는 것은 아니다). 고치려면 island_cache.gd 의 prune 에서 key 가 \"unnamed\" 이면 지우지 않거나(주석으로 까닭을 적기), island_key 주석에 「unnamed 는 한 칸 — 캐시를 켜려면 .tres 로 두라」고 적고, test_island_cache.gd 에 unnamed 를 저장해도 다른 unnamed 저장본에 대한 기대(남는지/지우는지)를 단언으로 박아 둔다. 또 test_save_leaves_other_islands_alone 의 「시험 섬(코드로 만든 설계 값)」 설명은 틀렸다 — 시험 섬은 test_island_blueprint.tres 이다. 설명을 「코드로 만든 설계 값」으로 고친다",
-    "차선끼리 저장본 폴더를 나눠 써 옛 형식이 다시 생긴다 — user://island_cache 는 모든 체크아웃이 같이 쓴다. QA 시점(18:08)에 옛 코드를 도는 다른 차선이 섬 이름 없는 옛 형식(4_39d4…bin 26MB · 4_7658…bin 5.2MB)을 다시 만들었고, 이 차선이 다음에 구우면 또 지워 저쪽이 다시 굽는다. 합친 뒤에는 사라지지만, 합친 뒤에도 차선마다 굽는 코드(SOURCES 해시)가 다르면 같은 섬의 두 판을 서로 지우며 번갈아 굽는다(틀리진 않고 느려진다). island_cache.gd 의 prune 주석에 이 사정을 한 줄 적어 두면 다음 사람이 헤매지 않는다"
-   ],
-   "good": []
-  },
-  "test": "y.gd\nok      3s  res://tests/craft/recipes/test_recipes.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/world/terrain/test_island_cache.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      0s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      0s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           154\nTests            1398\nPassing Tests    1398\nFailing Tests       0\nPending             0\nAsserts         71602\nTime           260s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "fc065bf"
- },
- {
   "time": "2026-09-26 18:23:29",
   "epoch": 1790414609,
   "type": "pass",
@@ -8585,5 +8528,47 @@
   },
   "test": "ecipes.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_cook_table.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      3s  res://tests/craft/stations/test_loom.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/craft/stations/test_station_queue.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/fishing/test_bait_grades.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      3s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      3s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      3s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok    435s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           175\nTests            1493\nPassing Tests    1493\nFailing Tests       0\nRisky/Pending       0\nAsserts         58388\nTime           435s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "a72a7f70"
+ },
+ {
+  "time": "2026-10-18 09:04:31",
+  "epoch": 1792281871,
+  "type": "pass",
+  "title": "통과 — G-237 단계 3 (낚싯대 등급 — 덜 빠진다)",
+  "group": "G-237",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "낚싯대 세 단(나무 ×1 · 청동 ×0.75 · 철 ×0.5) — 미니게임 게이지가 빠지는 빠르기를 든 낚싯대에서 받는다. 바뀐 곳만: 151개 파일 1305개 테스트 통과",
+   "approach": "FishingGauge 의 빠지는 빠르기가 상수(DRAIN_RATE)뿐이라 낚싯대마다 바꿀 수 없었다. 인스턴스 값 drain 을 두고 start(motion, drain_scale) 가 DRAIN_RATE × 배수로 정하게 했다. Fishing 에 RODS {fishing_rod 1.0 · bronze_fishing_rod 0.75 · iron_fishing_rod 0.5} 를 두고, hook · hook_at 이 든 낚싯대의 배수(rod_drain)를 게이지에 넘긴다. 던지기 판단도 held == ROD 에서 RODS.has(held) 로 넓혀 세 낚싯대 모두 던진다. 청동 · 철 낚싯대는 나무 낚싯대 곁(작업대)에 목재 3 + 청동괴 / 철괴 1 로 두고 도구 목록 · 무게 · 번역을 더했다. 테스트는 게임 화면에서 각 낚싯대를 들고 물려 drain 과 바 밖 1초의 빠짐을 재고, 진짜 우클릭으로 철 낚싯대를 던져 본다.",
+   "why": "낚싯대 세 단과 배수 ×1 · ×0.75 · ×0.5 — 사람은 「완화」만 정했다 (fishing.gd RODS); 청동 낚싯대 목재 3 + 청동괴 1 · 철 낚싯대 목재 3 + 철괴 1, 작업대 — 재료 · 만드는 곳 미정 (workbench.json); 청동 · 철 낚싯대 무게 1.5kg (weights.json)",
+   "files": [
+    "game/life/fishing/fishing.gd",
+    "game/life/fishing/fishing_gauge.gd",
+    "game/craft/recipes/workbench.json",
+    "game/combat/tools_as_weapons/tools.json",
+    "game/player/inventory_hotbar/weights.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/life/fishing/test_rod_grades.gd",
+    "spec/04_life/fishing.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "낚싯대 세 단(**임시**): 나무(지금 `fishing_rod`) · 청동 · 철 — 게이지 빠지는 빠르기 ×1 · ×0.75 · ×0.5(**임시**). FishingGauge 가 든 낚싯대에서 값을 받는다. 재료 · 만드는 곳은 지금 낚싯대 레시피 곁에(**임시**) (테스트)",
+     "evidence": "fishing.gd RODS {fishing_rod 1.0 · bronze_fishing_rod 0.75 · iron_fishing_rod 0.5} 에 「임시」가 적혀 있고, hook · hook_at 이 든 낚싯대의 배수(rod_drain(_held_rod()))를 gauge.start 에 넘긴다. test_rod_grades.gd: test_three_rods_with_easing_drain 이 세 배수를 보고, test_gauge_takes_its_drain_from_the_held_rod 는 GameRoot 에서 칸을 골라 진짜로 든 채 물려 gauge.drain 과 바 밖 1초의 실제 빠짐(DRAIN_RATE×배수)을 재며, test_a_sturdier_rod_holds_on_longer 는 놓치기까지 버티는 시간이 나무<청동<철인지 보고, test_every_rod_casts_by_hand 는 진짜 우클릭으로 철 낚싯대를 던져 drain 이 ×0.5 인지 본다. test_higher_rods_are_items_made_beside_the_wooden_rod 는 레시피 시설이 나무 낚싯대와 같은지(workbench), 무게 · 번역 · 도구 목록 · 재료가 있는 아이템인지 본다. 일부러 깨 봤다: fishing_gauge.gd start 의 `drain = DRAIN_RATE * drain_scale` 를 `drain = DRAIN_RATE` 로 바꾸니 test_rod_grades 의 테스트 3개가 떨어졌다(되돌렸다). test.log: 바뀐 곳 210개 파일 1768개 테스트 모두 통과, test_rod_grades.gd ok, guard 통과. 레시피 임시는 workbench.json _temporary, spec/04_life/fishing.md 에 임시 세 단 줄과 미정 줄이 적혔다(62줄, 사람 결정 줄은 그대로)"
+    }
+   ],
+   "issues": [
+    "영어 번역은 테스트가 안 본다 — test_rod_grades.gd test_higher_rods_are_items_made_beside_the_wooden_rod 는 ko 로케일에서만 tr 을 본다. en.po 에 ITEM_bronze_fishing_rod · ITEM_iron_fishing_rod 는 들어 있다(이번 것은 괜찮다). 비슷한 테스트를 짤 때 en 로케일에서도 tr 이 키 그대로가 아닌지 단언하면 좋다"
+   ],
+   "good": []
+  },
+  "test": "/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_cook_table.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/craft/stations/test_station_queue.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/fishing/test_bait_grades.gd\nok      1s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      3s  res://tests/life/gathering/test_herb_regrowth.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_queue_window.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/automation/villagers/test_villager_skills.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok    436s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           210\nTests            1768\nPassing Tests    1768\nFailing Tests       0\nRisky/Pending       0\nAsserts         62629\nTime           436s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "c087f689"
  }
 ]
