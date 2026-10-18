@@ -3928,9 +3928,11 @@
   - 기준: (앞 단계 QA) Animal.provoke 를 지켜 주는 테스트가 없다 — provoke 첫 줄에 return 을 넣어도 test_taming.gd 13개가 다 통과했다(곰이 가까워 _look 으로 어차피 본다). 「보이지 않아도 손길을 내민 사람을 쫓는다」를 지키려면 test_taming.gd 에 플레이어를 곰 시야 밖(뒤쪽 · 눈 각도 밖)에 두고 taming.press 뒤 bear._prey == player 또는 물림을 단언하는 테스트를 더하라. 아니면 provoke 가 필요 없다면 지워라
 - [x] 6. 조련사 주민
   - 기준: jobs.gd LIST 에 **조련사**(올리는 숙련도 조련) — 맡은 우리의 사료통 · 물통을 방 상자에서 채우고, 짐승마다 하루 한 번 쓰다듬는다. 조련 숙련도 5레벨마다 온순함 오름 +10%(**임시**) · 번역 키 ko · en (테스트)
-- [ ] 7. spec
+- [x] 7. spec
   - 기준: ranching-breeding.md 를 위 흐름으로 고쳐 쓴다 — 사람 원문 · 날짜 · 사람의 네 답. 「축사」 줄은 「우리로 합쳤다 (사람 결정 2026-10-18)」. hunting.md 의 케이지 · 도망 줄과 맞추고, rooms.md 에 우리 방. 150줄 안
   - 기준: (앞 단계 QA) 방 밖 짐승 단언이 순서에 기대 있다 — test_villager_tamer.gd 의 test_the_tamer_pets_every_beast_in_the_pen_once_a_day 에서 TendingWork._beasts 의 Rooms.holds(room, …) 조건을 지워도 「방 밖 짐승은 맡은 우리가 아니다」 단언은 통과했다(밖 짐승이 멀어 맨 나중에 가기 때문). 지금은 뒤따르는 「오늘 할 일을 마쳤다」 단언이 우연히 잡아 준다. 방 밖 짐승만 하나 두고(우리 안 짐승 없이) 조련사를 몇 초 돌린 뒤 outside.tameness == START_TAMENESS 와 why_still == WHY_NOTHING_TO_DO 를 단언하는 테스트를 따로 더하라
+- [ ] 8. (앞 단계 QA) 새 테스트의 온순함 단언은 아무것도 지키지 않는다
+  - 기준: 새 테스트의 온순함 단언은 아무것도 지키지 않는다 — QA 가 tending_work.gd:201 에서 Rooms.holds 조건을 지웠을 때 test_a_beast_outside_the_pen_alone_is_never_petted 는 why_still 단언에서만 떨어졌고, tameness == START_TAMENESS · petted_day != today 단언은 그대로 통과했다. 조련사가 20초 안에 밖 짐승에 닿아 쓰다듬지 못한다는 뜻이라 주석 「걸음 1.5 m/s 로 밖 짐승(18 m)에 닿고도 남는다」가 틀렸다. 조건을 지웠을 때 tameness 단언도 떨어지도록 기다리는 시간을 늘리거나(예: 60초) 밖 짐승을 방 문 바로 앞에 두고, 일부러 깨 봐서 두 단언이 다 떨어지는지 확인하라
 
 ## [x] G-915 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-start
