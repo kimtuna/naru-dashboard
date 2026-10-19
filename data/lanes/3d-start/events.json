@@ -1,84 +1,5 @@
 [
  {
-  "time": "2026-10-14 16:11:15",
-  "epoch": 1791961875,
-  "type": "pass",
-  "title": "통과 — G-219 단계 2 (배고픔이 바닥이면 체력이 준다)",
-  "group": "G-219",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "배고픔이 바닥이면 체력이 5초에 1 씩 준다 (1 에서 멈춤 · 먹으면 곧 멈춤 · 알림 목록에 「배가 고파 체력이 준다」 · 껐다 켜도 이어짐). 바뀐 곳 그물 208파일 1806개 중 1803 통과 — 떨어진 test_ui_shots 3개는 고쳐서 따로 13/13 통과",
-   "approach": "HungerThirst 가 캐릭터의 Health 를 쥐고(player.gd 가 넣는다), tick 마다 배고픔이 바닥이면 흐른 초를 _starve_carry 에 쌓아 STARVE_SECONDS(5초)마다 1 을 Health.take 로 깎는다 — STARVE_FLOOR(1) 아래로는 안 깎아 굶어 죽지 않는다. 바닥이 아니면 쌓인 몫을 버려 먹자마자 멈추고, 체력은 Health.heal · refill 길 그대로라 먹어도 돌아오지 않는다. 굶는 동안 알림 목록(AlertLog, 오른쪽 위)에 HUD_STARVING 한 줄을 올리고 배가 차면 걷는다. 배고픔 · 체력은 이미 저장되므로 불러오면 set_levels 가 다시 알림을 올리고 깎기 시작한다 — 5초 미만 자투리는 save.md 「안 담는다」에 적었다. 옛 test_empty_never_kills 는 「체력도 안 깎인다」를 보던 것을 「1 에서 멈춘다」로 고쳤다. UI 찍기에 starving 자리를 더해 ko · en 으로 찍어 봤다 — 체력 막대 60% · 오른쪽 위 알림이 보이고 겹침 없음. 찍기 _reset 에서 처음에 get_tree() 를 써서 트리 밖 테스트(test_ui_shots)가 3개 떨어졌다 — game 의 자식에서 Player 를 찾게 고쳐 통과. spec 은 목적(목마름이 속도를, 배고픔이 체력을) · 규칙(사람 결정 2026-10-14 인용) · 「느려지기만 한다」를 고치고 damage-death.md 공통에 한 줄 더했다.",
-   "why": "HungerThirst.STARVE_SECONDS = 5.0 — 배고픔 바닥에서 체력 1 이 주는 초. 사람이 비율을 맡겼다(체력 100 이면 8분 남짓). 사람이 체력을 더할 때 다시 정한다; HungerThirst.STARVE_FLOOR = 1 — 배고픔만으로는 체력 1 아래로 안 간다. 2026-09-23 「굶어 죽지 않는다」를 지키려고 Claude 가 정했다; HUD_STARVING 글 「배가 고파 체력이 준다」/「Starving — losing health」와 알림 목록에 띄우는 꼴은 임시",
-   "files": [
-    "game/player/hunger_thirst/hunger_thirst.gd",
-    "game/player/movement_controls/player.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/tests/player/hunger_thirst/test_starving.gd",
-    "game/tests/player/hunger_thirst/test_hunger_thirst.gd",
-    "spec/02_player/hunger-thirst.md",
-    "spec/08_combat/damage-death.md",
-    "spec/01_settings/save.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "배고픔이 바닥인 동안 체력이 천천히 준다 — Claude 가 정했다(임시): 5초에 1 (체력 100 이면 가득에서 8분 남짓). 값은 hunger_thirst.gd 한 곳에, 「임시」로 (테스트)",
-     "evidence": "hunger_thirst.gd STARVE_SECONDS=5.0 곁 주석에 「임시」. test_starving.gd test_empty_hunger_takes_one_health_every_five_seconds 가 4.9초 0 · 5초 1 · 잘게 흘린 30초 6 · 한 번에 50초 더해 16 을 보고, 소스에서 「임시」 표시도 확인한다. test_hunger_left_takes_nothing 이 배고픔이 조금 남았거나 목마름만 바닥이면 안 깎이는 것을 막는다"
-    },
-    {
-     "ok": true,
-     "criterion": "배고픔만으로는 죽지 않는다 — 체력 1 에서 멈춘다 (2026-09-23 「굶어 죽지 않는다」는 사람이 거두지 않았다. Claude 가 정했다(임시) — 사람이 체력을 더할 때 다시 정한다) (테스트)",
-     "evidence": "STARVE_FLOOR=1 (임시 주석). test_starving_stops_at_one_and_never_kills 가 1500초 굶겨 left==1 · is_dead false · 60초 더 해도 1. test_hunger_thirst.gd test_empty_never_kills 도 실제 캐릭터로 left==STARVE_FLOOR 를 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "먹어서 배고픔이 조금이라도 차면 곧 멈춘다. 깎인 체력은 먹는다고 돌아오지 않는다 — 지금 체력이 돌아오는 길을 그대로 쓴다 (테스트)",
-     "evidence": "eat() 가 _starve(0) 로 자투리를 버린다. test_eating_stops_it_and_does_not_heal 가 20초 굶겨 -4, eat(0.05) 뒤 체력 그대로 · 30초 더 흘러도 그대로 · Health.heal 길은 그대로 동작함을 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "깎이는 것이 보인다 — 체력 바가 줄고, 배고픔 게이지 곁이나 알림 줄에 「배가 고파 체력이 준다」 같은 말이 뜬다 (번역 키 · 꼴은 임시) (테스트)",
-     "evidence": "test_alert_line_shows_while_starving_and_goes_when_fed 가 AlertLog 를 띄워 배가 차면 없음 · 바닥이면 HUD_STARVING 한 줄 · 번역됨 · 늘지 않음 · 먹으면 걷힘을 본다. test_health_bar_shrinks_on_the_real_character 가 실제 Player 의 HealthBar.fill_ratio 가 0.9 로 준 것을 본다. ko.po/en.po 둘 다 HUD_STARVING 있고 꼴 임시 주석"
-    },
-    {
-     "ok": true,
-     "criterion": "껐다 켜도 이어진다 — 저장본의 배고픔 0 · 체력이 그대로 읽히고 다시 깎이기 시작한다 (테스트)",
-     "evidence": "test_starving_carries_over_save_and_load 가 PlayerState.remember → var_to_bytes 왕복 → 새 Player 에 restore 해 배고픔 0 · 체력 93 · is_starving · 5초 뒤 92 를 본다. 5초 미만 자투리는 save.md 「안 담는다」에 까닭과 함께 적혔다"
-    },
-    {
-     "ok": true,
-     "criterion": "spec/02_player/hunger-thirst.md 를 사람 결정으로 고쳐 적고 낡은 「하나라도 바닥이면 걷기 속도」 · 「둘 다 바닥이면 -30%」 줄을 지운다. damage-death.md 에 배고픔이 체력을 깎는 것을 한 줄 더한다",
-     "evidence": "hunger-thirst.md 규칙에 사람 결정 2026-10-14 를 그대로 인용, 낡은 걷기 · 둘 다 -30% 줄은 없다. 2026-09-23 「굶어 죽지 않는다」 사람 결정 줄은 남았다. 수치 절에 5초 · 1 임시. damage-death.md 공통에 한 줄 더함. 64 · 41 · 63 줄로 150 안쪽"
-    },
-    {
-     "ok": true,
-     "criterion": "찍어서 확인한다 — 배고픔이 바닥인 HUD (체력 바 · 알림)",
-     "evidence": "ui_shots 에 starving 자리를 더했고 /tmp/g219/starving_ko.png · starving_en.png 를 직접 봤다 — 배고픔 게이지 빈 원 · 체력 막대 60% · 오른쪽 위 「배가 고파 체력이 준다」/「Starving — losing health」, 겹침 없음. _reset 이 굶긴 것을 되돌려 뒤 사진에 남지 않는다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) hunger-thirst.md 목적·규칙이 낡았다 — spec/02_player/hunger-thirst.md 4행 「배고픔 · 목마름이 이동 속도를 정한다」와 12행 「굶어 죽거나 말라 죽지 않는다 — 느려지기만 한다」는 배고픔이 이제 속도를 안 건드리므로 맞지 않다. 이 묶음의 「배고픔 0 → 체력 감소」 단계에서 함께 고쳐라: 목적은 「목마름이 속도를, 배고픔이 체력을」로, 「느려지기만 한다」는 배고픔 쪽 결과(체력)로 바꾼다. hunger_thirst.gd 머리 주석 「바닥이어도 죽지 않는다」도 그 단계에서 체력 규칙과 맞춘다",
-     "evidence": "목적이 「목마름이 이동 속도를, 배고픔이 체력을 건드린다」로, 「느려지기만 한다」는 「배고픔은 체력을 1 까지만 · 목마름은 느려지기만」으로 바뀌었다. 「버프 음식과 층」 줄도 목마름으로 고쳤다. hunger_thirst.gd 머리 주석 · player.gd 주석도 체력 규칙과 맞췄다"
-    }
-   ],
-   "issues": [
-    "체력 1 에서도 「체력이 준다」 알림이 남는다 — hunger_thirst.gd _update_alert 의 want 가 is_hungry() and health != null 뿐이라, 체력이 STARVE_FLOOR 에 닿아 더 안 깎이는 동안에도 「배가 고파 체력이 준다」가 뜨고 is_starving() 이 참이다 (죽은 동안에도). 막는 것은 아니다 — 굶는다는 알림으로 남겨 둘지, 문구를 「배가 고프다」 쪽으로 다듬을지 정해 test_starving.gd 에 체력 1 일 때의 알림 단언을 하나 더해 두면 좋다"
-   ],
-   "good": []
-  },
-  "test": "rs_spec_split.gd\nok      1s  res://tests/automation/villagers/test_job_work_shared.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           344\nTests            2650\nPassing Tests    2650\nFailing Tests       0\nRisky/Pending       0\nAsserts        101709\nTime           782s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "ade4fe3f"
- },
- {
   "time": "2026-10-14 16:34:32",
   "epoch": 1791963272,
   "type": "fail",
@@ -9735,5 +9656,75 @@
   },
   "test": "res://tests/craft/recipes/test_recipes_by_station.gd\nok      2s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      2s  res://tests/craft/stations/test_loom.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      3s  res://tests/craft/stations/test_station_queue.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      3s  res://tests/life/hunting/test_bird_hunt.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      1s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      1s  res://tests/life/ranching/test_bond.gd\nok      1s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/automation/villagers/test_villager_skills.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    435s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           191\nTests            1609\nPassing Tests    1609\nFailing Tests       0\nRisky/Pending       0\nAsserts         58548\nTime           436s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "64c0f9ca"
+ },
+ {
+  "time": "2026-10-20 07:22:54",
+  "epoch": 1792448574,
+  "type": "pass",
+  "title": "통과 — G-260 단계 3 (약제대 · 경비 우리 빈 칸)",
+  "group": "G-260",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "「약제 작업대」→「약제대」(ko · spec · 테스트 · 주석) · 나오는 것이 없는 시설(레시피도 yields 도 없다)은 창 아래 출력 칸 다섯을 숨긴다 · hunt() 주석 고침. 바뀐 곳만 261개 스크립트 · 2042 테스트 통과",
+   "approach": "경비 우리 아래 빈 칸 다섯은 시설 공통 출력 칸(BUFFER_SLOTS)이 새장일 때만 숨겨져서였다(_buffer.visible = not _cage.visible). StationWindow.makes_something() — 레시피(recipes_for)가 있거나 저절로 나는 것(yields)이 있을 때만 출력 칸을 보인다 — 으로 바꿔 새장 · 경비 우리 · 사료통 · 물통 · 말뚝 · 화로가 다 숨는다. 테스트는 stations.json 의 시설을 다 돌아 레시피 표 · 시설 표만 보고 가른 뒤 창을 열어 본다(만드는 시설은 칸이 그대로 보이는지도). 이름은 ko.po 의 ITEM_apothecary_bench 와 spec · 테스트 · 주석의 「약제 작업대」를 다 「약제대」로 바꿨다(en.po 는 주석 한 줄만, msgstr 은 그대로). ui_shots guard_pen 을 다시 찍어 출력 칸이 없는 것을 그림으로 봤다. caged_bird.gd hunt() 주석은 QA 가 준 글대로 고쳤다.",
+   "why": "",
+   "files": [
+    "game/automation/villagers/cleaning_work.gd",
+    "game/automation/villagers/crafting_work.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/craft/recipes/apothecary_bench.json",
+    "game/craft/recipes/oil_press.json",
+    "game/craft/recipes/workbench.json",
+    "game/craft/stations/stations.json",
+    "game/i18n/en.po",
+    "game/i18n/ko.po",
+    "game/life/medicine/medicine.gd",
+    "game/life/medicine/medicine_catalog.gd",
+    "game/life/medicine/medicines.json",
+    "game/life/ranching/caged_bird.gd",
+    "game/tests/automation/villagers/test_villager_skills.gd",
+    "game/tests/craft/stations/test_apothecary_bench.gd",
+    "game/tests/craft/stations/test_apothecary_spec_line.gd",
+    "game/tests/craft/stations/test_oil_press.gd",
+    "game/tests/craft/stations/test_twelve_facilities.gd",
+    "game/tests/craft/test_from_empty_hands.gd",
+    "game/tests/life/farming/test_fertilizer_farm_plot.gd",
+    "game/tests/life/hunting/test_wild_yield_uses.gd",
+    "game/ui/hud/station_window.gd",
+    "spec/05_craft/crafting-stations.md",
+    "spec/05_craft/facilities.md",
+    "spec/07_automation/npc-villagers.md",
+    "spec/07_automation/villager-persona.md",
+    "game/tests/ui/hud/test_no_output_slots.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "「약제대」 → **「약제대」** (ko · 시설 이름 쓰는 spec 줄 · 테스트의 박힌 이름). en 은 그대로 둬도 된다",
+     "evidence": "ko.po ITEM_apothecary_bench msgstr 「약제대」. game/ · spec/ 전체에서 grep 「약제 작업대|약제작업대」 0건 (crafting-stations.md 열둘 줄 · facilities.md 표 · npc-villagers · villager-persona · json _note · 테스트 test_twelve_facilities · test_apothecary_spec_line · test_apothecary_bench). en.po msgstr 은 그대로(주석만). QA 가 test_twelve_facilities · test_apothecary_spec_line · test_apothecary_bench 를 돌려 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "경비 우리 창에 시설 공통 출력 칸 다섯이 안 보인다 — 나오는 것이 없는 시설(새장 · 경비 우리 · 그 밖에 레시피도 산출도 없는 것)은 다 숨긴다 · 테스트로 그런 시설 전부를 돈다 · ui_shots guard_pen 갱신",
+     "evidence": "station_window.gd _buffer.visible = makes_something() (레시피 또는 yields). tests/ui/hud/test_no_output_slots.gd 가 stations.json 의 시설 전부를 레시피 표 · 시설 표로 따로 갈라(창의 판단을 빌리지 않음) 새장 · 경비 우리가 들었는지 단언하고, 만드는 것이 없는 시설마다 창을 열어 칸이 안 보이고 「버퍼가 찼다」도 안 보이는지, 만드는 시설(10개 넘게)은 칸이 보이는지 본다. QA 가 옛 규칙(_buffer.visible = not _cage.visible)으로 되돌려 돌리자 「guard_pen 창에는 출력 칸이 안 보인다」로 깨졌다 — 껍데기 아님(되돌림 확인). ui_shots.gd 의 guard_pen 설명에 「아래 출력 칸 없음, G-260.3」"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) hunt() 주석이 낡았다 — game/life/ranching/caged_bird.gd:241 「부름 · 쉬기는 풀린다」인데 이제 쉬기(rest_out)는 풀리지 않고 ready_to_hunt 가 막는다(풀리는 것은 resting 뿐). 「부름 · 쉼(resting)은 풀린다 — 쉬기(rest_out) · 못 나가게면 보내지 않는다」로 고쳐라",
+     "evidence": "caged_bird.gd:241 이 「부름 · 쉼(resting)은 풀린다 — 쉬기(rest_out) · 못 나가게면 보내지 않는다. …」로 바뀌었다 (주석이라 테스트 대상 아님 — diff 로 확인)"
+    }
+   ],
+   "issues": [
+    "[결정] 바뀐 곳만 돌리기가 5개 뒤 죽었다 — .loop/out/test.log 에 「xargs: bash: terminated with signal 15; aborting」 — 262개 중 5개(28 테스트)만 돌고 「전체 테스트 0」으로 적혔다. 누가 test.sh 를 죽였는지(하네스 시간 제한으로 보임 — test_from_empty_hands 가 434s) 하네스가 보고, 죽으면 0 이 아니라 실패로 적어야 한다. 이번 회차는 QA 가 기준에 걸린 4개 + 출력 칸 · 이름을 건드리는 21개 파일(195 테스트)을 따로 돌려 모두 통과했다"
+   ],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 262 개 ---\ntest.sh: 파일 262 개를 6 개씩 한꺼번에 돌린다\nxargs: bash: terminated with signal 15; aborting\nok     86s  res://tests/automation/villagers/test_villager_gathering.gd\nok     94s  res://tests/automation/villagers/test_villager_chest_wall.gd\nok     96s  res://tests/automation/villagers/test_villager_g215_human_save.gd\nok    138s  res://tests/automation/villagers/test_villager_g217_real_island.gd\nok    434s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             5\nTests              28\nPassing Tests      28\nFailing Tests       0\nRisky/Pending       0\nAsserts          2371\nTime           434s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "0a1efa98"
  }
 ]
