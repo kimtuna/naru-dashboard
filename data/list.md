@@ -4173,7 +4173,7 @@
   - 기준: 주민 tool 이 저장 안 담는다 목록에 없다 — harvest_work.gd 의 var tool 은 게임 안에서 아무도 바꾸지 않아 늘 "" 이라 저장하지 않는다고 주석에만 적혔다(지금은 실제 상태가 아니라 테스트 이음새라 막는 것은 아니다). spec/01_settings/save.md 원칙대로 game/tests/settings/save/test_round_trip.gd 의 DONT_SAVE 와 save.md 38~40줄 「안 담는다」 목록에 「주민 HarvestWork.tool — 건네는 길이 없어 늘 맨손, 길이 생기면 그 길이 담는다」를 더하라
 
 ## [ ] G-247 나무 약점이 보이게
-- 차선: 3d-start
+- 차선: 3d-start · 시작 2026-10-19 14:26
 - spec: spec/04_life/logging.md
 - **사람이 2026-10-19 봤다**: 「나무 크리티컬 위치를 모르겠음. 표시가 안되있는듯함」 — 이 세션이 「플레이어 쪽에 · 크고 밝게」를 내놓았고 사람이 「그대로」
 - 이 세션이 2026-10-19 봤다: 표시는 있다 — life/harvest/harvest.gd `_mark` 의 주황 고리(지름 ≈0.5m). 도끼로 처음 친 뒤에만 뜨고 줄기 둘레 **아무 방향**(`angle` 무작위)이라 뒤쪽에 뜨면 안 보인다
