@@ -4164,7 +4164,7 @@
   - 기준: 주민 간격 기록에 낡은 이름이 남았다 — spec/07_automation/npc-villagers-history.md:108 이 없어진 HIT_EVERY 와 「좌클릭 Harvest.swing 에는 쿨다운이 없어」를 적고 있다. 기록 줄이면 그대로 두되 끝에 「G-246.1 부터 캐기도 든 도구 간격에 막힌다 · HIT_EVERY 는 HarvestWork.hit_every() 로 바뀌었다」 한 줄을 덧붙여라
   - 기준: (앞 단계 QA) 주민 간격 테스트가 약하다 — test_a_villager_hits_at_the_pace_of_the_tool_in_hand 는 HarvestWork.TOOL 이 상수 "" 라 hit_every 가 0.4 고정값을 돌려줘도 통과한다. 주민에게 도구를 건네는 길이 생기면(TOOL 을 var 로) 도끼 · 전투 도끼를 쥐여 hit_every 가 0.6 · 1.0 으로 바뀌는지 단언을 더하라
 
-## [ ] G-918 루프가 찾은 것 — 스스로 갚는다
+## [x] G-918 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-start · 시작 2026-10-19 12:14
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
