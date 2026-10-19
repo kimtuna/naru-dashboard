@@ -4310,7 +4310,7 @@
   - 기준: **식물성 기름** 아이템을 새로 만든다(무게 · 번역 · 개발용 상자) — 나오는 곳은 단계 3 의 착유기. 훈연기의 「기름」은 그대로 두되 연고에는 안 들어간다
   - 기준: spec 약 표를 넷으로 고친다 · 「밀랍은 연고 · 화상 연고의 재료(사람 2026-10-19)」 · 갈래 oil 의 오소리 기름 주석 갱신
   - 기준: (앞 단계 QA) 벌통 옛 규칙 주석이 셋 남았다 — 놓인 벌통은 이제 방을 안 보는데 아직 「농사장 방 안에서만 시간이 흐른다」고 적힌 곳: game/life/ranching/bee_colony.gd 10줄(「밀랍은 … 농사장 방 안에서만 시간이 흘러 버퍼에 나온다」), spec/04_life/ranching-breeding.md 105줄(「밀랍만 농사장 규칙」), game/craft/stations/stations.json 의 _fields(「room 이 있으면 그 방 종류 안에 섰을 때만 … 시간이 흐른다」). 셋 다 「room 이 있으면 그 방 안에만 놓이고, 놓인 뒤엔 방을 보지 않는다 (G-254.1)」로 고쳐라
-- [ ] 2. (앞 단계 QA) 해독제 줄 밑의 어긋남 줄이 겹친다
+- [x] 2. (앞 단계 QA) 해독제 줄 밑의 어긋남 줄이 겹친다
   - 기준: 해독제 줄 밑의 어긋남 줄이 겹친다 — spec/04_life/gathering.md 35줄 · spec/09_expedition/jungle-ruins.md 8줄의 하위 줄(「위 줄의 … 와 어긋난다 — 해독제는 G-254-2 에서 뺐다」)이 이번에 사람 줄 끝에 붙인 「(해독제는 2026-10-19 뺐다 — 원정 단계에서 다시 정한다)」와 같은 말을 되풀이한다. 하위 줄 두 개를 지우고 test_apothecary_spec_line.gd 의 test_lines_assuming_an_antidote_carry_the_note · ANTIDOTE_NOTE 를 같이 걷어 내라(새 테스트 test_lines_assuming_an_antidote_end_with_the_decision 가 남는다)
   - 기준: (앞 단계 QA) spec 에 「의료 키트」 · 「의료키트」 두 표기가 섞였다 — facilities.md 91줄 · gathering.md 35줄은 「의료 키트」, facilities.md 98줄 표 · 번역은 「의료키트」. ko.po 의 ITEM_medical_kit 글자에 맞춰 하나로 맞춰라
 
