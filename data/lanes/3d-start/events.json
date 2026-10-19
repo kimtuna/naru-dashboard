@@ -1,68 +1,5 @@
 [
  {
-  "time": "2026-10-13 23:09:32",
-  "epoch": 1791900572,
-  "type": "fail",
-  "title": "QA 불합격 — G-212 단계 1 (시도 3)",
-  "group": "G-212",
-  "step": "1",
-  "attempt": "3",
-  "report": {
-   "problem": "② 「켜 둔 Godot」을 Godot 4.7.2 소스로 확인한 실제 길(soft reload)대로, 사람이 실제로 겪은 판 바꿈(19:07 d219e9ed→f76710c7)에 맞춰 흉내 냈다 — 다섯 다 우클릭으로 열리고 게임이 계속 돈다: ②로는 사람 증상이 안 나온다. open_godot.sh 가 작업 폴더(cwd)로도 켜 둔 Godot 을 찾는다. 그물이 빈 목록이라 전체가 돌았다: 321개 파일 · 2494개 통과",
-   "approach": "① 실제 길 — Godot 4.7.2(ed1daf0bf) 소스를 읽었다: remote_debugger.cpp 의 reload_scripts 메시지는 GDScriptLanguage::reload_scripts(scripts, true) 를 부른다(soft). soft 면 인스턴스 상태를 떼거나 set_script 를 다시 하지 않고 load_source_code 뒤 GDScript::reload(true) 만 → gdscript_compiler _compile_class(keep_state) → GDScriptInstance::reload_members 가 옛 멤버를 이름으로 옮기고 새 멤버는 Variant()(null)로 둔다. QA 가 짐작한 set_script 길(멤버 초기값 []가 섬)은 p_soft_reload=false 일 때뿐이고 디버거는 그 길을 안 쓴다 — 그래서 source_code 를 바꿔 reload(true) 하는 흉내가 그 길 그대로다. ② 사람이 겪은 바꿈 — 플레이 폴더 판 이력(.git/worktrees/naru-play/logs/HEAD): 15:54 edb7eb04→d219e9ed · 19:07 d219e9ed→f76710c7 · (저장본 19:41) · 21:36 f76710c7→0be43bab. 판마다 줄 머리 멤버를 견줬다: crafting_station.gd 의 새 멤버 15:54 0개 · 19:07 0개 (몸만 바뀜 — restore_work 의 OldItems 거르기), stations.gd 는 15:54 에 chest_scans 1개(섬에 하나, 시설마다가 아님) · 19:07 0개. 21:36 은 시설에 _queue · _paused · _pause_tag 3개. ③ 19:07 을 그대로 — crafting_station.gd(d219e9ed) · stations.gd · station_window.gd(f76710c7)로 사람 저장본을 세우고, 게임을 세우지 않은 채 crafting_station.gd 를 f76710c7 로 soft reload: 같은 인스턴스 5개 · _job/_buffer 이름대로 옮겨짐 · 진짜 우클릭으로 5개 다 열림(레시피 줄 있음) · 그동안 100 프레임 넘게 계속 돎 · 제작대 시작→버퍼 1→수령 0 · 저장 꼴(standing) 다시 들이기 전과 같음(queue 없음 — 그 판 꼴) · 새로 놓은 것도 열림. 불러온 것과 새로 놓은 것이 갈릴 거리가 없다 → ②로는 사람 증상이 안 나온다. ④ 21:36 바꿈(저장본 뒤)은 다시 들인 시설이 _queue=null(Array[Dictionary] 인데 null) · _paused=null · _pause_tag=null · PauseTag 자식 없음, 같은 것: 종류 · 층 · 마스크 · 무리 · 칸 5. has_work 의 _queue.is_empty() 에서 SIGSEGV 로 죽는다 — 사람 증상(창만 안 뜸 · 다시 놓으면 됨)이 아니다. 저장도 standing()→queue() 의 for 가 같은 null 을 밟는다(빈 배열로 담기지 않는다) — 사람 화면에 크래시 리포트가 뜨므로 부르지 않고, 밟을 _queue 가 null 인 것과 그 길(standing 이 queue() 를 담고 queue() 가 _queue 를 돈다)을 단언했다. ⑤ 사람 저장본을 지금 판으로 그냥 불러오면 다섯 다 열린다(test_human_save_stations.gd) — 저장에 빠진 값 0개 · 바뀐 이름 0개 · 놓을 때만 채우는 값 차이 0개(몸 · 층 · 무리 · 자식 노드 · 크기 · 칸 같음). ⑥ open_godot.sh — project_manager.cpp _open_selected_projects 는 늘 --path 를 넘긴다. 그래도 인자로 놓치는 길에 대비해 lsof 로 작업 폴더(cwd)가 플레이 폴더 안이면 찾게 했다(편집기는 Main::setup 에서 프로젝트 폴더로 set_cwd). 이 기계의 인자 없는 Godot(pid 30853)은 2026-09-19 부터 떠 있는 프로젝트 관리자로 cwd 가 / 이고 naru 파일을 하나도 쥐지 않았다 — 찾지 않는 것이 맞다. ⑦ 앞 회차의 쓰레기 test_g212_probe.gd.uid 는 이미 없다. 결론: 사람 저장본으로도, 사람이 겪은 바꿈의 ②로도 「불러온 시설만 우클릭이 안 된다」는 재현되지 않는다. play.sh 는 켜 둔 Godot 을 알아채 껐다 켜라고 알린다(21:36 같은 바꿈에서는 실제로 죽을 수 있으므로).",
-   "why": "",
-   "files": [
-    "tools/open_godot.sh",
-    "tools/play.sh",
-    "game/tests/tools/test_play_sh_open_godot.gd",
-    "game/tests/settings/save/test_running_update_stations.gd",
-    "game/tests/settings/save/test_running_update_human_switch.gd",
-    "game/tests/settings/save/test_human_save_stations.gd",
-    "game/tests/settings/save/fixtures/g212/crafting_station.d219e9ed.gd.txt",
-    "game/tests/settings/save/fixtures/g212/station_window.f76710c7.gd.txt",
-    "game/tests/settings/save/fixtures/g212/stations.edb7eb04.gd.txt"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "사람의 저장본(~/Desktop/naru-saves/G-212/)을 지금 판으로 불러와, 야외에 선 시설을 우클릭으로 연다 — 안 열리는 것을 검사로 먼저 재현한다 (테스트). 짐작으로 고치지 않는다",
-     "evidence": "test_human_save_stations.gd — 픽스처 g212/world.sav·character.sav 로 불러와 다섯 시설이 야외에 서고(test_the_human_save_loads_and_every_station_stands_outdoors) 진짜 우클릭으로 다 열린다(test_every_outdoor_station_from_the_human_save_opens_with_a_right_click). 재현 안 됨을 검사로 남겼고 짐작으로 고친 코드는 없다"
-    },
-    {
-     "ok": true,
-     "criterion": "재현되면 불러온 시설과 새로 놓은 시설이 무엇이 다른지 숫자와 이름으로 적는다 — 조준 광선이 무엇을 맞히나 · 충돌 층 · 무리 · 노드 꼴 · 시설 종류 이름",
-     "evidence": "재현되지 않았다. 그래도 test_a_loaded_station_has_the_same_body_as_one_placed_by_right_click 가 몸·층·무리를 견주고, test_running_update_stations.gd 가 21:36 바꿈의 차이(_queue·_paused null · PauseTag 없음, 같은 것: 종류·층·마스크·무리·칸 5)를 단언한다"
-    },
-    {
-     "ok": false,
-     "criterion": "그래도 재현이 안 되면 「Godot 을 켜 둔 채 업데이트」(②)를 재현한다 — 편집기 · 게임이 옛 스크립트를 쥔 채 플레이 폴더가 바뀌면 무엇이 저장되나. 이 경우 고칠 곳은 tools/play.sh 일 수 있다 (켜 둔 Godot 을 알아채 알린다)",
-     "evidence": "게임 쪽(soft reload)은 19:07 · 21:36 두 바꿈으로 진짜 우클릭까지 흉내 냈고 play.sh 알림·open_godot.sh 검사도 있다. 그러나 (1) 편집기 쪽 — 켜 둔 편집기가 옛 씬·스크립트·.godot 캐시를 쥔 채 플레이 폴더가 바뀌면 편집기가 무엇을 다시 쓰는가 — 는 전혀 보지 않았다(기준은 「편집기 · 게임」 둘이다). (2) 「저장본 앞의 바꿈은 둘이다」가 틀렸다 — 플레이 폴더 판 이력에 15:49(c5eaee85→edb7eb04) 와 그 앞 바꿈이 더 있다. (3) 15:54 바꿈은 멤버 견줌만 했는데 station_window.gd 는 견주지 않았다 — 그 바꿈에 창에 새 멤버 넷(_chests · _chests_frame · _chests_placed · counted_rows)이 생긴다. 그래서 「②로는 사람 증상이 안 나온다」는 결론의 받침이 모자란다"
-    },
-    {
-     "ok": true,
-     "criterion": "불러온 시설이 새로 놓은 것과 똑같이 돈다 — 레시피 목록 · 시작 · 버퍼 · 수령 (테스트)",
-     "evidence": "test_human_save_stations.gd 의 test_loaded_stations_list_the_same_recipes_as_fresh_ones · test_a_loaded_workbench_starts_buffers_and_hands_over_like_a_placed_one, 그리고 test_running_update_human_switch.gd 의 test_after_the_switch_a_loaded_workbench_starts_and_hands_over"
-    },
-    {
-     "ok": false,
-     "criterion": "무엇이 달랐는지(저장에 빠진 값 · 바뀐 이름 · 놓을 때만 채우는 값) 숫자와 이름으로 report 에 적는다",
-     "evidence": "report 에 숫자·이름은 적었으나 틀린 곳이 있다 — 15:54 바꿈의 새 멤버를 「시설 0개 · stations.gd chest_scans 1개」로만 적고 station_window.gd 의 새 멤버 4개를 빠뜨렸다. 「저장본 앞의 바꿈은 둘」도 판 이력과 다르다(15:49 등 더 있다). 편집기 쪽에서 무엇이 저장되는지는 숫자도 이름도 없다"
-    }
-   ],
-   "issues": [
-    "편집기 쪽 ②를 안 봤다 — 기준 3 은 「편집기 · 게임이 옛 것을 쥔 채」다. 게임 쪽 soft reload 만 흉내 냈다. Godot 4.7.2 소스로 켜 둔 편집기가 플레이 폴더 바뀜 뒤 무엇을 쓰는지 확인하라: editor/editor_node.cpp 의 실행 전 저장(save_before_running · _save_all_scenes — 옛 씬을 쥔 채 ▶를 누르면 새 판 .tscn 을 옛 것으로 덮어쓰나), 디스크에서 바뀐 파일을 알아채는 길(EditorFileSystem 재스캔 · 「디스크에서 더 새 파일」 대화상자), play.sh 의 `godot --headless --import` 가 켜 둔 편집기와 같은 .godot/ (global_script_class_cache.cfg · uid_cache.bin · imported) 를 동시에 쓰는 것. 각 길마다 「무엇이 어느 파일에 저장되나」를 report 에 숫자·이름으로 적고, 흉내 낼 수 있는 것(예: 옛 판 crafting_station.tscn/스크립트 글이 새 판 위에 덮인 플레이 폴더를 임시 폴더에 만들어 사람 저장본을 불러와 우클릭)은 test_running_update_*.gd 에 단언하라. 이 길로도 증상이 안 나오면 「편집기 쪽으로도 안 나온다」와 그 까닭을 적어라",
-    "판 이력 셈이 틀렸다 — test_running_update_human_switch.gd 머리글과 report 가 「사람 저장본(19:41) 앞의 바꿈은 둘이다(15:54 · 19:07)」라 하나, .git/worktrees/naru-play/logs/HEAD 에 15:49 (c5eaee85→edb7eb04 merge) 와 그 앞 checkout 들이 더 있다. 사람 게임이 언제 켜졌는지 모르니 저장본 앞의 바꿈을 모두(적어도 그날 것) 판마다 crafting_station.gd · stations.gd · station_window.gd 의 새 멤버로 견주어 test_neither_human_switch_adds_a_member_to_crafting_station 에 더하고, 머리글·report 를 고쳐라",
-    "15:54 바꿈의 창 새 멤버를 빠뜨렸다 — edb7eb04→d219e9ed 에서 station_window.gd 에 _chests(Array[StorageChest]) · _chests_frame · _chests_placed · counted_rows 넷이 생긴다. soft reload 면 이것들이 null 로 서고 _room_chests() 가 null 을 돌려 창 열기가 막힐 수 있다(사람 증상 ①과 같은 꼴). _added(\"station_window.<edb7eb04>.gd.txt\", \"station_window.f76710c7.gd.txt\") 단언을 더하고, 15:54 를 19:07 처럼 실제로 흉내 내(창·Stations·시설 셋을 edb7eb04 글로 세운 뒤 d219e9ed 로 soft reload) 불러온 시설 · 새로 놓은 시설을 진짜 우클릭해 열리는지 단언하라. chest_scans 가 null 이 되어 room_chests 의 `chest_scans += 1` 에서 막히는지도 이름으로 적어라"
-   ],
-   "good": []
-  },
-  "test": "ests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      0s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           321\nTests            2494\nPassing Tests    2494\nFailing Tests       0\nRisky/Pending       0\nAsserts         94445\nTime           547s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-13 23:47:59",
   "epoch": 1791902879,
   "type": "pass",
@@ -9942,5 +9879,46 @@
    "decision": null
   },
   "test": "ife/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/test_temp_dir.gd\n\n================ 떨어진 파일: res://tests/life/hunting/test_owl_trees.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/life/hunting/test_owl_trees.gd\n* test_a_tree_becomes_an_owl_tree_by_a_low_chance_fixed_by_seed_and_mark\n* test_an_owl_tree_is_a_den_at_the_back_with_pellets_under_it\n* test_by_day_the_owl_sleeps_inside_its_tree\n* test_one_hit_on_the_tree_wakes_the_owl_and_it_flies_off_around\n* test_when_the_player_leaves_the_tree_the_owl_flies_home\n* test_a_villager_hit_also_wakes_the_owl\n* test_at_night_the_owl_leaves_home_and_returns_at_dawn\n    [Failed]:  돌아다닌다 — 게임 시간 10초 안에\n      at line 194\n* test_hitting_the_tree_at_night_scares_the_owl_that_is_out\n* test_when_the_home_tree_falls_the_owl_wanders_and_never_returns\n* test_a_tree_gone_while_the_owl_sleeps_lets_it_out\n* test_an_owl_caught_from_its_tree_stays_gone_after_loading\n10/11 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/life/hunting/test_owl_trees.gd\n- test_at_night_the_owl_leaves_home_and_returns_at_dawn\n    [Failed]:  돌아다닌다 — 게임 시간 10초 안에\n          at line 194\n\nTotals\n------\nScripts               1\nTests                11\nPassing Tests        10\nFailing Tests         1\nAsserts           4083/4084\nTime              30.875s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           498\nTests            3722\nPassing Tests    3721\nFailing Tests       1\nRisky/Pending       0\nAsserts        167663\nTime           725s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/life/hunting/test_owl_trees.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-19 21:00:32",
+  "epoch": 1792411232,
+  "type": "pass",
+  "title": "통과 — G-250 단계 3 ((앞 단계 QA) persona spec 의 옛 경고 결정 줄에 바뀜 표시가 없다)",
+  "group": "G-250",
+  "step": "3",
+  "attempt": "3",
+  "report": {
+   "problem": "persona spec 옛 경고 결정 줄 끝에 G-250.2 바뀜 표시를 덧붙이고 notice.gd 주석에 그 예가 낡았음을 적었다 · 전체에서 흔들린 올빼미 밤 배회 테스트에 씨앗을 박았다",
+   "approach": "spec 10줄의 사람 결정(2026-09-28)은 지우지 않고 끝에 「→ 2026-10-19 사람 결정으로 HUD 스트레스 표시(가장 높은 하나 · 고리 색)가 대신한다 — 아래 G-250.2」를 덧붙였다. notice.gd 주석은 G-233.3 때의 예이며 그 경고 줄은 G-250.2 에서 없앴다고 적었다. 기계 검사에서 떨어진 test_owl_trees 는 이 묶음과 상관없는 흔들림이었다: 올빼미 rng 를 randomize 해서 쉼(최대 4초)과 가까운 목적지가 두어 번 겹치면 게임 시간 10초 안에 4m 를 못 벗어난다. 테스트에서 owl.set_seed(7) 로 박아 같은 길을 걷게 했다(따로 세 번 돌려 다 통과).",
+   "why": "",
+   "files": [
+    "spec/07_automation/villager-persona.md",
+    "game/ui/hud/notice.gd",
+    "game/tests/life/hunting/test_owl_trees.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "persona spec 의 옛 경고 결정 줄에 바뀜 표시가 없다 — spec/07_automation/villager-persona.md:10 「경고는 사라지지 않고 오른쪽 위에 로그로 계속 뜬다」(사람 결정 2026-09-28)가 그대로라 같은 절 21~26줄(사람 결정 2026-10-19 — 알림 줄을 없앴다)과 어긋나 읽힌다. 사람 줄은 지우지 말고 그 줄 끝에 「→ 2026-10-19 사람 결정으로 HUD 스트레스 표시(가장 높은 하나 · 고리 색)가 대신한다 — 아래 G-250.2」처럼 덧붙여라",
+     "evidence": "git diff: villager-persona.md:10 의 사람 결정 문장(「50 과 80 에 경고 … 로그로 계속 뜬다」)은 그대로 남고 끝에 「→ 2026-10-19 사람 결정으로 HUD 스트레스 표시(가장 높은 하나 · 고리 색)가 대신한다 — 아래 G-250.2」가 붙었다. 22~26줄 G-250.2 절과 맞는다. 문서 기준이라 테스트 대상이 아니다. 파일 94줄(150 아래)"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) notice.gd 주석이 없어진 경고를 예로 든다 — game/ui/hud/notice.gd:43 「주민 스트레스 경고의 이름이 올릴 때의 언어로 굳었다」는 이제 없는 스트레스 경고 줄을 들어 설명한다. 「(G-233.3 앞 단계 QA 때의 예 — 그 줄은 G-250.2 에서 없앴다)」처럼 낡았음을 적거나 지금 쓰는 다른 번역 키 이름 예로 바꿔라",
+     "evidence": "git diff: notice.gd:43~44 주석에 「그때의 예다 — 그 경고 줄은 G-250.2 에서 없앴다」가 붙어 낡았음을 적었다. 주석만 바뀌어 코드 동작은 그대로다"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "test_owl_trees.gd test_at_night_the_owl_leaves_home_and_returns_at_dawn 에 owl.set_seed(7) 을 넣었다 — 앞 시도 전체 검사에서 이 테스트가 떨어져 묶음이 막혔기 때문이다(randomize 된 쉼 · 목적지 탓의 흔들림). animal.gd:298 set_seed 가 실제로 있고, 이번 전체 검사는 3722개 다 통과했다. 기준 밖이지만 합치려면 필요한 고침이다"
+   ]
+  },
+  "test": " res://tests/core/input/test_pointer.gd\nok      0s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      0s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      0s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           498\nTests            3722\nPassing Tests    3722\nFailing Tests       0\nRisky/Pending       0\nAsserts        167666\nTime           728s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "266d9b91"
  }
 ]
