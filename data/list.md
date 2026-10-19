@@ -4364,7 +4364,7 @@
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
-- [ ] 1. Steam 붙은 뒤 포기 갈래에 테스트가 없다 (G-255 단계 2)
+- [x] 1. Steam 붙은 뒤 포기 갈래에 테스트가 없다 (G-255 단계 2)
   - 기준: Steam 붙은 뒤 포기 갈래에 테스트가 없다 — net_session.gd _give_up_join 의 `_connected` 가 참일 때 MENU_NET_MAYBE_VERSION 을 내는 갈래를 보는 테스트가 없다(붙지 못한 갈래만 test_giving_up_before_connecting_does_not_blame_the_version 이 본다). test_net_version.gd 에 guest._connected = true 로 놓고 _give_up_join() 을 불러 closed == "MENU_NET_MAYBE_VERSION" 을 단언하는 테스트를 더하라 (이번 기준은 ENet 으로 확인됐으니 막는 것은 아니다)
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
