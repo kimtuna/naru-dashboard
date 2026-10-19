@@ -4254,7 +4254,7 @@
   - 기준: spec 에 「망원경은 원격 조종이 아니다 — 곁의 새장만」 한 줄 · 반경 수는 임시
   - 기준: HUD 에 「망원경 4배 · 2팀(매 3)」처럼 고른 팀 · 팀의 새 수, 팀마다 겨눈 짐승에 팀 번호 표시 (테스트: 두 새장 · 두 짐승 — 1팀 → A, 2팀 → B 가 따로 간다)
   - 기준: ui_shots 에 쓰는 중 망원경 HUD 한 장 · ko/en 문구
-- [ ] 3. (앞 단계 QA) 올빼미가 줄기에 막혀 10초 넘게 선다
+- [x] 3. (앞 단계 QA) 올빼미가 줄기에 막혀 10초 넘게 선다
   - 기준: 올빼미가 줄기에 막혀 10초 넘게 선다 — 구현 세션이 test_owl_trees.gd 의 밤 배회 흔들림을 씨앗(set_seed 7)과 손으로 맞춘 자리(-0.267, -0.964 방향)로 박아 잡았지만, 게임에서는 올빼미가 고른 곳 맞은편 줄기 둘레에 나오면 _aim_left 가 다할 때까지 서 있다. 박은 자리는 Animal 의 난수 순서가 바뀌면 다시 흔들린다. life/hunting 의 올빼미 나오는 자리(전역 randf)를 고른 곳 쪽으로 잡거나 줄기에 막히면 곧 다시 고르게 고치고, 테스트는 씨앗 · 손 좌표 없이 여러 씨앗(예: 0~9)에서 10초 안에 4m 를 벗어나는지 단언하라
   - 기준: (앞 단계 QA) teams() 의 is_queued_for_deletion 거름은 쓰이지 않는다 — Stations 가 캐면 CraftingStation.vanish() 가 그룹에서 먼저 빼므로 is_in_group 이 이미 거른다(그 거름만 빼도 test_taking_down_a_front_cage_brings_up_the_fourth 가 통과한다). 남겨도 되지만 life/hunting/telescope.gd teams() 주석에 「vanish 가 그룹에서 빼고 · queue 거름은 그 밖의 free 대비」라고 적어 두라
 
