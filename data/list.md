@@ -4275,7 +4275,7 @@
 - [x] 3. (앞 단계 QA) ui_shots kept 자리를 지키는 단언이 없다
   - 기준: ui_shots kept 자리를 지키는 단언이 없다 — test_villager_gear_window.gd 329줄처럼 test_kept_window.gd 에 assert_true(UiShotsKit.PLACES.has("kept")) 한 줄을 더해라 (지금은 PLACES 에서 kept 를 빼도 아무 테스트도 떨어지지 않는다)
 
-## [ ] G-254 벌통은 농사장 안에만 · 약은 넷만
+## [x] G-254 벌통은 농사장 안에만 · 약은 넷만
 - 차선: 3d-lane2 · 시작 2026-10-19 20:18
 - spec: spec/05_craft/facilities.md (약 줄)
 - **사람 결정 2026-10-19**: 「그냥 지금 그대로 하는게 맞는거 같아. 그리고 그냥 설치 자체를 농사장 안에 설치하게 만들자. 이렇게 하면 밀랍도 꿀도 다른 연산 필요 없이 설치만 하면 되는거니까 둘다 나오게 하면 될거고」
