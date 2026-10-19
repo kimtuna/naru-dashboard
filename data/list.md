@@ -4368,7 +4368,7 @@
   - 기준: Steam 붙은 뒤 포기 갈래에 테스트가 없다 — net_session.gd _give_up_join 의 `_connected` 가 참일 때 MENU_NET_MAYBE_VERSION 을 내는 갈래를 보는 테스트가 없다(붙지 못한 갈래만 test_giving_up_before_connecting_does_not_blame_the_version 이 본다). test_net_version.gd 에 guest._connected = true 로 놓고 _give_up_join() 을 불러 closed == "MENU_NET_MAYBE_VERSION" 을 단언하는 테스트를 더하라 (이번 기준은 ENet 으로 확인됐으니 막는 것은 아니다)
 
 ## [ ] G-258 마취는 놓아도 남는다 · 맞으면 느리게 도망 · 다시 잡아도 같은 짐승
-- 차선: 3d-start
+- 차선: 3d-start · 시작 2026-10-20 03:52
 - spec: spec/04_life/hunting.md, spec/04_life/ranching-breeding.md
 - **사람 결정 2026-10-20**: 「마취가 안끝난 상태인데 놓으면 그냥 일어남 … 땅바닥에 놓아도 마취 때문에 안깨어나게」 · 「마취총 한대 맞으면 안움직이는거 같은데 이동속도 느린상태로 도망가야됨」 · 「마취가 풀리면 도망다니는데 마취총으로 다시 쏴서 잡으면 스텟이랑 나이가 변경됨」
 - 이 세션이 2026-10-20 봤다: 놓기(Ranch.place → _put, life/ranching/ranch.gd:530-581)가 칸의 sedation 을 넘기지 않는다 — ranch.gd:6 · hunting.md:59 의 「놓는 순간 풀린다」가 옛 규칙이다. Animal.hold_captured(animal.gd:473) 가 있다. 다트는 피해 0 이라 hear() · _panic() 이 안 불려(projectile.gd:95-101) 처음 30m 도망이 끝나면 반 속도로 서 있거나 거닌다. 가방에서 깬 짐승은 _escape(captives.gd:271-281)가 kind · health 만 든 새 Animal 을 만들어 born · 이름 · 스탯이 사라지고, 다시 잡으면 born_today() 가 나이를 새로 굴린다 · 우리 밖에 놓은 짐승의 run_off(ranch.gd:476) · _to_field(ranch.gd:718) 도 같다
