@@ -4157,9 +4157,13 @@
 - spec: spec/08_combat/tools-as-weapons.md
 - **사람 결정 2026-10-19**: 도구마다 휘두르기 간격을 다르게 한다 — 이 세션이 임시 수를 잡고, 사람은 「일단 그렇게 해놓고 이상하거나 너무 밸런스 안맞으면 말 할게」 (decisions.md 「평타 · 캐기에 휘두르기 간격이 없다」의 답)
 - 이 세션이 2026-10-19 봤다: 지금은 모든 휘두르기가 한 값 — combat/tools_as_weapons/attack.gd:69 `SWING_EVERY := 0.6`(G-916.4 임시) · 주민 HarvestWork.HIT_EVERY · 야생 벌집 WildHives.SWING_EVERY 가 이것을 읽는다 · 도구 목록은 tools.json(필드를 더하면 코드를 안 고쳐도 된다)
-- [ ] 1. 도구마다 간격
+- [x] 1. 도구마다 간격
   - 기준: tools.json 도구에 **swing**(초) 필드 — 임시 수: 맨손 0.4 · 칼(knife) · 단검 0.4 · 도끼 · 곡괭이 · 검 0.6 · 망치 · 톱 0.7 · 창 0.8 · 전투 도끼 1.0 · 안 적힌 도구 0.6. 평타 · 캐기 · 야생 벌집 치기가 **든 도구의 swing** 을 따른다 · 주민도 든 도구로 같은 간격 (테스트: 도끼와 전투 도끼로 1초 동안 누른 대 수가 다르다)
   - 기준: spec tools-as-weapons.md 에 간격 표 · 「수는 임시 — 사람이 해 보고 말한다(2026-10-19)」
+- [ ] 2. (앞 단계 QA) 주민 간격 기록에 낡은 이름이 남았다
+  - 기준: 주민 간격 기록에 낡은 이름이 남았다 — spec/07_automation/npc-villagers-history.md:108 이 없어진 HIT_EVERY 와 「좌클릭 Harvest.swing 에는 쿨다운이 없어」를 적고 있다. 기록 줄이면 그대로 두되 끝에 「G-246.1 부터 캐기도 든 도구 간격에 막힌다 · HIT_EVERY 는 HarvestWork.hit_every() 로 바뀌었다」 한 줄을 덧붙여라
+  - 기준: (앞 단계 QA) 주민 간격 테스트가 약하다 — test_a_villager_hits_at_the_pace_of_the_tool_in_hand 는 HarvestWork.TOOL 이 상수 "" 라 hit_every 가 0.4 고정값을 돌려줘도 통과한다. 주민에게 도구를 건네는 길이 생기면(TOOL 을 var 로) 도끼 · 전투 도끼를 쥐여 hit_every 가 0.6 · 1.0 으로 바뀌는지 단언을 더하라
+
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
   로드맵 한 바퀴: 생활 → 보급 → 배 → 새 자원 → 더 나은 생활
