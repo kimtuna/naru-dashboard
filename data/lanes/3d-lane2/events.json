@@ -1,42 +1,5 @@
 [
  {
-  "time": "2026-10-14 05:28:37",
-  "epoch": 1791923317,
-  "type": "pass",
-  "title": "차선 합치기 — 3d-start(933feac0) → 3d-lane2",
-  "group": "G-215",
-  "step": "4",
-  "attempt": "2",
-  "report": {
-   "problem": "손 검사(test_villager_hand_close)의 고아 노드를 없애고, slack 이 WAYPOINT 를 넘기는 뜻을 지키는 테스트를 더했다 — 바뀐 곳만: 1개 파일 7개 통과",
-   "approach": "고아: _set_up 이 Villager · Harvest 를 트리 밖에서 만들어 after_all 까지 고아로 셌다 → add_child 로 넣고(주민은 PROCESS_MODE_DISABLED 로 걷지 않게, 섬 밖 자리에 둠) after_all 의 따로 free 를 뺐다. 파일 로그에 orphans 줄이 사라졌다(남은 것은 HEAD 와 같은 'unfreed children' 경고 — after_all 의 queue_free 때문이며 free() 로 바꾸면 GUT 가 죽어 그대로 뒀다). slack: 길 끝 선 자리마다 대상에서 먼 쪽으로 물러나 손 + WAYPOINT/2 떨어진 자리를 잡고, 나무·바위는 reaches_from(slack 0)=false · (WAYPOINT)=true, 시설·축사는 station_reach 로 같은 것을 단언한다. 검증: 두 함수의 '+ slack' 을 '+ 0.0' 으로 바꾸니 그 테스트가 떨어졌고(6/7), 되돌렸다. 앞 회차 전체 검사의 test_from_empty_hands 실패(18단계 사슴 다리 사격에서 한 발이 몸통에 맞음)는 이 묶음이 손대지 않은 플레이어 경로이고, 그 파일만 다시 돌리니 2/2 통과(1899 단언, 446초) — 흔들리는 실패로 본다.",
-   "why": "",
-   "files": [
-    "game/tests/automation/villagers/test_villager_hand_close.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "손 검사에 고아 노드 2개가 생겼다 — test_villager_hand_close.gd 의 _set_up 이 Villager.new() · Harvest.new() 를 트리에 안 넣고 만들어, GUT 가 「2 orphans」를 보고한다(HEAD 판에는 없었다). 테스트마다 _set_up 을 부르니 after_all 의 free 전까지 고아로 센다. add_child(villager) · add_child(gather.harvest) 로 트리에 넣거나 autofree 로 감싸 orphans 0 이 되게 하라",
-     "evidence": "_set_up 이 add_child(villager)(PROCESS_MODE_DISABLED, 섬 밖 자리) · add_child(gather.harvest) 를 한다. 이번 전체 검사의 파일 로그(test_files/tests__automation__villagers__test_villager_hand_close.gd.log)와 내가 돌린 로그 어디에도 orphans 줄이 없다. 남은 것은 after_all 의 queue_free 로 생기는 'unfreed children' 경고뿐(고아 아님)"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) slack 을 빼도 손 검사가 통과한다 — reaches_from · station_reach 의 '+ slack' 을 '+ 0.0' 으로 바꿔도 6개 다 통과했다. 선 자리가 slack 없이도 손 안이라 WAYPOINT 를 넘기는 뜻이 지켜지지 않는다. 기준 문장대로는 됐으니 막지는 않는다 — 지키려면 길 끝에서 WAYPOINT 만큼 더 멀리 선 자리를 하나 넣어 slack 0 이면 false, WAYPOINT 면 true 인지 단언하라",
-     "evidence": "test_slack_carries_the_waypoint_gap 이 길 끝 선 자리마다 대상에서 손 + WAYPOINT/2 물러난 자리에서 reaches_from / station_reach 가 slack 0 이면 false, WAYPOINT 면 true 인지 단언한다(나무·바위·쇠 + 시설 전부·축사). 일부러 깨 봤다: crafting_work.gd:85 · gather_work.gd:113 의 '+ slack' 을 '+ 0.0' 으로 바꾸니 이 테스트가 떨어졌다(6/7, pine·broadleaf·rock·iron 과 시설 16종·barn 모두 736개 단언 실패). 되돌렸다(git diff 에 두 파일 없음)"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "ts/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/build/test_placers_file_end.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           334\nTests            2573\nPassing Tests    2573\nFailing Tests       0\nRisky/Pending       0\nAsserts         99685\nTime           569s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "5831a120"
- },
- {
   "time": "2026-10-14 05:28:39",
   "epoch": 1791923319,
   "type": "stop",
@@ -8690,5 +8653,98 @@
    "decision": null
   },
   "test": "      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\n\n================ 떨어진 파일: res://tests/ui/hud/test_villager_gear_window.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/ui/hud/test_villager_gear_window.gd\n* test_pressing_a_villager_opens_the_window_on_that_villager\n* test_pressing_a_villager_does_not_stack_on_another_window\n* test_the_press_goes_through_the_interact_ray\n* test_the_villager_press_and_a_chest_behind_it_do_not_share_one_right_click\n    [Failed]:  [<null>] expected to equal [Chest:<StaticBody3D#326769838979>(storage_chest.gd)]:  이제 광선 맨 앞은 상자다\n      at line 160\n    [Failed]:  [<null>] expected to equal [Chest:<StaticBody3D#326769838979>(storage_chest.gd)]:  우클릭이 주민 쪽을 그대로 지나 상자를 연다\n      at line 165\n* test_the_gear_tab_sits_in_the_existing_villager_window\n* test_dragging_from_the_bag_puts_gear_on_and_dragging_back_takes_it_off\n* test_dropping_a_bag_item_on_a_worn_slot_swaps\n* test_both_settings_start_on_and_the_buttons_turn_them_off\n* test_a_participant_asks_the_server_and_the_server_uses_their_bag_copy\n    6 Orphans\n        * [Row:<Button#526687143627>]\n        * [Row:<Button#525613403465>]\n        * [Gear:<Node3D#520462798942>]\n        * [Gear:<Node3D#526502597185>] + 1\n        * [Row:<Button#526569706056>]\n* test_every_new_key_is_in_ko_and_en\n    20 Orphans\n        * [@Label@753:<Label#556886133262>]\n        * [@Label@754:<Label#556919687716>]\n        * [@Label@755:<Label#556953242149>]\n        * [@Label@756:<Label#556986796582>]\n        * [@Label@758:<Label#557053905588>]\n        * [@Label@757:<Label#557020351159>]\n        * [@Label@759:<Label#557087460025>]\n        * [@Label@768:<Label#561097215065>]\n        * [@Label@767:<Label#561063660651>]\n        * [@Label@766:<Label#561030106221>]\n        * [NameHead:<Label#556819025124>]\n        * [@Label@764:<Label#560962997583>]\n        * [@Label@765:<Label#560996552275>]\n        * [Head:<Label#556852579984>]\n        * [@Label@760:<Label#557121015476>]\n        * [NameHead:<Label#560862334882>]\n        * [Head:<Label#560895889536>]\n        * [@Label@763:<Label#560929443970>]\n        * [@Label@769:<Label#561130770756>]\n        * [@Label@770:<Label#561164325191>]\n* test_the_gear_tab_has_a_shot_place\n10/11 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/ui/hud/test_villager_gear_window.gd\n- test_the_villager_press_and_a_chest_behind_it_do_not_share_one_right_click\n    [Failed]:  [<null>] expected to equal [Chest:<StaticBody3D#326769838979>(storage_chest.gd)]:  이제 광선 맨 앞은 상자다\n          at line 160\n    [Failed]:  [<null>] expected to equal [Chest:<StaticBody3D#326769838979>(storage_chest.gd)]:  우클릭이 주민 쪽을 그대로 지나 상자를 연다\n          at line 165\n\nTotals\n------\nScripts               1\nTests                11\nPassing Tests        10\nFailing Tests         1\nAsserts           113/115\nTime              2.005s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           292\nTests            2370\nPassing Tests    2369\nFailing Tests       1\nRisky/Pending       0\nAsserts         77471\nTime           500s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/ui/hud/test_villager_gear_window.gd\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-20 07:09:23",
+  "epoch": 1792447763,
+  "type": "pass",
+  "title": "통과 — G-262 단계 1 (도면 — 좌클릭 놓기 · 우클릭 해체)",
+  "group": "G-262",
+  "step": "1",
+  "attempt": "2",
+  "report": {
+   "problem": "도면을 든 손 = 건설 모드: 좌클릭 놓기 · 우클릭 해체(건물 조각 · 시설 · 상자 · 횃불 · 침대 · 가구 · 밭을 한 번에 거둔다, 밭이 토대보다 먼저, 막는 규칙이면 까닭 표시). 바뀐 곳 그물 292 파일 2370 개 모두 통과",
+   "approach": "앞 시도에서 구현은 끝났고(Placeable.take — 남은 대수를 1로 줄이고 그 놓는 곳의 치기를 한 번 불러 돌아오는 것·무너짐이 치기와 같다, 막는 규칙은 why_kept 한 곳) 기계 검사만 test_villager_gear_window 하나에서 떨어졌다. 따로 돌리면 5번 다 통과 — G-262 와 상관없는 흔들림이었다: 섬이 없는 테스트라 사람이 떨어지고, 전체를 돌릴 때 붐벼 한 프레임에 물리가 여러 번 돌면 조준 광선이 상자 밑으로 빠져 null 이 됐다. 그 테스트에서 사람의 물리를 멈춰 세워 두었다. 바뀐 곳 그물(changed_tests 가 292 파일 전부를 골랐다) 2370 개 통과.",
+   "why": "",
+   "files": [
+    "game/build/buildings.gd",
+    "game/build/placeable.gd",
+    "game/build/placer.gd",
+    "game/core/net/net_world.gd",
+    "game/craft/stations/crafting_station.gd",
+    "game/craft/stations/stations.gd",
+    "game/i18n/en.po",
+    "game/i18n/ko.po",
+    "game/life/farming/farmland.gd",
+    "game/life/ranching/bird_cage.gd",
+    "game/tests/build/test_blueprint.gd",
+    "game/tests/build/test_building_chain_grade.gd",
+    "game/tests/build/test_building_downgrade.gd",
+    "game/tests/build/test_building_grades.gd",
+    "game/tests/build/test_building_link_count.gd",
+    "game/tests/build/test_building_pillar.gd",
+    "game/tests/build/test_building_preview.gd",
+    "game/tests/build/test_building_qa_sweep.gd",
+    "game/tests/build/test_building_roof_skyward.gd",
+    "game/tests/build/test_building_roof_stairs.gd",
+    "game/tests/build/test_building_sockets.gd",
+    "game/tests/build/test_building_walls.gd",
+    "game/tests/build/test_foundation_attach.gd",
+    "game/tests/build/test_foundation_wheel_attach.gd",
+    "game/tests/build/test_placeable_previews.gd",
+    "game/tests/craft/stations/test_g212_human_save.gd",
+    "game/tests/craft/test_from_empty_hands.gd",
+    "game/tests/multiplayer/test_bird_cage_on_server.gd",
+    "game/tests/multiplayer/test_build_on_server.gd",
+    "game/tests/multiplayer/test_farm_on_server.gd",
+    "game/tests/ui/hud/test_villager_gear_window.gd",
+    "game/world/storage/chests.gd",
+    "game/world/storage/storage_chest.gd",
+    "spec/01_settings/input.md",
+    "spec/02_player/movement-controls.md",
+    "spec/04_life/bird-cage.md",
+    "spec/04_life/farming.md",
+    "spec/05_craft/crafting-stations.md",
+    "spec/06_build/building.md",
+    "spec/06_build/storage.md",
+    "spec/11_multiplayer/netcode.md",
+    "game/tests/build/test_build_mode_take.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "도면을 든 채 좌클릭 = 놓기, 우클릭 = 해체. 해체는 건물 조각(토대 · 벽 · 문 · 지붕 · 계단 · 기둥)뿐 아니라 시설 · 상자 · 횃불 · 침대 · 가구 · 밭까지 겨눈 것 하나를 한 번에 거둔다(건물은 재료를, 그 밖은 그 아이템을 돌려준다 — 지금 부서질 때와 같다). 위에 얹힌 것이 있는 토대 해체는 지금의 무너짐 규칙 그대로",
+     "evidence": "test_build_mode_take.gd — 진짜 조준 · 진짜 마우스 클릭(push_input)으로: 우클릭은 놓지 않고 좌클릭이 토대를 놓고 재료가 빠진다 · 우클릭 한 번에 토대가 거둬지고 재료 전부가 가방으로(test_the_left_click_places…); 제작대 · 상자 · 횃불 · 침대 · 의자 · 밭이 각각 우클릭 한 번에 사라지고 그 아이템 1개가 떨어진다; 벽 밑 토대를 거두면 벽이 무너져 바닥에 재료가 떨어지고 토대 몫만 가방에. 깨 봄: Placeable.take 에서 HITS_LEFT=1 을 빼자 「한 번에」 · 돌아오는 것 단언이 줄줄이 떨어졌다. 바뀐 곳 그물 292 파일 2370 개 통과(test.log)"
+    },
+    {
+     "ok": true,
+     "criterion": "거두기를 막는 규칙이 있는 것(새장 — 새가 다 들어와야 · G-260.4)은 해체도 막히고 빨간 표시 대신 까닭을 보인다",
+     "evidence": "test_a_cage_with_a_bird_out_is_not_taken_until_every_bird_is_home — 매가 FLY 면 우클릭에 그대로 서고 Notice 가 TAKE_CAGE_BIRDS_OUT %1 · HOME/HUNT/GUARD 도 밖 · PERCH 로 바꾸면 거둬져 새장째 가방에 든다. 찬 상자도 같은 길(test_a_chest_with_something_inside…: 깎이지도 않고 TAKE_CHEST_NOT_EMPTY). 깨 봄: CraftingStation.why_kept 를 늘 [] 로 놓자 새장 테스트가 떨어졌다. 해체 쪽 빨간 표시는 아직 없어 「대신」은 이 단계에서 까닭 한 줄로 충족"
+    },
+    {
+     "ok": true,
+     "criterion": "밭 위에서 우클릭하면 밭이 해체된다(토대가 아니라) — 위에 놓인 것이 먼저다 (테스트: 토대 위 밭에 우클릭 → 밭만 사라지고 토대가 남는다)",
+     "evidence": "test_the_right_click_on_a_field_on_a_foundation_takes_the_field_and_leaves_the_foundation — 대조로 조준선이 토대를 짚음을 먼저 확인한 뒤 aimed_target 은 밭(FieldPatch), 우클릭 후 밭 없음 · 토대 남음 · 밭 아이템 1. 깨 봄: Buildings.aimed_target 의 밭 먼저 갈래를 끄자 「그래도 겨눈 것은 위에 놓인 밭」 · 「토대는 남는다」가 떨어졌다. 클릭은 Buildings._input 이 set_input_as_handled 로 삼켜 Farmland 가 같이 받지 않는다"
+    },
+    {
+     "ok": true,
+     "criterion": "옛 「도면 우클릭 = 놓기」에 기대던 키 안내 · 도면 고르는 창 글자 · spec 을 고친다 · 키 표(spec/01_settings/input.md)",
+     "evidence": "HUD_BLUEPRINT_TITLE ko/en 이 「R 바꾸기 · 좌클릭 놓기 · 우클릭 해체」로; 새 까닭 키 TAKE_CHEST_NOT_EMPTY · TAKE_CAGE_BIRDS_OUT 는 ko · en 둘 다. input.md 좌클릭 · 우클릭 줄, movement-controls · building(규칙 · 확인) · farming · crafting-stations · storage · bird-cage · netcode 를 고쳤다. buildings.gd 머리 주석의 「들고 우클릭」도 고쳤다. 남은 「들고 우클릭으로 놓는다」는 설치물(Placer) 것이라 맞다. 사람 결정 줄은 지워지지 않았고 md 는 다 150줄 안"
+    }
+   ],
+   "issues": [
+    "새장 규칙을 G-260.4 몫까지 미리 만들었다 — G-260.4(3d-start 차선 목록, 「새가 다 들어와야 새장을 거둔다」)가 아직 안 끝났는데 이 단계가 CraftingStation.why_kept · BirdCage.outside · Stations.hit_station 의 마지막 한 대 막기 · spec/04_life/bird-cage.md 줄을 만들었다. 두 차선이 합쳐질 때 G-260.4 세션이 같은 것을 또 만들지 않게, G-260.4 를 할 때 이 why_kept 를 그대로 쓰고(이미 있으면 기준 확인 · 테스트만) 같은 뜻의 두 번째 규칙 · 번역 키를 만들지 마라"
+   ],
+   "good": [
+    "G-260.4 의 새장 규칙(치기도 마지막 한 대가 막힌다 · BirdCage.outside · bird-cage.md 줄) — 기준이 G-260.4 규칙에 기대라고 했지만 그 단계가 아직 다른 차선에 남아 있어 여기서 만들었다",
+    "test_villager_gear_window.gd 의 흔들림 고침 — 사람의 물리를 멈춰 조준 광선이 상자 밑으로 빠지지 않게 했다 (앞 시도의 기계 검사 실패 원인)"
+   ]
+  },
+  "test": "   2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_back.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/hunting/test_bird_hunt.gd\nok      2s  res://tests/life/ranching/test_bird_cage_five.gd\nok      2s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      1s  res://tests/life/ranching/test_bond.gd\nok      1s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/life/ranching/test_shearing.gd\nok      2s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      3s  res://tests/multiplayer/test_kept_names_on_server.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      3s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      6s  res://tests/multiplayer/test_traces_on_server.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           292\nTests            2370\nPassing Tests    2370\nFailing Tests       0\nRisky/Pending       0\nAsserts         77466\nTime           496s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "adf2203e"
  }
 ]
