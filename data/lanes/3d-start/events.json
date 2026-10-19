@@ -1,73 +1,5 @@
 [
  {
-  "time": "2026-10-14 06:51:32",
-  "epoch": 1791928292,
-  "type": "pass",
-  "title": "통과 — G-216 단계 1 (음료가 든 컵은 그 음료로 보인다)",
-  "group": "G-216",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "음료가 든 컵 칸이 그 음료 이름(과일 주스 · 맥주)으로 보이고, 남은 모금 「2/3」과 작은 컵 이름이 같이 적힌다 — 이름은 Cup.shown_as · Cup.name_key 한 곳에서 고른다. 바뀐 곳만 돌렸다: 73개 파일 · 596개 통과",
-   "approach": "칸을 그리는 ItemSlot.paint · 끌 때 붙는 이름표(SlotDrop._preview) · 검색(ItemSearch.light)이 다 entry.item 만 보아 음료가 든 컵이 「나무컵」으로 보였다. Cup 에 shown_as(칸이 무엇으로 보이나 — 음료가 들었으면 그 음료) · name_key(ITEM_ 키) · cup_note(작은 컵 이름 키 · 「남은/가득」 모금)를 두고 셋 다 이것을 부른다. 가방 · 핫바 · 상자 · 시설 결과 칸 · 손에 든 것(HandView) · 장비칸은 모두 ItemSlot.paint 를 지나므로 한 군데를 고쳐 다 바뀐다. 칸에 오른쪽 위 작은 「Cup」 라벨을 더했고, 개수 자리(음료 컵은 한 칸에 하나뿐)에 「2/3」을 적는다. 영어 핫바에서 칸 번호와 「7Wooden cup」 처럼 붙어 보여, 컵 이름을 칸 번호에서 DIGIT_GAP 만큼 떨어질 때까지 줄이게 했다(최소 6px). 물이 든 컵 · 빈 컵은 그대로 컵 이름이다. 검색은 보이는 이름으로 찾는다: 상자 창에서 「주스」는 주스 컵에 걸리고 「나무컵」에는 안 걸린다. 시설 창은 레시피 줄의 output(fruit_juice)으로 이미 걸렸고, 이것을 테스트로 묶었다. 줍는 알림과 아이템 설명은 게임에 아직 없다(Pickup.picked_up 을 듣는 화면이 없다). 게다가 음료가 든 컵은 상태를 안은 칸이라 바닥에 버려지지 않는다(Pickup.throw). 그래서 그 둘은 새로 만들지 않았다. UI 찍기에 drinks 자리를 더해(조리대 결과 칸에 주스 · 맥주, 핫바에 마시다 만 주스 · 쇠컵 맥주 · 빈 나무컵) ko · en 을 찍어 보고 겹침을 고쳤다.",
-   "why": "음료 컵 칸의 꼴 — 오른쪽 위에 작은 컵 이름(칸 번호 글자 크기 8px), 오른쪽 아래에 「남은/가득」 모금. 기준이 「꼴은 임시」라고 했다; ItemSlot.CUP_MIN_FONT_SIZE = 6 — 컵 이름이 칸 번호와 붙을 때 줄여 내려가는 가장 작은 글자. 영어 「Wooden cup」 이 핫바 번호와 떨어지는 크기로 잡았다",
-   "files": [
-    "game/player/hunger_thirst/cup.gd",
-    "game/ui/hud/item_slot.gd",
-    "game/ui/hud/slot_drop.gd",
-    "game/ui/hud/item_search.gd",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/tests/ui/hud/test_drink_cup_names.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "음료가 든 컵 칸은 그 음료 이름(과일 주스 · 맥주 …)으로 보인다 — 가방 · 핫바 · 상자 · 시설 결과 칸 · 손에 든 것 · 줍는 알림 · 아이템 설명 모두 (테스트, 자리마다)",
-     "evidence": "test_drink_cup_names.gd 에서 자리마다 따로 본다. 핫바·가방은 test_bag_and_hotbar_show_the_juice, 상자는 test_chest_shows_the_juice_and_its_search_finds_it, 시설 결과 칸은 test_station_result_slot_shows_the_juice_and_its_search_finds_it(buffer_slot), 손과 끌 때 이름표는 test_the_hand_and_the_drag_label_show_the_juice. 모두 Item 라벨이 ITEM_fruit_juice 이고 tr 하면 「과일 주스」인지 단언한다. 줍는 알림과 아이템 설명은 게임에 아직 없다. Pickup.picked_up 을 듣는 화면 코드가 없고, ITEM_ 키로 설명을 띄우는 tooltip 도 없다(grep 으로 확인했다). 게다가 음료 컵은 바닥에 버려지지 않는다. 그래서 그 두 자리는 볼 대상이 없다"
-    },
-    {
-     "ok": true,
-     "criterion": "남은 모금과 어느 컵인지가 함께 보인다 — 예: 「과일 주스」 + 2/3 · 작게 「나무컵」 (꼴은 임시)",
-     "evidence": "_assert_juice 가 Count=「2/3」(가방은 1/3, 결과 칸은 3/3)과 Cup=ITEM_wooden_cup 을 단언한다. test_the_small_cup_name_keeps_off_the_slot_number 는 영어 핫바에서 컵 이름이 칸 번호와 붙지 않는지 본다. 사진 /private/tmp/naru_drinks/drinks_ko.png 와 en_crop.png 에서 결과 칸에 「과일 주스 3/3 · 나무컵」·「맥주 4/4 · 돌컵」, 핫바에 「과일 주스 2/3 · 나무컵」이 보인다. 임시 표시는 item_slot.gd 의 Cup 라벨 주석과 CUP_MIN_FONT_SIZE 에 붙어 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "검색 칸에 「주스」를 치면 주스가 든 컵이 걸린다 (상자 창 · 시설 창 — ItemSearch 가 같은 이름을 본다) (테스트)",
-     "evidence": "상자 창에서는 「주스」로 주스 컵이 밝고 빈 나무컵은 흐리다. 「나무컵」을 치면 반대가 된다. 이 단언은 고치기 전 코드(entry.item 을 보던 ItemSearch.light)로는 깨진다. 시설 창의 검색은 원래 레시피 줄만 거르고 결과 칸은 밝히지 않는다. 그 창에서는 과일 주스 줄이 matched_rows 에 드는지 단언한다"
-    },
-    {
-     "ok": true,
-     "criterion": "칸 이름을 고르는 곳을 한 곳에 둔다 (Cup 이나 아이템 이름 함수 하나) — 자리마다 따로 drink 를 보지 않는다",
-     "evidence": "이름은 Cup.shown_as 와 Cup.name_key 가 고른다. ItemSlot.paint, SlotDrop._preview, ItemSearch.light 가 모두 이것만 부른다. diff 에서 drink 를 직접 읽는 곳은 cup.gd 뿐이다. test_the_one_name_picker 가 이 함수를 직접 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "물이 든 컵 · 빈 컵은 그대로 컵 이름이다 (테스트)",
-     "evidence": "test_water_and_empty_cups_keep_the_cup_name 이 가방 칸을 본다. 물 든 나무컵은 ITEM_wooden_cup, 빈 돌컵 4개는 ITEM_stone_cup 에 Count 4 이고, 둘 다 Cup 라벨이 비었다. test_the_one_name_picker 에서는 물 든 쇠컵, 빈 컵, 컵이 아닌 것, 빈 칸도 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "찍어서 확인한다 — 결과 칸 · 가방에 든 과일 주스",
-     "evidence": "ui_shots 에 drinks 자리를 더했다. /private/tmp/naru_drinks/drinks_ko.png 와 drinks_en.png 를 열어 보았다. 조리대 결과 칸과 핫바(가방 첫 줄)에 과일 주스와 맥주가 음료 이름으로 보이고, 겹침은 없다"
-    }
-   ],
-   "issues": [
-    "줍는 알림·아이템 설명은 아직 없다 — 이번 기준에 적힌 두 자리가 게임에 없어서 테스트도 없다. 그 화면을 만들 때는 Cup.name_key(entry) 로 이름을 고르고, test_drink_cup_names.gd 에 그 자리를 하나 더하라 (지금 고칠 것은 없다)"
-   ],
-   "good": [
-    "ItemSlot._fit_cup — 영어 핫바에서 컵 이름이 칸 번호와 붙지 않게 글자를 줄인다. 기준의 「작게 나무컵」을 읽히게 하려고 넣은 것이라 기준 안쪽이다",
-    "끌 때 붙는 이름표(SlotDrop._preview)도 음료 이름으로 바꿨다"
-   ]
-  },
-  "test": "automation/villagers/test_villager_chest_shared.gd\nok      3s  res://tests/ui/hud/test_map_window.gd\nok      3s  res://tests/ui/hud/test_room_window.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      4s  res://tests/ui/hud/test_station_search.gd\nok      4s  res://tests/ui/hud/test_station_output.gd\nok      3s  res://tests/ui/hud/test_bag_move_slots.gd\nok      4s  res://tests/ui/hud/test_station_window.gd\nok      3s  res://tests/ui/hud/test_chest_window_search.gd\nok      2s  res://tests/ui/hud/test_health_bar.gd\nok      3s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok     31s  res://tests/player/hunger_thirst/test_hunger_thirst.gd\nok      3s  res://tests/ui/hud/test_station_make_bar.gd\nok      4s  res://tests/ui/hud/test_room_names.gd\nok      2s  res://tests/ui/hud/test_station_queue_window.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/ui/hud/test_villager_window_release.gd\nok      3s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/craft/stations/test_cook_table.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      2s  res://tests/craft/stations/test_drink_cups.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_sips.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_barn_window.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      3s  res://tests/ui/hud/test_hotbar.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_search_field_shared.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            73\nTests             596\nPassing Tests     596\nFailing Tests       0\nRisky/Pending       0\nAsserts         52178\nTime           45s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "a492dc6c"
- },
- {
   "time": "2026-10-14 07:27:10",
   "epoch": 1791930430,
   "type": "pass",
@@ -9744,5 +9676,66 @@
   },
   "test": "//tests/craft/recipes/test_recipe_tags.gd\nok      1s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/craft/stations/test_station_queue.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/hunting/test_bird_hunt.gd\nok      1s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      1s  res://tests/life/ranching/test_bond.gd\nok      2s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      3s  res://tests/life/ranching/test_shearing.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      1s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      3s  res://tests/life/ranching/test_taming.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      0s  res://tests/automation/villagers/test_crafter_spec.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/life/hunting/test_food_chain.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      0s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok    435s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           190\nTests            1598\nPassing Tests    1598\nFailing Tests       0\nRisky/Pending       0\nAsserts         53620\nTime           435s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "410daf82"
+ },
+ {
+  "time": "2026-10-20 05:38:56",
+  "epoch": 1792442336,
+  "type": "pass",
+  "title": "통과 — G-259 단계 2 (새장의 새도 관계가 있다)",
+  "group": "G-259",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "새장의 새마다 관계(사나움 · 관심 · 친밀함)를 지니고 먹이 · 새장 창 쓰다듬기(하루 한 번)로 오른다 — 가방을 오가도 · 저장해도 남고, 새 칸 · 잡은 동물 창 새장 탭에 뜬다. 바뀐 곳만 191 파일 1607 개 통과",
+   "approach": "새장의 새(CagedBird)는 bird 사전에 온순함(tame)과 쓰다듬은 날(pet)을 새로 지닌다. 등급 읽기는 놓은 짐승과 같은 것을 쓰도록 Ranch 에 온순함 수 하나로 읽는 bond_of · bond_text_of 를 만들고 bond · bond_text 가 그것을 부르게 했다. 새는 _meal 에서 한 끼 먹을 때 FEED_TAME, 새장 창의 새 칸마다 새로 단 「쓰다듬기」(Stations.CAGE_PET — ACTS 에 넣어 같이 하는 판도 서버가 한다)로 하루 한 번 PET_TAME 오른다. 잡은 새는 0(사나움)에서 시작하고, take() 가 가방 칸에 tame · pet 을 실어 다시 put() 하면 그대로 이어진다(같은 날 다시 넣어도 또 쓰다듬지 못한다). 새장 저장본은 bird 사전째 담기므로 restore 에서 값만 다듬고, tame 이 없는 옛 저장본은 사나움으로 읽는다. 새 칸 글자에 셋째 줄로 관계 등급, 잡은 동물 창은 새장 줄에 tame 을 실어 오른쪽 판에 관계를 띄운다. 관계는 사냥 · 돌아오기에 쓰이지 않는다 — spec 에 「미정」 한 줄. ui_shots bird_cage 는 칸마다 관계가 다르고 첫 칸은 오늘 쓰다듬어 단추가 잠긴 모습으로 찍었다(ko/en 둘 다 잘림 없음). 앞 단계 QA 둘: test_bond 의 옛 저장본 테스트를 손으로 적은 옛 꼴(tame 만 든 줄)을 IslandState.apply 에 넣도록 바꿨고, ko.po 의 GUARD_STATE_tame · GUARD_CANDIDATE_TAME/WILD · GUARD_NEEDS_TAME · SHEAR_WILD 위에 「키 이름은 옛 말, 뜻은 친밀함」 주석을 달았다. test.log: 바뀐 곳만 191 파일 1607 개 모두 통과. ESC 목차 파일은 아직 없어(G-264) 건너뛰었다.",
+   "why": "새의 관계가 오르는 크기는 놓은 짐승과 같은 값을 쓴다 — 한 끼 Ranch.FEED_TAME 5 · 쓰다듬기 Ranch.PET_TAME 10 (둘 다 이미 임시). 새는 120초마다 먹어 먹이만으로 친밀함까지 40분쯤",
+   "files": [
+    "game/life/ranching/caged_bird.gd",
+    "game/life/ranching/ranch.gd",
+    "game/life/ranching/kept_animals.gd",
+    "game/craft/stations/stations.gd",
+    "game/ui/hud/cage_panel.gd",
+    "game/ui/hud/kept_window.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/life/ranching/test_cage_bond.gd",
+    "game/tests/life/ranching/test_bond.gd",
+    "game/tests/ui/hud/test_bird_cage_window.gd",
+    "game/tests/ui/hud/test_kept_window.gd",
+    "spec/04_life/bird-cage.md",
+    "spec/04_life/kept-animals.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "새장의 새마다 관계(같은 네 등급)를 지닌다 — 새장 먹이를 먹을 때 · 새장 창에서 쓰다듬기(하루 한 번)로 오른다. 잡은 새는 사나움에서 시작 · 새를 꺼내 가방에 넣고 다시 넣어도 남는다 · 저장 · 복원",
+     "evidence": "CagedBird 가 bird.tame/pet 을 지니고 Ranch.bond_of 로 같은 등급을 읽는다. test_cage_bond.gd 가 사나움 시작 · 한 끼 FEED_TAME(못 먹으면 그대로) · CAGE_PET 하루 한 번(같은 날 거부 · 빈 칸 거부 · 다음 날 됨) · CAGE_TAKE→가방 직렬화→CAGE_PUT 뒤 온순함·쓰다듬은 날 유지 · to_dict/restore 왕복과 tame 없는 옛 저장본=사나움을 본다. 일부러 _meal 의 tame_up 과 take() 의 tame 을 빼 보니 test_eating_from_the_cage_raises_the_bond · test_the_bond_stays_when_taken_to_the_bag_and_put_back 가 떨어졌다(되돌림 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "새장 창 새 칸마다 관계 등급 · 잡은 동물 창 새장 탭에도. 관계가 새의 사냥 · 돌아오기를 바꾸지는 않는다(사람이 정하지 않았다 — spec 미정 한 줄) · ui_shots bird_cage 갱신",
+     "evidence": "test_bird_cage_window.gd test_each_bird_row_shows_its_bond_and_a_pet_button_once_a_day 가 칸 셋째 줄 「사나움 0%」/「친밀함」, 빈 칸에 단추 없음, 클릭하면 오르고 단추 잠김을 본다. test_kept_window.gd 가 새장 탭 관계 줄 「사나움 0%」→「관심 60%」를 본다. test_the_bond_does_not_change_hunting_or_coming_home 이 친밀/사나움 새의 사냥 준비·모드·피해·돌아오기가 같음을 보고, bird-cage.md 에 「미정 — 관계가 새의 사냥 · 돌아오기를 바꾸는가」 줄(테스트로 확인). ui_shots.gd bird_cage 가 칸마다 관계를 달리하고 첫 칸을 쓰다듬은 모습으로 갱신"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 옛 저장본 테스트가 지금 형식 왕복이다 — test_bond.gd test_old_saves_keep_their_tameness_and_read_as_bonds 는 IslandState.of 로 지금 만든 저장본을 다시 읽는다. …",
+     "evidence": "test_bond.gd 가 이제 G-259 이전 꼴의 ranch 줄(tame 만 든 사전)을 손으로 적어 IslandState.apply 에 넣는다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 옛 이름이 남은 번역 키 이름 — GUARD_STATE_tame · GUARD_CANDIDATE_TAME/WILD · GUARD_NEEDS_TAME · SHEAR_WILD …",
+     "evidence": "ko.po 의 다섯 키 위에 「(G-259.1 — 키 이름은 옛 말(야생 · 온순함), 뜻은 친밀함)」 주석이 달렸다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "alf.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/build/test_room_overlay.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      0s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           510\nTests            3825\nPassing Tests    3825\nFailing Tests       0\nRisky/Pending       0\nAsserts        171511\nTime           755s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "b463c8f9"
  }
 ]
