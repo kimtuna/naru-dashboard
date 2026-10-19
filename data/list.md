@@ -4407,7 +4407,7 @@
   - 기준: (앞 단계 QA) 옛 저장본 테스트가 지금 형식 왕복이다 — test_bond.gd test_old_saves_keep_their_tameness_and_read_as_bonds 는 IslandState.of 로 지금 만든 저장본을 다시 읽는다. 저장 형식이 안 바뀌어 지금은 같지만, G-259 이전 저장본 꼴(tameness 만 든 사전)을 손으로 적어 IslandState.apply 에 넣는 꼴로 바꾸면 앞으로 형식이 바뀌어도 지킨다 (막는 것은 아니다)
   - 기준: (앞 단계 QA) 옛 이름이 남은 번역 키 이름 — GUARD_STATE_tame · GUARD_CANDIDATE_TAME/WILD · GUARD_NEEDS_TAME · SHEAR_WILD 의 키 이름이 옛 「야생 · 온순함」 말 그대로다. 글자는 바뀌어 사람 눈엔 문제가 없지만 다음에 읽는 세션이 헷갈리지 않게 ko.po 주석에 「(G-259.1 — 키 이름은 옛 말, 뜻은 친밀함)」 한 줄을 달거나 키를 BOND 쪽으로 갈아라
 
-## [ ] G-260 새장 — 누르면 안 부른다 · 못 나가게 · 쉬기 · 약제대 · 경비 우리 빈 칸
+## [x] G-260 새장 — 누르면 안 부른다 · 못 나가게 · 쉬기 · 약제대 · 경비 우리 빈 칸
 - 차선: 3d-start · 시작 2026-10-20 05:51
 - 순서: G-259 뒤
 - spec: spec/04_life/bird-cage.md, spec/04_life/ranching-breeding.md, spec/05_craft/facilities.md
