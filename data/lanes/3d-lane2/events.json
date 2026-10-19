@@ -1,59 +1,5 @@
 [
  {
-  "time": "2026-10-12 05:55:44",
-  "epoch": 1791752144,
-  "type": "pass",
-  "title": "통과 — G-994 단계 1 (경계를 넘는 것을 모으고, 가장 값나가는 하나를 갚는다)",
-  "group": "G-994",
-  "step": "1",
-  "attempt": "2",
-  "report": {
-   "problem": "경계를 넘는 것 10 건을 표로 모으고(23 커밋 + G-950), 1번 Stations._aim_hit 의 광선 베끼기를 Aim.at 한 줄로 갚았다 — 전체 263 파일 2088 → 2090/2090 통과",
-   "approach": "## 모은 것\n`git log --all --grep='경계를 넘는 것'` 은 23 커밋을 낸다. 그중 「경계를 넘는 것: 없다/없음」이라 적은 커밋(G-995.5 de8fcdbf · G-993.11 · G-995.3 · G-993.10 · G-995.2 · G-993.8 · G-993.7 · G-993.6 · G-993.4 · G-993.2 의 경계 줄 · G-992.3 · G-992.2)은 표에서 뺐다 — 갚을 것이 없다. 다만 그 본문의 「옆 파일 메모」에 적힌 겹침(G-993.2 의 REACH · G-993.10 의 hands 상자 칸 · G-993.9 의 창 여백)은 넣었다. G-950 은 두 단계 — G-950.1(halt 세 줄)은 이미 그 자리에서 갚았고, G-950.2 의 test.sh TMPDIR 만 남았다.\n\n| # | 무엇이 | 어느 파일에 걸쳐 있나 | 부르는 쪽 (grep 파일 수) | 어디서 나왔나 |\n|---|---|---|---|---|\n| 1 | **Stations._aim_hit 이 Aim.at 광선 11줄을 베꼈다** (이번에 갚음) | craft/stations/stations.gd ↔ player/aim.gd | _aim_hit 은 stations.gd 안 2 곳 · Aim.at( 30 파일 | G-992.9 · G-995.4 |\n| 2 | 놓는 곳 뼈대(미리보기 · aimed_* · plan_spot · standing/restore) 네 파일 겹침 → Placeable 로 | beds.gd · torches.gd · chests.gd · stations.gd | refresh_preview 4 · Placeable 집안 | G-992.8 · G-992.9 |\n| 3 | 손 닿는 거리 4.0 을 셋이 각자 적었다 | stations.gd · aim.gd · harvest.gd | Stations.REACH 10 · Aim.REACH 12 · Harvest.REACH 4 (test_reach_temporary_notes 가 주석을 본다) | G-993.2 |\n| 4 | Buildings 의 _ 이름(_pieces_of · _edge_plates)을 build_piece.gd 가 밖에서 부른다 → 공개 이름으로 | buildings.gd ↔ build_piece.gd | 5 파일 | G-992.6 · G-992.7 |\n| 5 | 낚시 aimed_water 와 마시기의 수면 찾기(광선 → STEP 걸음) 겹침 | life/fishing/fishing.gd ↔ player/hunger_thirst/drinking.gd | aimed_water 1 파일 (거리만 CAST_RANGE ↔ Aim.REACH) | G-993.5 |\n| 6 | 주민 손 add 의 자리 찾기 · fits_into/takes_some 상자 칸 베끼기 ↔ Chest.store/_stack_in | automation/villagers/hands.gd ↔ world/storage/chest.gd | VillagerHands 13 · 상자 56 | G-992.5 · G-993.10 |\n| 7 | gather_work 와 field_care 가 _age · why_still · _stop · 방 상자 두기를 각자 적었다 → JobWork 로 | gather_work.gd ↔ field_care.gd | GatherWork 9 · FieldCare 17 | G-992.4 |\n| 8 | ButcherPanel._holds_gun 이 Attack.holds_gun 을 다시 한다 (Player 가 Attack 을 안 내준다) | hud/butcher_panel ↔ attack.gd ↔ player.gd | holds_gun 3 · Player 189 | G-995.1 |\n| 9 | 창 위 여백(TOP_MARGIN) 을 창 셋이 각자 | chest_window · villager_window 등 ui 창 | 6 파일 | G-993.9 |\n| 10 | tools/test.sh 가 두 차선에서 같은 TMPDIR 를 쓴다 | tools/test.sh ↔ 모든 테스트 임시 경로 | 모든 테스트 | G-950.2 |\n\n## 갚은 것 — 1번\nStations._aim_hit(stations.gd:368) 의 11줄(광선 만들기 · 카메라 뒤 거리 + REACH · 플레이어 빼기 · 거리 넘으면 {})을 `Aim.at(player, get_world_3d().direct_space_state, REACH)` 한 줄로. 줄 대 줄로 같은 일이라 행동이 그대로다.\n왜 먼저: (가) 두 차선이 따로 두 번 보고했다(G-992.9 · G-995.4) (나) 이 줄기엔 아직 차선 1 이 안 합쳐졌다 — 차선 1 이 고친 파일(placeable · beds · buildings · build_piece · hands · gather_work)을 건드리면 합칠 때 부딪힌다. stations.gd · aim.gd 는 차선 1 이 안 건드렸다 (다) _aim_hit 은 _ 이름이라 부르는 쪽이 stations.gd 안 두 곳뿐 — grep 으로 확인, 검사 파일 중 부르는 것은 이번에 더한 test_stations.gd 뿐.\n검사(test_stations.gd 에 둘): 가까운 땅 · 먼 땅에서 _aim_hit() == Aim.at(REACH) · stations.gd 에 intersect_ray / PhysicsRayQueryParameters3D 가 다시 없다.\n\n## 다음 단계 후보\n- 지금 줄기에서: 3(REACH 4.0 을 Aim.REACH 하나로) → 5 → 9 → 10\n- 차선 1(G-992 · G-995)이 이 줄기에 합쳐진 뒤: 2 · 4 · 6 · 7 · 8\n\n## 테스트 개수 (test.log 가 말한 것)\n앞 2088/2088 — 이 단계 직전 루프의 마지막 전체 그물(G-993.13, loop.log 「263 files, 2088/2088」). QA 는 2087(G-993.12)이라 했지만 G-993.13 이 하나를 더해 2088 이다.\n뒤 **263 파일 · 2090/2090 통과 · 실패 0** (TEST_DIR 없이 전체, .loop/out/full_test_G994_1_after.log, 490초). 2088 + 이번 둘 = 2090. 끝에 「TMPDIR 에 새로 남은」 줄 없음. 있던 단언은 하나도 안 바꿨다.",
-   "why": "",
-   "files": [
-    "game/craft/stations/stations.gd",
-    "game/tests/craft/stations/test_stations.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "`git log --all --grep='경계를 넘는 것'` 과 G-950 단계를 훑어 **표로 모은다** — 무엇이 · 어느 두 파일에 걸쳐 있나 · 부르는 쪽이 몇 파일인가 (report 에)",
-     "evidence": "report.how 에 10 줄 표(무엇이 · 걸친 파일 · 부르는 쪽 grep 파일 수 · 출처). 커밋 수 23 은 report 작성(05:47) 시점 기준으로 맞다 — 지금 24 개인 것은 그 뒤 05:49 에 차선 1 이 올린 G-995.6(3a93d4f3)이고 그 본문도 「경계를 넘는 것은 없다」라 표가 달라지지 않는다. 「없다」 커밋을 뺐다는 줄도 적혀 있다. G-950.1 · G-950.2 도 훑었다"
-    },
-    {
-     "ok": true,
-     "criterion": "그중 **하나**를 골라 그 자리에서 갚는다. 왜 그것을 먼저 골랐는지 적는다",
-     "evidence": "1번 Stations._aim_hit 의 광선 11줄을 `Aim.at(player, space, REACH)` 한 줄로 바꿨다. Aim.at(player/movement_controls/aim.gd:24) 은 null 검사 · 카메라 뒤 거리 + reach · 몸 빼기 · within(<= reach) 까지 줄 대 줄로 같다. 까닭(두 차선이 따로 보고 · 차선 1 이 안 건드린 파일 · _ 이름이라 부르는 쪽이 파일 안 두 곳)이 적혀 있다. test_the_station_aim_is_the_same_ray_as_aim_at 이 가까운 땅(맞음)·먼 땅(못 맞힘) 둘 다 대조 단언과 함께 _aim_hit()==Aim.at 을 보고, test_stations_does_not_write_its_own_ray 가 stations.gd 에 intersect_ray · PhysicsRayQueryParameters3D 가 다시 들어오는 것을 막는다"
-    },
-    {
-     "ok": true,
-     "criterion": "남은 것은 report 에 **다음 단계 후보**로 남긴다 (QA 가 단계로 붙인다)",
-     "evidence": "report.how 「다음 단계 후보」 — 지금 줄기에서 3 → 5 → 9 → 10, 차선 1 합친 뒤 2 · 4 · 6 · 7 · 8. 아래 problems 에 단계로 붙였다"
-    },
-    {
-     "ok": true,
-     "criterion": "전체 테스트 통과 개수가 줄지 않았다 — 앞뒤 숫자를 report 에 적는다",
-     "evidence": "앞 2088/2088(G-993.13 루프 전체, loop.log 700 줄에서 확인 — 앞 QA 의 2087 보다 새것이 맞다) → 뒤 2090/2090. .loop/out/full_test_G994_1_after.log 를 직접 읽어 Scripts 263 · Tests 2090 · Passing 2090 · Failing 0 확인. 이번 회차 test.log(바뀐 곳 46 파일 453 개)도 모두 통과 · guard 통과"
-    }
-   ],
-   "issues": [
-    "손 닿는 거리 4.0 을 Aim.REACH 하나로 — G-994 다음 단계(report 표 3번). Stations.REACH · Harvest.REACH 가 각자 4.0 을 적었다(부르는 쪽 Stations.REACH 10 · Aim.REACH 12 · Harvest.REACH 4 파일). 두 상수를 지우거나 `const REACH := Aim.REACH` 로 잇고, 부르는 쪽을 grep 으로 전부 고친 뒤 report 에 빠짐 없음을 적어라. tests/world/storage/test_reach_temporary_notes.gd 가 「임시」 주석을 보니 그 주석이 Aim.REACH 한 곳에 남는지 같이 고쳐라",
-    "낚시 · 마시기의 수면 찾기 겹침 — G-994 그 다음 단계(표 5번). life/fishing/fishing.gd 의 aimed_water 와 player/hunger_thirst/drinking.gd 가 광선 → STEP 걸음 수면 찾기를 각자 적었다. 거리(CAST_RANGE ↔ Aim.REACH)만 인자로 받는 한 함수로 모으고, 두 거리에서 같은 수면을 찾는 테스트를 더해라",
-    "창 위 여백 TOP_MARGIN 을 창 셋이 각자 — G-994 그 다음 단계(표 9번). chest_window · villager_window 등 ui 창이 같은 여백을 따로 적는다. ui 쪽 한 곳(레이아웃 상수)으로 모으고 test_window_layout 류에서 셋이 같은 값을 쓰는지 단언해라",
-    "tools/test.sh 가 두 차선에서 같은 TMPDIR — G-994 그 다음 단계(표 10번, G-950.2). 차선 1 · 2 가 동시에 돌면 임시 경로가 겹친다. .loop/lane 값으로 TMPDIR 아래 차선별 하위 폴더를 쓰게 고쳐라",
-    "차선 1 합친 뒤 남은 경계 다섯 — G-994 맨 뒤 단계들(표 2 · 4 · 6 · 7 · 8). sync_lanes 가 G-992 · G-995 를 이 줄기에 합쳐 온 뒤 하나씩 단계로: 2 놓는 곳 뼈대 → Placeable · 4 Buildings._pieces_of/_edge_plates 공개 이름 · 6 hands.gd 상자 칸 베끼기 ↔ Chest.store · 7 gather_work/field_care → JobWork · 8 ButcherPanel._holds_gun ↔ Attack.holds_gun"
-   ],
-   "good": []
-  },
-  "test": "--- 바뀐 곳만: 46 개 ---\ntest.sh: 파일 46 개를 6 개씩 한꺼번에 돌린다\nok     27s  res://tests/world/terrain/test_island_walk.gd\nok     34s  res://tests/world/frontier_islands/test_voyage.gd\nok     36s  res://tests/settings/save/test_round_trip.gd\nok     16s  res://tests/craft/stations/test_stations.gd\nok     45s  res://tests/combat/tools_as_weapons/test_tranq_ammo.gd\nok     47s  res://tests/build/test_placeable_previews.gd\nok     13s  res://tests/life/farming/test_farmland.gd\nok     15s  res://tests/life/hunting/test_carry_cage.gd\nok     10s  res://tests/life/farming/test_field_free_grid.gd\nok     12s  res://tests/player/pickup/test_pickup.gd\nok      9s  res://tests/world/storage/test_chest_break.gd\nok     11s  res://tests/world/storage/test_chest_place.gd\nok     10s  res://tests/core/debug/test_ui_shots.gd\nok      4s  res://tests/combat/tools_as_weapons/test_ammo_kinds.gd\nok      5s  res://tests/combat/tools_as_weapons/test_gun_ladder.gd\nok      8s  res://tests/build/test_building_stairs_plate.gd\nok      4s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      8s  res://tests/world/frontier_islands/test_dock_building.gd\nok      3s  res://tests/build/test_bed.gd\nok      3s  res://tests/ui/hud/test_station_window.gd\nok      3s  res://tests/build/test_building_collapse.gd\nok      4s  res://tests/player/hunger_thirst/test_cup.gd\nok      5s  res://tests/ui/layout/test_window_layout.gd\nok      2s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      3s  res://tests/craft/recipes/test_recipes.gd\nok      3s  res://tests/life/climbing/test_grapple_ammo.gd\nok      3s  res://tests/life/food/test_food.gd\nok      1s  res://tests/build/test_placeable.gd\nok      3s  res://tests/ui/hud/test_station_output.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            46\nTests             453\nPassing Tests     453\nFailing Tests       0\nRisky/Pending       0\nAsserts         14780\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "2d68c274"
- },
- {
   "time": "2026-10-12 06:20:46",
   "epoch": 1791753646,
   "type": "fail",
@@ -8849,5 +8795,70 @@
    "decision": null
   },
   "test": "from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n================ 떨어진 파일: res://tests/life/hunting/test_owl_trees.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/life/hunting/test_owl_trees.gd\n* test_a_tree_becomes_an_owl_tree_by_a_low_chance_fixed_by_seed_and_mark\n* test_an_owl_tree_is_a_den_at_the_back_with_pellets_under_it\n* test_by_day_the_owl_sleeps_inside_its_tree\n* test_one_hit_on_the_tree_wakes_the_owl_and_it_flies_off_around\n* test_when_the_player_leaves_the_tree_the_owl_flies_home\n* test_a_villager_hit_also_wakes_the_owl\n* test_at_night_the_owl_leaves_home_and_returns_at_dawn\n    [Failed]:  돌아다닌다 — 게임 시간 10초 안에\n      at line 194\n* test_hitting_the_tree_at_night_scares_the_owl_that_is_out\n* test_when_the_home_tree_falls_the_owl_wanders_and_never_returns\n* test_a_tree_gone_while_the_owl_sleeps_lets_it_out\n* test_an_owl_caught_from_its_tree_stays_gone_after_loading\n10/11 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/life/hunting/test_owl_trees.gd\n- test_at_night_the_owl_leaves_home_and_returns_at_dawn\n    [Failed]:  돌아다닌다 — 게임 시간 10초 안에\n          at line 194\n\nTotals\n------\nScripts               1\nTests                11\nPassing Tests        10\nFailing Tests         1\nAsserts           4083/4084\nTime              30.882s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           498\nTests            3729\nPassing Tests    3728\nFailing Tests       1\nRisky/Pending       0\nAsserts        167819\nTime           728s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/life/hunting/test_owl_trees.gd\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-19 18:10:02",
+  "epoch": 1792401002,
+  "type": "pass",
+  "title": "통과 — G-252 단계 2 (팀 셋)",
+  "group": "G-252",
+  "step": "2",
+  "attempt": "3",
+  "report": {
+   "problem": "망원경 팀 셋 · 곁 반경(임시 30m) — 앞 새장을 캐면 넷째가 올라오는 테스트를 지키고, 전체에서 떨어진 올빼미 밤 배회 테스트의 흔들림을 잡았다 (바뀐 곳만: 82개 파일 · 699개 통과)",
+   "approach": "QA 가 짚은 「앞 새장을 캐면 넷째가 올라온다」는 test_telescope.gd 의 test_taking_down_a_front_cage_brings_up_the_fourth 가 지킨다 — 새장 넷을 세우고 Stations.hit_station 으로 둘째를 캐서, queue_free 직후 같은 프레임과 지워진 뒤 둘 다 teams()==[one,three,four] 이고 숫자키 3 → 좌클릭에 넷째 새장의 매가 사냥하러 간다. 전체 검사에서 떨어진 test_owl_trees 의 밤 배회 단언(「돌아다닌다 — 10초 안에」)은 망원경과 상관없는 흔들림이었다: 혼자 돌려도 8번에 한 번꼴로 떨어졌다. 실마리 둘 — (1) Animal 이 randomize() 로 둘레 25m 원판에서 고르는 곳이 4m 안일 확률이 한 번에 2.6% (2) 올빼미가 줄기 둘레 아무 데나(전역 randf) 나와, 고른 곳 맞은편이면 줄기에 막혀 _aim_left 가 다할 때까지(10초 넘게) 선다 — 맞은편에 두어 다시 일으켜 확인했다. 테스트에서 씨앗을 박고(set_seed 7) 고른 곳 쪽 줄기 곁에 두어 늘 같은 길로 가게 했다(6번 연속 통과). 줄기에 막힌 올빼미는 게임에서도 _aim_left 가 다하면 멈추고 다시 고르므로(잠깐 서 있을 뿐) 기준 밖이라 손대지 않았다. 바뀐 곳 그물: 82개 파일 · 699개 통과.",
+   "why": "Telescope.NEAR 30m — 망원경 팀이 명령을 받는 새장–사람 거리, 새가 나는 반경 15m 의 두 배 (current.md 가 임시라 정함); R = 불러들이기 키 (G-252.1 에서 임시)",
+   "files": [
+    "game/life/hunting/telescope.gd",
+    "game/core/net/net_world.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "spec/04_life/hunting.md",
+    "spec/01_settings/save.md",
+    "game/tests/life/hunting/test_telescope.gd",
+    "game/tests/multiplayer/test_bird_cage_on_server.gd",
+    "game/tests/life/hunting/test_owl_trees.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "새장 하나 = 한 팀. 놓은 차례대로 앞의 셋만 1 · 2 · 3 번(넷째부터는 팀이 없다 — 앞의 것을 캐면 다음 것이 올라온다). 쓰는 동안 1 · 2 · 3 으로 팀을 고르고 좌클릭한 야생동물을 그 팀의 새들이 공격한다(잡을 수 있는 새만 — 크기 · 낮밤 규칙 그대로). 팀마다 다른 짐승도 · 같은 짐승도 된다",
+     "evidence": "test_telescope.gd — test_teams_are_the_first_three_cages_set_up(넷째 새장은 듣지 않는다), 새 test_taking_down_a_front_cage_brings_up_the_fourth(Stations.hit_station 으로 둘째를 캐고 같은 프레임 · 지워진 뒤 둘 다 teams()==[one,three,four], 숫자키 3 → 좌클릭에 four 의 매가 hunting). 일부러 깨 봄: teams() 의 그룹 · queue 거름을 빼니 이 테스트가 떨어졌다(되돌림). 다른 짐승 · 같은 짐승은 test_two_teams_go_after_two_beasts_each_marked_with_its_team · test_two_teams_on_one_beast_show_both_numbers, 크기 · 낮밤은 기존 test_the_owl_hunts_only_at_night 등이 지킨다"
+    },
+    {
+     "ok": true,
+     "criterion": "사람 결정 2026-10-19 「플레이어 주변에 새장이 있어야돼」 — 팀이 명령을 받는 것은 그 새장이 플레이어 곁 반경(임시 30m) 안일 때만 … 반경은 서버가 잰다 (테스트: 새장에서 50m 떨어지면 공격 명령이 안 간다 · 다가가면 간다)",
+     "evidence": "test_a_team_whose_cage_is_far_is_grey_and_does_not_obey — 50m 새장: 팀 번호 남음, HUD 「망원경 1배 · 1팀 — 새장이 멀다」 · 회색 · 좌클릭 안 감 · 까닭 한 줄(TELESCOPE_FAR) · R 도 0, 20m 로 옮기면 간다. 서버 쪽 test_bird_cage_on_server.gd test_the_guest_sends_and_calls_a_bird_only_near_its_cage — 50m 에서 안 가고 30m 다가가면 간다. 일부러 깨 봄: net_world._station_for 의 _within(NEAR) 를 빼니 「50 m 떨어진 새장은 듣지 않는다」가 떨어졌다(되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "spec 에 「망원경은 원격 조종이 아니다 — 곁의 새장만」 한 줄 · 반경 수는 임시",
+     "evidence": "spec/04_life/hunting.md 82줄대에 그 문구와 사람 결정 인용, 미정/임시 줄에 「망원경 곁 반경 30 m … 전부 임시」. Telescope.NEAR 주석에도 **임시**. 사람 결정 줄은 지워지지 않았다(「반경은 없다」만 이 결정으로 바뀜). 145줄"
+    },
+    {
+     "ok": true,
+     "criterion": "HUD 에 「망원경 4배 · 2팀(매 3)」처럼 고른 팀 · 팀의 새 수, 팀마다 겨눈 짐승에 팀 번호 표시 (테스트: 두 새장 · 두 짐승 — 1팀 → A, 2팀 → B 가 따로 간다)",
+     "evidence": "test_the_hud_reads_like_zoom_four_team_two_hawks_three 가 ko 로 「망원경 4배 · 2팀(매 3)」을 글자 그대로 단언. test_two_teams_go_after_two_beasts_each_marked_with_its_team — order_of(0)==A · order_of(1)==B, mark_on 「1」 · 「2」, tick_cages 뒤 1팀 매는 A · 2팀 매는 B 곁(1m 안), 떼면 숨고 R 로 걷힌다"
+    },
+    {
+     "ok": true,
+     "criterion": "ui_shots 에 쓰는 중 망원경 HUD 한 장 · ko/en 문구",
+     "evidence": "ui_shots.gd _telescope · PLACES 에 telescope, .loop/out/shots_g252/telescope_ko.png 에 초록 테두리 · 머리 위 「2」 · 「망원경 4배 · 2팀(매 3)」. 새 키 TEAM · TEAM_EMPTY · TEAM_NONE · TEAM_FAR · FAR 가 ko.po · en.po 둘 다 있고 test_the_lines_are_translated_in_korean_and_english 가 본다"
+    }
+   ],
+   "issues": [
+    "올빼미가 줄기에 막혀 10초 넘게 선다 — 구현 세션이 test_owl_trees.gd 의 밤 배회 흔들림을 씨앗(set_seed 7)과 손으로 맞춘 자리(-0.267, -0.964 방향)로 박아 잡았지만, 게임에서는 올빼미가 고른 곳 맞은편 줄기 둘레에 나오면 _aim_left 가 다할 때까지 서 있다. 박은 자리는 Animal 의 난수 순서가 바뀌면 다시 흔들린다. life/hunting 의 올빼미 나오는 자리(전역 randf)를 고른 곳 쪽으로 잡거나 줄기에 막히면 곧 다시 고르게 고치고, 테스트는 씨앗 · 손 좌표 없이 여러 씨앗(예: 0~9)에서 10초 안에 4m 를 벗어나는지 단언하라",
+    "teams() 의 is_queued_for_deletion 거름은 쓰이지 않는다 — Stations 가 캐면 CraftingStation.vanish() 가 그룹에서 먼저 빼므로 is_in_group 이 이미 거른다(그 거름만 빼도 test_taking_down_a_front_cage_brings_up_the_fourth 가 통과한다). 남겨도 되지만 life/hunting/telescope.gd teams() 주석에 「vanish 가 그룹에서 빼고 · queue 거름은 그 밖의 free 대비」라고 적어 두라"
+   ],
+   "good": []
+  },
+  "test": "_death/test_health.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      0s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/world/map/test_map_memory.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           498\nTests            3729\nPassing Tests    3729\nFailing Tests       0\nRisky/Pending       0\nAsserts        167807\nTime           722s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "08f7136f"
  }
 ]
