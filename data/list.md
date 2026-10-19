@@ -4427,11 +4427,14 @@
   - 기준: 쓰는 동안 화면 가운데 조준선 — 좌클릭이 겨누는 자리가 그것이다(Aim.at 과 같은 광선). 짐승에 걸리면 색이 바뀐다 · 안 쓸 때는 없다 · ui_shots 갱신
   - 기준: (앞 단계 QA) hunting.md 망원경 줄에 짝 없는 괄호 — spec/04_life/hunting.md 85줄 「· 팀 새장 차례가 바뀌면 알림 한 줄)」 끝의 「)」가 여는 괄호 없이 남았다(앞의 「(사람 결정 2026-10-19 …재지 않는다)」는 이미 닫혔다). 그 「)」 하나를 지워라
   - 기준: (앞 단계 QA) 팀 줄이 매 프레임 teams() 를 더 돈다 — _rows_text 가 쓰는 동안 매 프레임 teams() 한 번 · 팀마다 near/distance_to 를 돌고 글을 새로 만든다. 묶음 제목의 「가볍게」 단계에서 함께 줄여라(값이 바뀔 때만 글을 다시 짓기 등). 이번 기준과는 상관없다
-- [ ] 3. 매 프레임을 가볍게
+- [x] 3. 매 프레임을 가볍게
   - 기준: 망원경을 들지 않았으면 _process 가 아무것도 하지 않는다(set_process 끄기나 이른 return) · 쓰는 중에도 팀 목록은 한 프레임에 한 번(또는 새장이 놓이고 캐질 때)만 · HUD 글자 · 색은 바뀔 때만 넣는다 · 매 프레임 새 Dictionary/Array 를 만들지 않는다
   - 기준: 튕길 만한 자리를 찾는다 — 겨눈 짐승이 사라지거나(디스폰 · 죽음 · 잡힘) 새장이 캐지는 순간 쓰는 중 망원경이 freed 를 건드리지 않는지 테스트로 돈다(각각 한 프레임에) · 외곽선(_make_outline)이 MeshInstance3D 가 아닌 짐승에서도 안 터진다
   - 기준: 결과(찾은 원인 또는 못 찾음)를 report 에 적는다 — 못 찾았으면 다음에 튕길 때 로그가 남도록 사람용 로그 자리를 spec 한 줄로(사람이 튕긴 판의 godot.log 를 루프 도구 실행이 덮어쓴다 — 도구 실행이 다른 로그 파일을 쓰게)
   - 기준: (앞 단계 QA) spec 에 조준선 줄이 없다 — 사람 결정 2026-10-20 「망원경에 조준선 표시」가 telescope.gd 머리 주석에만 있고 spec/04_life/hunting.md 망원경 「쓰기 · 팀」 줄에는 없다. 그 줄에 「쓰는 동안 화면에 조준선(좌클릭 광선 자리 · 짐승에 걸리면 초록/빨강 · 안 쓰면 없다, 사람 결정 2026-10-20, G-261.2)」를 한 마디 더하라(150줄 넘지 않게)
+- [ ] 4. (앞 단계 QA) 매 프레임 광선 질의가 새 Array · Dictionary 를 만든다
+  - 기준: 매 프레임 광선 질의가 새 Array · Dictionary 를 만든다 — 쓰는 중 _aimed_animal 이 부르는 Aim.at(game/player/movement_controls/aim.gd:32-34)이 프레임마다 PhysicsRayQueryParameters3D · q.exclude = [rid] 배열 · intersect_ray 결과 Dictionary 를 새로 만든다. 막는 것은 아니다(광선 하나). 줄이려면 망원경이 PhysicsRayQueryParameters3D 하나를 쥐고 from/to 만 바꿔 쓰거나(exclude 는 한 번만) 플레이어 카메라에 RayCast3D 를 두어라
+  - 기준: (앞 단계 QA) 테두리 · 조준선 「바뀔 때만」 테스트가 이름만큼 보지 않는다 — test_telescope_light.gd test_the_outline_colour_and_crosshair_are_set_only_on_change 는 색이 그대로인지만 보므로 매 프레임 같은 색을 넣어도 통과한다. 넣은 횟수를 세는 값(_rebuilds 처럼)을 두거나 테스트 이름을 실제로 보는 것(색이 유지된다)에 맞춰라
 
 ## [ ] G-262 건설 모드 — 좌클릭 놓기(도면 · 시설) · 도면 우클릭 해체 · 빨간 표시
 - 차선: 3d-lane2

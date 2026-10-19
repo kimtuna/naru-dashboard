@@ -13,3 +13,9 @@
 
 ---
 
+
+## 물음 — 하네스 godot 이 아직 godot.log 를 덮는다
+- 물은 때: 2026-10-20 04:45:38
+- 어디서: G-261 단계 3
+- 무엇: 하네스 godot 이 아직 godot.log 를 덮는다 — harness/shot.sh · harness/bin/godot 의 godot 실행은 기본 user://logs/godot.log 를 써서, 사람이 튕긴 판의 로그를 찍기 · 하네스 실행이 여전히 밀어낼 수 있다. 세션은 하네스를 못 고친다 — 사람이 합칠 줄기에서 두 곳에 tools/test.sh 처럼 --log-file user://logs/tools.log 를 붙여 주면 된다
+- **사람이 답할 것**: 

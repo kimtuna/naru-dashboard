@@ -1,38 +1,5 @@
 [
  {
-  "time": "2026-10-14 03:16:47",
-  "epoch": 1791915407,
-  "type": "start",
-  "title": "루프 시작",
-  "report": {
-   "problem": "spec/12_ui/hud.md 검색 칸 줄을 「상자 창은 단추 줄 맨 앞, 시설 창은 줄 목록 위(제목 아래)에 선다」로 고쳤다. shot.sh 종료 코드 2는 shot.sh 탓이 아니라 세션 셸의 ls 함수(eza) 탓임을 가려 shot.sh 는 손대지 않았다",
-   "approach": "① spec 한 줄을 기준대로 고쳤다 (문서만, 코드 변경 없음). ② shot.sh: `harness/shot.sh --ui /tmp/g213shot workbench chest_search` 를 다시 돌려 앞 회차와 같은 8장을 찍었더니 종료 코드 0, 「\"\": No such file」 없음. 그런데 이 세션에서 맨 `ls` 를 치자 같은 '\"\": No such file or directory (os error 2)' 가 찍혔다. 까닭: Claude Code 셸 스냅숏(~/.claude/shell-snapshots/)이 ~/.zshrc 의 `ls() { command eza \"${_EZA_BASE[@]}\" ... }` 함수는 옮기지만 배열 _EZA_BASE 는 옮기지 않아 eza 가 빈 경로 \"\" 를 받고 종료 코드 2를 낸다 (os error 2 는 Rust 인 eza 의 말). shot.sh 는 bash 스크립트라 진짜 ls 를 쓰므로 걸리지 않는다 — 앞 회차의 코드 2는 세션이 찍은 뒤 부른 ls 에서 났다고 본다. 그래서 shot.sh 는 고치지 않았다 (harness/ 는 손대지 않는다). 셸 쪽을 고치려면 사람이 ~/.zshrc 의 ls 함수를 `_EZA_BASE` 없이 옵션을 직접 적게 바꾸면 된다 — 게임 · 하네스와 무관해 묻지 않는다. 테스트: changed_tests.py 가 고른 5개 파일(test_ui_shots · test_input_spec_table · test_map_coords · test_window_layout · test_ui_theme) — Failing 0, Asserts 6346, All tests passed (바뀐 곳만 돌렸다, 전체 아님).",
-   "why": "",
-   "files": [
-    "spec/12_ui/hud.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "spec 검색 칸 줄이 시설 창 자리를 틀리게 말한다 — spec/12_ui/hud.md 「검색 칸」 줄은 두 창 모두를 말하면서 「단추 줄 맨 앞에 서고」라고 한다. 시설 창에는 단추 줄이 없고 검색 칸이 제목 아래 · 줄 목록 위에 선다 (station_window.tscn, test_station_search::test_the_search_field_sits_above_the_rows). 「상자 창은 단추 줄 맨 앞, 시설 창은 줄 목록 위에 선다」로 고쳐라",
-     "evidence": "git diff: hud.md 30번째 줄이 「상자 창은 단추 줄 맨 앞, 시설 창은 줄 목록 위(제목 아래)에 선다」로 바뀌었다. station_window.tscn 에서 Box 의 자식 순서가 Title → Search → Herd → Scroll/Recipes 라 글과 맞는다. 자리 자체는 기존 test_station_search::test_the_search_field_sits_above_the_rows 가 지키고, 이번 회차 전체 테스트(324 파일 · 2509 테스트)가 다 통과했다. 사람 결정 줄은 지워지지 않았고 hud.md 는 64줄"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) shot.sh 가 끝에 종료 코드 2를 낸다 — report 에 따르면 harness/shot.sh --ui 가 8장을 다 찍은 뒤 godot 이 '\"\": No such file' 와 종료 코드 2를 냈다. 이 QA 세션 셸에서도 명령마다 같은 '\"\": No such file or directory (os error 2)' 가 찍혀, shot.sh 가 아니라 셸 환경(프로필이 빈 경로를 부르는 것) 탓일 수 있다. 어느 쪽인지 가려 shot.sh 탓이면 고쳐라 — 사진에는 영향이 없었다",
-     "evidence": "직접 확인했다: 이 QA 셸에서 맨 `ls` 가 '\"\": No such file or directory (os error 2)' 를 찍고 종료 코드 2를 낸다. `type ls` 는 ~/.claude/shell-snapshots/ 의 셸 함수라고 말한다 (eza 래퍼). shot.sh 는 #!/bin/bash 스크립트라 그 함수를 물려받지 않고(bash -c 'type ls' → /bin/ls), 유일한 ls 호출(56번째 줄)도 2>/dev/null 로 막혀 있다. 코드 2를 낼 수 있는 shot.sh 의 다른 길은 OUT 인자가 빌 때(29번째 줄)뿐인데 그때는 '쓰임:' 안내를 찍는다. 구현 세션이 다시 찍었을 때 종료 코드 0. 따라서 shot.sh 탓이 아니며 고치지 않은 것이 맞다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           324\nTests            2509\nPassing Tests    2509\nFailing Tests       0\nRisky/Pending       0\nAsserts         95857\nTime           523s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-14 03:47:05",
   "epoch": 1791917225,
   "type": "pass",
@@ -8670,5 +8637,61 @@
   },
   "test": "--- 바뀐 곳만: 43 개 ---\ntest.sh: 파일 43 개를 6 개씩 한꺼번에 돌린다\nok     22s  res://tests/world/terrain/test_island_walk.gd\nok     30s  res://tests/life/hunting/test_animal_sound.gd\nok     16s  res://tests/life/hunting/test_carry_cage.gd\nok     11s  res://tests/life/hunting/test_sedation_capture.gd\nok     45s  res://tests/combat/tools_as_weapons/test_tranq_ammo.gd\nok      8s  res://tests/ui/layout/test_window_layout.gd\nok      6s  res://tests/core/debug/test_ui_shots.gd\nok      6s  res://tests/life/hunting/test_telescope.gd\nok      5s  res://tests/core/debug/test_dev_box.gd\nok      8s  res://tests/life/hunting/test_leg_slow.gd\nok     56s  res://tests/life/hunting/test_butchery.gd\nok      5s  res://tests/core/debug/test_dev_box_open.gd\nok      4s  res://tests/life/hunting/test_burrow_beasts.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      4s  res://tests/life/hunting/test_butcher_yields.gd\nok     61s  res://tests/life/hunting/test_owl_trees.gd\nok      3s  res://tests/life/hunting/test_body_parts.gd\nok      3s  res://tests/ui/hud/test_station_g230_look.gd\nok      5s  res://tests/multiplayer/test_bird_cage_on_server.gd\nok      3s  res://tests/core/test_open_chest_window.gd\nok     64s  res://tests/life/hunting/test_animal_walk.gd\nok      3s  res://tests/life/hunting/test_martens.gd\nok      3s  res://tests/core/debug/test_dev_animals.gd\nok      3s  res://tests/life/hunting/test_animal_traces.gd\nok      5s  res://tests/life/hunting/test_island_animals.gd\nok      2s  res://tests/life/hunting/test_captive_age.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/life/hunting/test_despawn.gd\nok      3s  res://tests/life/hunting/test_wild_kinds.gd\nok      3s  res://tests/ui/hud/test_kept_window.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok      3s  res://tests/ui/hud/test_villager_gear_window.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      2s  res://tests/life/hunting/test_bird_hunt.gd\nok      1s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/life/hunting/test_summon.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      3s  res://tests/life/hunting/test_summon_weak.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            43\nTests             430\nPassing Tests     430\nFailing Tests       0\nRisky/Pending       0\nAsserts         11014\nTime           71s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "ff94cc7c"
+ },
+ {
+  "time": "2026-10-20 04:45:38",
+  "epoch": 1792439138,
+  "type": "pass",
+  "title": "통과 — G-261 단계 3 (매 프레임을 가볍게)",
+  "group": "G-261",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "망원경 매 프레임을 가볍게 — 들지 않으면 _process 즉시 돌아감 · 팀은 프레임에 한 번 같은 배열에 · HUD 글은 값이 바뀔 때만 · 사라지는 짐승/캐는 새장 테스트 10개 · 튕긴 원인은 못 찾아 테스트 로그를 user://logs/tools.log 로 갈랐다",
+   "approach": "부하: 예전 _process 는 들지 않아도 매 프레임 refresh 했고, 쓰는 중에는 teams() 를 여러 번(테두리 · 조준선의 catchable 이 team_birds → teams · birds() 배열) 돌고, 팀 번호 표시용 Dictionary · Array 를 새로 만들고, HUD · 팀 줄 글을 매 프레임 새로 지었다. 이제 (1) 손에 든 것은 가방의 changed · selection_changed 때만 다시 보고(_watch_hand) 들지 않았으면 _process 가 곧바로 돌아간다(새장 차례 알림만 표시가 섰을 때 본다) (2) 쓰는 중 팀 · 거리는 refresh 마다 한 번 같은 배열(_all · _dist)을 다시 채우고, 잡을 수 있나는 한 번 재서(_can) 테두리와 조준선이 같이 쓴다 — birds() 대신 cage.slots 를 돈다 (3) HUD · 팀 줄 글은 배율 · 팀 · 곁인지 · 거리 m · 새(종 · 이름) · 언어를 수로 더한 셈(_signature)이 바뀔 때만 짓고, 보이기 · 색 · 자리도 다를 때만 넣는다 (4) 팀 번호 표시는 명령 · 쓰기가 바뀌거나 맡은 짐승이 사라질 때만 다시 단다. 남은 매 프레임 할당은 Aim.at 의 광선 하나(엔진이 주는 결과 Dictionary)뿐이다 — 「한 길」이라 그대로 뒀다. 튕김: 겨눈 짐승이 곧바로 free · 프레임 끝 queue_free(디스폰) · 죽음 · 잡혀서 없어짐, 맡긴 짐승이 없어짐, 쓰는 중 새장을 캠(같은 프레임 refresh 포함), 몸 그림이 MeshInstance3D 가 아니거나 없는 짐승 — 전부 _process 를 실제로 돌려 한 프레임 넘겨도 SCRIPT ERROR · 엔진 에러 없이 지나간다. 직접 원인은 **못 찾았다**(물리는 별도 스레드가 아니라 _process 의 광선도 안전). 사람 판의 로그는 ~/Library/Application Support/Godot/app_userdata/Naru/logs/ 에서 이미 테스트 실행에 밀려 사라졌다(godot.log + 4개만 남는다) — 그래서 tools/test.sh 의 godot 실행이 모두 --log-file user://logs/tools.log 를 쓰게 했고(실측: tools.log 가 따로 생긴다), spec/01_settings/save.md 에 로그 자리 한 줄을 적었다. 다만 harness/shot.sh · harness/bin/godot 은 하네스라 못 고쳐 아직 기본 godot.log 를 쓴다 — 같은 --log-file 을 붙이면 사람 로그가 온전히 남는다. hunting.md 망원경 줄에 조준선 한 마디를 더했다(145줄). 바뀐 곳 그물(TESTS=changed_tests) 첫 판: 508 파일 3819개 중 3816 통과 — test_round_trip 이 새 캐시 _bag · _order_dirty 를 「안 담기는 것」으로 잡아 DONT_SAVE 에 까닭을 적었고, 그 파일만 다시 돌려 23/23 통과. 망원경 폴더(tests/life/hunting) 283/283 · 새 파일 10/10 통과.",
+   "why": "",
+   "files": [
+    "game/life/hunting/telescope.gd",
+    "game/tests/life/hunting/test_telescope_light.gd",
+    "game/tests/settings/save/test_round_trip.gd",
+    "tools/test.sh",
+    "spec/01_settings/save.md",
+    "spec/04_life/hunting.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "망원경을 들지 않았으면 _process 가 아무것도 하지 않는다(set_process 끄기나 이른 return) · 쓰는 중에도 팀 목록은 한 프레임에 한 번(또는 새장이 놓이고 캐질 때)만 · HUD 글자 · 색은 바뀔 때만 넣는다 · 매 프레임 새 Dictionary/Array 를 만들지 않는다",
+     "evidence": "_process 는 들지 않으면 곧바로 return 한다(손에 든 것은 가방 changed/selection_changed 때만 다시 본다). test_without_the_telescope_in_hand_process_does_nothing 가 _refreshes 가 빈손 · 다른 아이템 · 내려놓은 뒤에 늘지 않는 것을 본다. 팀은 refresh 에서 _fill_teams 한 번만 돌고, _can_catch · _signature · _rows_text · _team_text_of 가 모두 _all/_dist 를 쓴다(코드로 확인: 매 프레임 teams() 부름 없음 · _watch_order 는 dirty 일 때만). test_while_looking_the_text_is_built_only_when_it_changes 가 같은 배열(is_same) · 5프레임 동안 _rebuilds 그대로 · 배율/거리가 바뀌면 +1 을 본다. 일부러 _all = _all.duplicate() 로 깨 보니 그 테스트가 떨어졌다. HUD 색 · 테두리 색 · 조준선 자리/색 · visible 은 다를 때만 넣는다(코드 확인). 남은 매 프레임 할당은 Aim.at 의 광선 질의뿐 — 아래 지적"
+    },
+    {
+     "ok": true,
+     "criterion": "튕길 만한 자리를 찾는다 — 겨눈 짐승이 사라지거나(디스폰 · 죽음 · 잡힘) 새장이 캐지는 순간 쓰는 중 망원경이 freed 를 건드리지 않는지 테스트로 돈다(각각 한 프레임에) · 외곽선(_make_outline)이 MeshInstance3D 가 아닌 짐승에서도 안 터진다",
+     "evidence": "test_telescope_light.gd 에 곧바로 free · 프레임 끝 queue_free(디스폰) · 죽음 · 잡혀서 없어짐 · 맡긴 짐승이 없어짐 · 쓰는 중 새장 캐기(같은 프레임 refresh 포함) · 몸이 Node3D 인/없는 짐승이 각각 있고, _process 를 실제로 한 프레임 이상 돌린다. GUT 9.7.1 이 엔진 오류를 Unexpected Errors 로 떨어뜨린다 — _gone 의 is_instance_valid 를 빼 보니 테스트가 떨어졌고, _make_outline 의 as 캐스트를 타입 대입으로 바꾸니 SCRIPT ERROR 로 떨어졌다(둘 다 되돌렸다)"
+    },
+    {
+     "ok": true,
+     "criterion": "결과(찾은 원인 또는 못 찾음)를 report 에 적는다 — 못 찾았으면 다음에 튕길 때 로그가 남도록 사람용 로그 자리를 spec 한 줄로(사람이 튕긴 판의 godot.log 를 루프 도구 실행이 덮어쓴다 — 도구 실행이 다른 로그 파일을 쓰게)",
+     "evidence": "report.json how 에 「직접 원인은 못 찾았다」와 살펴본 길을 적었다. tools/test.sh 의 godot 실행(import · TIMING · 파일마다 · 재시도) 모두 --log-file user://logs/tools.log. spec/01_settings/save.md 에 「로그 자리」 한 줄(사람 판 godot.log 자리 · 테스트는 tools.log · 하네스는 아직 기본 자리). 하네스 쪽은 세션 손 밖이라 [결정] 지적으로 넘긴다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) spec 에 조준선 줄이 없다 — 사람 결정 2026-10-20 「망원경에 조준선 표시」가 telescope.gd 머리 주석에만 있고 spec/04_life/hunting.md 망원경 「쓰기 · 팀」 줄에는 없다. 그 줄에 「쓰는 동안 화면에 조준선(좌클릭 광선 자리 · 짐승에 걸리면 초록/빨강 · 안 쓰면 없다, 사람 결정 2026-10-20, G-261.2)」를 한 마디 더하라(150줄 넘지 않게)",
+     "evidence": "hunting.md 「쓰기 · 팀」 줄에 그 문구가 그대로 들어갔다. 지운 줄 없음 · 145줄"
+    }
+   ],
+   "issues": [
+    "[결정] 하네스 godot 이 아직 godot.log 를 덮는다 — harness/shot.sh · harness/bin/godot 의 godot 실행은 기본 user://logs/godot.log 를 써서, 사람이 튕긴 판의 로그를 찍기 · 하네스 실행이 여전히 밀어낼 수 있다. 세션은 하네스를 못 고친다 — 사람이 합칠 줄기에서 두 곳에 tools/test.sh 처럼 --log-file user://logs/tools.log 를 붙여 주면 된다",
+    "매 프레임 광선 질의가 새 Array · Dictionary 를 만든다 — 쓰는 중 _aimed_animal 이 부르는 Aim.at(game/player/movement_controls/aim.gd:32-34)이 프레임마다 PhysicsRayQueryParameters3D · q.exclude = [rid] 배열 · intersect_ray 결과 Dictionary 를 새로 만든다. 막는 것은 아니다(광선 하나). 줄이려면 망원경이 PhysicsRayQueryParameters3D 하나를 쥐고 from/to 만 바꿔 쓰거나(exclude 는 한 번만) 플레이어 카메라에 RayCast3D 를 두어라",
+    "테두리 · 조준선 「바뀔 때만」 테스트가 이름만큼 보지 않는다 — test_telescope_light.gd test_the_outline_colour_and_crosshair_are_set_only_on_change 는 색이 그대로인지만 보므로 매 프레임 같은 색을 넣어도 통과한다. 넣은 횟수를 세는 값(_rebuilds 처럼)을 두거나 테스트 이름을 실제로 보는 것(색이 유지된다)에 맞춰라"
+   ],
+   "good": []
+  },
+  "test": "indow_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           508\nTests            3819\nPassing Tests    3819\nFailing Tests       0\nRisky/Pending       0\nAsserts        171570\nTime           735s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "8b16e678"
  }
 ]
