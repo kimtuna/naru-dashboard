@@ -4259,7 +4259,7 @@
   - 기준: (앞 단계 QA) teams() 의 is_queued_for_deletion 거름은 쓰이지 않는다 — Stations 가 캐면 CraftingStation.vanish() 가 그룹에서 먼저 빼므로 is_in_group 이 이미 거른다(그 거름만 빼도 test_taking_down_a_front_cage_brings_up_the_fourth 가 통과한다). 남겨도 되지만 life/hunting/telescope.gd teams() 주석에 「vanish 가 그룹에서 빼고 · queue 거름은 그 밖의 free 대비」라고 적어 두라
 
 ## [ ] G-253 잡은 동물 창 — 스탯 · 이름 · 사는 곳
-- 차선: 3d-lane2
+- 차선: 3d-lane2 · 시작 2026-10-19 18:42
 - 순서: G-251 뒤
 - spec: spec/04_life/ranching-breeding.md
 - **사람 결정 2026-10-19**: 「동물마다 스텟을 다르게 할거고 그 동물을 키울 수 있게도 확장성을 가지게 할거야. 그래서 내가 포획한 동물들의 스텟을 보는 ui도 필요해. 동물의 이름도 변경 할 수 있게 해야돼. 일단 지금 동물 스텟은 공격력 방어력 체력 스피드 이정도 ? 만 두자. 나중엔 많아질거라 카테고리별로 분류가 될 수 있게 해줘」 · 이 세션의 「사는 곳으로 나누기(새장 · 우리 · 경비 · 벌통)」에 「좋다 그대로」
