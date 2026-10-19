@@ -1,45 +1,5 @@
 [
  {
-  "time": "2026-10-13 20:28:19",
-  "epoch": 1791890899,
-  "type": "pass",
-  "title": "통과 — G-209 단계 1 (결과 칸을 다섯으로)",
-  "group": "G-209",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "제작 시설 결과(출력 버퍼)를 세 칸에서 다섯 칸으로 늘렸다. 세 칸이던 옛 저장본도 그대로 읽힌다. 바뀐 곳 그물: 70개 파일 · 668개 테스트 통과",
-   "approach": "CraftingStation.BUFFER_SLOTS 를 3에서 5로 바꿨다. stations.json 에 slots 를 따로 적지 않은 시설(제작대 · 용광로 · 조리대 등)은 모두 이 값을 쓰고, 축사는 계속 6칸이다. 저장본은 버퍼를 칸 목록으로 적고 restore_work 는 칸 수까지만 읽는다. 그래서 세 칸짜리 옛 버퍼는 고치지 않아도 그대로 들어오고 남은 두 칸은 빈다. 이것을 Stations.restore 로 직접 불러오는 테스트로 확인했다. test_smoker 의 '버퍼가 꽉 차서 시작하지 않는다' 테스트는 칸 셋을 직접 채우고 있어서 다섯 칸에서는 기름이 들어갈 자리가 남았다. 그래서 buffer_slot_count() 만큼 채우도록 고쳤다. 창은 칸 수만큼 칸을 만들고 6칸짜리 축사 창이 이미 있어서 화면은 따로 찍어 보지 않았다. 바뀐 곳에 걸리는 테스트(70개 파일 · 668개)가 통과했다 (.loop/out/g209_changed.log).",
-   "why": "BUFFER_SLOTS = 5 — 사람이 다섯 칸을 골랐다. 다만 spec 에서 최대 칸 수가 아직 미정이라 코드에 '임시'라고 적어 두었다",
-   "files": [
-    "game/craft/stations/crafting_station.gd",
-    "game/tests/craft/stations/test_buffer_five_slots.gd",
-    "game/tests/craft/stations/test_smoker.gd",
-    "spec/05_craft/crafting-stations.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "결과(출력 버퍼)가 **다섯 칸**이다 (지금 3 — `crafting_station.gd BUFFER_SLOTS`) (테스트)",
-     "evidence": "crafting_station.gd BUFFER_SLOTS 3→5. tests/craft/stations/test_buffer_five_slots.gd test_buffer_has_five_slots 가 BUFFER_SLOTS==5 를 숫자로 못박고, 제작대·용광로·조리대의 catalog.slots_of 와 놓인 시설의 buffer_slot_count()==5 를 본다(값을 되돌리면 깨진다). test_five_different_things_fill_five_slots 가 다섯 가지가 다섯 칸에 들고 그때 buffer_full 이 참인지 본다. test_station_output · test_recipes 의 창·가득참 테스트도 BUFFER_SLOTS 를 따라가 통과(test.log 70파일 668개 통과, guard 통과)"
-    },
-    {
-     "ok": true,
-     "criterion": "옛 저장본의 세 칸짜리 버퍼가 그대로 읽힌다 (테스트)",
-     "evidence": "test_old_three_slot_buffer_loads_as_is 가 Stations.standing 이 적는 꼴({kind, at, job, buffer, yield_left})로 세 칸 버퍼를 var_to_bytes 왕복시켜 Stations.restore 로 불러온 뒤, 칸 수 5 · 버퍼 3칸 · 칸마다 물건과 개수가 그대로인지 · buffer_full 이 거짓인지 · 빈 두 칸에 두 스택이 들어가는지를 본다. restore_work 는 _slots 까지만 읽으므로 3칸은 손대지 않고 들어온다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "free_grid.gd\nok      8s  res://tests/craft/stations/test_salt_pan_island.gd\nok      7s  res://tests/craft/stations/test_twelve_facilities.gd\nok      6s  res://tests/ui/layout/test_window_layout.gd\nok      8s  res://tests/build/test_furniture.gd\nok      8s  res://tests/world/frontier_islands/test_dock_building.gd\nok      5s  res://tests/craft/stations/test_beehive.gd\nok      5s  res://tests/combat/tools_as_weapons/test_gun_ladder.gd\nok      5s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      5s  res://tests/craft/stations/test_beehive_rooms_cache.gd\nok      4s  res://tests/ui/hud/test_station_output.gd\nok      3s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      3s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      4s  res://tests/ui/hud/test_station_window.gd\nok      4s  res://tests/automation/villagers/test_villager_cleaning.gd\nok      5s  res://tests/combat/tools_as_weapons/test_ammo_kinds.gd\nok      3s  res://tests/craft/recipes/test_recipes.gd\nok      3s  res://tests/life/hunting/test_butcher_yields.gd\nok      5s  res://tests/craft/stations/test_salt_pan.gd\nok      3s  res://tests/ui/hud/test_room_names.gd\nok      4s  res://tests/player/hunger_thirst/test_cup.gd\nok      2s  res://tests/build/test_building_collapse.gd\nok      1s  res://tests/craft/stations/test_brewing.gd\nok      3s  res://tests/build/test_bed.gd\nok      2s  res://tests/craft/stations/test_millstone.gd\nok      3s  res://tests/life/food/test_food.gd\nok      2s  res://tests/build/test_placeable.gd\nok      2s  res://tests/build/test_room_overlay.gd\nok      3s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      3s  res://tests/ui/hud/test_room_window.gd\nok      1s  res://tests/craft/recipes/test_recipe_tags.gd\nok      2s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      1s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/recipes/test_smelter_recipes.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_barn.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/stations/test_cook_table.gd\nok      2s  res://tests/craft/stations/test_loom.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/ui/hud/test_barn_window.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok    448s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            70\nTests             668\nPassing Tests     668\nFailing Tests       0\nRisky/Pending       0\nAsserts         28931\nTime           448s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "f38be2e6"
- },
- {
   "time": "2026-10-13 21:02:21",
   "epoch": 1791892941,
   "type": "pass",
@@ -10062,5 +10022,37 @@
   },
   "test": "ger_room_doors.gd\nok     15s  res://tests/automation/villagers/test_villager_fight.gd\nok     11s  res://tests/automation/villagers/test_villager_hands_room.gd\nok     10s  res://tests/life/ranching/test_guard_pen.gd\nok     13s  res://tests/automation/villagers/test_villager_body_slope.gd\nok     13s  res://tests/automation/villagers/test_villager_sleep.gd\nok     13s  res://tests/perf/test_net_measure.gd\nok     16s  res://tests/automation/villagers/test_villager_jobs_detour.gd\nok     10s  res://tests/automation/villagers/test_villager_door_close.gd\nok     10s  res://tests/automation/villagers/test_villager_home.gd\nok      9s  res://tests/automation/villagers/test_villager_cleaning.gd\nok      9s  res://tests/settings/save/test_round_trip.gd\nok      9s  res://tests/automation/villagers/test_villager_gather_close.gd\nok     15s  res://tests/automation/villagers/test_villager_answers_cry.gd\nok      8s  res://tests/automation/villagers/test_villager_smooth_motion.gd\nok      7s  res://tests/automation/villagers/test_villager_g218_human_save.gd\nok      8s  res://tests/automation/villagers/test_villager_torch_detour.gd\nok      9s  res://tests/automation/villagers/test_villager_g218_folk_ground.gd\nok      9s  res://tests/core/test_unseen_work_goes_on.gd\nok      6s  res://tests/core/debug/test_ui_shots.gd\nok      4s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      4s  res://tests/multiplayer/test_folk_on_server.gd\nok      6s  res://tests/automation/villagers/test_villager.gd\nok      6s  res://tests/core/test_path_walk_replan.gd\nok      6s  res://tests/automation/villagers/test_villager_g218_floor_stuck.gd\nok      4s  res://tests/build/test_bed.gd\nok      2s  res://tests/automation/villagers/test_villager_pen_room.gd\nok      3s  res://tests/core/test_far_cull.gd\nok      3s  res://tests/craft/stations/test_cook_table.gd\nok      4s  res://tests/ui/hud/test_villager_gear_window.gd\nok      2s  res://tests/life/medicine/test_medicine.gd\nok      4s  res://tests/automation/villagers/test_villager_chest_detour.gd\nok      1s  res://tests/automation/villagers/test_villager_body.gd\nok      2s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      2s  res://tests/automation/villagers/test_villager_door.gd\nok      1s  res://tests/automation/villagers/test_villager_gear.gd\nok      4s  res://tests/ui/hud/test_villager_window.gd\nok      4s  res://tests/ui/hud/test_villager_window_release.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      2s  res://tests/automation/villagers/test_villager_skills.gd\nok      1s  res://tests/automation/villagers/test_villager_stress_one_line.gd\nok      1s  res://tests/automation/villagers/test_villager_stress_warn.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      1s  res://tests/automation/villagers/test_job_work_shared.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            83\nTests             594\nPassing Tests     594\nFailing Tests       0\nRisky/Pending       0\nAsserts         13514\nTime           239s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "6db6190b"
+ },
+ {
+  "time": "2026-10-19 18:41:43",
+  "epoch": 1792402903,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-250 단계 2 (시도 1)",
+  "group": "G-250",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "HUD 배고픔 · 목마름 고리 위에 가장 스트레스가 높은 주민 하나(「가온 100」 + 고리 아이콘)를 띄우고, 오른쪽 위 알림 목록의 스트레스 경고 줄을 없앴다 — 넘을 때 한 번 떴다 사라지는 한 줄만 남는다 (바뀐 곳만: 336개 파일 · 2705개 중 2702 통과, 떨어진 test_round_trip 은 고친 뒤 따로 23개 통과)",
+   "approach": "사람 결정(2026-10-19 「메인 화면엔 가장 스트레스 높은 애 하나」)대로 StressBadge(HBox: 38px 고리 아이콘 + HudSmallLabel)를 player.tscn 의 HUD/Body 에서 배고픔 · 목마름 고리 바로 위에 넣었다 — 같은 NeedsRow 테마 변형 · NeedGauge.draw_ring · 같은 색 경계(거꾸로)를 써 UiTheme 규칙을 따른다. 0.25초마다 Villager.GROUP 에서 stress 가 가장 높은 하나를 골라 「이름 값」(HUD_STRESS_TOP)을 적고, 주민이 없으면 숨는다. Villager._watch_stress 는 AlertLog 줄을 달던 것을 Notice.say(떴다 사라지는 한 줄)로 바꿔 넘을 때 한 번만 알린다(한꺼번에 넘으면 높은 문턱 하나). 줄 이름 자체가 없어져 앞 단계 QA 의 「같은 이름 둘이 한 줄을 나눠 씀」도 사라졌고, 같은 name_key 둘이 50 을 넘으면 경고가 둘 다 뜨는지 테스트로 지킨다. 불러온 주민은 from_dict 에서 넘어 있는 문턱을 알린 것으로 쳐(_mark_stress_warned) 켜자마자 다시 알리지 않는다. ui_shots hud 에 주민 둘(62 · 100)을 세워 찍어 「하람 100」이 고리 위에 잘리지 않고 뜨는 것을 PNG 로 확인했다. 바뀐 곳 그물에서 test_round_trip 이 새 상태 StressBadge._wait 를 잡아 「안 담는다」 목록에 까닭을 적었다. spec 의 옛 「경고는 오른쪽 위에 로그로 계속 뜬다」(사람 결정 2026-09-28) 줄은 지우지 않고 바로 아래에 2026-10-19 결정으로 바뀌었다고 적었다.",
+   "why": "StressBadge.EVERY 0.25초 — 주민을 다시 보는 사이. 스트레스가 느리게 움직여 매 프레임 볼 까닭이 없다; StressBadge.MARK_WIDTH 3px 와 번개 꺾임 아이콘 모양 — 아이콘 그림이 따로 없어 고리 위에 그렸다. 사람이 아이콘을 정한다",
+   "files": [
+    "game/ui/hud/stress_badge.gd",
+    "game/ui/hud/stress_badge.tscn",
+    "game/player/movement_controls/player.tscn",
+    "game/automation/villagers/villager.gd",
+    "game/automation/villagers/persona.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/ui/hud/test_stress_badge.gd",
+    "game/tests/automation/villagers/test_villager_stress_warn.gd",
+    "game/tests/automation/villagers/test_villager_stress_one_line.gd",
+    "game/tests/settings/save/test_round_trip.gd",
+    "spec/12_ui/hud.md",
+    "spec/07_automation/villager-persona.md"
+   ],
+   "decision": null
+  },
+  "test": "t_seed_back.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      0s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      0s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\n\n================ 떨어진 파일: res://tests/life/hunting/test_owl_trees.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/life/hunting/test_owl_trees.gd\n* test_a_tree_becomes_an_owl_tree_by_a_low_chance_fixed_by_seed_and_mark\n* test_an_owl_tree_is_a_den_at_the_back_with_pellets_under_it\n* test_by_day_the_owl_sleeps_inside_its_tree\n* test_one_hit_on_the_tree_wakes_the_owl_and_it_flies_off_around\n* test_when_the_player_leaves_the_tree_the_owl_flies_home\n* test_a_villager_hit_also_wakes_the_owl\n* test_at_night_the_owl_leaves_home_and_returns_at_dawn\n    [Failed]:  돌아다닌다 — 게임 시간 10초 안에\n      at line 194\n* test_hitting_the_tree_at_night_scares_the_owl_that_is_out\n* test_when_the_home_tree_falls_the_owl_wanders_and_never_returns\n* test_a_tree_gone_while_the_owl_sleeps_lets_it_out\n* test_an_owl_caught_from_its_tree_stays_gone_after_loading\n10/11 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/life/hunting/test_owl_trees.gd\n- test_at_night_the_owl_leaves_home_and_returns_at_dawn\n    [Failed]:  돌아다닌다 — 게임 시간 10초 안에\n          at line 194\n\nTotals\n------\nScripts               1\nTests                11\nPassing Tests        10\nFailing Tests         1\nAsserts           4083/4084\nTime              30.884s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           500\nTests            3732\nPassing Tests    3731\nFailing Tests       1\nRisky/Pending       0\nAsserts        167631\nTime           726s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/life/hunting/test_owl_trees.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
