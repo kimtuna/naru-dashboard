@@ -1,63 +1,5 @@
 [
  {
-  "time": "2026-10-12 23:23:36",
-  "epoch": 1791815016,
-  "type": "fail",
-  "title": "QA 불합격 — G-201 단계 1 (시도 1)",
-  "group": "G-201",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "작물 열넷(보리 · 쌀 · 감자 · 옥수수 · 토마토 · 사과 · 포도 · 사탕수수 · 카카오 · 찻잎 · 원두 · 생강 · 목화 · 아마)을 밭에 심어 거둔다 — 작물표를 crops.json 한 곳으로 옮겼다. 바뀐 곳에 걸리는 72 파일 · 623 개 통과 (전체가 아니다)",
-   "approach": "작물표가 crops.gd 의 const CROPS 에 박혀 있었다. game/life/farming/crops.json 으로 옮기고 Crops.CROPS 는 그 파일을 읽는 static var 로 바꿨다 (load_table) — 기존 코드 · 테스트가 쓰던 Crops.CROPS[...] 모양은 그대로다. 한 줄 = 작물 하나(key · seed · days · count · tags)이고, 임시 파일에 한 줄을 더해 심고 거두는 테스트로 확인했다. 씨앗은 밀과 같은 임시 규칙(제작대 · 목재 1 → 2알)으로 열네 줄을 recipes.json 에 더했다. 무게 · 번역(ko · en)도 더했다 — 기존 그물(test_seed_sources · test_crops 의 번역 · test_weight)이 작물표를 훑어 빠진 것을 잡는다. 태그: G-200 단계 1(태그 목록)은 다른 차선에서 지금 만드는 중이라 이 차선에는 태그 파일이 없다. 그래서 작물 줄마다 tags 칸(@곡물 · @채소 · @과일)을 두고 Crops.tagged(tag) 로 읽게 했다 — 곡물: 밀 · 보리 · 쌀 · 옥수수 / 채소: 감자 · 토마토 · 생강 / 과일: 사과 · 포도. 두 차선을 합칠 때 G-200 의 태그 목록이 이 tags 칸을 읽게 하거나(작물은 작물표에서), 태그 파일로 옮기고 이 칸을 지우거나 한쪽으로 모아야 한다 — 태그 목록이 두 곳이 되지 않게.",
-   "why": "밀 밖의 작물 days — 곡물 3 · 채소 4 · 과일 · 나무 작물(사과 · 포도 · 카카오 · 찻잎 · 원두) 5 · 그 밖(사탕수수 · 목화 · 아마) 4: 작물 목록 · 성장 일수가 spec 미정이라 갈래끼리 순서만 매겼다; 모든 작물의 count(2~3) — 수량 미정; 새 씨앗 열넷의 레시피(제작대 · 목재 1 → 2알) — spec 의 임시 규칙(제작대에서 나무로)을 그대로 늘렸다; 새 작물 · 씨앗의 무게(작물 0.1 · 씨앗 0.01 kg) — 밀과 같은 값",
-   "files": [
-    "game/life/farming/crops.json",
-    "game/life/farming/crops.gd",
-    "game/craft/recipes/recipes.json",
-    "game/player/inventory_hotbar/weights.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "spec/04_life/farming.md",
-    "game/tests/life/farming/test_crop_kinds.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "보리 · 쌀 · 감자 · 옥수수 · 토마토 · 사과 · 포도 · 사탕수수 · 카카오 · 찻잎 · 원두 · 생강 · 목화 · 아마를 **밭에 심어 거둔다** (테스트). 자라는 날수 · 수량은 임시다",
-     "evidence": "test_crop_kinds.gd::test_every_new_crop_is_planted_and_harvested_from_a_field 가 열넷을 이름으로 적어 두고 하나씩 밭에 심어 · 날마다 물 주고 · 덜 자란 동안 is_grown 이 거짓인지 · 다 자라면 거둬 {작물: 개수} 가 나오는지 본다. 물 없이는 안 자람 · 저장 복원도 따로 본다. crops.json 에서 flax 줄을 지워 보니 이 파일의 테스트 3개가 떨어졌다(되돌렸다). 날수 · 수량 임시는 crops.json _temporary · spec/04_life/farming.md 수치에 적혀 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "작물표가 **데이터 한 곳**에 있다 — 지금 `crops.gd` 의 `CROPS` 는 코드에 박혀 있다. 한 줄로 늘어나게 한다 (테스트)",
-     "evidence": "const CROPS 를 없애고 static var CROPS = load_table() 로 crops.json 을 읽는다. test_crop_table_is_the_data_file 이 CROPS == load_table(DEFAULT_PATH) 와 소스에 작물 줄이 없는지 보고, test_one_more_line_makes_one_more_crop 이 임시 파일에 한 줄을 더해 심고 · 자라고 · 4개 거두는 것까지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "씨앗을 얻는 길이 **있다** — 지금 임시 규칙(제작대에서 목재로)을 그대로 늘린다",
-     "evidence": "recipes.json 에 열네 씨앗 줄(workbench · 목재 1 → 2알)이 더해졌고 _temporary 에 임시라고 적었다. test_every_new_seed_is_made_at_the_workbench_from_wood 가 RecipeCatalog 를 읽어 열넷 모두 제작대에서 {wood: 1} 로 나오는지 본다. 기존 test_seed_sources 도 통과"
-    },
-    {
-     "ok": false,
-     "criterion": "`@곡물` · `@채소` · `@과일` 태그에 이것들이 들어간다 (G-200 단계 1 의 태그 목록)",
-     "evidence": "G-200 단계 1 의 태그 목록에 넣지 않았다 — 그 목록은 이 차선(3d-lane2)에 없다(다른 차선 3d-start 에서 만드는 중). 대신 crops.json 줄마다 tags 칸을 따로 만들고 Crops.tagged() 로 읽었다. spec/05_craft/facilities.md 는 「태그 목록은 레시피 데이터 옆에 둔다 (recipes.json 과 같은 자리)」이고 G-200.1 기준은 「태그 목록이 데이터 파일 한 곳에」다 — 지금 만든 것은 태그의 두 번째 출처다. test_crops_fall_into_the_grain_vegetable_fruit_tags 는 이 따로 만든 칸만 본다. report 의 how 도 「합칠 때 한쪽으로 모아야 한다」고 스스로 적었다"
-    }
-   ],
-   "issues": [
-    "[결정] G-201.1 기준 4 가 다른 차선의 G-200.1 에 걸려 있다 — 「@곡물 · @채소 · @과일 태그에 이것들이 들어간다 (G-200 단계 1 의 태그 목록)」인데 G-200 은 차선 3d-start, G-201 은 3d-lane2 다. 이 차선에는 태그 목록 파일이 없어 세션이 기준대로 할 길이 없다(만들면 G-200.1 을 앞질러 같은 파일을 두 차선이 만든다). 목록(plan/list.md)에서 고를 것: (가) 이 기준을 G-200 이 이 차선에 합쳐진 뒤의 단계로 옮긴다, (나) 이 차선에서 recipes.json 옆에 태그 파일을 먼저 만들게 허락하고 합칠 때 G-200.1 과 맞춘다. 같은 걸림이 G-201.2 의 「@약초 태그에 일곱이 다 들어간다」에도 있다",
-    "태그가 두 곳에 생긴다 — game/life/farming/crops.json 의 tags 칸과 Crops.tags_of · Crops.tagged 는 spec/05_craft/facilities.md 「태그 목록은 레시피 데이터 옆에 둔다」와 어긋나는 두 번째 태그 출처다. 위 [결정] 이 풀리면 G-200.1 의 태그 파일 한 곳에 wheat · barley · rice · corn(@곡물) · potato · tomato · ginger(@채소) · apple · grape(@과일)를 넣고, crops.json 의 tags 칸 · Crops.tags_of · Crops.tagged 와 그것을 보는 test_crops_fall_into_the_grain_vegetable_fruit_tags · test_one_more_line_makes_one_more_crop 의 tagged 단언을 태그 파일을 읽는 쪽으로 옮겨라"
-   ],
-   "good": [
-    "Crops.tags_of · Crops.tagged — 태그를 읽는 함수를 작물표 쪽에 만들었다. 태그 목록 · 태그 해석은 G-200 단계 1 의 몫이다"
-   ]
-  },
-  "test": "er_walks_in.gd\nok     17s  res://tests/automation/villagers/test_villager_jobs.gd\nok     15s  res://tests/automation/villagers/test_villager_planting.gd\nok     17s  res://tests/craft/stations/test_stations.gd\nok     16s  res://tests/automation/villagers/test_villager_many_fields.gd\nok     16s  res://tests/life/hunting/test_carry_cage.gd\nok     13s  res://tests/automation/villagers/test_villager_as_built.gd\nok     13s  res://tests/automation/villagers/test_villager_as_played.gd\nok     14s  res://tests/core/debug/test_dev_box.gd\nok     15s  res://tests/automation/villagers/test_villager_reach.gd\nok     10s  res://tests/life/farming/test_crops.gd\nok     11s  res://tests/player/inventory_hotbar/test_weight.gd\nok     10s  res://tests/life/farming/test_field_free_grid.gd\nok     11s  res://tests/world/storage/test_chest_place.gd\nok     12s  res://tests/life/farming/test_water_and_fertilizer.gd\nok     12s  res://tests/life/farming/test_farmland.gd\nok      8s  res://tests/player/inventory_hotbar/test_bag_twenty_island.gd\nok      7s  res://tests/world/day_night/test_day_in_world.gd\nok      8s  res://tests/automation/villagers/test_villager_torch_detour.gd\nok      8s  res://tests/world/frontier_islands/test_dock_building.gd\nok      9s  res://tests/automation/villagers/test_villager_hands_room.gd\nok      3s  res://tests/life/climbing/test_grapple_ammo.gd\nok      3s  res://tests/ui/hud/test_station_output.gd\nok      5s  res://tests/combat/tools_as_weapons/test_gun_ladder.gd\nok      4s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      6s  res://tests/build/test_blueprint.gd\nok      3s  res://tests/automation/villagers/test_villager_chest_detour.gd\nok      3s  res://tests/ui/hud/test_station_window.gd\nok      3s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      2s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      3s  res://tests/build/test_bed.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/automation/villagers/test_villager_door.gd\nok      2s  res://tests/build/test_placeable.gd\nok      3s  res://tests/craft/recipes/test_recipes.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      3s  res://tests/life/food/test_food.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            72\nTests             623\nPassing Tests     623\nFailing Tests       0\nRisky/Pending       0\nAsserts         44135\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-13 00:00:18",
   "epoch": 1791817218,
   "type": "pass",
@@ -8881,5 +8823,36 @@
   },
   "test": "s://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      0s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      0s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      1s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      1s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           501\nTests            3749\nPassing Tests    3749\nFailing Tests       0\nRisky/Pending       0\nAsserts        169441\nTime           738s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "4489d6d9"
+ },
+ {
+  "time": "2026-10-19 20:18:15",
+  "epoch": 1792408695,
+  "type": "fail",
+  "title": "차선 합치기 실패 — 3d-start(7e02651f) → 3d-lane2",
+  "group": "G-253",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "test_kept_window.gd 에 ui_shots kept 자리를 지키는 단언을 더했다 — 바뀐 곳만: test_kept_window.gd 10개 통과",
+   "approach": "PLACES 에서 kept 를 빼도 떨어지는 테스트가 없었다. test_villager_gear_window.gd 처럼 UiShotsKit 을 preload 하고 assert_true(UiShotsKit.PLACES.has(\"kept\")) 테스트를 하나 더했다 (class_name 이 UiShots 라 preload 상수가 있어야 한다).",
+   "why": "",
+   "files": [
+    "game/tests/ui/hud/test_kept_window.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "ui_shots kept 자리를 지키는 단언이 없다 — test_villager_gear_window.gd 329줄처럼 test_kept_window.gd 에 assert_true(UiShotsKit.PLACES.has(\"kept\")) 한 줄을 더해라 (지금은 PLACES 에서 kept 를 빼도 아무 테스트도 떨어지지 않는다)",
+     "evidence": "test_kept_window.gd 에 UiShotsKit preload 와 test_the_window_has_a_shot_place 가 assert_true(UiShotsKit.PLACES.has(\"kept\")) 로 더해졌다. 일부러 깨 봄: ui_shots_kit.gd PLACES 에서 \"kept\" 를 빼고 TEST_DIR=res://tests/ui/hud 를 돌리니 test_kept_window.gd 가 1개 떨어졌다(되돌림 확인). 전체 테스트 3749 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "s://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      0s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      0s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      1s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      1s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           501\nTests            3749\nPassing Tests    3749\nFailing Tests       0\nRisky/Pending       0\nAsserts        169441\nTime           738s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
