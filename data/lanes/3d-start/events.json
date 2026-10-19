@@ -1,23 +1,5 @@
 [
  {
-  "time": "2026-10-13 09:44:12",
-  "epoch": 1791852252,
-  "type": "stop",
-  "title": "루프 끝 — 목록을 모두 처리했다",
-  "group": "G-904",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "손대지 않았다 — 기준의 앞조건(3d-lane2 가 3d-start 에 합쳐진 뒤)이 아직 서지 않았다",
-   "approach": "기준은 「3d-lane2 가 3d-start 에 합쳐진 뒤」 tags.json 의 pending · _pending 을 지우라고 한다. 그런데 git merge-base --is-ancestor 3d-lane2 HEAD 가 거짓이고(3d-lane2 에만 있는 커밋 8개), 3d-start 도 마찬가지다. 합치기는 smelter.json 충돌로 막혀 plan/decisions.md 에 「차선 3d-lane2(dff125dc) 을 3d-start 에 합치지 못했다」로 사람 손을 기다리고 있다. 이 줄기에는 보리 · 옥수수 · 감자 · 토마토 · 생강 · 알로에 · 인삼 · 쑥 · 박하가 무게표에 없다(tags.json 에만 이름이 있다). 지금 pending 을 지우면 없는 이름이 갈래에 들어 RecipeTags 의 걸러내기가 꺼지고 갈래 이름 검사가 떨어진다 — pending 은 바로 이 상태를 위해 있는 것이다. 세션은 git 을 쓸 수 없어 합치기를 대신할 수 없다. 그래서 아무 파일도 고치지 않았다. 9번 되풀이해도 결과가 같으니 이 단계는 합치기가 풀린 뒤로 미뤄야 한다.",
-   "why": "",
-   "files": [],
-   "decision": {
-    "question": "G-904 단계 4(pending 목록 지우기)는 3d-lane2 가 3d-start 에 합쳐진 뒤에만 할 수 있는데, 그 합치기가 plan/decisions.md 의 「차선 3d-lane2(dff125dc) 을 3d-start 에 합치지 못했다」(smelter.json 충돌)에 걸려 있다. 그 합치기를 손으로 풀어 주면 이 단계를 그대로 다시 돌리면 된다 — 새로 정할 것은 없고 그 물음 하나에 매여 있다."
-   }
-  }
- },
- {
   "time": "2026-10-13 12:29:03",
   "epoch": 1791862143,
   "type": "start",
@@ -10022,6 +10004,34 @@
   "group": "G-916",
   "step": "1",
   "attempt": "1",
+  "report": {
+   "problem": "주민 한 그루 시간 테스트의 사람 몫을 Attack.SWING_EVERY 로 셈하고 주민 몫만 HarvestWork.HIT_EVERY 로 남겼다 (바뀐 곳만: 1개 파일 5개 통과 · villagers 폴더 402개 통과)",
+   "approach": "G-916.4 에서 사람 휘두르기 간격이 Attack.SWING_EVERY 한 곳으로 옮겨졌는데, 주민 테스트는 사람 쪽 셈(person)과 158줄 주석에서 아직 HarvestWork.HIT_EVERY 를 사람 빠르기라 불렀다. 158줄 주석을 'Attack.SWING_EVERY (0.6초, 임시) — 주민 HIT_EVERY 도 이것을 읽는다'로, 168줄 person 계산을 Attack.SWING_EVERY 로 바꿨다. 181줄 주민 하한은 HarvestWork.HIT_EVERY 그대로 둔다. 값은 같아 결과는 그대로다. 159줄('캐기에는 쿨다운이 없다')은 attack.gd 주석대로 아직 사실이라 두었다.",
+   "why": "",
+   "files": [
+    "game/tests/automation/villagers/test_villager_gather_close.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "주민 테스트 주석이 HIT_EVERY 를 사람 빠르기라 부른다 — tests/automation/villagers/test_villager_gather_close.gd:158 · 168 · 181 이 사람 쪽 셈에 HarvestWork.HIT_EVERY 를 쓴다(값은 같아 막지 않음). 사람 몫(person 계산 · 158줄 주석)은 Attack.SWING_EVERY 로 바꾸고 주민 몫(181줄)만 HarvestWork.HIT_EVERY 로 두어라",
+     "evidence": "git diff: 158줄 주석이 'Attack.SWING_EVERY (0.6초, 임시)' 로 사람 휘두르기 간격을 부르고 주민 HIT_EVERY 는 이를 읽는다고 적는다 · 168줄 person 이 hits * Attack.SWING_EVERY 로 셈한다 · 181줄 주민 하한 assert_gte(took, hits * HarvestWork.HIT_EVERY) 는 그대로다. Attack.SWING_EVERY 는 game/combat/tools_as_weapons/attack.gd:69 에 실제로 있고 HarvestWork.HIT_EVERY := Attack.SWING_EVERY 라 값이 같다. 바뀐 테스트 test_felling_one_tree_takes_about_as_long_as_a_person 가 전체 실행(472 파일 · 3525 테스트 모두 통과, guard 통과)에서 통과했다. 159줄 '좌클릭(Harvest.swing)에는 쿨다운이 없다' 는 attack.gd:68 '캐기(Harvest.swing)에는 아직 걸지 않았다' 와 맞아 사실이다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "/tests/core/input/test_pointer.gd\nok      0s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_seed_back.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      1s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/core/test_guard.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           472\nTests            3525\nPassing Tests    3525\nFailing Tests       0\nRisky/Pending       0\nAsserts        155554\nTime           698s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-19 11:19:51",
+  "epoch": 1792376391,
+  "type": "start",
+  "title": "루프 시작",
   "report": {
    "problem": "주민 한 그루 시간 테스트의 사람 몫을 Attack.SWING_EVERY 로 셈하고 주민 몫만 HarvestWork.HIT_EVERY 로 남겼다 (바뀐 곳만: 1개 파일 5개 통과 · villagers 폴더 402개 통과)",
    "approach": "G-916.4 에서 사람 휘두르기 간격이 Attack.SWING_EVERY 한 곳으로 옮겨졌는데, 주민 테스트는 사람 쪽 셈(person)과 158줄 주석에서 아직 HarvestWork.HIT_EVERY 를 사람 빠르기라 불렀다. 158줄 주석을 'Attack.SWING_EVERY (0.6초, 임시) — 주민 HIT_EVERY 도 이것을 읽는다'로, 168줄 person 계산을 Attack.SWING_EVERY 로 바꿨다. 181줄 주민 하한은 HarvestWork.HIT_EVERY 그대로 둔다. 값은 같아 결과는 그대로다. 159줄('캐기에는 쿨다운이 없다')은 attack.gd 주석대로 아직 사실이라 두었다.",
