@@ -1,64 +1,5 @@
 [
  {
-  "time": "2026-10-13 00:54:39",
-  "epoch": 1791820479,
-  "type": "pass",
-  "title": "통과 — G-201 단계 3 (광석 여덟)",
-  "group": "G-201",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "광석 여덟(구리광석 · 주석광석 · 금광석 · 은광석 · 석탄 · 모래 · 석회석, 점토 없음)을 곡괭이로 캐고, 캔 바위가 광물의 날(14일) 뒤 다시 자라며, 석회는 석회석을 제련로에서 구워 얻어 비료까지 이어진다 — 바뀐 곳만 69 파일 665개 통과 (전체 아님)",
-   "approach": "자원 종류(IslandResources.KINDS · GROUP)에 copper · tin · gold · silver · coal · sand · limestone 을 광물(ore) 무리로 더하고, 땅에서 바로 캐던 석회(lime) 종류는 뺐다. 캐는 표(Harvest.DROPS)는 저마다 제 광석(copper_ore … limestone)을 떨어뜨리고, 재생 날(Regrowth.DAYS)은 철 · 유황과 같은 14일이라 나무 < 돌 < 광물 순서가 지켜진다. 그림(ResourceView)에는 종류마다 거리 · 칸 · 몸통 · 색을 더했다. 곡괭이가 맞는 도구인지는 tools.json 의 무리(ore)가 정하므로 그 파일은 그대로 두었다. 석회는 이제 제련로 레시피(석회석 2 → 석회 2)에서 나오므로 비료(석회 2 → 1)는 그대로 이어진다. 자리는 임시로 개척 섬(유황 섬) 설계 값 ores 에 일곱을 더했다. 내 섬은 건드리지 않았다: 내 섬 설계 값을 바꾸면 섬 저장본 해시가 바뀌어 다시 굽게 되고(앞 단계에서 그것이 test_round_trip 을 흔들었다), 석회석이 내 섬에 나면 「석회는 내 섬에서 나지 않는다」(사람 결정)가 깨진다. 옛 저장본에 남은 \"lime:N\" 캔 자리가 재생 날에 없는 종류의 자리를 찾다 멈추지 않도록 Regrowth.set_taken_days 가 없는 종류를 버린다(테스트 있음). 테스트: 진짜 좌클릭 곡괭이로 일곱을 캐 제 광석이 떨어지는지, 실제 유황 섬에 일곱이 다 깔리는지, 거기서 캔 바위가 13일째에는 아직 없고 14일째에 시드 그 자리 · 성한 몸으로 돌아오는지, 석회석 → 제련로 석회 → 제작대 비료가 이어지는지 본다. 빈손에서 끝까지 가는 test_from_empty_hands 도 개척 섬에서 석회석을 캐 제련로에서 석회 넷을 굽고 비료 둘을 만드는 길로 고쳤다. spec/04_life/mining.md 에는 사람 결정 줄을 지우지 않고 그 아래에 석회석 · 광석 여덟 줄을 덧붙였다. 확인: TESTS=$(harness/changed_tests.py) 로 69 파일 · 665개 · 실패 0 (바뀐 곳만, 전체 아님). 덧: recipes.json 은 차선 1(G-200.2)이 시설별 파일로 갈라 지운 파일이다 — 이 차선의 단계 1(씨앗 줄)처럼 이번에도 한 줄을 더했으니, 합칠 때 smelter.json 쪽으로 옮겨야 한다.",
-   "why": "광석 일곱의 내구도 200 · 한 번에 2개 (game/life/harvest/harvest.gd DROPS) — 철 · 유황과 같은 값. 드롭 수량 · 내구도가 미정이다 (mining.md 미정); 광석 일곱의 재생 14일 (game/world/resources_regrowth/regrowth.gd DAYS) — 광물이라 철과 같게. 종류별 날 수가 미정이다; 광석 일곱을 개척 섬(유황 섬)에만 깐다 (sulfur_island_blueprint.tres ores) — 어디에 나는가는 사람이 나중에 정한다; 석회 레시피: 제련로에서 석회석 2 → 석회 2 (recipes.json) — 개수는 임시 (facilities.md 「개수는 상관 없다」); 광석 일곱의 무게 (weights.json) · 바위 색 (resource_view.gd _tint) — 지어낸 값",
-   "files": [
-    "game/world/terrain/island_resources.gd",
-    "game/world/terrain/resource_view.gd",
-    "game/world/resources_regrowth/regrowth.gd",
-    "game/life/harvest/harvest.gd",
-    "game/world/frontier_islands/sulfur_island_blueprint.tres",
-    "game/craft/recipes/recipes.json",
-    "game/player/inventory_hotbar/weights.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "spec/04_life/mining.md",
-    "game/tests/life/harvest/test_ores_on_island.gd",
-    "game/tests/life/harvest/test_harvest.gd",
-    "game/tests/life/farming/test_fertilizer_farm_plot.gd",
-    "game/tests/world/frontier_islands/test_lime.gd",
-    "game/tests/craft/test_from_empty_hands.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "구리광석 · 주석광석 · 금광석 · 은광석 · 석탄 · 모래 · 석회석 · (점토는 **없다** — 사람이 뺐다) 을 **캔다** (테스트). 석회는 이제 석회석에서 나온다",
-     "evidence": "test_harvest.gd test_the_pickaxe_mines_each_new_ore 가 일곱 종류마다 곡괭이를 들고 진짜 좌클릭으로 캐서 정해진 대수(GOOD_HIT)와 제 광석 드롭(copper_ore … limestone)을 단언한다. test_ores_on_island.gd 는 실제 유황 섬 설계 값으로 일곱이 다 깔리는지, 거기서 캐면 제 광석이 그 자리에 떨어지는지 본다. 점토 종류는 KINDS · DROPS 어디에도 없다. 석회 쪽은 test_lime.gd test_lime_itself_is_no_longer_a_field_resource(종류 · 캐는 표 · 섬 설계 값에 lime 없음)와 test_fertilizer_farm_plot.gd test_no_rock_drops_lime_directly(어느 종류를 캐도 석회가 바로 안 나옴)가 본다. 번역 키 ko · en 은 test_new_ore_names_are_translation_keys 가 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "캐는 바위가 다시 자란다 (03_world/resources-regrowth.md 의 약속)",
-     "evidence": "test_ores_on_island.gd test_mined_ore_rocks_grow_back 이 일곱을 다 캐고, 날 수가 돌보다 길다는 것(나무<돌<광물), 13일째에는 아직 없고 14일째에 시드가 낸 그 자리 · 성한 내구도로 돌아오는 것을 단언한다. days_for 가 없는 종류에 0 을 내므로 DAYS 를 빠뜨리면 첫 단언에서 걸린다. 옛 저장본의 lime 표시를 버리는 길도 test_old_lime_marks_in_a_save_are_dropped 가 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "석회를 쓰던 곳(비료)이 끊기지 않는다 — 석회석 → 석회 길이 이어진다 (테스트)",
-     "evidence": "test_fertilizer_farm_plot.gd test_limestone_becomes_lime_becomes_fertilizer 가 석회석 바위 → 석회석 드롭, 석회 레시피의 재료가 석회석뿐 · 제련로라는 것, 석회석이 없으면 굽지 못하는 것, 구워 얻은 석회로 제작대에서 비료가 나오는 것을 실제 CraftingStation 으로 확인한다. test_from_empty_hands 도 개척 섬에서 석회석을 캐 제련로에서 석회 넷 → 비료 둘 → 밭까지 간다. 전체 테스트 278 파일 2166개 통과 · guard 통과 (test.log 맨 윗줄 「전체」)"
-    }
-   ],
-   "issues": [
-    "석회 레시피가 지워질 파일에 들어갔다 — game/craft/recipes/recipes.json 에 {\"key\": \"lime\", station smelter, limestone 2 → lime 2} 한 줄을 더했는데, 차선 1(G-200.2)이 이 파일을 시설별 파일로 갈라 지웠다. 합칠 때 이 줄(과 _temporary 의 석회 문장)을 용광로/제련로 쪽 시설 파일(smelter.json 등)로 옮겨야 비료 사슬이 안 끊긴다 — 합친 뒤 test_fertilizer_farm_plot.gd test_limestone_becomes_lime_becomes_fertilizer 가 그것을 지킨다",
-    "시설 이름이 용광로 · 제련로로 섞였다 — game/life/harvest/harvest.gd DROPS 위 주석 · island_resources.gd 주석은 「용광로」, 레시피 _temporary · 테스트 · spec/04_life/mining.md 는 「제련로(smelter)」라 한다. spec/05_craft/facilities.md 의 표 이름은 용광로다. 한쪽으로 맞춰라(코드 주석을 facilities.md 와 같게, 혹은 「용광로(smelter)」로 둘 다 적기)"
-   ],
-   "good": []
-  },
-  "test": "t_build_piece_tidy.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/build/test_placeable.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      0s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/build/test_room_overlay.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           278\nTests            2166\nPassing Tests    2166\nFailing Tests       0\nRisky/Pending       0\nAsserts        104662\nTime           486s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "3ce683e3"
- },
- {
   "time": "2026-10-13 01:14:09",
   "epoch": 1791821649,
   "type": "pass",
@@ -8845,5 +8786,79 @@
   },
   "test": "ng.gd\nok      3s  res://tests/multiplayer/test_guard_pen_on_server.gd\nok      3s  res://tests/multiplayer/test_modules_on_server.gd\nok      3s  res://tests/multiplayer/test_kept_names_on_server.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok      2s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      3s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      3s  res://tests/automation/villagers/test_villager_pen_room.gd\nok      2s  res://tests/build/test_placer.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      2s  res://tests/build/test_room_overlay.gd\nok      1s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_cook_table.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      3s  res://tests/craft/stations/test_station_queue.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      1s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      2s  res://tests/life/ranching/test_bird_cage_five.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok    435s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           157\nTests            1339\nPassing Tests    1339\nFailing Tests       0\nRisky/Pending       0\nAsserts         48332\nTime           435s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "8c4b4332"
+ },
+ {
+  "time": "2026-10-19 21:07:19",
+  "epoch": 1792411639,
+  "type": "fail",
+  "title": "QA 불합격 — G-254 단계 2 (시도 1)",
+  "group": "G-254",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "약을 연고 · 화상 연고 · 붕대 · 의료키트 넷만 남기고(사람이 말한 재료), 식물성 기름 아이템을 새로 만들고, 뺀 약 열은 옛 저장본에서 버린다. 벌통 옛 규칙 주석 셋도 고쳤다. 바뀐 곳만(changed_tests 240 파일) 1903개 통과",
+   "approach": "약 열셋을 넷으로 줄였다: 연고 = 밀랍 + 식물성 기름, 화상 연고 = 밀랍 + 오소리 기름(이제 @oil 갈래를 거치지 않고 바로 든다), 붕대 = 가죽, 의료키트(새 아이템) = 붕대 + 연고 + @liquor. 뺀 약 열은 medicines.json · 레시피 · 무게 · 번역(ko/en)에서 지웠다. ui_shots 에는 약 이름이 없었고, 개발용 상자는 레시피에서 저절로 채워지므로 식물성 기름 · 의료키트는 따로 손대지 않아도 들어간다(테스트로 확인). 옛 저장본은 이미 있던 「없는 아이템」 규칙(OldItems.DROPPED)에 열 개를 더해 가방 · 상자 · 바닥 · 시설 버퍼에서 버린다. 주민 손(Hands.load_list)만 그 길을 안 거치고 있어서 거기에도 is_dropped 거르기를 넣었다. 버프 독 · 해독 · 기력 · 스트레스 효과는 이제 쓰는 약이 없지만 Medicine · NetVitals 코드는 데이터로 움직이므로 남겼다. 그 길이 계속 듣는지는 테스트 전용 목록 tests/life/medicine/fixture_medicines.json 으로 본다(멀티 테스트는 그 테스트 동안만 MedicineCatalog._shared 를 바꿔 끼운다). 훈연기의 기름은 그대로 두고 연고에는 안 든다는 것을 테스트가 본다. 식물성 기름은 아직 나는 곳이 없다 — 단계 3 착유기의 몫이다. 벌통 주석 셋(bee_colony.gd · ranching-breeding.md · stations.json _fields)은 「room 이 있으면 그 방 안에만 놓이고, 놓인 뒤엔 방을 보지 않는다 (G-254.1)」로 고쳤다. spec 약 표를 넷으로 고치고 「밀랍은 연고 · 화상 연고의 재료」를 적었다.",
+   "why": "약 넷의 재료 개수 전부 1 — 사람이 개수를 말하지 않았다; 효과: 연고 HP +15 · 화상 연고 HP +20 · 붕대 HP +20 · 의료키트 HP +60 (current.md 임시 값); 무게: 의료키트 0.3kg · 식물성 기름 0.5kg (훈연기 기름과 같게)",
+   "files": [
+    "game/life/medicine/medicines.json",
+    "game/craft/recipes/apothecary_bench.json",
+    "game/craft/recipes/tags.json",
+    "game/player/inventory_hotbar/weights.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/settings/save/old_items.gd",
+    "game/automation/villagers/hands.gd",
+    "game/life/ranching/bee_colony.gd",
+    "game/craft/stations/stations.json",
+    "spec/05_craft/facilities.md",
+    "spec/04_life/ranching-breeding.md",
+    "spec/04_life/hunting.md",
+    "spec/01_settings/save.md",
+    "game/tests/craft/stations/test_apothecary_bench.gd",
+    "game/tests/life/medicine/test_medicine.gd",
+    "game/tests/life/medicine/fixture_medicines.json",
+    "game/tests/life/hunting/test_wild_yield_uses.gd",
+    "game/tests/multiplayer/test_body_on_server.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "약 · 레시피를 넷만 남긴다 — 연고 = 밀랍 1 + 식물성 기름 1 · 화상 연고 = 밀랍 1 + 오소리 기름 1 · 붕대 = 가죽(hide) 1 · 의료키트(새 아이템) = 붕대 1 + 연고 1 + 술(@liquor) 1. 효과 임시: 연고 HP +15 · 화상 연고 HP +20 · 붕대 HP +20 · 의료키트 HP +60",
+     "evidence": "apothecary_bench.json 에 약 줄이 넷뿐이고 재료가 사람 말 그대로다. test_apothecary_bench.test_medicines_take_the_inputs_the_person_named 가 약마다 줄 하나 · inputs 사전을 통째로 비교하고, test_medicine.test_the_four_medicines_heal_these_much 가 meds.keys() 가 정확히 넷인지와 HP 15/20/20/60 을 본다. test_wild_yield_uses.test_badger_fat_makes_burn_ointment 는 오소리 기름으로 실제로 만들어 보고 훈연기 기름은 안 든다는 것까지 본다. test.log 바뀐 곳만 253 파일 2012 통과"
+    },
+    {
+     "ok": false,
+     "criterion": "나머지 약(진통제 · 마취제 · 독약 · 강한 독 · 해독제 · 기력 회복제 · 꿀약 · 해열제 · 소화제 · 약 붕대)은 목록 · 레시피 · 무게 · 번역 · ui_shots 에서 뺀다. 마취탄 셋 · 비료는 약이 아니라 남긴다. 뺀 약을 쓰던 곳(주민이 먹는 약 · 버프 독 · 상자 · 개발용 상자)을 다 찾아 맞추고, 옛 저장본에 든 뺀 약은 기존의 「없는 아이템」 규칙대로 다룬다(규칙이 없으면 불러올 때 지우고 spec 에 적는다)",
+     "evidence": "데이터 쪽은 됐다 — test_removed_medicines_are_gone 이 목록 · 레시피 · 무게 · 번역 · 개발용 상자 · OldItems.is_dropped 를 열 개 다 보고, test_removed_medicines_are_dropped_from_old_saves 가 가방 · 주민 손(hands.gd 에 새로 넣은 거르기)을 본다. 그러나 기준이 이름으로 짚은 「버프 독」을 쓰던 곳이 맞춰지지 않았다: game/life/food/buffs.gd 24줄은 아직 「독약을 먹으면 붙고 해독제가 푼다」, 62줄 「(해독제 — life/medicine/)」, game/life/medicine/medicine.gd 7줄 「독을 풀거나(해독제) 붙인다(독약)」 — 이제 없는 약을 독의 출처로 적고 있다. 주민이 먹는 약 쪽 game/automation/villagers/villager.gd 889~890줄도 「스트레스가 그 약의 값만큼 내려간다」만 있고 지금은 스트레스를 내리는 약이 없다는 것이 안 적혔다. 뺀 약을 쓰던 곳을 다 맞추라는 기준이라 불합격"
+    },
+    {
+     "ok": true,
+     "criterion": "식물성 기름 아이템을 새로 만든다(무게 · 번역 · 개발용 상자) — 나오는 곳은 단계 3 의 착유기. 훈연기의 「기름」은 그대로 두되 연고에는 안 들어간다",
+     "evidence": "weights.json vegetable_oil 0.5(임시 표시 있음) · ko/en ITEM_vegetable_oil. test_ointment_takes_vegetable_oil_not_smoker_oil 이 번역 · 무게 · DevBox.contents() 에 드는지 · 연고 재료 칸 어디에도 oil 이 안 드는지(갈래 members 로) 본다. 훈연기 oil 은 그대로 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "spec 약 표를 넷으로 고친다 · 「밀랍은 연고 · 화상 연고의 재료(사람 2026-10-19)」 · 갈래 oil 의 오소리 기름 주석 갱신",
+     "evidence": "spec/05_craft/facilities.md 86~100줄에 넷 표 · 「밀랍은 연고 · 화상 연고의 재료 (사람 2026-10-19)」. tags.json _temporary 의 oil 주석이 「오소리 기름은 화상 연고에 갈래를 거치지 않고 바로 든다 · 지금 이 갈래를 받는 레시피는 없다」로 바뀌었다. hunting.md 쓰임 줄도 고쳤다. facilities.md 146줄(150 안)"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 벌통 옛 규칙 주석이 셋 남았다 — 놓인 벌통은 이제 방을 안 보는데 아직 「농사장 방 안에서만 시간이 흐른다」고 적힌 곳: game/life/ranching/bee_colony.gd 10줄(「밀랍은 … 농사장 방 안에서만 시간이 흘러 버퍼에 나온다」), spec/04_life/ranching-breeding.md 105줄(「밀랍만 농사장 규칙」), game/craft/stations/stations.json 의 _fields(「room 이 있으면 그 방 종류 안에 섰을 때만 … 시간이 흐른다」). 셋 다 「room 이 있으면 그 방 안에만 놓이고, 놓인 뒤엔 방을 보지 않는다 (G-254.1)」로 고쳐라",
+     "evidence": "git diff 로 셋 다 지정 문장으로 바뀐 것을 확인했다 (bee_colony.gd 10줄 · ranching-breeding.md 105줄 · stations.json _fields). 주석 · 문서 수정이라 테스트 대상이 아니다"
+    }
+   ],
+   "issues": [
+    "버프 독 주석이 뺀 약을 가리킨다 — 기준 2 불합격 사유. game/life/food/buffs.gd 24줄 「독약을 먹으면 붙고 해독제가 푼다」→ 「지금 독을 붙이거나 푸는 약은 없다 — medicines.json 에 poison · cure 칸을 적으면 듣는다 (G-254.2)」 꼴로, 62줄 「(해독제 — life/medicine/)」→ 「(약의 cure 칸 — life/medicine/)」, game/life/medicine/medicine.gd 7줄 「독을 풀거나(해독제) 붙인다(독약)」도 같은 뜻으로 고쳐라. game/automation/villagers/villager.gd 889~890줄 take_medicine 주석에 「지금 약 넷은 HP 만 채워 스트레스를 내리는 약이 없다 (G-254.2)」를 덧붙여라. 고친 뒤 grep -rnE '진통제|마취제|독약|강한 독|해독제|기력 회복제|꿀약|해열제|소화제|약 붕대' game --include='*.gd' --include='*.json' 이 old_items.gd · tests · G-254 설명 줄 말고는 비어야 한다",
+    "[결정] 사람 줄에 뺀 해독제가 남았다 — spec/09_expedition/jungle-ruins.md 7줄 「보급: 해독제」와 spec/04_life/gathering.md 34줄 「기본 진행(기본 버프 음식 · 기본 해독제)은 재배 작물로 된다」는 사람 결정 줄인데, 2026-10-19 사람이 해독제를 포함해 약을 넷만 남기라고 했다. 원정 보급의 해독제를 없애는지 · 나중에 다시 들일지 사람이 정해야 한다 (사람 줄이라 루프가 지우지 않는다)"
+   ],
+   "good": [
+    "테스트 전용 약 목록 game/tests/life/medicine/fixture_medicines.json 을 새로 두어 독 · 해독 · 기력 · 스트레스 길을 계속 시험한다 — 기준 밖이지만 쓰는 약이 없어진 코드를 지키는 합리적인 방법이다"
+   ]
+  },
+  "test": "ecipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/fishing/test_bait_grades.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      2s  res://tests/life/hunting/test_bird_hunt.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/medicine/test_medicine.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_bird_cage_five.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/equipment/test_armor.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_old_barn.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      2s  res://tests/automation/villagers/test_job_work_shared.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           253\nTests            2012\nPassing Tests    2012\nFailing Tests       0\nRisky/Pending       0\nAsserts         62360\nTime           487s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
