@@ -19,3 +19,9 @@
 - 어디서: 차선 합치기 (3d-start)
 - 무엇: 부딪힌다: game/core/debug/ui_shots.gd game/ui/hud/slot_drop.gd — 이 줄기(3d-start)에서 `git merge 3d-lane2` 을 손으로 풀어 커밋해 달라. 풀릴 때까지 이 차선은 3d-lane2 없이 돈다
 - **사람이 답할 것**: 
+
+## 물음 — 차선 3d-start(7e02651f) 을 3d-lane2 에 합치지 못했다
+- 물은 때: 2026-10-19 18:42:52
+- 어디서: 차선 합치기 (3d-lane2)
+- 무엇: 부딪힌다: game/core/debug/ui_shots.gd game/core/debug/ui_shots_kit.gd game/ui/hud/slot_drop.gd — 이 줄기(3d-lane2)에서 `git merge 3d-start` 을 손으로 풀어 커밋해 달라. 풀릴 때까지 이 차선은 3d-start 없이 돈다
+- **사람이 답할 것**: 
