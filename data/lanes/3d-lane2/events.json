@@ -1,65 +1,5 @@
 [
  {
-  "time": "2026-10-13 22:14:02",
-  "epoch": 1791897242,
-  "type": "pass",
-  "title": "통과 — G-210 단계 5 (나무꾼 · 광부는 대상에 붙어서 일한다)",
-  "group": "G-210",
-  "step": "5",
-  "attempt": "1",
-  "report": {
-   "problem": "나무꾼 · 광부가 나무 · 바위 몸통 겉에서 주민의 손(2m) 안까지 걸어가서야 친다 — 바뀐 곳 그물 57개 파일 414개 통과",
-   "approach": "범위 값은 game/automation/villagers/gather_work.gd 의 `const REACH := Aim.REACH` (사람의 거리 4m, 몸통 가운데까지 수평으로 잼)였다. 그래서 주민은 첫 대를 나무 가운데에서 3.95m · 바위 가운데에서 약 3.98m 떨어져 쳤고, 3.6m 떨어진 자리에서는 걷지도 않고 쳤다(옛 코드로 새 테스트를 돌려 잼). 이를 없애고 밭 · 상자와 같은 주민의 손(Villager.hand, 처음 HAND 2m)을 **몸통 겉에서** 재게 했다(GatherWork.reaches = 수평 거리 - _girth ≤ _hand). 몸통 반지름은 부딪히는 모양과 같은 값을 ResourceView.girth_of 로 꺼낸다(소나무 0.3m · 바위 1.26m). 이제 첫 대 거리는 나무 가운데에서 2.3m 안이다. 사람의 4m 를 그대로 쓰면 지금과 거의 같아(사람도 겉에서 4m) 줄지 않으므로 「바로 곁」은 주민의 손으로 맞췄다. 청소부(CleaningWork)도 같은 틀을 타서, 축사는 전처럼 가운데까지 4m 로 남겨 두었다(_hand 를 덮어씀 — 이 단계 범위 밖). 한 그루(10m 떨어진 곳)를 다 베는 시간: 바꾸기 전 주민 16.1초 → 바꾼 뒤 17.3초, 사람이 직접 하면 약 12.9초(걷기 6m/s + 맨손 20대 × 0.6초). 시간의 대부분은 맨손 스무 대라서 한 그루로는 크게 안 바뀌고, 효율은 빽빽한 숲에서 한 자리에 선 채 4m 안의 여러 그루를 치던 것이 사라지는 쪽으로 줄어든다. (앞 단계 QA) 검색 칸 낡은 주석 넷(test_chest_window_search.gd 6줄 · 39줄, ko.po · en.po 185줄)을 「상자 창 셋이 같이 쓴다 — 시설 창과 맞추는 것은 G-213」으로 고쳤다(.po 는 그 줄만). spec 의 「치는 거리는 아직 따로다」 줄을 지우고 G-210.5 절을 더했다. 바뀐 곳 그물(changed_tests.py) 57개 파일 · 414개 테스트 통과 — 전체는 안 돌렸다.",
-   "why": "",
-   "files": [
-    "game/automation/villagers/gather_work.gd",
-    "game/automation/villagers/harvest_work.gd",
-    "game/automation/villagers/cleaning_work.gd",
-    "game/world/terrain/resource_view.gd",
-    "game/tests/automation/villagers/test_villager_gather_close.gd",
-    "game/tests/ui/hud/test_chest_window_search.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "spec/07_automation/npc-villagers.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "나무꾼 · 광부가 **나무 · 바위 바로 곁(사람 손 닿는 거리와 같은 값)**까지 걸어가서야 친다 (테스트)",
-     "evidence": "test_villager_gather_close.gd 의 woodcutter · miner · inside_the_old_four_metres 셋이 첫 대를 친 자리가 몸통 겉에서 Villager.HAND(2m) 안인지 본다. QA 가 GatherWork._hand 를 Aim.REACH 로 되돌려 복사본으로 돌리니 5개 중 4개가 떨어졌다(친 거리 3.95m · 4.25m · 3.6m) — 껍데기가 아니다. 되돌려 두었다. 값은 사람의 4m 가 아니라 주민의 손 2m 를 겉에서 잰 것이다 — 아래 [결정] 줄 참고"
-    },
-    {
-     "ok": true,
-     "criterion": "멀리서 치는 길이 없다 — 지금의 범위 값이 어디 있는지 찾아 report 에 적고 그 값을 손 닿는 거리로 맞춘다",
-     "evidence": "report 에 gather_work.gd 의 const REACH := Aim.REACH(가운데까지 4m)를 적었다. const 는 지워졌고 GOING · WORKING · _walk_ended · _choose 네 곳이 모두 reaches(v, t)(수평 거리 - girth ≤ v.hand)를 탄다. test_inside_the_old_four_metres_it_still_walks_first 가 옛 거리 안(3.6m)에서도 먼저 걸어가는지 보고, test_gather_reach_is_the_villagers_hand 가 옛 const 가 안 돌아왔는지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "그래서 한 그루를 다 베는 데 걸리는 시간이 **사람이 직접 하는 것과 비슷하다** — 앞뒤 숫자를 report 에 적는다",
-     "evidence": "report · spec 에 주민 16.1초 → 17.3초 · 사람 약 12.9초를 적었다. test_felling_one_tree_takes_about_as_long_as_a_person 이 한 그루를 다 벨 때까지 게임 안 초를 재 사람 추정의 1.6배 안 · 대 수만큼은 드는지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 검색 칸 낡은 주석 셋이 남았다 — ... 「상자 창 셋이 같이 쓴다 — 시설 창과 맞추는 것은 G-213」으로 고쳐라 (.po 는 차선 1과 같이 걸리니 그 줄만 손댄다)",
-     "evidence": "git diff: test_chest_window_search.gd 6줄 · 39줄, ko.po 185줄, en.po 185줄이 바뀌었고 .po 는 그 한 줄씩만 바뀌었다. test_chest_window_search.gd 는 test.log 에서 통과"
-    }
-   ],
-   "issues": [
-    "[결정] 기준의 「사람 손 닿는 거리와 같은 값」과 다르게 2m 로 맞췄다 — 기준 1의 괄호는 사람의 거리(Aim.REACH 4m)를 말하지만, 사람은 조준 광선이 몸통 겉에 닿으면 치니 겉에서 4m 다. 그 값을 그대로 쓰면 옛 코드(가운데까지 4m)보다 오히려 멀어져 「오브젝트랑 붙어서」가 안 된다. 그래서 구현은 밭 · 상자와 같은 주민의 손(Villager.HAND 2m, 임시)을 몸통 겉에서 재게 했다(첫 대 거리 3.95m → 2.3m 안). 사람이 짚은 뜻에는 맞다고 보고 통과시켰다. 2m(주민의 손)로 둘지, 다른 값을 원하는지 사람이 확인해 달라",
-    "사람이 치는 빠르기를 0.6초로 가정했다 — test_villager_gather_close.gd 의 시간 비교는 사람도 HarvestWork.HIT_EVERY(0.6초)마다 한 대씩 친다고 본다. 사람의 좌클릭(Harvest.swing)에는 쿨다운이 없어 실제로는 더 빨리 칠 수 있다. 그 가정을 테스트 주석과 spec 의 「한 그루」 줄에 「사람 빠르기는 HIT_EVERY 로 가정 — 임시」라고 적어 두어라"
-   ],
-   "good": [
-    "CleaningWork 에 _hand 덮어쓰기를 더해 축사 거리는 전처럼 가운데까지 4m 로 남겼다 — 동작은 안 바뀌었고 틀이 바뀐 데 따른 것이라 덤이라 보기 어렵다"
-   ]
-  },
-  "test": "/tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      0s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_loom.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok    446s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           214\nTests            1703\nPassing Tests    1703\nFailing Tests       0\nRisky/Pending       0\nAsserts         87432\nTime           446s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "4a48787d"
- },
- {
   "time": "2026-10-13 22:33:08",
   "epoch": 1791898388,
   "type": "pass",
@@ -8662,5 +8602,53 @@
    "good": []
   },
   "test": "res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      0s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/hunting/test_summon.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      2s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      0s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           504\nTests            3782\nPassing Tests    3782\nFailing Tests       0\nRisky/Pending       0\nAsserts        170756\nTime           728s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-20 01:19:44",
+  "epoch": 1792426784,
+  "type": "fail",
+  "title": "QA 불합격 — G-256 단계 1 (시도 1)",
+  "group": "G-256",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "마취가 걸리는 체력을 10% → 30%(Animal.SEDATE_HEALTH 0.3, 공황 도주 PANIC_HEALTH 와 같다) — 바뀐 곳만 고른 테스트 129개 파일 1063개 통과",
+   "approach": "공황 도주는 체력 30% 아래에서 시작하는데(9 m/s, 사람 6 m/s 보다 빠르다) 마취 게이지는 10% 아래에서만 차서, 30% → 10% 를 깎는 사이 동물이 달아났다. SEDATE_HEALTH 를 0.3 으로 올려 도주가 시작되는 순간부터 마취탄이 게이지를 채운다. 체력바 색 바뀜(target_bars)과 기절은 그대로 SEDATE_HEALTH · stunned() 를 따른다. 30% 이상에서 맞은 마취탄은 여전히 느려지게만 한다. 「10% 위는 안 찬다」 테스트는 PANIC_HEALTH-1(이제 마취 구간 안)을 빼고 30%+1 · 30% 를 본다. spec 의 사람 결정 줄은 남기고 「2026-10-20 30% 로 올렸다」를 붙였다. tools/test.sh 는 changed_tests.py 로 고른 129개 파일만 돌렸다 — 전체는 돌리지 않았다.",
+   "why": "",
+   "files": [
+    "game/life/hunting/animal.gd",
+    "game/life/hunting/tranq.gd",
+    "game/ui/hud/target_bars.gd",
+    "spec/04_life/hunting.md",
+    "game/tests/life/hunting/test_sedation_capture.gd",
+    "game/tests/ui/hud/test_target_bars.gd",
+    "game/tests/life/hunting/test_carry_cage.gd",
+    "game/tests/life/hunting/test_wild_kinds.gd",
+    "game/tests/craft/test_from_empty_hands.gd",
+    "game/tests/multiplayer/test_hunt_on_server.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "Animal.SEDATE_HEALTH 0.1 → **0.3** — 공황 도주가 시작되는 체력과 같다. 체력바 색 바뀜(target_bars) · 기절(stunned)은 그대로. 30% 위에서 맞은 마취탄은 지금처럼 느려지기만 한다 (테스트: 체력 29% 에서 마취탄이 게이지를 채운다 · 31% 에서는 안 채운다)",
+     "evidence": "animal.gd SEDATE_HEALTH := 0.3, sedatable() 는 stunned() or _health_below(SEDATE_HEALTH) 그대로. test_sedation_capture.gd::test_twenty_nine_percent_fills_and_thirty_one_does_not 가 상수 0.3 · PANIC_HEALTH 와 같음을 단언하고, 사슴 체력 29% 에서 하급탄 한 발이 게이지를 Tranq.dose 만큼 채우고 31% 에서는 sedation 0 · tranq_slow_left>0(느려지기만)을 진짜 take_tranq 로 본다. test_above_thirty_percent… 는 30%+1 · 30% 에서 세 단 모두 안 찬다. test_target_bars 는 30 에서 색 그대로 · 29 에서 SEDATE_ZONE_COLOR. test.log 바뀐 곳만 129 파일 1063 통과 · guard 통과"
+    },
+    {
+     "ok": false,
+     "criterion": "spec hunting.md · tranq.gd · animal.gd 주석의 「10%」를 다 「30%」로 · 사람 결정 줄은 지우지 말고 「2026-10-20 30% 로 올렸다」를 덧붙인다",
+     "evidence": "hunting.md 세 곳 · tranq.gd · animal.gd 머리말 · 상수 · sedation · take_tranq 문서 주석은 바뀌었고 사람 결정 줄도 남기고 덧붙였다. 그러나 game/life/hunting/animal.gd:421 take_tranq 안의 줄끝 주석 `return true  # 10% 위 — 느려지기만 한다` 가 그대로 「10%」다 — 기준이 「다」라고 했다"
+    }
+   ],
+   "issues": [
+    "animal.gd 421줄 주석이 아직 10% — game/life/hunting/animal.gd:421 `return true  # 10% 위 — 느려지기만 한다` 를 `# 30% 위 — 느려지기만 한다` 로 바꿔라. 102줄의 「10% 였을 때는…」은 내력 설명이라 그대로 둔다",
+    "hud.md 18줄도 체력 10% 라고 한다 — spec/12_ui/hud.md:18 「(04_life/hunting.md — 체력 10% 아래)」를 「체력 30% 아래」로 바꿔라 (기준이 이름 댄 파일 밖이지만 같은 수치의 낡은 줄이다)"
+   ],
+   "good": []
+  },
+  "test": "s://tests/player/equipment/test_armor.gd\nok      2s  res://tests/multiplayer/test_traces_on_server.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      3s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      3s  res://tests/ui/hud/test_chest_window_search.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      3s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_kept_window.gd\nok      3s  res://tests/ui/hud/test_hotbar_wheel.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_search_field_shared.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_station_doing_line.gd\nok      3s  res://tests/ui/hud/test_station_queue_window.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      3s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      3s  res://tests/ui/hud/test_villager_gear_window.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/automation/villagers/test_villager_pen_room.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/hunting/test_summon.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/life/ranching/test_taming.gd\nok      3s  res://tests/multiplayer/test_wild_kinds_on_server.gd\nok      3s  res://tests/multiplayer/test_martens_on_server.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      0s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      3s  res://tests/ui/hud/test_villager_hands_window.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok    435s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           129\nTests            1063\nPassing Tests    1063\nFailing Tests       0\nRisky/Pending       0\nAsserts         23652\nTime           435s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
