@@ -1,63 +1,5 @@
 [
  {
-  "time": "2026-10-13 20:54:48",
-  "epoch": 1791892488,
-  "type": "pass",
-  "title": "통과 — G-210 단계 3 (염전은 바닷가에만 놓인다)",
-  "group": "G-210",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "염전은 바닷가에만 놓인다 — 바닷가가 아니면 미리보기가 빨갛고 놓이지 않으며 까닭이 한 줄 뜬다 (바뀐 곳만: 114개 파일 952개 통과)",
-   "approach": "Placer.plan_spot 에 아이템마다의 자리 규칙 갈래(_why_not_at)를 하나 두었다 — 넷(Stations·Chests·Torches·Beds)이 plan_spot 을 다시 적지 못하게 하는 test_placer 를 지키려고 뼈대 안에서 묻는다. Stations 는 near=sea 인 시설(염전)에 대해 소금 판정과 같은 is_seaside 하나로 바닷가가 아니면 why=\"sea\" 를 돌려준다 → 미리보기 빨강, 우클릭은 놓지 않고 Notice 로 STATION_PLACE_NEEDS_SEA(새 번역 키, ko·en)를 띄운다. 옛 저장본: restore 는 자리 규칙을 묻지 않으므로 바닷가가 아닌 곳의 염전도 지우지 않고 그대로 선다 — 소금은 지금처럼 why_idle(STATION_NEEDS_SEA)로 안 난다 (테스트로 확인). 모든 시설을 맨땅에 놓아 보는 테스트 셋(test_stations · test_placeable_previews · test_twelve_facilities)은 sea_level 을 '어디나 바다'로 넣어 염전도 놓이게 했다. QA 두 가지: drinking.gd pour_held 는 빈 컵을 한 번만 찾는다(c 를 먼저 구해 c < 0), hunger-thirst.md 의 음료 한 모금 줄에 「모금마다 한 잔 몫이 통째로 — 큰 컵일수록 한 잔이 더 채운다」를 덧붙였다.",
-   "why": "",
-   "files": [
-    "game/build/placer.gd",
-    "game/craft/stations/stations.gd",
-    "game/craft/stations/stations.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/player/hunger_thirst/drinking.gd",
-    "spec/05_craft/facilities.md",
-    "spec/02_player/hunger-thirst.md",
-    "game/tests/craft/stations/test_salt_pan.gd",
-    "game/tests/craft/stations/test_twelve_facilities.gd",
-    "game/tests/craft/stations/test_stations.gd",
-    "game/tests/build/test_placeable_previews.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "바닷가가 아니면 **놓이지 않고**, 미리보기가 빨갛고 까닭이 보인다 (테스트). 바닷가 판정은 지금 소금 판정과 **같은 규칙 하나**를 쓴다",
-     "evidence": "test_salt_pan.gd::test_inland_it_is_not_placed_the_preview_is_red_and_the_reason_shows — 같은 자리에서 제작대는 ok, 염전은 ok=false · why=WHY_SEA · is_seaside 거짓 · preview_color==BAD_COLOR, 우클릭해도 시설 0개 · 손에 그대로 · Notice 글자==tr(STATION_PLACE_NEEDS_SEA), 바다를 옆으로 끌어오면 OK_COLOR 로 바뀌고 놓인다. Stations._why_not_at 은 소금 판정(why_idle)과 같은 is_seaside(at) 를 부른다. 일부러 깨 봄: _why_not_at 의 조건을 false 로 바꾸자 이 테스트가 182줄에서 떨어졌다(되돌림 확인). 번역 키 ko·en 둘 다 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "옛 저장본에서 바닷가가 아닌 곳에 놓인 염전은 — 지우지 말고 그대로 두되 소금은 안 난다 (지금처럼). report 에 적는다",
-     "evidence": "test_salt_pan.gd::test_an_old_inland_pan_from_a_save_stays_but_yields_nothing — restore 로 내륙 염전을 되살려 1개 남음 · why_idle==STATION_NEEDS_SEA · tick 3주기 뒤 소금 0. restore 는 _stand 로 바로 세워 자리 규칙을 묻지 않는다. report.json how 에 적혀 있고 facilities.md 에도 한 줄 들어갔다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 음료 배고픔이 모금마다 통째로 드는 것이 spec 에 없다 — … 그 줄에 덧붙여 사람이 보게 하라",
-     "evidence": "spec/02_player/hunger-thirst.md 20째 줄 근처 「음료 한 모금은 …」 줄에 「모금마다 한 잔 몫이 통째로 들어, 큰 컵일수록 한 잔이 더 채운다 (임시)」가 덧붙었다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) pour_held 가 빈 컵을 두 번 찾는다 — … c 를 먼저 구해 c < 0 으로 묻게 한 번으로 줄여라",
-     "evidence": "drinking.gd pour_held 가 var c := Cup.empty_cup_at(...) 를 한 번 구하고 if c < 0 으로 묻는다. 동작은 같고 test_cup_drinks.gd 가 test.log 에서 통과했다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "    2s  res://tests/build/test_rooms.gd\nok      2s  res://tests/build/test_room_overlay.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      2s  res://tests/craft/recipes/test_recipe_tags.gd\nok      2s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      1s  res://tests/craft/stations/test_cook_table.gd\nok      2s  res://tests/craft/stations/test_loom.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_barn_window.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok    445s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           128\nTests            1068\nPassing Tests    1068\nFailing Tests       0\nRisky/Pending       0\nAsserts         72109\nTime           446s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "830b8e68"
- },
- {
   "time": "2026-10-13 21:07:25",
   "epoch": 1791893245,
   "type": "fail",
@@ -8620,6 +8562,36 @@
  {
   "time": "2026-10-19 23:22:54",
   "epoch": 1792419774,
+  "type": "start",
+  "title": "루프 시작",
+  "report": {
+   "problem": "해독제를 전제한 사람 줄 두 곳(gathering.md · jungle-ruins.md) 바로 밑에 「약은 사람 결정 2026-10-19 로 넷만 — 해독제는 지금 없다」를 덧붙이고 그것을 보는 테스트를 두었다 — 바뀐 곳만 4개 파일 26개 통과",
+   "approach": "약이 사람 결정 2026-10-19 로 넷(연고 · 화상 연고 · 붕대 · 의료 키트)만 남았는데, 다른 spec 두 줄이 아직 해독제를 전제했다. 사람 줄은 그대로 두고 그 바로 밑 들여쓴 줄에 어긋남과 「남은 약 정리는 G-254-2 몫」을 적었다. 테스트는 사람 줄이 남아 있는지, 그 다음 줄에 안내가 붙었는지를 두 파일에서 본다.",
+   "why": "",
+   "files": [
+    "spec/04_life/gathering.md",
+    "spec/09_expedition/jungle-ruins.md",
+    "game/tests/craft/stations/test_apothecary_spec_line.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "다른 spec 에 해독제를 전제한 줄이 남았다 — 사람 결정 2026-10-19 로 약은 넷만 남는데 spec/04_life/gathering.md 34줄(「기본 해독제는 재배 작물로 된다」) · spec/09_expedition/jungle-ruins.md 7줄(보급: 해독제)이 아직 해독제를 전제한다. 사람 줄은 지우지 말고, G-254-2 에서 약을 뺄 때 그 줄 곁에 「약은 사람 결정 2026-10-19 로 넷만 — 해독제는 지금 없다」를 덧붙여 어긋남을 드러내라",
+     "evidence": "두 사람 줄은 글자 그대로 남았고(diff 는 덧붙임 두 줄뿐), 각 줄 바로 밑 들여쓴 줄에 안내 문장이 그대로 들어갔다. test_apothecary_spec_line.gd::test_lines_assuming_an_antidote_carry_the_note 가 두 파일에서 사람 줄이 남았는지(assert_ne at -1)와 다음 줄에 안내 문장이 있는지를 본다. 일부러 jungle-ruins.md 의 안내 줄을 지우고 돌리니 그 테스트가 떨어졌다(4개 중 1개 실패) — 되돌렸다. spec 의 다른 해독제 언급은 facilities.md 밖에 없다. 전체 테스트 502파일 3757개 통과, guard 통과. 두 md 54줄 · 22줄"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "    1s  res://tests/core/net/test_steam_api.gd\nok      0s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      0s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           502\nTests            3757\nPassing Tests    3757\nFailing Tests       0\nRisky/Pending       0\nAsserts        169896\nTime           726s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-19 23:45:11",
+  "epoch": 1792421111,
   "type": "start",
   "title": "루프 시작",
   "report": {
