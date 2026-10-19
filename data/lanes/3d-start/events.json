@@ -1,61 +1,5 @@
 [
  {
-  "time": "2026-10-13 15:54:47",
-  "epoch": 1791874487,
-  "type": "stop",
-  "title": "루프 끝 — 목록을 모두 처리했다",
-  "group": "G-207",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "조리용 화로는 (다) 레시피 없이 두고 까닭을 spec 에 적었다 — 부엌(조리대 + 화로)이 서고 그 방 조리대가 같은 방 상자의 밀가루로 밀빵을 굽는다(test_kitchen 3 통과). 빈손 한 바퀴의 걷기를 다시 겨누게 고쳐 맷돌을 돌 20 · 40kg 으로 되돌렸다(test_from_empty_hands 2 통과)",
-   "approach": "화로: 셋 가운데 (다)를 골랐다. 까닭 — (가) 조리대로 합치면 rooms.md 의 주방 규칙(조리대 + 화로 둘 다 · 수용 기준 「조리대만 있고 화로가 없는 공간 → 주방이 아니다」)을 루프가 뒤집게 되고, (나) 굽기 · 끓이기를 가르는 것은 사람이 정할 게임 설계를 루프가 지어내는 일이다. 그래서 화로는 레시피 없이 부엌의 핵심 오브젝트로 남기고, facilities.md 미정에 그 까닭(사람이 몫을 정한다 · 음식은 조리대 · 화로 창은 「만들 것이 없다」)을 적었다. stations.json 의 메모도 같은 말로 고쳤다. test_kitchen 이 막힌 방에 조리대 + 화로를 놓아 주방이 서는지(화로를 치우면 잡실), 그 방 조리대가 같은 방 상자의 밀가루 3 으로 밀빵을 굽는지, 화로 레시피가 0 이고 창이 STATION_NO_RECIPES 를 보이는지 확인한다. 앞 단계 QA(맷돌 값): 맷돌을 돌 20 · 40kg 으로 되돌리고 빈손 한 바퀴의 곡괭이 줄에 바위 일곱을 더했더니 똑같이 떨어졌다. 걸음마다 높이를 찍어 보니 까닭은 짐 무게가 아니었다 — 5-2 에서 제작대 옆(36.5, 1)에서 연구대 자리(6, -28)로 한 번 겨눠 곧장 걷는데, 길에 선 용광로 모서리에 스쳐 비킨 방향 그대로 물가(z=-40) 너머로 걸어가 떨어졌다. 짐 219kg 을 지고 같은 길을 따로 걸으면 멀쩡히 닿았다. 그래서 _walk_to 가 WALK_LEG(90 물리 프레임)마다 선 자리에서 목표로 다시 돌아서고, 닿았나는 거리로만 가르되 땅 아래로 떨어졌으면(_fell) 닿은 것으로 치지 않게 고쳤다(전에는 떨어지는 동안 x · z 가 다가가 「닿음」이 될 수 있었다). 그 뒤 맷돌 돌 20 · 40kg 그대로 test_from_empty_hands 2 테스트 통과(582초). 앞 단계 QA(음식 재료 표): facilities.md 미정에 「음식별 재료 표 — 사람 표의 음식 줄이 spec 에 옮겨지지 않았다, 지금 줄은 G-205.1 · G-207.3 에 루프가 지은 임시」를 두었다. 돌린 것: changed_tests 그물 92개 파일 — test_from_empty_hands 를 뺀 91개를 한 번(842 테스트 통과, 147초), test_from_empty_hands 를 따로 한 번(2 테스트 통과, 582초). 전체는 돌리지 않았다.",
-   "why": "WALK_LEG 90 물리 프레임(1.5초) — 테스트 걷기가 다시 겨누는 간격. 스쳐 비킨 방향이 물가까지 가기 전에 바로잡힐 만큼; WALK_FALL 2.0m — 땅보다 이만큼 아래면 떨어진 것으로 본다; 맷돌 돌 20 · 40kg — 다른 시설과 견줄 값으로 되돌렸다. 원래부터 임시; 빈손 한 바퀴의 곡괭이 줄에 바위 일곱 — 맷돌 돌 20 몫",
-   "files": [
-    "spec/05_craft/facilities.md",
-    "game/craft/stations/stations.json",
-    "game/craft/recipes/workbench.json",
-    "game/player/inventory_hotbar/weights.json",
-    "game/tests/craft/test_from_empty_hands.gd",
-    "game/tests/craft/stations/test_kitchen.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "`cook_stove` 에도 레시피가 없다 — 부엌 방은 조리대 + 화로 **둘**을 요구하는데(rooms.json) 화로는 할 일이 없다",
-     "evidence": "(다)를 골라 화로를 일부러 비워 두었다. test_kitchen.gd test_the_stove_has_no_recipes_on_purpose 가 for_station('cook_stove').size()==0 이고, 화로 창을 열면 empty_label 이 STATION_NO_RECIPES 로 뜨는지 확인한다(ko.po · en.po 에 키가 있다)"
-    },
-    {
-     "ok": true,
-     "criterion": "셋 중 하나를 골라 report 에 까닭을 적고 그대로 한다: (가) 사람 표대로 **조리대 하나로 합치고** 부엌 방의 요구에서 화로를 뺀다 · (나) 화로에 **굽기 · 끓이기**를 나눠 준다 (조리대는 손질, 화로는 열) · (다) 지금처럼 비워 두고 **왜 두는지** spec 에 적는다",
-     "evidence": "report.how 에 (다)를 고른 까닭을 적었다: (가)는 rooms.md 의 주방 규칙을 뒤집고, (나)는 게임 설계를 지어내는 일이다. facilities.md 「미정」의 낡은 줄('화로의 몫 미정')은 까닭을 적은 줄로 바꾸었고, stations.json _twelve 메모도 같은 말로 맞췄다. 사람 결정 줄은 지워지지 않았고 md 는 132줄이다"
-    },
-    {
-     "ok": true,
-     "criterion": "어느 쪽이든 부엌 방이 **지금처럼 서고**, 그 방에서 음식이 만들어진다 (테스트)",
-     "evidence": "test_the_table_and_the_stove_make_a_kitchen 이 막힌 방에서 조리대만 두면 misc, 화로를 더하면 kitchen, 화로를 vanish 하면 다시 misc 가 되는지 본다. test_food_is_made_in_the_kitchen 은 방 밖에 선 플레이어의 빈 가방과 같은 방 상자의 밀가루로 can_start → start_craft → craft_tick → collect 을 거쳐 밀빵 1 이 나오고 상자의 밀가루가 0 이 되는지 확인한다. 전체 실행에서 통과했다(test.log 206줄)"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 맷돌 값을 테스트에 맞춰 낮췄다 — … test_from_empty_hands.gd 5-2 의 물가 걷기가 무게로 느려져도 목표에 닿게 … 고친 뒤, 맷돌 값을 다른 시설과 견줄 만한 값(돌 20)으로 되돌릴지 보라",
-     "evidence": "_walk_to 가 WALK_LEG(90프레임)마다 목표로 다시 돌아서고, 닿았나는 거리로 가르며 _fell() 이면 닿은 것으로 치지 않는다. 맷돌은 돌 20 · 40kg 으로 되돌렸고(workbench.json · weights.json · facilities.md), 곡괭이 줄에 바위 일곱과 돌 단언 22→37 을 더했다. 전체 실행에서 test_from_empty_hands 가 통과했다(581s). 새 상수는 '임시'로, 맷돌 값의 내력은 _temporary 에 적혀 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 음식 재료 표가 spec 에 없다 — … facilities.md 「미정」에 「음식별 재료 표 — 사람 표의 음식 줄이 spec 에 옮겨지지 않았다, 지금 줄은 G-205.1 · G-207.3 에 루프가 지은 임시」 한 줄을 두어 다음 단계 기준이 없는 표를 가리키지 않게 하라",
-     "evidence": "facilities.md 미정에 '음식별 재료 표 — 사람 표의 음식 줄이 spec 에 옮겨지지 않았다. 지금 조리대 줄은 G-205.1 · G-207.3 에 루프가 지은 임시다' 줄이 생겼다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "/build/test_build_piece_tidy.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      0s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      0s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/life/medicine/test_medicine.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok    581s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           311\nTests            2434\nPassing Tests    2434\nFailing Tests       0\nRisky/Pending       0\nAsserts        126660\nTime           581s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-13 19:43:27",
   "epoch": 1791888207,
   "type": "start",
@@ -10002,5 +9946,62 @@
    "decision": null
   },
   "test": "tep_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_back.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\n\n================ 떨어진 파일: res://tests/ui/theme/test_ui_theme.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/ui/theme/test_ui_theme.gd\n* test_the_theme_is_the_project_theme\n* test_colors_gaps_slot_size_and_font_live_in_the_theme\n* test_no_ui_scene_writes_its_own_color_gap_or_font\n* test_no_hud_script_writes_a_color_value\n    [Failed]:  res://ui/hud/villager_gear_page.gd 가 색 값을 적는다: const FAR_TINT := Color(0.55, 0.55, 0.55, 0.8)\n      at line 98\n* test_window_scenes_do_not_write_sizes_the_theme_holds\n* test_the_stamina_bar_width_is_written_once\n* test_the_stamina_bar_follows_its_own_width\n* test_every_window_uses_the_theme_slot_size\n* test_every_window_title_uses_the_theme_font_size\n* test_every_window_box_uses_the_theme_gap\n* test_slot_colors_come_from_the_theme\n10/11 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/ui/theme/test_ui_theme.gd\n- test_no_hud_script_writes_a_color_value\n    [Failed]:  res://ui/hud/villager_gear_page.gd 가 색 값을 적는다: const FAR_TINT := Color(0.55, 0.55, 0.55, 0.8)\n          at line 98\n\nTotals\n------\nScripts               1\nTests                11\nPassing Tests        10\nFailing Tests         1\nAsserts           8631/8632\nTime              0.879s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           498\nTests            3721\nPassing Tests    3720\nFailing Tests       1\nRisky/Pending       0\nAsserts        167368\nTime           731s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/ui/theme/test_ui_theme.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-19 17:46:28",
+  "epoch": 1792399588,
+  "type": "pass",
+  "title": "통과 — G-249 단계 2 (일시중지 · 재개 · 부르기)",
+  "group": "G-249",
+  "step": "2",
+  "attempt": "2",
+  "report": {
+   "problem": "주민 창에 「일시중지 / 재개」 · 「부르기」 단추 — 멈추면 그 자리에 서고(욕구는 흐른다 · 멈춤은 저장본에 담김), 부르면 플레이어 곁 1.5m 로 걸어와 기다린다. 앞 시도의 테마 검사 실패(FAR_TINT 색 값)도 고쳤다. 바뀐 곳만 157 파일 · 1123 개 통과",
+   "approach": "전체 검사에서 앞 단계(G-249.1)의 villager_gear_page.gd 가 const FAR_TINT := Color(...) 로 HUD 에 색 값을 직접 적어 test_ui_theme 이 떨어졌다 — 색을 테마 Palette/far_tint 로 옮기고 UiTheme.color 로 읽게 했다. 일시중지는 Villager.paused 하나로 쥔다: 멈추면 하던 걸음 · 자러 · 먹으러 · 탄 가지러 가던 길을 놓고(손은 그대로) 일 · _mind_night · _mind_meal · _mind_ammo 를 건너뛰되 _rest_tick · _needs_tick 은 그대로 돈다. 부르기는 멈춘 채 따로 쥔 걸음(_call_walk)으로 부른 자리까지 걷고 CALL_NEAR(1.5m) 안이면 선다 — 그 사람이 움직여도 따라가지 않는다. 멀티는 PAUSE · SUMMON 을 서버에 바라고 서버는 act_for 의 at(바란 사람 몸 자리)으로 부른다. paused 는 멈췄을 때만 담고, 오던 걸음은 담지 않는다. ui_shots villagers_gear 에 목록 아래 두 단추가 보이는 것을 ko · en 그림으로 확인했다.",
+   "why": "Villager.CALL_NEAR 1.5m — 부른 사람 곁에 서는 거리. 몸 둘이 맞닿지 않고 한 걸음 남짓; 부른 뒤 플레이어가 움직여도 따라오지 않는다 (수용 기준의 임시); 멈춘 동안에도 싸움에 나서기가 켜져 있으면 무는 짐승과는 싸운다 · 자던 주민을 멈추면 일어나 선다 · 멈춘 동안 밤에도 자러 가지 않는다 (이 세션이 정했다); 테마 Palette/far_tint (0.55, 0.55, 0.55, 0.8) — 멀어서 넣고 뺄 수 없는 칸의 회색",
+   "files": [
+    "game/automation/villagers/villager.gd",
+    "game/automation/villagers/villagers.gd",
+    "game/ui/hud/villager_window.gd",
+    "game/ui/hud/villager_gear_page.gd",
+    "game/ui/theme/naru_theme.tres",
+    "game/core/debug/ui_shots.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/automation/villagers/test_villager_pause.gd",
+    "game/tests/settings/save/test_round_trip.gd",
+    "spec/07_automation/villager-gear.md",
+    "spec/07_automation/npc-villagers.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "주민 창에 「일시중지 / 재개」 단추 — 멈추면 하던 일을 그 자리에서 멈추고 선다(손은 그대로). 배고픔 · 목마름 · 잠 · 스트레스는 계속 흐른다. 재개하면 하던 일로 돌아간다. 멈춤은 저장본에 담긴다",
+     "evidence": "test_villager_pause.gd — test_pause_stops_work_on_the_spot_and_needs_keep_flowing 가 걷기만 하는 일(Stride)의 틱 수가 멈춘 120프레임 동안 그대로인지, 자리가 0.05m 안인지, 손 칸(목재 5)이 그대로인지, hunger · thirst · sleep 이 줄어드는지, 재개 뒤 틱이 다시 오르는지 본다. test_stress_keeps_flowing_while_paused 가 스트레스 상승을, test_a_paused_villager_does_not_go_to_eat 가 먹으러 안 가는 것을 본다. test_window_buttons_pause_resume_and_summon 가 정보 · 장비 두 탭에서 단추가 보이고 누르면 멈춤/재개 · 글자가 「재개」로 바뀌는지 본다. 저장: test_pause_is_saved(to_dict/from_dict · 옛 저장본은 일한다) + test_round_trip.gd 가 멈춘 나무꾼을 디스크를 거쳐 통째로 비교한다. save.md 에 「일시중지」 담는다고 적었고, 담지 않는 오던 걸음도 까닭과 함께 적혀 있다. 전체 테스트 3721개 통과(test.log)"
+    },
+    {
+     "ok": true,
+     "criterion": "「부르기」 단추 — 하던 일을 멈추고 플레이어에게 걸어와 곁에 서서 기다린다(= 일시중지 상태). 플레이어가 움직여도 따라오지는 않는다(임시). 재개하면 일하러 간다 (테스트: 부르기 → 플레이어 곁 2m 안에 닿는다)",
+     "evidence": "test_summon_walks_to_the_player_and_waits_there 가 8m 넘게 떨어진 플레이어를 부른 뒤 가로 거리 2m 안에 닿는지 보고, 그다음 멈춰 서는지(coming false · WHY_PAUSED), 오는 동안 일 틱이 그대로인지, 플레이어를 4m 옮겨도 0.05m 안에 머무는지, 재개하면 일 틱이 다시 오르는지 본다. 일부러 깨 봤다: _call_walk.step 결과에 0 을 곱하면 이 테스트와 test_server_summons_to_the_asking_participant 가 「지금 12.95m」 · 「13.04m」로 떨어진다(본 뒤 되돌렸다 · diff stat 같음). 멀티(서버 act_for · 참가자 ask · mirror)도 테스트가 있다. CALL_NEAR 1.5m 은 「임시」라고 적혀 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "ui_shots 에 소지품 칸 · 단추가 보이는 장비 탭 한 장 (villagers_gear 갱신)",
+     "evidence": "harness/shot.sh --ui 로 villagers_gear 를 ko · en 두 장 직접 찍어 봤다 — 장비 탭에 「소지품/Belongings」 6칸(목재 24 · 물뿌리개 · 밀 씨앗 6)이 보이고, 왼쪽 목록 아래에 「일시중지/Pause」 · 「부르기/Call over」 단추가 잘리거나 겹치지 않고 보인다. ui_shots.gd 의 자리 설명도 갱신했다"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "멀티 길(PAUSE · SUMMON 을 서버에 바라고, 서버는 act_for 의 at 으로 부른다 · mirror 가 paused 를 받는다) — 기준에 없지만 그동안 주민 창의 다른 동작과 같은 길이라 맞췄다",
+    "앞 시도의 테마 검사 실패(FAR_TINT 색 값)를 고쳤다 — 테마 Palette/far_tint 로 옮겼다"
+   ]
+  },
+  "test": " 2s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      0s  res://tests/core/tools/test_no_move_to_trash.gd\nok      0s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      0s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_back.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/world/map/test_map_memory.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           498\nTests            3721\nPassing Tests    3721\nFailing Tests       0\nRisky/Pending       0\nAsserts        167368\nTime           722s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "d8e62bf0"
  }
 ]
