@@ -4325,7 +4325,7 @@
   - 기준: 다른 spec 에 해독제를 전제한 줄이 남았다 — 사람 결정 2026-10-19 로 약은 넷만 남는데 spec/04_life/gathering.md 34줄(「기본 해독제는 재배 작물로 된다」) · spec/09_expedition/jungle-ruins.md 7줄(보급: 해독제)이 아직 해독제를 전제한다. 사람 줄은 지우지 말고, G-254-2 에서 약을 뺄 때 그 줄 곁에 「약은 사람 결정 2026-10-19 로 넷만 — 해독제는 지금 없다」를 덧붙여 어긋남을 드러내라
 
 ## [ ] G-255 판이 다르면 멀티에 들어가지 않는다
-- 차선: 3d-start
+- 차선: 3d-start · 시작 2026-10-20 00:54
 - spec: spec/11_multiplayer/netcode.md
 - **사람이 2026-10-20 봤다**: 「이동속도가 너무 빠른 애들은 안맞음」 · 「마취탄으로 마취가 안된다 ? -> 테이밍이 안된다」
 - 이 세션이 2026-10-20 봤다: 그때 맥은 **참가자**였다(godot.log 00:51 — net_session.gd `_welcome`). 호스트는 옛 판이었다 — 윈도우 시험판은 2026-10-17(243c2a30), 맥 플레이 폴더는 2026-10-19. 로그에 `The rpc node checksum failed` · `_animals_seen: Method expected 3 argument(s), but called with 2` 470 번 · `_hunt_said: Cannot convert argument 1 from String to Dictionary` — 짐승 자리 · 사냥 결과가 참가자에게 하나도 안 갔다. 그래서 참가자 화면의 짐승은 서버 자리와 어긋나(빠른 짐승일수록 크게) 안 맞고, 마취 · 포획 결과도 안 왔다(짐작 — 같은 판끼리 다시 해 봐야 확정). 들어갈 때 판을 견주는 곳이 없다(net_session.gd `_hello` 는 캐릭터만 보낸다)
