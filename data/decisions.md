@@ -14,12 +14,6 @@
 ---
 
 
-## 물음 — 차선 3d-start(7e02651f) 을 3d-lane2 에 합치지 못했다
-- 물은 때: 2026-10-19 18:42:52
-- 어디서: 차선 합치기 (3d-lane2)
-- 무엇: 부딪힌다: game/core/debug/ui_shots.gd game/core/debug/ui_shots_kit.gd game/ui/hud/slot_drop.gd — 이 줄기(3d-lane2)에서 `git merge 3d-start` 을 손으로 풀어 커밋해 달라. 풀릴 때까지 이 차선은 3d-start 없이 돈다
-- **사람이 답할 것**: 
-
 ## 물음 — 차선 3d-lane2(103f5c5f) 을 3d-start 에 합치지 못했다
 - 물은 때: 2026-10-19 21:00:37
 - 어디서: 차선 합치기 (3d-start)
@@ -31,4 +25,10 @@
 - 막힌 단계: 2. 약은 넷만 — **이 단계만 떼었다. G-254 의 나머지 단계는 루프가 이어 한다**
 - 통과한 단계: 1
 - 왜 막혔나: 원정 보급의 해독제를 어떻게 할까요? 2026-10-19에 약을 넷만 남기라고 하셔서 해독제도 뺐습니다. 그런데 사람 결정 줄 두 곳에 아직 해독제가 있습니다 — spec/09_expedition/jungle-ruins.md 7줄 「보급: 해독제」와 spec/04_life/gathering.md 34줄 「기본 해독제는 재배 작물로 된다」. 이 둘을 지울까요, 아니면 원정 단계에서 해독제를 다시 들일까요? 사람 결정 줄이라 루프는 지우지 않았습니다.
+- **사람이 답할 것**: 
+
+## 물음 — 차선 3d-start(3b16e76c) 을 3d-lane2 에 합치지 못했다
+- 물은 때: 2026-10-19 21:56:13
+- 어디서: 차선 합치기 (3d-lane2)
+- 무엇: 부딪힌다: game/core/debug/ui_shots.gd game/core/debug/ui_shots_kit.gd game/i18n/en.po game/i18n/ko.po game/ui/hud/slot_drop.gd — 이 줄기(3d-lane2)에서 `git merge 3d-start` 을 손으로 풀어 커밋해 달라. 풀릴 때까지 이 차선은 3d-start 없이 돈다
 - **사람이 답할 것**: 
