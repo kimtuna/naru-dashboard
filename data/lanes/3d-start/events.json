@@ -1,63 +1,5 @@
 [
  {
-  "time": "2026-10-14 22:25:33",
-  "epoch": 1791984333,
-  "type": "pass",
-  "title": "통과 — G-221 단계 1 (설계 — 무엇이 어디서 돌고 무엇을 맞추나)",
-  "group": "G-221",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "멀티 설계 — spec/11_multiplayer/netcode.md 에 상태를 바꾸는 자리 29곳의 표(정한다 · 맞추는 길 · 고칠 파일)를 적고 roadmap 「빼는 것: 멀티」를 사람 결정 2026-10-14 로 고쳤다. 코드는 바꾸지 않았다 (바뀐 곳에 걸리는 테스트 98파일 828개 통과)",
-   "approach": "코드를 영역 셋(플레이어 · 전투 / 세계 · 건축 · 제작 / 농사 · 짐승 · 주민 · 창)으로 나눠 상태를 바꾸는 함수를 다 훑었다. 드러난 뼈대 문제 셋: ① 섬(test_island.gd)이 Player 하나를 세우고 시스템 서른 개쯤이 저마다 var player 하나를 쥔다 ② 모든 시스템의 _unhandled_input 이 조준하고 곧바로 상태를 바꾼다 — 입력과 실행이 붙어 있다 ③ 상자 · 시설 창은 _open 하나라 한 사람만 연다. 그래서 설계는: 기본은 서버가 정한다(참가자는 바라는 일만 RPC) · 예외는 자기 몸(이동 · 시선 · 등반)과 손맛 미니게임(스킬체크 · 낚시 게이지 — 결과만 보낸다) · 무작위는 서버에서만 굴린다(짐승 · 주민 · 산책 · 물고기의 randomize/randi 는 참가자가 결과만 받으니 시드를 맞출 필요가 없다) · 캐릭터는 들어올 때 사본을 서버에 건네고 서버가 바꾼 것을 돌려받아 각자 기계에 저장 · 세계는 서버장 기계. 접속은 game/core/net/ 한 곳에서 ENet(루프 테스트) · Steam(GodotSteam SteamMultiplayerPeer, 앱 ID 480, 로비 데이터에 방 코드)을 갈아 끼운다. permissions.md · listen-server.md 에 사람 결정(서버장 = 길드장 · 나머지 권한 없음 · UI 따로 · Steam 로비 + 방 코드)을 옮겨 적었다.\n\n다음 단계로 목록에 붙일 것 (이 표대로):\n2. 접속 한 곳 — game/core/net/ 에 ENet 피어 · 서버 열기 · 들어가기 · 정원 12(13번째 거부) · 서버장 끊김 시 저장 후 메인으로. headless 둘(서버 · 참가)을 붙이는 테스트 틀 (한 프로세스 안 SceneTree.set_multiplayer 두 갈래로 빠른 단위 테스트도 함께)\n3. 캐릭터 여럿 — peer 마다 Player 를 생성(MultiplayerSpawner) · 몸 · 시선 · 등반 동기화 · 시스템들의 var player 를 「누가」 인자로 바꾸는 뼈대 (입력 → 바라는 일 → do_*(who) 갈라 놓기)\n4. 캐릭터 맡기기 — 들어올 때 CharacterData 사본을 서버로, 가방 · 장비 · 손 만들기 · 고른 칸 RPC, 바뀐 것을 주인에게 돌려 각자 저장\n5. 시간 · 지도 — 서버 시계 주기 맞추기 · 날 바뀜 일은 서버만 · 지도는 모든 몸 둘레를 합쳐 밝힌다\n6. 채집 — 나무 · 바위 치기 · 재생 · 약초(스킬체크 결과 RPC) · 땅에 떨어진 것 생성 · 밟아 줍기 서버 판정\n7. 건축 · 놓기 — 토대 · 벽 · 문 · 계단 · 무너짐 · 방 이름 · 상자 · 침대 · 가구 · 횃불 · 앵커 · 선착장\n8. 상자 안 — 여럿이 같이 열기(_open 을 사람마다) · 칸 옮기기 · 정렬 · 채우기 RPC\n9. 제작 시설 — 대기열 · 개수 · 꺼내기 · 먹이 · 가축 RPC, 시설 틱은 서버만, 연 사람마다 창 갱신\n10. 농사 — 밭 · 심기 · 물 · 비료 · 수확 RPC, 작물 칸 동기화\n11. 짐승 · 사냥 · 해체 · 포획 · 낚시(게이지는 각자, 물고기는 서버가 굴림)\n12. 주민 — 몸 생성 · 자리 동기화, 직업 · 거주지 · 반경 · 떠나보내기 RPC, 주민 창은 서버 표로\n13. 몸 상태 · 전투 · 죽음 — 배고픔 · 목마름 · 버프 · 독 서버 틱, 먹기 · 마시기 · 약 RPC, 휘두르기 · 쏘기 · 탄창, 맞기는 서버만, 데스 상자\n14. 권한 — 서버장이 길드장 · 나머지는 월드 변경 거부 · 길드장이 푸는 권한 UI (임시 묶음: 건축 · 놓기 / 상자 / 시설 / 농사 / 채집 / 주민 / 배)\n15. 배 · 월드 설정 — 배는 서버장만 타고 다 같이 건너간다(임시), 월드 설정 동기화\n16. Steam — GodotSteam(MIT, THIRD_PARTY.md) · 로비 + 방 코드 · 앱 ID 480 피어를 접속 한 곳에 끼운다\n17. 메뉴 — 방 열기 · 방 코드로 들어가기 화면\n\n덧붙여: spec/06_build/building.md 102줄 「도구함(건축 권한)은 나중에 — 멀티용」(사람 결정 2026-09-24)은 이번 「서버장이 길드장 · 권한 UI」와 겹친다. 사람 결정 줄이라 지우지 않았다 — 권한 단계에서 둘의 관계를 볼 것.\n\n테스트: 이 단계는 코드를 안 바꿨다. changed_tests.py 가 고른 98파일을 돌렸다 — test.log 「Tests 828 · Passing 828 · Failing 0」(바뀐 곳만, 전체 아님).",
-   "why": "배는 서버장만 타고 다 같이 건너간다 — 섬을 하나만 돌리기 위해서다. 흩어진 섬을 함께 돌리는 길은 미정 (netcode.md 미정); 권한 단위 묶음 「건축 · 놓기 / 상자 / 시설 / 농사 / 채집 / 주민 / 배」 — permissions.md 의 권한 단위가 미정이라 표의 자리를 묶어 둔 것",
-   "files": [
-    "spec/11_multiplayer/netcode.md",
-    "spec/00_core/roadmap.md",
-    "spec/11_multiplayer/listen-server.md",
-    "spec/11_multiplayer/permissions.md",
-    "spec/README.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "상태를 바꾸는 모든 곳을 훑어 표로 적는다 — 플레이어 · 가방 · 장비 · 채집(나무 · 바위 · 약초) · 땅에 떨어진 것 · 건축 · 놓기 · 상자 · 제작 시설(대기열 · 버퍼) · 농사 · 동물 · 주민 · 시간 · 배고픔 · 체력 · 전투 · 데스 상자 · 저장. 자리마다 「서버가 정한다 / 각자 정한다」 · 맞추는 길(RPC · 동기화 · 생성) · 고칠 파일을 적는다",
-     "evidence": "spec/11_multiplayer/netcode.md 36~65줄 표 28줄 — 나열된 자리를 모두 담았고(목장 · 낚시 · 지도 · 방 이름 · 섬 열기/배 · 월드 설정 등도 더함) 각 줄에 정한다 · 맞추는 길 · 고칠 파일이 있다. 표의 game/ 파일 경로 58개를 하나하나 확인했더니 모두 있다. game/ 아래 코드 폴더 전부를 표와 견줘 보니 빠진 것은 world/water(겉모습만) · core/debug(개발 도구)뿐이고, 마시기는 player/hunger_thirst/* 줄에 들어 있다. 「_open 하나뿐」(chest.gd · death.gd · stations.gd) · 「var player 하나」(26곳) · randomize()(animal · villager · stroll) 주장도 코드에서 맞는지 확인했다"
-    },
-    {
-     "ok": true,
-     "criterion": "**서버가 정한다**가 기본이다 (리슨 서버 — 서버장 기계가 세계를 돌린다). 참가자는 입력 · 바라는 일만 보내고 서버가 해 보고 결과를 돌려준다",
-     "evidence": "netcode.md 12~17줄 「기본 — 서버가 정한다」. 예외(자기 몸 · 손맛 미니게임 결과)를 까닭과 함께 적었고, 표에서 '각자'는 몸 · 등반 줄뿐이다. 29~30줄에 입력과 실행을 가르는 길(aimed_* → do_*(who))을 적었다"
-    },
-    {
-     "ok": true,
-     "criterion": "캐릭터는 각자 기계에 남는다(character-world.md — 캐릭터를 데려간다). 세계는 서버장 기계에 저장된다",
-     "evidence": "netcode.md 19~23줄 — CharacterData 사본을 서버에 건네고 바뀐 것을 주인에게 돌려 자기 기계에 저장, WorldData 는 서버장 기계에만. 표의 '저장' 줄(65줄)도 같다"
-    },
-    {
-     "ok": true,
-     "criterion": "결과는 spec/11_multiplayer/ 에 새 문서(netcode.md 등, 150줄 아래)로. roadmap.md 의 「빼는 것: 멀티」를 사람 결정 2026-10-14 로 고쳐 적는다",
-     "evidence": "netcode.md 82줄 새 문서. roadmap.md 빼는 것 목록에서 「멀티」를 빼고 「멀티는 이제 넣는다 (사람 결정 2026-10-14 …)」를 적었다. 옛 「멀티를 뺀 이유」는 지우지 않고 하위 줄로 남겼다. README · listen-server · permissions 에도 이어 적었고 모두 150줄 아래(가장 긴 것 82줄)"
-    },
-    {
-     "ok": true,
-     "criterion": "이 단계는 코드를 바꾸지 않는다 — 다음 단계들을 이 표대로 나눠 목록에 붙일 것을 report 에 적는다",
-     "evidence": "git status 에서 바뀐 것은 current.md 와 spec/ 아래 md 다섯 개뿐이고 game/ 은 그대로다. report.json how 에 2~17단계(접속 · 캐릭터 여럿 · 캐릭터 맡기기 · 시간/지도 · 채집 · 건축 · 상자 · 시설 · 농사 · 짐승/낚시 · 주민 · 몸/전투/죽음 · 권한 · 배/설정 · Steam · 메뉴)를 표의 줄에 맞춰 적었다. test.log 는 바뀐 곳만 98파일, 828개 통과, guard 통과"
-    }
-   ],
-   "issues": [
-    "권한 단계에서 「도구함」 줄과 맞춰 볼 것 — spec/06_build/building.md 102줄 「도구함(건축 권한) · 부패는 나중에 — 멀티용이다 (사람 결정 2026-09-24)」가 이번 「서버장이 길드장 · 권한 UI」와 겹친다. 사람 결정 줄이라 지우지 말고, 권한 단계(report 의 14번)에서 permissions.md 에 「도구함은 권한 UI 와 어떤 관계인가」를 한 줄 적어 이어라"
-   ],
-   "good": []
-  },
-  "test": "recipes/test_recipe_tags.gd\nok      2s  res://tests/craft/stations/test_station_queue.gd\nok      2s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/life/food/test_food.gd\nok      3s  res://tests/life/hunting/test_body_parts.gd\nok      3s  res://tests/ui/hud/test_map_coords.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      4s  res://tests/ui/hud/test_room_names.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      3s  res://tests/ui/hud/test_station_queue_window.gd\nok      3s  res://tests/ui/hud/test_room_window.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/craft/stations/test_cook_table.gd\nok      2s  res://tests/craft/stations/test_loom.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok    340s  res://tests/automation/villagers/test_villager_g217_real_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            98\nTests             828\nPassing Tests     828\nFailing Tests       0\nRisky/Pending       0\nAsserts         61613\nTime           340s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "db180a9f"
- },
- {
   "time": "2026-10-14 23:00:48",
   "epoch": 1791986448,
   "type": "pass",
@@ -9703,5 +9645,81 @@
   },
   "test": "--- 바뀐 곳만: 2 개 ---\ntest.sh: 파일 2 개를 6 개씩 한꺼번에 돌린다\nok     12s  res://tests/perf/test_net_stutter.gd\nok     14s  res://tests/perf/test_net_measure.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             2\nTests               7\nPassing Tests       7\nFailing Tests       0\nRisky/Pending       0\nAsserts           128\nTime           14s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "c2e97f7a"
+ },
+ {
+  "time": "2026-10-20 18:15:43",
+  "epoch": 1792487743,
+  "type": "pass",
+  "title": "통과 — G-267 단계 2 (고친다 — 모습은 잃어도 되는 길로 · 받는 쪽은 사이를 메운다)",
+  "group": "G-267",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "짐승 · 주민 자리 · 보는 쪽을 unreliable_ordered 자리 소식으로 떼고 받는 쪽은 100 ms 뒤를 메워 그린다 — 잃음 5% 1분 판 끊김 짐승 12/분 · 주민 12/분 → 0 · 0, 받음 4.5 → 2.4 KB/s. 바뀐 곳 그물 176 파일 1344 개 통과 (전체는 돌리지 않았다)",
+   "approach": "1단계는 reliable 머리 막힘을 짐작대로 보였다. 자리 · 보는 쪽(MOTION_KEYS)을 reliable 지문에서 빼고(_still) 서버가 0.1초마다 이 섬 사람에게 전부를 바이트 줄(한 마리 20 B, 50 마리씩)로 unreliable_ordered 로 보낸다(_animals_moved · _folk_moved, 서버 시계를 붙인다). 처음 세울 때 · 이름 · 체력 · 잡힘 · 사라짐은 reliable 그대로. 받는 그림은 NetInterp 에 넣어 「서버 시계 + 가장 짧았던 늦음」보다 100 ms 뒤를 앞뒤 사이로 메워 그린다 — 늦게 온 것은 버리고, 다음 것이 늦으면 0.25초까지 마지막 빠르기로 잇는다. 그런데 짧은 판에서 잃음 5% 가 272 B/s 로 말라 2.8초 섰다 — ENet 꾸러미 조이기가 왕복 시간 흔들림에 unreliable 을 보내는 쪽에서 버렸다. 줄이는 몫을 0 으로(NetLink.unthrottle, 붙은 뒤에 — 참가자가 붙는 중에 바꾸면 못 붙었다). 1분 일곱 판: 잃음 2% · 5% 모두 끊김 0, 받음 4.5 → 2.4 KB/s(주민 자리가 딕셔너리 조각에서 바이트 줄이 됐다). QA 흠: 고친 뒤에는 잃음 판이 0 이라 「잃음 판 > 0」 대신 망이 0.6초씩 통째로 끊기는 받침 판을 더해 그 판이 0 아님을 단언했다(세는 길이 고장 나 늘 0 이면 떨어진다). 표 밑에 「두 배쯤 흔들린다」 줄. App Nap 은 1단계에서 안 보여 하지 않았다. 남의 몸은 이미 unreliable 이라 보간은 그대로(다가가기) 뒀다",
+   "why": "NetInterp.DELAY 100 ms — current.md 의 임시 값; NetInterp.EXTRAPOLATE 0.25초 — 둘을 내리 잃어도(0.3초 빔) 서지 않을 만큼; NetInterp.Clock.LEAK 0.01 초/초 — 두 기계 시계 어긋남을 따라가는 몫; NetWorld.MOTION_CHUNK 50 — 1 KB 로 ENet 꾸러미 한 장을 넘지 않게; NetLink.THROTTLE_DOWN 0 — ENet 꾸러미 조이기를 줄이지 않는다 (우리가 싣는 것은 사람당 몇 KB/s)",
+   "files": [
+    "game/core/net/net_interp.gd",
+    "game/core/net/net_world.gd",
+    "game/core/net/net_link.gd",
+    "game/core/net/net_session.gd",
+    "game/life/hunting/animal.gd",
+    "game/automation/villagers/villager.gd",
+    "game/tests/core/net/test_net_interp.gd",
+    "game/tests/multiplayer/test_send_less.gd",
+    "game/tests/perf/lossy_link.gd",
+    "game/tests/perf/stutter_probe.gd",
+    "game/tests/perf/test_net_stutter.gd",
+    "spec/00_core/performance.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "짐승 · 주민 · 남의 몸의 자리 · 방향은 unreliable(또는 unreliable_ordered)로 늘 전부 싣는다 — 한 꾸러미를 잃어도 다음 것이 곧 덮는다. 잘 안 바뀌는 칸(이름 · 체력 · 잡힘 · 사라짐)은 reliable 그대로 (G-227.3 의 「첫 소식 잃음」 함정을 다시 만들지 않는다)",
+     "evidence": "net_world.gd _animals_moved · _folk_moved 가 unreliable_ordered 로 0.1초마다 전부(pack_motion)를 싣고, MOTION_KEYS 를 _still 로 reliable 지문에서 뺐다. 처음 세우기(_all_animals · _all_folk)는 자리까지 reliable. 남의 몸(net_bodies.gd _snapshot)은 이미 unreliable_ordered. test_net_interp.gd test_only_moving_does_not_go_on_the_reliable_path(자리만 바뀌면 reliable 로 안 감 · 처음은 자리 포함 · 체력은 reliable) · test_motion_is_unreliable_and_the_rest_stays_reliable(RPC 모드) · test_motion_packs_twenty_bytes_each_and_comes_back · test_send_less.gd test_animal_motion_rides_the_unreliable_stream(실제 ENet 둘에서 자리 소식으로 그림이 섬)"
+    },
+    {
+     "ok": true,
+     "criterion": "받는 쪽은 받은 두 모습 사이를 메운다(받은 시각을 붙여 조금 뒤(임시 100 ms)를 그린다 — 흔한 스냅숏 보간). 늦게 온 꾸러미는 버린다",
+     "evidence": "NetInterp(DELAY 0.1 임시) — 서버 시계 + 가장 짧은 늦음으로 맞춰 100 ms 뒤를 앞뒤 사이로 lerp. test_net_interp.gd 가 사이 메우기 · 늦은/같은 때 꾸러미 버림(push false) · 잃은 것 잇기 · EXTRAPOLATE 까지 잇고 섬 · SNAP · 시계(흔들린 늦음에도 고르게) 를 구체 값으로 단언. animal.gd · villager.gd _follow 가 motion.sample() 을 그린다"
+    },
+    {
+     "ok": true,
+     "criterion": "1단계 시험에서 0.2초 넘게 멈춤이 잃음 없을 때와 같은 수준이 된다 (테스트). 초당 바이트를 전후로 적는다 — 크게 늘면 줄인 꼴(G-227.2)을 그대로 쓴다",
+     "evidence": "test_net_stutter.gd 가 깨끗 판 끊김 == 0, 잃음 5% 판 끊김 0~2, 끊김 판 > 0 을 단언. 전체 실행 로그: 깨끗 0 · 잃음 5%(버림 9.4%) 0 · 끊김 판 12. QA 가 _animals_moved · _folk_moved 를 reliable 로 되돌려 돌리니 잃음 5% 판 끊김 6 으로 FAIL — 테스트가 고침을 지킨다(되돌림 확인, cmp 동일). performance.md 표에 전/뒤 받음 4.5 → 2.4 KB/s 적힘(줄었다)"
+    },
+    {
+     "ok": true,
+     "criterion": "2단계 짐작(맥 서버장이 쉴 때)이 1단계에서 보였으면 — 게임 중에는 맥 App Nap 을 막는다(NSProcessInfo 활동 · Godot 설정이 있으면 그것)",
+     "evidence": "조건부 — 1단계 표에서 서버 30 · 15 fps 판 끊김 0 이라 짐작이 보이지 않았다. 이번 뒤 판도 0. performance.md 에 「그래서 App Nap 막기는 하지 않았다」 적힘"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 끊김 재기 테스트가 끊김 수를 단언하지 않는다 — test_net_stutter.gd test_guests_count_stalls_over_a_lossy_link 는 STUTTER 줄을 print 만 한다. stutter_probe.gd 의 _watch 가 고장 나 늘 0을 세어도(STALL=99 등) 통과한다. 짧은 두 판(깨끗 · 잃음 5%)에서 「깨끗 판 beast.stalls + folk.stalls == 0」과 「잃음 판 jumps > 0 (또는 stalls 합 > 0)」을 단언하라. 5초 판에서도 잃음 5% 판은 짐승 튐 44 · 주민 끊김 12 가 나왔다. 다음 단계(고치기)가 끊김을 줄였는지 지킬 받침도 된다",
+     "evidence": "고친 뒤에는 잃음 판이 0 이 맞으므로 「0 아님」 받침을 망 0.6초 통째 끊김 판(OUTAGE)으로 옮겨 assert_gt(stalls, 0) — _watch 가 늘 0 을 세면 떨어진다. 깨끗 판 == 0 단언 있음. 취지(세는 길이 살아 있나 + 고침 지킴)를 지키며 QA 의 되돌림 실험에서 실제로 떨어졌다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 표 숫자가 판마다 흔들린다는 말이 없다 — performance.md 끊김 표는 한 번 잰 값(잃음 2% 짐승 8.0/분 · 주민 6.0/분)이다. QA 가 다시 재니 짐승 4.0 · 주민 13.0 이었다. 표 밑에 「한 판 1분이라 판마다 두 배쯤 흔들린다 — 크기보다 0과 0 아님을 본다」 한 줄을 적어라",
+     "evidence": "performance.md 표 바로 밑에 「한 판 1분이라 판마다 두 배쯤 흔들린다 — 크기보다 0과 0 아님을 본다 (QA 가 다시 재니 …)」 줄이 있다. 파일 137줄"
+    }
+   ],
+   "issues": [
+    "test_net_stutter 머리 주석이 낡았다 — game/tests/perf/test_net_stutter.gd 머리 주석 끝 줄이 아직 「여섯 판은 한꺼번에 돈다(… 열둘)」다. 판이 일곱(끊김 판 더함)이니 「일곱 판 … 열넷」으로 고쳐라",
+    "ENet 조이기 값에 「임시」 표시가 없다 — game/core/net/net_link.gd THROTTLE_INTERVAL_MS · THROTTLE_UP · THROTTLE_DOWN(0) 은 report 의 temporary 에 올랐는데 코드 주석에는 **임시** 가 없다. 다른 임시 값(NetInterp.DELAY · MOTION_CHUNK)처럼 주석에 「**임시**」를 달아라",
+    "남의 몸은 아직 메우지 않는다 — 남의 몸은 unreliable 이라 머리 막힘은 없지만 그림은 옛 다가가기 그대로다(report: 「보간은 그대로 뒀다」). 끊김 시험(stutter_island)에 남의 몸을 더해 재 보고, 끊김이 보이면 net_bodies.gd 받는 쪽에 NetInterp 를 붙여라",
+    "App Nap 은 15 fps 까지만 재었다 — 맥이 가려진 창 · App Nap 에서 그보다 더 느려지는지(예 1~5 fps)는 재지 않았다. test_net_stutter CASES 에 「서버 5 fps」 판을 더해 보고 끊김이 나면 App Nap 막기를 하라"
+   ],
+   "good": [
+    "ENet 꾸러미 조이기 풀기(NetLink.unthrottle, 서버 · 참가자 둘 다) — 기준에 없지만 unreliable 이 흔들리는 망에서 말라 끊기던 것을 고치려 필요했고 test_send_less 가 지킨다",
+    "lossy_link.gd 의 통째 끊김 흉내(outage_every · outage_for)와 받은 바이트 셈 — 기준 3 · 앞 단계 QA 기준을 위한 받침"
+   ]
+  },
+  "test": "/world/storage/test_chest_slots.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      0s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      0s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      0s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           525\nTests            3949\nPassing Tests    3949\nFailing Tests       0\nRisky/Pending       0\nAsserts        182059\nTime           765s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "eba97dba"
  }
 ]
