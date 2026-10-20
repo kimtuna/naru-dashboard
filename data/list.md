@@ -4467,10 +4467,13 @@
   - 기준: 도면을 든 동안 겨눈 것이 해체 대상이면 그것을 **빨간 덧씌움**(BAD_COLOR 같은 반투명)으로 덮는다 — 놓을 자리 미리보기와 같은 방식 · 겨눈 것이 놓을 자리이면 여느 초록 미리보기 · 둘이 같이 뜨지 않는다(어느 쪽이 우선인지 spec 에 한 줄)
   - 기준: ui_shots 에 해체 표시 한 장(토대 위 밭을 겨눈 채)
   - 기준: (앞 단계 QA) 새장 규칙을 G-260.4 몫까지 미리 만들었다 — G-260.4(3d-start 차선 목록, 「새가 다 들어와야 새장을 거둔다」)가 아직 안 끝났는데 이 단계가 CraftingStation.why_kept · BirdCage.outside · Stations.hit_station 의 마지막 한 대 막기 · spec/04_life/bird-cage.md 줄을 만들었다. 두 차선이 합쳐질 때 G-260.4 세션이 같은 것을 또 만들지 않게, G-260.4 를 할 때 이 why_kept 를 그대로 쓰고(이미 있으면 기준 확인 · 테스트만) 같은 뜻의 두 번째 규칙 · 번역 키를 만들지 마라
-- [ ] 3. 맨손 · 도구로 치면 안 부서진다
+- [x] 3. 맨손 · 도구로 치면 안 부서진다
   - 기준: 놓인 것(건물 · 시설 · 밭)은 이제 **도면 해체로만** 거둔다 — 맨손 · 도구 좌클릭 3 대로 부서지던 길은 없앤다(밭 · 토대가 같이 깨지던 일이 그 길이다). **사람 결정 2026-10-20** 「시설 놓는것도 좌클릭으로 하자」 — 시설 · 상자 · 횃불 · 침대 · 가구 · 밭 아이템을 든 채 놓기도 **좌클릭**(도면과 같다 · Placer._place_input · Farmland.place_held). 들고 우클릭은 놓지 않는다 — 그 자리에 기대던 우클릭(열기 · 상호작용)은 그대로 · 키 안내 · input.md 를 고친다 (테스트: 작업대를 들고 좌클릭 → 놓인다 · 우클릭 → 안 놓인다)
   - 기준: 같은 좌클릭을 두 곳이 받지 않는다 — 처리한 곳이 set_input_as_handled (테스트: 토대 위 밭을 맨손으로 세 번 쳐도 둘 다 남는다)
   - 기준: (앞 단계 QA) 덧씌움이 원래 material_overlay 를 지운다 — buildings.gd _mark 는 걷을 때 material_overlay 를 null 로 놓는다. 지금은 놓인 것에 다른 overlay 를 쓰는 곳이 없어 괜찮지만, 나중에 다른 강조(선택 · 피해 깜빡임)가 overlay 를 쓰면 지워진다. 걸기 전 값을 Dictionary(mesh→옛 overlay)에 담았다가 되돌리게 하고, 옛 overlay 가 있던 그림을 덮고 걷으면 그대로인지 보는 단언을 test_build_mode_take_mark.gd 에 더하라
+- [ ] 4. (앞 단계 QA) netcode.md 에 놓인 것 「치기」가 남았다
+  - 기준: netcode.md 에 놓인 것 「치기」가 남았다 — spec/11_multiplayer/netcode.md 38 · 46 · 93 · 95 · 99줄에 건축 · 놓기 · 농사 쪽 「치기」 RPC가 아직 적혀 있다(G-262.3 에서 서버가 받지 않게 걷었다). 나무 · 바위 치기(34 · 88줄)는 그대로 두고, 놓인 것 쪽의 「치기」만 지워라. spec/04_life/bird-cage.md:16 「치기도 도면 우클릭 해체도 막히고」는 「도면 우클릭 해체가 막히고」로, spec/11_multiplayer/permissions.md:12 건축 단위의 「치기」는 「해체」로 고쳐라
+  - 기준: (앞 단계 QA) 코드 주석에 좌클릭 치기가 남았다 — 놓인 것은 이제 안 부서지는데 아직 「좌클릭 평타로 몇 대 치면 부서진다」고 적힌 곳: craft/stations/crafting_station.gd:5 · :173(「치기(Stations.hit_station)도」), life/farming/field_patch.gd:5, world/storage/storage_chest.gd:79, core/net/net_world.gd:19(참가자가 바라는 것 목록의 「치기」), build/placeable.gd:216, i18n ko.po · en.po 의 TAKE_* 위 주석 「치기 · 도면 우클릭 해체가 같이 띄운다」. 「도면 해체(마지막 한 대 = take)」로 고쳐라
 
 ## [ ] G-263 설정 — 키보드 · 마우스 탭
 - 차선: 3d-lane2
