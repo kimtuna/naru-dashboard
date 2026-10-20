@@ -1,57 +1,5 @@
 [
  {
-  "time": "2026-10-16 00:21:37",
-  "epoch": 1792077697,
-  "type": "pass",
-  "title": "통과 — G-224 단계 2 (「아무 연료」 → 「연료」)",
-  "group": "G-224",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "갈래(TAG_) 이름에서 「아무」·「Any」를 뺐다 (연료 · 곡물 · 빈 컵 …) · 안 쓰는 _set_text 와 테마 갈래 QueueWhy · QueueDoing 을 지웠다. 바뀐 곳만 72개 파일 567개 테스트 통과",
-   "approach": "ko.po 의 TAG_ 열 개(곡물 · 약초 · 고기 · 음식 · 연료 · 섬유류 · 과일 · 채소 · 술 · 빈 컵)가 모두 「아무 …」였다 — 기준대로 전부 뺐고 en.po 도 같은 뜻으로 「Any …」를 뺐다(Fuel · Grain · Empty cup …). 옛 글자를 보던 테스트 셋(곡물 · 빈 컵 · 과일)을 새 글자로 맞추고, 다시 붙지 않게 po 의 TAG_ 줄을 훑는 테스트를 더했다. station_window.gd 의 부르는 곳 없는 _set_text 를 지우고, naru_theme.tres 에서 QueueWhy · QueueDoing 갈래와 sub_resource queue_why 를 지운 뒤 load_steps 를 8→7 로 맞췄다(이 갈래를 보는 테스트는 없었다). 주석 두 곳의 「아무 곡물」도 고쳤다. 확인: changed_tests 그물 72개 파일 · 567개 테스트 모두 통과.",
-   "why": "",
-   "files": [
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/ui/hud/station_window.gd",
-    "game/ui/theme/naru_theme.tres",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/tests/craft/recipes/test_smelter_recipes.gd",
-    "game/tests/craft/recipes/test_tag_new_materials.gd",
-    "game/tests/craft/stations/test_drink_cups.gd",
-    "game/tests/ui/hud/test_station_tag_inputs.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "i18n/ko.po:1157 `TAG_fuel` 을 「연료」로. en.po 는 그 뜻 그대로(Fuel). 다른 TAG_ 라벨에 「아무」가 붙은 것이 있으면 같이 뺀다 (테스트: tests/craft/recipes/test_smelter_recipes.gd:238 을 맞춘다)",
-     "evidence": "ko.po:1157 TAG_fuel = 「연료」, en.po = 「Fuel」. TAG_ 열 개(곡물 · 약초 · 고기 · 음식 · 연료 · 섬유류 · 과일 · 채소 · 술 · 빈 컵) 모두 ko 「아무」· en 「Any」 를 뺐다. test_smelter_recipes.gd::test_the_window_shows_a_fuel_slot 이 창의 연료 칸 라벨을 ko 로 tr 해 「연료」, en 으로 「Fuel」 인지 본다. test_no_tag_label_starts_with_any 가 두 po 의 TAG_ 줄을 모두 훑어 「아무」·「Any」로 시작하는 값이 없는지 보고, TAG_ 줄을 5개 넘게 찾았는지도 확인한다(빈 반복으로 통과하는 껍데기가 아니다). 옛 글자를 보던 test_tag_new_materials · test_drink_cups · test_station_tag_inputs 도 새 글자로 맞췄다. test.log 바뀐 곳만 75개 파일 603개 테스트 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 쓰지 않게 된 _set_text 가 남았다 — game/ui/hud/station_window.gd:437 static func _set_text 를 이제 아무도 부르지 않는다(grep 결과 정의뿐). 지워라",
-     "evidence": "정의가 지워졌다. game 아래 .gd/.tscn/.tres 에서 `_set_text(` grep 결과 0 건. station_window 를 쓰는 HUD 테스트들이 test.log 에서 모두 통과(파싱 오류 없음)"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 쓰지 않는 테마 갈래 QueueWhy · QueueDoing — game/ui/theme/naru_theme.tres:87-90 의 QueueWhy(들여 쓰기 stylebox queue_why) · QueueDoing(초록 글자)은 Why · Doing 라벨이 사라져 쓰는 곳이 없다. 두 갈래와 SubResource(\"queue_why\")를 지우고, 이 갈래를 보는 테스트가 있으면 함께 정리하라",
-     "evidence": "naru_theme.tres 에서 QueueWhy · QueueDoing 네 줄과 sub_resource queue_why 를 지우고 load_steps 8→7 로 맞췄다. game 전체에서 QueueWhy · QueueDoing · queue_why grep 0 건 — 보는 테스트도 없었다. tests/ui/theme/test_ui_theme.gd 등 테마를 읽는 테스트가 test.log 에서 통과"
-    }
-   ],
-   "issues": [
-    "주석에 옛 갈래 이름 「아무 …」가 남았다 — 화면 글자를 가리키는 주석이 옛 라벨 그대로다. game/tests/craft/stations/test_drink_cups.gd:191 의 메시지 「갈래 이름(아무 빈 컵)으로 적힌다」 → 「(빈 컵)」, game/tests/ui/hud/test_station_window_frame_cost.gd:22 · :197 「아무 곡물」 → 「곡물」, game/tests/ui/hud/test_station_tag_inputs.gd:5 「아무 곡물 1」 → 「곡물 1」, game/tests/craft/recipes/test_smelter_recipes.gd:211 「아무 연료가 아니라」 → 「연료 갈래가 아니라」. 사람 말을 옮긴 인용(test_drink_cups.gd:4 · :99, spec)과 '어느 곡물이든' 뜻으로 쓴 _temporary 설명은 그대로 둬도 된다"
-   ],
-   "good": []
-  },
-  "test": "5s  res://tests/craft/stations/test_beehive.gd\nok      5s  res://tests/craft/stations/test_salt_pan.gd\nok     37s  res://tests/craft/stations/test_g212_human_save.gd\nok      5s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      4s  res://tests/ui/hud/test_station_window.gd\nok      3s  res://tests/ui/hud/test_map_pin.gd\nok      3s  res://tests/ui/hud/test_map_window.gd\nok      4s  res://tests/ui/hud/test_room_names.gd\nok     41s  res://tests/core/input/test_held_keys.gd\nok      3s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/core/test_game_root_tidy.gd\nok      2s  res://tests/craft/recipes/test_smelter_recipes.gd\nok      4s  res://tests/ui/hud/test_station_search.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      4s  res://tests/craft/recipes/test_recipes.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      4s  res://tests/ui/hud/test_bag.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      3s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_room_window.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok      3s  res://tests/ui/hud/test_station_doing_line.gd\nok      2s  res://tests/ui/hud/test_station_queue_window.gd\nok      3s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/ui/hud/test_villager_window.gd\nok      2s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/stations/test_drink_cups.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/craft/stations/test_station_queue.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_barn_window.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_body_gauges_layout.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_chest_window_search.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            75\nTests             603\nPassing Tests     603\nFailing Tests       0\nRisky/Pending       0\nAsserts         22123\nTime           60s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "a75bb4b2"
- },
- {
   "time": "2026-10-16 00:58:38",
   "epoch": 1792079918,
   "type": "pass",
@@ -8959,6 +8907,35 @@
   "group": "G-925",
   "step": "2",
   "attempt": "1",
+  "report": {
+   "problem": "put_bird 주석의 「케이지는 늘 그 칸에 돌아온다」를 「늘 가방에 돌아온다(떨굴 일이 없다)」로 고쳤다 — 바뀐 곳만 148개 파일 1256개 통과",
+   "approach": "Inventory.add 는 같은 케이지가 쌓인 칸이나 앞쪽 빈 칸에 먼저 넣으므로 케이지가 비운 그 칸에 돌아온다는 말은 틀렸다. 틀린 낱말은 stations.gd:559 에만 있었다 — captives.gd give_back_cage 주석은 이미 「칸을 먼저 비우므로 떨굴 일이 없고」라 맞아서 두었다. stations.gd 주석을 「늘 가방에 돌아온다(떨굴 일이 없다 — 비운 그 칸이 아니라 같은 케이지가 쌓인 칸이나 앞쪽 빈 칸일 수 있다)」로 고치고, 2번 칸의 새를 넣으면 케이지가 0번 칸으로 가고 2번은 비는 것 · 주석에 「늘 그 칸에」가 없는 것을 테스트로 묶었다. changed_tests 그물(148개 파일, 1256개) 통과.",
+   "why": "",
+   "files": [
+    "game/craft/stations/stations.gd",
+    "game/tests/life/hunting/test_cage_reuse.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "「늘 그 칸에」는 엄밀히 틀린 말이다 — game/craft/stations/stations.gd:559 와 game/life/hunting/captives.gd 의 같은 뜻 주석. Inventory.add(game 의 inventory.gd:114)는 같은 케이지가 쌓인 칸(_stack_onto_existing)이나 앞쪽 빈 칸(_put_in_empty_slots)에 먼저 넣으므로, 케이지는 비운 그 칸이 아닌 다른 칸에 들어갈 수 있다. 맞는 말은 「칸을 먼저 비우므로 케이지는 늘 가방에 돌아온다(떨굴 일이 없다)」다. 주석 낱말만 고치면 된다 (막는 것은 아니다)",
+     "evidence": "stations.gd:559 주석이 「칸을 먼저 비우므로 케이지는 늘 가방에 돌아온다(떨굴 일이 없다 — 비운 그 칸이 아니라 …)」로 바뀌었다. captives.gd give_back_cage 주석(:289)은 이미 「칸을 먼저 비우므로 떨굴 일이 없고」로 「그 칸에」라는 말이 없어 맞다 — game 전체에 「그 칸에 돌아」가 남지 않았다. test_cage_reuse.gd 의 test_put_bird_returns_the_cage_to_a_front_empty_slot_not_the_emptied_one 이 2번 칸 케이지째 올빼미를 새장에 넣으면 케이지가 0번 칸에 들어가고 2번은 비며 떨굼이 없음을 실제 동작으로 확인하고, test_put_bird_comment_says_the_bag_not_the_same_slot 이 소스에 「늘 그 칸에」가 없고 새 문구가 있음을 본다. 전체 테스트 531 파일 3997개 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_armor_health.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           531\nTests            3997\nPassing Tests    3997\nFailing Tests       0\nRisky/Pending       0\nAsserts        189473\nTime           762s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-20 22:35:05",
+  "epoch": 1792503305,
+  "type": "start",
+  "title": "루프 시작",
   "report": {
    "problem": "put_bird 주석의 「케이지는 늘 그 칸에 돌아온다」를 「늘 가방에 돌아온다(떨굴 일이 없다)」로 고쳤다 — 바뀐 곳만 148개 파일 1256개 통과",
    "approach": "Inventory.add 는 같은 케이지가 쌓인 칸이나 앞쪽 빈 칸에 먼저 넣으므로 케이지가 비운 그 칸에 돌아온다는 말은 틀렸다. 틀린 낱말은 stations.gd:559 에만 있었다 — captives.gd give_back_cage 주석은 이미 「칸을 먼저 비우므로 떨굴 일이 없고」라 맞아서 두었다. stations.gd 주석을 「늘 가방에 돌아온다(떨굴 일이 없다 — 비운 그 칸이 아니라 같은 케이지가 쌓인 칸이나 앞쪽 빈 칸일 수 있다)」로 고치고, 2번 칸의 새를 넣으면 케이지가 0번 칸으로 가고 2번은 비는 것 · 주석에 「늘 그 칸에」가 없는 것을 테스트로 묶었다. changed_tests 그물(148개 파일, 1256개) 통과.",
