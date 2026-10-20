@@ -4568,7 +4568,7 @@
   - 기준: 2단계 짐작(맥 서버장이 쉴 때)이 1단계에서 보였으면 — 게임 중에는 맥 App Nap 을 막는다(NSProcessInfo 활동 · Godot 설정이 있으면 그것)
   - 기준: (앞 단계 QA) 끊김 재기 테스트가 끊김 수를 단언하지 않는다 — test_net_stutter.gd test_guests_count_stalls_over_a_lossy_link 는 STUTTER 줄을 print 만 한다. stutter_probe.gd 의 _watch 가 고장 나 늘 0을 세어도(STALL=99 등) 통과한다. 짧은 두 판(깨끗 · 잃음 5%)에서 「깨끗 판 beast.stalls + folk.stalls == 0」과 「잃음 판 jumps > 0 (또는 stalls 합 > 0)」을 단언하라. 5초 판에서도 잃음 5% 판은 짐승 튐 44 · 주민 끊김 12 가 나왔다. 다음 단계(고치기)가 끊김을 줄였는지 지킬 받침도 된다
   - 기준: (앞 단계 QA) 표 숫자가 판마다 흔들린다는 말이 없다 — performance.md 끊김 표는 한 번 잰 값(잃음 2% 짐승 8.0/분 · 주민 6.0/분)이다. QA 가 다시 재니 짐승 4.0 · 주민 13.0 이었다. 표 밑에 「한 판 1분이라 판마다 두 배쯤 흔들린다 — 크기보다 0과 0 아님을 본다」 한 줄을 적어라
-- [ ] 3. (앞 단계 QA) test_net_stutter 머리 주석이 낡았다
+- [x] 3. (앞 단계 QA) test_net_stutter 머리 주석이 낡았다
   - 기준: test_net_stutter 머리 주석이 낡았다 — game/tests/perf/test_net_stutter.gd 머리 주석 끝 줄이 아직 「여섯 판은 한꺼번에 돈다(… 열둘)」다. 판이 일곱(끊김 판 더함)이니 「일곱 판 … 열넷」으로 고쳐라
   - 기준: (앞 단계 QA) ENet 조이기 값에 「임시」 표시가 없다 — game/core/net/net_link.gd THROTTLE_INTERVAL_MS · THROTTLE_UP · THROTTLE_DOWN(0) 은 report 의 temporary 에 올랐는데 코드 주석에는 **임시** 가 없다. 다른 임시 값(NetInterp.DELAY · MOTION_CHUNK)처럼 주석에 「**임시**」를 달아라
   - 기준: (앞 단계 QA) 남의 몸은 아직 메우지 않는다 — 남의 몸은 unreliable 이라 머리 막힘은 없지만 그림은 옛 다가가기 그대로다(report: 「보간은 그대로 뒀다」). 끊김 시험(stutter_island)에 남의 몸을 더해 재 보고, 끊김이 보이면 net_bodies.gd 받는 쪽에 NetInterp 를 붙여라
@@ -4582,6 +4582,10 @@
   - 기준: 서버장이 띄엄띄엄 서는 경우는 안 쟀다 — 30 · 15 fps 는 고른 느림이다. App Nap · 가려진 창은 프레임 한두 개가 수백 ms 걸리는 꼴일 수 있다. 사람이 본 끊김의 다른 짐작을 닫으려면 서버장 프레임에 가끔 OS.delay_msec(200~400)을 끼우는 판을 하나 더 재라(기준 밖)
 - [ ] 2. App Nap 은 15 fps 까지만 재었다 (G-267 단계 2)
   - 기준: App Nap 은 15 fps 까지만 재었다 — 맥이 가려진 창 · App Nap 에서 그보다 더 느려지는지(예 1~5 fps)는 재지 않았다. test_net_stutter CASES 에 「서버 5 fps」 판을 더해 보고 끊김이 나면 App Nap 막기를 하라
+- [ ] 3. 끊김 시험이 몸의 튐을 단언하지 않는다 (G-267 단계 3)
+  - 기준: 끊김 시험이 몸의 튐을 단언하지 않는다 — test_net_stutter.gd 는 g.body.stalls 를 끊김 합에 더하지만 G-267.3 이 고친 것은 튐(jumps)이다. 보간을 빼도 이 시험은 그대로 통과할 수 있다(지금은 test_visitor_interp 가 막는다). 잃음 5% 판의 int(g.body.jumps) 를 깨끗 판 수준(SAME_LEVEL 안쪽)으로 assert_between 하라. 짐승 jumps 도 같이 보면 좋다
+- [ ] 4. STUTTER 줄의 몸 칸 글자가 어긋났다 (G-267 단계 3)
+  - 기준: STUTTER 줄의 몸 칸 글자가 어긋났다 — test_net_stutter.gd print 의 「몸 %d 끊김 튐 %d」는 짐승 칸(「끊김 %.1f/분 … 튐 %d」)과 꼴이 달라 「끊김」 뒤에 숫자가 없다. 「몸 끊김 %d · 튐 %d」처럼 고쳐라
 
 ## [ ] G-268 짐승은 케이지로만 잡는다 · 케이지는 계속 쓴다
 - 차선: 3d-lane2
