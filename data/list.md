@@ -4696,7 +4696,7 @@
   - 기준: 들고 있을 때 화면 구석에 그 아이템의 키 안내 한 줄 · spec/06_build/building.md · 설명서(G-264) · input_actions.gd 주석을 고친다
   - 기준: (앞 단계 QA) 낡은 「도면 우클릭」 주석 · spec 줄이 남았다 — 해체가 망치로 바뀌었는데 game/core/net/net_world.gd:19 는 「해체(도면 우클릭 …) · 올리기 · 내리기」(내리기는 없앴다), game/build/placeable.gd:14 · 36-43 은 「도면 우클릭 해체가 깎는다 · 도면 우클릭 세 번」, game/i18n/ko.po:2361 주석은 「도면 해체」, spec/04_life/bird-cage.md:26 은 「도면 우클릭 해체가 막히고」라 적혀 있다. 「망치 우클릭」으로 고치고 net_world.gd 에서 「내리기」를 빼라. tests/build/test_take_not_hit_wording.gd 가 bird-cage.md · placeable.gd 의 옛 문구를 그대로 단언하니 같이 고쳐라
   - 기준: (앞 단계 QA) movement-controls.md 사람 결정 줄에 「바뀌었다」가 없다 — spec/02_player/movement-controls.md:38 「도면을 든 손은 건설 모드다 … 우클릭은 상호작용 대신 해체」와 spec/06_build/building.md:78 「도면을 든 손은 건설 모드다 — 좌클릭 놓기 · 우클릭 해체」에 다른 파일처럼 「→ 같은 날 해체는 망치 우클릭으로 바뀌었다 (사람 결정 2026-10-20, G-271.2)」를 붙여라(원문은 지우지 않는다)
-- [ ] 4. (앞 단계 QA) 없앤 「내리기」가 코드 주석에 둘 남았다
+- [x] 4. (앞 단계 QA) 없앤 「내리기」가 코드 주석에 둘 남았다
   - 기준: 없앤 「내리기」가 코드 주석에 둘 남았다 — game/core/net/acts.gd:52 「… 치기 · 한 등급 내리기」, game/core/net/net_world.gd:546 꼬리 주석 「해체 · 내리기도 건축이다」. 내리기는 G-271.2 에서 없앴다. 「내리기」를 빼라(acts.gd 는 「해체」로). test_take_not_hit_wording.gd BLUEPRINT_TAKE_GONE 에 acts.gd 「내리기」를 더하면 다시 안 생긴다
   - 기준: (앞 단계 QA) netcode.md 에 계단 키가 Tab 으로 남았다 — spec/11_multiplayer/netcode.md:40 「미리 보기 · 도면 고르기 · 휠 · Tab 은 각자」. 계단 스냅은 이제 F 이고 Tab 은 도면 고르기다. buildings.gd:126 처럼 「· 휠 · F 는 각자」로 고쳐라
   - 기준: (앞 단계 QA) QA 훑기 테스트 주석이 T 키를 말한다 — game/tests/build/test_building_qa_sweep.gd:150 「벽 · 문은 T 로 돌아선다」. R 로 고쳐라
