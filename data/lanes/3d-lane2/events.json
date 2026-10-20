@@ -1,37 +1,5 @@
 [
  {
-  "time": "2026-10-14 10:01:58",
-  "epoch": 1791939718,
-  "type": "stop",
-  "title": "루프 끝 — 목록을 모두 처리했다",
-  "group": "G-217",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "주민 몸 비탈 50° 의 곁효과를 지키는 판(test_villager_body_slope.gd, 5개)을 두었다 — 바뀐 곳만 돌린 그물: 파일 1개 · 5개 통과",
-   "approach": "G-217.3 에서 Villager.FLOOR_MAX 를 50° 로 올려 몸이 걸을 땅(FOLK_MAX_SLOPE 46°) 밖 46~50° 면에도 설 수 있게 됐는데, 그 곁효과를 지키는 테스트가 없었다. 서쪽 낮은 땅 · 48° 면(8m) · 동쪽 높은 땅으로 된 비탈 시험 섬을 짜고, 충돌과 주민 걸을 땅(AnimalNav.folk)을 같은 a–d 면(AnimalNav._ground on_terrain)으로 깔았다. 그 위에서 확인한 것: (1) 면 위에는 걸을 땅이 없고 양쪽 땅에는 있다. (2) 면 가운데로 밀려난 몸은 미끄러지지 않고 서지만(곁효과), 걸을 땅이 OFF_MESH 밖이라 PathWalk.plan(straight) 이 빈 길을 주어 낮은 땅 · 높은 땅 어느 쪽 표적이든 곧장 가지 않고 NO_PATH(길이 막혔다)로 끝난다. (3) 발치 가까이 밀려나면 걸을 땅이 곁에 있어 내려와 표적에 닿는다. (4) 낮은 땅에서 닿을 수 없는 높은 땅을 물으면 발치까지만 가고 면을 오르지 않는다(가장 높이 0.001m). (5) 발치를 따라 40m 걸어도 면을 오르지 않는다. 걷기는 Villager._physics_process 와 같은 순서(떨어지기 · _step_up · move_and_slide)로 돌렸다. 처음에는 걸을 땅이 지도에 들기 전에 첫 판이 물어 떨어졌다 — before_each 에서 지도에 들 때까지 기다리게 했다. spec history 에 곁효과 한 줄을 더했다. 돌린 것: changed_tests 그물(이 파일 하나) — 5개 통과. 게임 코드는 고치지 않았다.",
-   "why": "",
-   "files": [
-    "game/tests/automation/villagers/test_villager_body_slope.gd",
-    "spec/07_automation/npc-villagers-history.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "주민 몸 비탈 50° 의 곁효과를 지키는 테스트가 없다 — Villager.FLOOR_MAX 를 45→50° 로 올려 주민 몸이 걸을 땅 밖의 46~50° 면(둔덕 · 절벽 어귀)에도 올라설 수 있다. 막는 것은 아니다(전체 통과). 걸을 땅 밖으로 밀려난 주민이 46~50° 면을 올라 걸을 땅이 없는 곳에 서는 일이 없는지, 또는 서도 PathWalk.plan 이 「길이 막혔다」로 다루는지 보는 판을 test_villager_g217_real_island.gd 나 test_villager_stairs.gd 곁에 하나 두면 좋다",
-     "evidence": "game/tests/automation/villagers/test_villager_body_slope.gd (5개). 낮은 땅 · 48° 면 · 높은 땅으로 된 비탈 섬을 짜고, 충돌과 AnimalNav.folk 걸을 땅을 같은 _ground(on_terrain) 면으로 깐다. 걷기(_walk)는 villager.gd:526~530 _physics_process 와 같은 순서(떨어지기 · _step_up · move_and_slide)다. test_pushed_onto_face_is_blocked_not_straight 는 면 가운데 선 몸이 is_on_floor 로 서고 PathWalk.plan(straight) 이 빈 길 · 걸음 0 · NO_PATH 로 끝나는지, test_low_ground_does_not_climb_face_toward_unreachable · test_walk_along_foot_stays_on_ground 는 걸을 땅 곁을 걷는 몸이 면을 오르지 않는지(가장 높이 < 0.6m) 단언한다. 일부러 깨 봤다: (1) path_walk.gd:56 의 straight 거르기를 끄자 1개 떨어졌다(곧장 간다). (2) AnimalNav.FOLK_MAX_SLOPE 를 46→49.5 로 올려 면을 걸을 땅에 넣자 면에 걸을 땅이 없다 · 빈 길 · NO_PATH · 면을 오르지 않는다(가장 높이 8.89m) 단언이 모두 떨어졌다. 둘 다 되돌렸다(git diff 깨끗). 전체 테스트(test.log 맨 윗줄 「전체」) 2627개 통과 · guard 통과"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "/tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           342\nTests            2627\nPassing Tests    2627\nFailing Tests       0\nRisky/Pending       0\nAsserts        101395\nTime           662s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-14 14:42:32",
   "epoch": 1791956552,
   "type": "start",
@@ -8889,5 +8857,73 @@
   },
   "test": "tion_recipes.gd\nok      3s  res://tests/craft/stations/test_station_queue.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/fishing/test_bait_grades.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      3s  res://tests/life/hunting/test_captive_age.gd\nok      2s  res://tests/life/hunting/test_summon.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      3s  res://tests/life/medicine/test_medicine.gd\nok      2s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      1s  res://tests/life/ranching/test_cage_bond.gd\nok      1s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/ranching/test_ranch_escape.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/life/ranching/test_taming.gd\nok      1s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      1s  res://tests/player/equipment/test_armor_health.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      3s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           338\nTests            2806\nPassing Tests    2806\nFailing Tests       0\nRisky/Pending       0\nAsserts        140945\nTime           564s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "f90bc4b5"
+ },
+ {
+  "time": "2026-10-20 11:38:04",
+  "epoch": 1792463884,
+  "type": "fail",
+  "title": "QA 불합격 — G-263 단계 2 (시도 1)",
+  "group": "G-263",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "설정 화면 키보드 탭 — 동작마다 키 다시 잡기(누르면 「키를 누르세요」 · 겹치면 맞바꾸고 알림 · Esc 그만두기 · 처음대로 · user://settings.cfg 에 저장 · 복원). 키 안내 글자가 바뀐 키를 따른다. 바뀐 곳에 걸린 160 파일 1482 개 통과",
+   "approach": "키 배치는 project.godot InputMap 에 박혀 있었고 바꿀 길이 없었다. KeyBinds(settings/user/key_binds.gd)가 동작마다 키보드 키를 읽고 바꾼다 — 키보드 탭에는 기본이 키보드 키인 동작만 뜨고(좌·우클릭·휠은 마우스), Esc 는 어디서나 뒤로라 고정이며 기다리는 동안 Esc 는 그만두기다. 겹치면 맞바꾼다(그 키를 쥔 동작이 옛 키를 받는다) — spec/01_settings/input.md 「키 다시 잡기」에 적었다. UserPrefs 가 기본과 다른 키만 [keys] 에 물리 키 번호로 쓰고 띄울 때 InputMap 에 얹는다. 키 안내 글자는 번역문에 {villagers} 같은 자리를 두고, 키가 바뀔 때마다 들어온 Translation 에 채운 글을 다시 넣고 TRANSLATION_CHANGED 를 돌린다 — 번역 키를 그대로 쓰는 Label(걷기 안내 · 주민/방/길드/잡은 동물 창 「V · Esc 닫기」 · 도면 「R 바꾸기」)이 손대지 않아도 따른다. InputActions.all() 에 GUILD(P)가 빠져 있어 더했다. 테스트 godot 이 사람과 같은 user:// 를 쓰므로, 사람이 키를 바꿔 두면 E→가방 같은 테스트가 흔들린다 — GUT 로 띄운 godot 은 사람의 settings.cfg 를 읽지도 쓰지도 않게 했다. 앞 단계 QA 두 가지: 「월드 저장이 아니다」 단언을 실제 자리(DEFAULT_PATH)로 바꾸고 캐릭터·월드 to_dict() 에 mouse·sensitivity 키가 없는지 본다 · 미끄럼 걸음을 UserPrefs.SENSITIVITY_STEP(임시)로 옮겼다. ui 찍기 settings_keyboard 를 더해 settings_keyboard · settings_mouse · hud · villagers 를 ko/en 으로 찍어 보았다 — 말을 바꿔도 코드가 채운 줄 이름이 한국어로 남던 것을 찍은 그림에서 찾아 고쳤다. ESC 데이터베이스 목차 파일은 아직 없어(G-264) 건너뛰었다",
+   "why": "UserPrefs.SENSITIVITY_STEP 0.0001 — 감도 미끄럼 한 칸, 범위(0.0005~0.0055)와 같이 임시",
+   "files": [
+    "game/settings/user/key_binds.gd",
+    "game/settings/user/user_prefs.gd",
+    "game/ui/menu/settings_screen.gd",
+    "game/ui/menu/settings_screen.tscn",
+    "game/core/input/input_actions.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/ui/menu/test_key_rebind.gd",
+    "game/tests/ui/menu/test_settings_screen.gd",
+    "game/tests/ui/menu/test_main_menu.gd",
+    "game/tests/ui/menu/test_menu_text.gd",
+    "spec/01_settings/input.md",
+    "spec/01_settings/save.md",
+    "spec/12_ui/menu.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "키보드 탭에 동작마다(input_actions.gd) 지금 키 · 누르면 「키를 누르세요」 · 다음 누른 키로 바뀐다 · 겹치면 알린다(바꾸지 않거나 맞바꾸기 — spec 에 한 줄) · 「처음대로」 · 저장 · 복원",
+     "evidence": "test_key_rebind.gd — test_every_keyboard_action_has_a_row_with_its_current_key(모든 rebindable 줄 · 기본 키 글자 · 마우스/Esc 제외), test_pressing_a_row_waits_and_the_next_key_becomes_the_binding(push_input 으로 I → InputMap · 이벤트 판정까지), test_escape_cancels_waiting, test_a_clashing_key_swaps_and_says_so(맞바꾸기 · 알림 글), test_reset_restores_defaults, test_rebinds_are_saved_and_restored_after_restart(cfg [keys] · 새 UserPrefs _ready 복원), test_broken_or_unknown_entries_in_the_file_are_ignored. spec/01_settings/input.md 「키 다시 잡기」에 맞바꾸기 규칙이 적혔다"
+    },
+    {
+     "ok": false,
+     "criterion": "키 안내 글자(HUD · 창의 「[E]」 같은 것)가 바뀐 키를 따른다 · input.md 의 「미정」을 고친다 · ui_shots 두 탭 · ko/en",
+     "evidence": "tr() 수준은 test_key_hints_follow_the_rebound_key_in_both_languages 가 ko/en 으로 본다. 그러나 「화면의 글자가 따른다」를 맡은 test_a_label_on_screen_redraws_with_the_new_key 는 껍데기다 — key_binds.gd refresh_hints() 의 propagate_notification(NOTIFICATION_TRANSLATION_CHANGED) 를 지워도 tests/ui/menu 15파일 117개가 모두 통과했다. 또 ko.po · en.po 에 msgid \"KEYBIND_guild\" 가 두 번 들어갔다(깨진 po). 미정 줄 · ui_shots(settings_keyboard · settings_mouse) 는 됐다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 「월드 저장이 아니다」 단언이 늘 참이다 — …DEFAULT_PATH 로 바꾸고 … 'mouse' · 'sensitivity' 키가 없는지도 단언하라",
+     "evidence": "test_settings_screen.gd test_sensitivity_is_saved_as_a_user_setting_and_survives_restart 가 USER_PREFS.DEFAULT_PATH.begins_with(SaveStore.DEFAULT_ROOT) 를 보고, CharacterData · WorldData to_dict() 를 재귀로 훑어 mouse · sensitivity 키가 없음을 단언한다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 미끄럼 걸음이 화면에 박혔다 — … SENSITIVITY_STEP 상수로 옮겨 범위와 같이 「임시」로 적고 화면은 그것을 읽게 하라",
+     "evidence": "user_prefs.gd SENSITIVITY_STEP 0.0001 이 범위와 같은 「임시」 주석 아래, settings_screen.gd 가 그것을 읽고 test_slider_step_comes_from_user_prefs 가 본다"
+    }
+   ],
+   "issues": [
+    "화면 글자 다시 그리기 테스트가 껍데기다 — tests/ui/menu/test_key_rebind.gd test_a_label_on_screen_redraws_with_the_new_key 는 Label 에 없는 get_parsed_text 대신 label.atr(label.text) 를 보는데, 이는 tr() 을 다시 부르는 것일 뿐 Label 이 실제로 그린 글을 보지 않는다. key_binds.gd:106 의 tree.root.propagate_notification(NOTIFICATION_TRANSLATION_CHANGED) 를 pass 로 바꿔도 통과했다. Label 이 그린 글을 보는 단언으로 바꿔라 — 예: 바꾸기 전후 label.get_minimum_size() 또는 TextServer 줄(label 의 get_line_count/글 폭) 비교, 혹은 「Y · Esc 닫기」처럼 길이가 다른 키(예: KEY_SPACE → 「Space · Esc 닫기」)로 바꾼 뒤 label.get_minimum_size().x 가 커졌는지 단언. 알림을 지우면 깨지는지 직접 확인하라",
+    "po 에 같은 msgid 가 두 번 — game/i18n/ko.po · en.po 에 msgid \"KEYBIND_guild\" 블록이 연달아 두 개 있다(gettext 로는 깨진 파일). 하나를 지워라. test_key_rebind.gd 나 test_menu_text.gd 에 「po 의 msgid 가 겹치지 않는다」 단언을 하나 더해 다시 안 생기게 하라",
+    "디버그 · 고정 키와 겹쳐도 모른다 — KeyBinds.holder_of 는 rebindable() 만 본다. F1~F5(debug 비행 카메라 · 전체 보기 …) 나 Shift+클릭처럼 코드가 직접 보는 키로 잡으면 알림 없이 두 일이 겹친다. 막을 키 목록(또는 「잡을 수 없는 키」 알림)을 두고 테스트하라 (막는 것은 아니다)"
+   ],
+   "good": [
+    "InputActions.all() 에 GUILD 를 더했다 — 탭에 길드 줄이 뜨려면 필요했다",
+    "GUT 로 띄운 godot 은 user://settings.cfg 를 읽지도 쓰지도 않게 했다(user_prefs.gd _blocked) — 기준 밖이지만 테스트 안정에 필요"
+   ]
+  },
+  "test": "    2s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      1s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_bond.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_armor_health.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           520\nTests            3909\nPassing Tests    3909\nFailing Tests       0\nRisky/Pending       0\nAsserts        178646\nTime           754s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
