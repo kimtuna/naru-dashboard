@@ -1,38 +1,5 @@
 [
  {
-  "time": "2026-10-14 22:57:29",
-  "epoch": 1791986249,
-  "type": "stop",
-  "title": "루프 끝 — 이 차선(3d-lane2) 몫을 다 했다. 다른 차선 몫으로 남은 것: G-221",
-  "group": "G-906",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "걸을 땅 조각을 32m → 24m 로 줄여 사람 섬에서 가장 느린 한 조각이 17.6~18.1ms → 11.9~13.0ms 가 되었고, 섬을 다 덮은 뒤 slowest_us 가 한 프레임(16.7ms) 안인지 보는 테스트를 넣었다",
-   "approach": "사람 섬의 조각을 다 재 보니 느린 것은 물(_ground, 6ms 까지)이 아니라 가파른 조각(높이 차 75~220m)의 Recast 굽기였다 — (7,10) 조각이 굽기만 14.7ms. 설정을 바꿔 봤다: detail sample · cell_height · monotone/layers 나누기 · 가파른 면 빼기는 그 조각에 효과가 없었고, edge_max_error 를 기본 1.3 으로 하면 열 배 빨랐지만 FOLK_EDGE_ERROR 0.6 은 방 모퉁이 벽 몫을 지키려 G-218.3 에 일부러 좁힌 값이라 두었다. 굽는 시간은 넓이보다 가파르게 늘어(꼭짓점 많은 다각형 줄이기) 16m 조각 넷이 32m 하나의 절반도 안 걸렸다. 그래서 TILE 을 24m(판 4m 의 배수 — OFFSET 으로 조각 변이 판 한가운데를 지나는 것은 그대로)로 줄였다: 혼자 재면 가장 느린 조각 10.9ms. 새 테스트는 사람 저장본을 불러 섬을 다 덮을 때까지(조각 7402 구움) 기다린 뒤 ground.slowest_us < 16.7ms 를 본다 — TILE 32 로 되돌리면 18.1ms 로 떨어지고(재 봤다), 24 면 혼자 11.9ms · 6개 함께 돌 때 13.0ms 로 통과. 바뀐 곳 그물(changed_tests.py, 51 파일 289 테스트)이 다 통과했다. 나무 · 돌 도려내기(_carve_resources)가 조각마다 섬의 자원을 다 훑어 1ms 씩 쓰지만, shape.resources 가 통째로 갈리는 자리(디버그 찍기)가 있어 캐시를 두려면 무효화가 붙어 덤이 커지므로 손대지 않았다.",
-   "why": "FolkGround.TILE 24m — 가장 느린 조각이 한 프레임 안이 되는 크기로 골랐다(혼자 10.9ms, 함께 돌 때 13.0ms). 16m 는 4ms 남짓이지만 조각이 넷 배라 지도가 무겁다. 섬이 더 가파르면 다시 재야 한다",
-   "files": [
-    "game/automation/villagers/folk_ground.gd",
-    "game/tests/automation/villagers/test_villager_g218_folk_ground_saved.gd",
-    "spec/07_automation/npc-villagers.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "처음 덮기의 한 조각이 한 프레임을 넘는다 — report 에 사람 섬에서 가장 느린 한 조각 17.6ms(>16.7ms)가 있었다. bake_some 은 적어도 한 조각은 굽으니 불러온 직후 그 프레임은 끊긴다. 놓을 때 기준과는 상관없지만, 가파르거나 물 많은 조각의 굽는 시간을 줄이거나(TILE 을 줄이거나 물 추리기 더) 테스트에 slowest_us 상한을 걸어 두라",
-     "evidence": "둘 다 했다. FolkGround.TILE 32→24m (판 4m 의 배수라 OFFSET 이 지키는 것은 그대로, 「임시」 표시 있음). test_villager_g218_folk_ground_saved.gd::test_3_no_single_tile_takes_longer_than_a_frame 이 사람 저장본을 불러 ground.done() 까지(조각 7402) 기다린 뒤 slowest_us < 16.7ms 를 단언한다 — 전체 테스트 로그에서 가장 느린 조각 11.9ms 로 통과. QA 가 TILE 을 32 로 되돌려 그 파일만 돌리니 19.2ms 로 이 단언이 떨어졌다(되돌려 놓음). 전체 350 파일 2687 테스트 통과 · guard 통과"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "and_craft.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           350\nTests            2687\nPassing Tests    2687\nFailing Tests       0\nRisky/Pending       0\nAsserts        103706\nTime           699s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-15 19:15:19",
   "epoch": 1792059319,
   "type": "start",
@@ -8916,5 +8883,60 @@
   },
   "test": "ple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      3s  res://tests/ui/hud/test_hotbar.gd\nok      4s  res://tests/ui/hud/test_hotbar_wheel.gd\nok      3s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_no_output_slots.gd\nok      3s  res://tests/ui/hud/test_map_coords.gd\nok      3s  res://tests/ui/hud/test_station_doing_line.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_station_queue_window.gd\nok      3s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      3s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      3s  res://tests/ui/hud/test_villager_gear_window.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/automation/villagers/test_villager_pen_room.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      2s  res://tests/life/hunting/test_captive_fed.gd\nok      2s  res://tests/life/hunting/test_summon.gd\nok      2s  res://tests/life/hunting/test_same_animal.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_bond.gd\nok      3s  res://tests/life/ranching/test_bird_cage_five.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shearing.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      3s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok    434s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           164\nTests            1363\nPassing Tests    1363\nFailing Tests       0\nRisky/Pending       0\nAsserts         43786\nTime           435s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "81e6472d"
+ },
+ {
+  "time": "2026-10-20 18:50:03",
+  "epoch": 1792489803,
+  "type": "pass",
+  "title": "통과 — G-266 단계 5 (새는 날지 않고 어디 앉아 있다)",
+  "group": "G-266",
+  "step": "5",
+  "attempt": "1",
+  "report": {
+   "problem": "새장의 새가 둘레를 날지 않고 새장 지붕 위 횃대에 앉아 있는다 — 사냥 명령 때만 날고 끝나면 돌아와 앉는다. 망원경 키 주석의 낡은 「먼 팀」 토막을 지웠다. 바뀐 곳 그물 193 파일 1648 개 중 1647 통과 · 떨어진 test_bird_cage_on_server.gd 를 고쳐 따로 다시 돌려 4/4 통과",
+   "approach": "새가 날아다닌 까닭은 CagedBird._sit 이 부름 · 쉼 · 잠이 풀리면 곧바로 FLY 로 바꾸고 _pick 으로 새장 둘레 RANGE 15 m · 높이 5~8 m 를 골랐기 때문이다. 그 전환과 _pick · BirdCage.HEIGHT · HEIGHT_SPREAD 를 거두어, 새는 PERCH 에 머물며 그 자리에서 먹고 쉬고 잔다. 나는 것은 사냥(HUNT) · 지키기(GUARD) · 돌아오기(HOME)뿐이고 끝나면 HOME → 제 횃대에 앉는다. FLY 는 옛 저장본을 읽으려고 enum 에 남겼고, 틱 한 번에 HOME 으로 바뀐다. 횃대는 새장 안(높이의 0.55)에서 지붕 위(높이 + 0.11 m)로 옮겼다 — CageBird.perch_of 하나를 Stations.perch_of 와 같이 쓴다. bird_cage 섬 사진을 새로 두고 찍어 보니 다섯이 지붕에 겹치지 않고 얹혀 있다. 옛 「나간다」를 보던 테스트는 「사냥하러 보냈다 → 돌아와 앉는다」 · 「부름 · 쉼이 풀려도 앉아 있다」로 고쳤다. spec bird-cage.md 에 사람 결정 2026-10-20 줄을 더했다(2026-10-18 원문은 그대로 둔다). 망원경 telescope.gd:86 주석은 「곁의 팀마다 한 줄 (…) · 빈 새장 · 차례가 바뀌었다」로 고쳤다.",
+   "why": "앉을 자리는 새장 지붕 위 횃대뿐 (CageBird.PERCH 1.0 · SIT 0.11 m) — current.md 가 임시로 정했다. 나무 · 바위 · 지붕은 아직 없다",
+   "files": [
+    "game/life/ranching/caged_bird.gd",
+    "game/life/ranching/cage_bird.gd",
+    "game/life/ranching/bird_cage.gd",
+    "game/craft/stations/stations.gd",
+    "game/life/hunting/telescope.gd",
+    "game/core/debug/shots.gd",
+    "game/core/debug/ui_shots.gd",
+    "spec/04_life/bird-cage.md",
+    "game/tests/life/ranching/test_bird_cage.gd",
+    "game/tests/life/ranching/test_bird_cage_five.gd",
+    "game/tests/life/ranching/test_bird_cage_call_five.gd",
+    "game/tests/life/ranching/test_cage_keep_rest.gd",
+    "game/tests/ui/hud/test_bird_cage_window.gd",
+    "game/tests/multiplayer/test_bird_cage_on_server.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "새장의 새가 일정 높이에서 계속 나는 것(cage_bird.gd perch() + 떠 있음)을 거두고 **앉아 있게** 한다 — 새장 위 · 가까운 나무 · 바위 · 지붕 같은 앉을 자리(임시: 새장 위 횃대). 사냥 명령을 받았을 때만 날고, 끝나면 돌아와 앉는다 (테스트)",
+     "evidence": "caged_bird.gd _sit 의 PERCH→FLY 전환 · _pick · BirdCage.HEIGHT/HEIGHT_SPREAD 를 거뒀고 옛 저장본 FLY 는 한 틱에 HOME. 횃대는 CageBird.perch_of = 새장 높이×1.0 + SIT 0.11 m(임시 표시 있음)로 지붕 위. test_bird_cage.gd 의 test_the_bird_sits_on_its_perch_and_never_flies_on_its_own(낮/밤 1000초 매 틱 PERCH · 제 횃대) · test_the_perch_is_on_top_of_the_cage(지붕 위 0.3 m 안) · test_sent_to_hunt_it_flies_and_comes_back_to_sit · test_after_guarding_the_kill_it_comes_back_to_sit(돌아와 앉고 300초 더 PERCH) · test_an_old_save_of_a_bird_flying_around_comes_home 가 확인한다. 일부러 _sit 에 「부름·쉼·못나가게가 아니면 FLY」를 되살려 tests/life/ranching 을 돌리니 test_bird_cage.gd 4 · test_cage_keep_rest.gd 2 · test_bird_cage_call_five.gd 1 이 떨어졌다(되돌림 확인 — cmp 같음). test.log 바뀐 곳 244 파일 2027 테스트 전부 통과 · guard 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 망원경 키 주석이 낡았다 — game/life/hunting/telescope.gd:86 「## 팀마다 한 줄 (…) · 먼 팀 (%d 팀 · %d 거리 m) · 빈 새장 …」 에 지운 ROW_FAR_KEY 몫 「먼 팀 (%d 팀 · %d 거리 m)」 이 남았다. 그 토막을 지우고 「곁의 팀마다 한 줄」로 고쳐라",
+     "evidence": "telescope.gd:86 이 「## 곁의 팀마다 한 줄 (%d 팀 · %s 새 · %d 거리 m) · 빈 새장 · 차례가 바뀌었다 (%d 팀).」로 바뀌었다 — 「먼 팀」 토막이 없다 (git diff 로 확인)"
+    }
+   ],
+   "issues": [
+    "새장 다섯 부르기 테스트 주석이 낡았다 — game/tests/life/ranching/test_bird_cage_call_five.gd:11 「앞 둘은 50 아래라 1분 만에 나가고, 뒤 셋은 50 위라 쉬었다 나간다」 가 G-266.5 뒤에도 「나간다」로 남았다. 새는 이제 나가지 않고 부름 · 쉼이 풀릴 뿐이니 「앞 둘은 1분 만에 풀리고, 뒤 셋은 쉬었다 풀린다」로 고쳐라",
+    "새장 문서 주석의 「나가기」가 남았다 — spec/04_life/bird-cage.md:12 「나가기 · 돌아오기 · 사냥 · 내려앉기가 다 날아서 · … 제 몫의 둘레」 의 「제 몫의 둘레」는 거둔 _pick(부채꼴 둘레 날기) 몫이다. 「제 몫의 둘레 ·」 토막을 지우고 「나가기」를 「사냥하러 나가기」로 고쳐라 (사람 원문 줄은 건드리지 않는다)"
+   ],
+   "good": [
+    "game/core/debug/shots.gd 에 bird_cage 섬 사진(지붕 위 다섯 새)을 더했다 — 기준의 「앉아 있다」를 눈으로 보려는 것이라 이번 몫에 붙는다"
+   ]
+  },
+  "test": "s://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/hunting/test_same_animal.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_bond.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      3s  res://tests/multiplayer/test_despawn_on_server.gd\nok      2s  res://tests/multiplayer/test_owl_trees_on_server.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/multiplayer/test_martens_on_server.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      1s  res://tests/ui/menu/test_manual_screen.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      3s  res://tests/ui/hud/test_villager_hands_window.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok    435s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           244\nTests            2027\nPassing Tests    2027\nFailing Tests       0\nRisky/Pending       0\nAsserts         75623\nTime           435s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "bd59d816"
  }
 ]
