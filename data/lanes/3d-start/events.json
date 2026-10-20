@@ -1,61 +1,5 @@
 [
  {
-  "time": "2026-10-14 21:35:39",
-  "epoch": 1791981339,
-  "type": "pass",
-  "title": "통과 — G-220 단계 3 (장비 이름 — 갑옷은 상의 · 각반은 하의)",
-  "group": "G-220",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "갑옷 → 「~상의」, 각반 → 「~하의」 (ko · en Top · Bottoms). 아이템 키는 그대로 두었고, 바뀐 곳에 걸리는 95개 파일 836개 테스트가 통과했다",
-   "approach": "po 의 *_armor · *_leggings 여덟 줄씩만 「가죽 상의 · 가죽 하의 …」/「Leather top · Leather bottoms …」로 바꿨다. 키 · FITS · 방어 수치 · 레시피는 건드리지 않았다 — 옛 저장본(가방 · 장비칸에 leather_armor 등)이 CharacterData 로 그대로 돌아와 같은 칸에 끼고 같은 방어를 내는 것을 테스트로 본다. spec/02_player/equipment.md 의 갑옷 · 각반을 상의 · 하의로 고치고 사람 결정 줄과 수용 기준 한 줄을 더했다. 계통도처럼 이름을 적은 곳(armor.gd · equipment.gd 주석, workbench.json 의 _temporary)도 「상의 · 투구 · 하의」로 맞췄다. 방어구 전체를 뜻하는 「갑옷」(facilities.md 사람의 표 「무기 · 갑옷 · 도구 · 가구」, player.gd 주석)은 벌 이름이 아니라 그대로 두었다. 테스트: 바뀐 곳만 95개 파일 836개 통과 (전체는 돌리지 않았다).",
-   "why": "",
-   "files": [
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "spec/02_player/equipment.md",
-    "game/player/equipment/armor.gd",
-    "game/player/equipment/equipment.gd",
-    "game/craft/recipes/workbench.json",
-    "game/tests/player/equipment/test_armor.gd",
-    "game/tests/player/equipment/test_top_bottoms_names.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "상의 칸에 끼우는 `*_armor` 는 「가죽 상의 · 청동 상의 · 철 상의 · 강철 상의」, 하의 칸의 `*_leggings` 는 「가죽 하의 · 청동 하의 · 철 하의 · 강철 하의」 (game/i18n/ko.po · en.po 도 Top · Bottoms 로) (테스트)",
-     "evidence": "ko.po · en.po 의 여덟 줄씩이 바뀌었다. test_top_bottoms_names.gd 의 test_ko_names_are_top_and_bottoms · test_en_names_are_top_and_bottoms 가 네 재질 × 두 벌을 정확한 글자로 단언하고, test_game_shows_the_new_names 가 tr() 로 실제 화면 글자를, test_no_old_word_left_in_item_names 가 ITEM_ 전체에 갑옷 · 각반이 없는지를 본다. po 를 되돌리면 깨지는 단언이다. 전체 테스트 2673개 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "아이템 키(leather_armor …)는 그대로 둔다 — 저장본이 깨지지 않는다. 이름만 바꾼다 (테스트)",
-     "evidence": "diff 에 키 · FITS · 레시피 output 변경이 없다. test_item_keys_survive_an_old_save 가 옛 키를 담은 저장본 dict 를 CharacterData.from_dict → to_dict 로 돌려 가방 · 장비칸이 그대로인지, slot_for 가 TOP · PANTS 인지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "투구 · 방패 · 방어 수치는 그대로다",
-     "evidence": "armor.gd · equipment.gd 는 주석만 바뀌었고 DEFENSE 표는 그대로다. test_helmet_and_shield_names_unchanged 가 투구 · 방패 이름을 확인한다. test_armor.gd 도 그대로 통과한다"
-    },
-    {
-     "ok": true,
-     "criterion": "spec/02_player/equipment.md 의 「갑옷 · 각반」을 「상의 · 하의」로 고쳐 적는다. 계통도에 이름이 나오는 곳도 줄기 이름을 따른다",
-     "evidence": "equipment.md 의 규칙 · 수치 · 수용 기준 줄을 바꿨고 사람 결정 2026-10-14 줄을 더했다(41줄). 남은 「갑옷」은 facilities.md 의 사람 표(방어구 전체를 뜻하는 갈래 이름)와 코드 주석의 일반명뿐이다. spec 안에 각반은 남지 않았다"
-    }
-   ],
-   "issues": [
-    "「하의은」 조사가 틀렸다 — game/craft/recipes/workbench.json 의 _temporary 「상의 · 투구 · 하의은 가죽」과 game/tests/player/equipment/test_armor.gd 5줄 「상의 · 투구 · 하의은 상의 · 모자 · 바지칸」을 「하의는」으로 고쳐라 (각반은 → 하의은 으로 기계적으로 바꾼 흔적)"
-   ],
-   "good": []
-  },
-  "test": "ts/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      0s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      0s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/world/map/test_map_memory.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           348\nTests            2673\nPassing Tests    2673\nFailing Tests       0\nRisky/Pending       0\nAsserts        102340\nTime           690s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "5348a44b"
- },
- {
   "time": "2026-10-14 21:55:57",
   "epoch": 1791982557,
   "type": "pass",
@@ -9700,5 +9644,47 @@
   },
   "test": "sts/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           515\nTests            3865\nPassing Tests    3865\nFailing Tests       0\nRisky/Pending       0\nAsserts        177461\nTime           761s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "b22f6f98"
+ },
+ {
+  "time": "2026-10-20 14:17:10",
+  "epoch": 1792473430,
+  "type": "stop",
+  "title": "루프 끝 — 목록을 모두 처리했다",
+  "group": "G-258-3",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "한 번 잡은 짐승은 깨어 도망 다녀도(가방에서 깬 _escape · 놓은 뒤 깸 · 저장본의 곰 _to_field) 나이 · 이름 · 스탯 · 잡은 표시를 지니고 다시 잡으면 그대로다 · run_off(우리 밖 1분)는 사람 결정대로 옛 규칙 그대로 사라진다 — 바뀐 곳만 98개 파일 834개 통과",
+   "approach": "브랜치에 하다 만 것(Animal.caught · Captives.carry_over · 처음 잡을 때 스탯을 칸에 적기 · _escape/_to_field 가 나이 · 이름 · 스탯을 잇기)은 그대로 두고, 사람 결정(2026-10-20 「추천대로 가자」)에 따라 run_off 를 들판 짐승으로 세우던 것만 되돌렸다 — 다시 몸째 지운다. run_off 를 다시 잡을 수 있다고 적었던 코드 주석 · spec(hunting.md · ranching-breeding.md · save.md)을 옛 규칙으로 고쳤다. 테스트는 run_off 뒤 들판 짐승이 남는다던 두 개를 「run_off 전에 다시 잡으면 같은 짐승」 · 「run_off 뒤에는 그 짐승이 없다(겨눌 수 없고 들판 짐승도 안 선다)」로 바꿨다. test.log: tests/life/hunting 302개 통과 · 바뀐 곳만(changed_tests) 98개 파일 834개 통과.",
+   "why": "",
+   "files": [
+    "game/life/ranching/ranch.gd",
+    "game/life/hunting/captives.gd",
+    "game/life/hunting/animal.gd",
+    "game/tests/life/hunting/test_same_animal.gd",
+    "spec/04_life/hunting.md",
+    "spec/04_life/ranching-breeding.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "한 번 잡은 짐승은 깨어 도망쳐도 **나이 · 이름 · 스탯 · 잡은 표시가 그대로**다 — _escape 로 나온 들판의 짐승 · 놓은 뒤 깨어 도망 다니는 짐승 · _to_field 가 그것을 지니고, 다시 잡으면 그대로 돌아온다 (테스트: 잡기 → 가방에서 깸 → 다시 잡기에서 born · 이름 · 스탯이 같다 · 놓기 → 깸 → 다시 잡기도)",
+     "evidence": "tests/life/hunting/test_same_animal.gd — test_a_captive_that_wakes_in_the_bag_is_the_same_beast_when_caught_again(caught · born · 이름 · 종 값과 다른 스탯 77 을 지니고 다시 잡은 칸의 born · name · stats 가 같다) · test_a_placed_one_that_wakes_is_the_same_beast_when_caught_again · test_an_old_saved_bear_keeps_its_age_name_and_stats_in_the_field(_to_field). 일부러 깨 봤다: _escape 의 carry_over 를 빼면 1개 실패, pick_up 의 born 을 늘 born_today() 로 바꾸면 가방 깸 · 놓기 깸 · run_off 전 다시 잡기 3개가 실패 — 되돌린 뒤 diff 는 원래대로. 전체 515 파일 3865 개 통과 · guard 통과 (test.log)"
+    },
+    {
+     "ok": true,
+     "criterion": "run_off(우리 밖 1분)는 **그대로 사라진다** — 다시 잡을 수 없다 (사람 결정 위). 테스트: 놓기 → 깸 → run_off 전에 다시 쏴 잡으면 born · 이름 · 스탯이 같다 · run_off 뒤에는 그 짐승이 없다",
+     "evidence": "ranch.gd run_off 가 _to_field 로 들판 짐승을 세우던 것을 되돌려 몸째 지운다(브랜치의 run_off 변경 되돌림). test_a_placed_one_caught_again_before_it_runs_off_is_the_same_beast(ESCAPE_SECONDS-1 에서 escape_left>0 전제 뒤 _same) · test_a_placed_one_that_runs_off_is_gone_for_good(지워짐 · ALL 그룹 밖 · kept/standing 0 · 들판 짐승 0 · pick_up -1). 옛 브랜치 코드(들판 짐승을 세움)라면 _wild_ones().size()==0 단언이 깨진다. spec hunting.md · ranching-breeding.md · save.md 도 옛 규칙으로 고쳐졌고 사람 결정 줄은 남았다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "sts/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           515\nTests            3865\nPassing Tests    3865\nFailing Tests       0\nRisky/Pending       0\nAsserts        177461\nTime           761s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
