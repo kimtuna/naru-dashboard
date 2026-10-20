@@ -1,115 +1,5 @@
 [
  {
-  "time": "2026-10-14 23:42:23",
-  "epoch": 1791988943,
-  "type": "pass",
-  "title": "통과 — G-221 단계 3 (Steam 로비 · 방 코드 (앱 ID 480))",
-  "group": "G-221",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "Steam 로비 + 방 코드(앱 ID 480)를 접속 자리에 더하고 윈도우 빌드를 뽑았다. 전체 362개 파일 2748개 테스트 중 2747개 통과, 떨어진 1개(test_pause_menu — 숨긴 「친구 초대」 단추까지 셈)를 고친 뒤 바뀐 곳 폴더 88개 파일 630개 테스트 모두 통과. 빌드: ~/Desktop/naru-builds/2026-10-14-d3c63191/naru-2026-10-14-d3c63191-windows.zip (검사 6/6)",
-   "approach": "① GodotSteam 은 GitHub 이 아니라 Codeberg 릴리스(v4.23.1 GDExtension, Godot 4.4+)에 있었다. SteamMultiplayerPeer 가 들었는지 dylib 을 보고 확인하고, headless 에서 클래스가 읽히는지 본 뒤 맥 · win64 · linux64 만 넣었다. ② 이 맥에서 사람의 Steam 이 켜져 있다(isSteamRunning=true) — 그래서 진짜 Steam 은 내보낸 판(또는 NARU_STEAM=1)에서만 붙고, headless 는 SteamApi.start() 가 아예 붙지 않는다. NetLink.steam_api() 가 null 이면 ENet(루프 테스트 · 같은 망 주소)이다. ③ Steam 과 말하는 곳은 steam_api.gd 하나, SteamMultiplayerPeer 를 세우는 곳은 net_link.gd 하나(ClassDB 이름으로 — 라이브러리가 없는 판에서도 스크립트가 읽힌다). 방 코드 · 「나루 로비」 표시(naru=1) · 찾기 순서는 steam_room.gd 가 하고, 가짜 Steam(tests/core/net/fake_steam.gd)은 로비를 한 세상에 모으고 접속은 ENet 으로 대신해 메뉴 → 게임까지 끝까지 붙여 본다. 480 은 남의 로비와 같이 쓰므로 표시와 코드로 거르고 받은 답을 한 번 더 본다. ④ 서버장은 로비가 서기를 기다리지 않고 바로 들어가며, 로비가 서면 알림 한 줄과 ESC 창 맨 위에 방 코드 · 「친구 초대」가 뜬다. 참가 칸은 방 코드면 Steam, 주소면 ENet. 친구 목록 「게임 참가」 · 초대(join_requested) · 「+connect_lobby」로 켜기는 캐릭터를 고르면 코드 없이 그 로비로 간다 — 게임 중에 받으면 메인 화면에 올 때까지 들고 있는다. ⑤ 내보내기 템플릿이 없어 공식 4.7.2-stable tpz 를 받아 SHA512 를 SHA512-SUMS.txt 와 맞춘 뒤 윈도우 x86_64 것만 ~/Library/Application Support/Godot/export_templates/4.7.2.stable 에 풀었다. tools/export_windows.sh 가 headless 로 뽑고 steam_appid.txt(480)를 넣어 zip 한 개로 낸 뒤 같은 GUT 검사로 본다(.pck 는 머리 · 목록을 끝까지 읽어 project.binary · 두 GDExtension · 메뉴 씬이 있고 테스트가 안 섞였는지). 맥 godot 에 --main-pack 으로도 열어 프로젝트가 읽히는 것까지 봤다(윈도우용이라 맥 라이브러리 없음 오류는 당연). ⑥ 전체를 돌리니 test_pause_menu 의 「항목 다섯」이 숨긴 친구 초대 단추까지 세 떨어졌다 — 보이는 단추만 세게 고치고 menu.md 에 「Steam 으로 열었을 때만 더 뜬다」를 적었다. ⑦ 그림(menu_room 자리를 더해 찍음)에서 영어 판에 「방 코드」가 한국어로 남았다 — 코드를 끼운 글이라 Label 이 스스로 못 옮겨, 말이 바뀌면 다시 옮기게 하고 테스트를 더했다. ⑧ listen-server.md 의 「네트워크 방식」은 이미 앞 단계에서 Steam 으로 적혀 있어 ENet 을 남기는 까닭 · 480 을 사람 결정 2026-10-14 로 덧붙였다. ⑨ (앞 단계 QA) _seat_visitor 1.5m 줄에 「서버장 옆 1.5m — 임시, 몸 동기화 단계 전까지」를 달았다. 【사람이 볼 것】 진짜 Steam 접속(서버 열기 → 방 코드 → 친구가 코드로 참가 · 친구 목록 「게임 참가」 · 초대)은 루프가 시험하지 않았다 — 친구와 확인해 주세요. 윈도우에서 Naru.exe 가 실제로 켜지는지도(zip: ~/Desktop/naru-builds/2026-10-14-d3c63191/, Steam 을 켠 채로; 오류는 Naru.console.exe 로 볼 수 있다). 이 빌드는 커밋 d3c63191 위의 아직 커밋 안 된 이번 단계 변경을 담았다 — 루프가 커밋한 뒤 다시 뽑으면 이름의 커밋이 바뀐다. 맥 에디터에서 Steam 을 시험하려면 NARU_STEAM=1 로 켠다.",
-   "why": "방 코드 6자 (core/net/room_code.gd LENGTH) — 사람이 길이를 정하지 않았다. 32자 6칸이면 10억 가지; Steam 앱 ID 480 (core/net/steam_api.gd APP_ID · tools/export_windows.sh) — 파트너 등록 전 Valve 시험용; 서버장 옆 1.5m (core/game_root.gd _seat_visitor) — 몸 동기화 단계 전까지",
-   "files": [
-    "game/addons/godotsteam/ (GodotSteam GDExtension 4.23.1 — 맥 · win64 · linux64 만)",
-    "game/core/net/net_link.gd",
-    "game/core/net/net_session.gd",
-    "game/core/net/room_code.gd",
-    "game/core/net/steam_api.gd",
-    "game/core/net/steam_room.gd",
-    "game/core/game_root.gd",
-    "game/ui/menu/menu_root.gd",
-    "game/ui/menu/pause_menu.gd",
-    "game/ui/menu/pause_menu.tscn",
-    "game/ui/menu/join_screen.gd",
-    "game/ui/menu/main_menu.gd",
-    "game/ui/menu/world_select.gd",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/export_presets.cfg",
-    "tools/export_windows.sh",
-    "game/tests/core/net/fake_steam.gd",
-    "game/tests/core/net/test_net_link_one_place.gd",
-    "game/tests/ui/menu/test_pause_menu.gd",
-    "game/tests/export/windows_build_check.gd",
-    "THIRD_PARTY.md",
-    "spec/11_multiplayer/listen-server.md",
-    "spec/11_multiplayer/netcode.md",
-    "spec/12_ui/menu.md",
-    "spec/01_settings/save.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "GodotSteam(GDExtension, 쓰는 Godot 판에 맞는 것)을 넣고 앞 단계의 접속 자리에 Steam 접속(SteamMultiplayerPeer)을 더한다 — ENet 은 시험용으로 남긴다. 라이선스를 THIRD_PARTY.md 에 적는다",
-     "evidence": "game/addons/godotsteam(4.23.1, osx·win64·linux64, license.md). QA 가 headless 4.7.2 에서 ClassDB 로 직접 확인: Steam 싱글턴 · steamInitEx(app_id, embed_callbacks) · createLobby/joinLobby/… · 신호 lobby_created/lobby_match_list/lobby_joined/join_requested 의 이름·인자 수가 steam_api.gd 와 맞고, SteamMultiplayerPeer.host_with_lobby/connect_to_lobby 가 있다. 피어는 net_link.gd 한 곳(steam_host/steam_join), ENet 그대로. test_net_link_one_place +2 가 Steam 피어·싱글턴이 한 곳에만 있는지 지킨다. THIRD_PARTY.md 에 MIT + Steamworks 재배포 줄"
-    },
-    {
-     "ok": true,
-     "criterion": "서버장이 서버를 열면 Steam 로비가 생기고 짧은 방 코드(임시 6자, 헷갈리는 0/O · 1/I 빼고)가 화면에 뜬다. 참가자가 코드를 치면 그 로비를 찾아 들어온다 — 로비 찾기는 「나루 로비」 표시로 거른다 (테스트: Steam 을 흉내 낸 가짜로 코드 만들기 · 거르기 · 찾기)",
-     "evidence": "test_room_code(2000개 생성 6자·0/O/1/I 없음·clean·is_code 거부), test_steam_room(표시·코드 달린 로비, last_filters == {naru:1, code} 단언, 같은 코드의 남의 로비로 안 감, is_ours 재확인, 없는 코드·틀린 코드·가득 참), test_steam_game(메뉴에서 서버 열기 → 알림 · ESC 창에 코드, 다른 기계가 소문자 코드로 참가해 서버장 월드에 들어가고 서버장 쪽에 몸이 섬). 가짜는 필터를 실제로 적용해 거르므로 표시를 빼면 단언이 떨어진다"
-    },
-    {
-     "ok": true,
-     "criterion": "Steam 친구 목록의 「게임 참가」 · 초대로도 들어온다",
-     "evidence": "SteamApi.start 가 Steam join_requested(lobby_id, steam_id) 를 ask_to_join 에 잇고 +connect_lobby 를 읽는다(인자 이름 QA 확인). test_friend_list_join_and_invite_bring_you_in · test_launched_by_an_invite_goes_to_that_lobby 가 메뉴 → 캐릭터 → 코드 없이 그 로비로 게임에 들어가는 것을, test_launch_args_carry_the_lobby 가 +connect_lobby 파싱을 본다. ESC 창 「친구 초대」 → invite(lobby) 도 단언. 진짜 Steam 신호는 사람 확인 몫으로 report 에 적힘"
-    },
-    {
-     "ok": true,
-     "criterion": "Steam 이 안 켜져 있으면 「Steam 을 켜 주세요」를 띄우고 혼자 하기는 그대로 된다 (테스트)",
-     "evidence": "test_without_steam_it_asks_to_start_steam_and_solo_still_works: 메인 notice == MENU_STEAM_NEEDED, 서버 열기는 같은 키로 막히고 판 없음, 같은 월드 「Choose」로 혼자 게임이 net==null·is_host 로 선다. test_without_steam_joining_by_code_asks_to_start_steam 도. ko/en 번역 키 있음"
-    },
-    {
-     "ok": true,
-     "criterion": "루프는 진짜 Steam 접속을 시험하지 않는다 — 사람의 Steam 앱을 띄우거나 로그인하지 않는다. 진짜 접속은 사람이 친구와 확인한다 (report 에 「사람이 볼 것」으로 적는다)",
-     "evidence": "SteamApi.start 는 headless 이면 곧바로 false, NetLink.wants_steam 은 headless 에서 false — test_the_loop_never_starts_the_real_steam 가 단언. 테스트는 fake_steam.gd 만 끼운다. report.how 에 【사람이 볼 것】 있음"
-    },
-    {
-     "ok": true,
-     "criterion": "spec/11_multiplayer/listen-server.md 의 「네트워크 방식(ENet / Steam) · 릴레이 미정」을 사람 결정 2026-10-14 로 고쳐 적는다",
-     "evidence": "listen-server.md 에 네트워크 방식(Steam SteamMultiplayerPeer, ENet 은 테스트·같은 망용, net_link.gd 한 곳) · 480 줄을 사람 결정 2026-10-14 로 적었다. 「미정」 줄은 앞 단계에서 이미 걷혀 있었다(grep 확인). netcode.md 「접속」에도 덧붙임"
-    },
-    {
-     "ok": true,
-     "criterion": "친구에게 줄 윈도우 빌드를 뽑는다 — game/export_presets.cfg 에 Windows Desktop(x86_64) 판을 두고, 한 줄 명령으로 ~/Desktop/naru-builds/<날짜>-<커밋>/ 에 실행 파일 · .pck · GDExtension dll(Terrain3D · GodotSteam) · steam_api64.dll · steam_appid.txt(480) 를 담아 zip 한 개로 낸다. 빌드는 headless 로 뽑는다",
-     "evidence": "export_presets.cfg(Windows Desktop, x86_64, embed_pck=false, tests/* 제외), tools/export_windows.sh 가 --headless --export-release 로 뽑아 zip 한 개. QA 가 unzip -l 로 확인: ~/Desktop/naru-builds/2026-10-14-d3c63191/ 의 zip 에 Naru.exe · Naru.console.exe · Naru.pck · libgodotsteam…dll · libterrain…dll · steam_api64.dll · steam_appid.txt(4바이트, 480)"
-    },
-    {
-     "ok": true,
-     "criterion": "Godot 4.7.2 내보내기 템플릿이 없으면 공식 릴리스에서 받아 맞는 자리에 풀고 체크섬을 확인한다. 받지 못하면 needs_decision 으로",
-     "evidence": "~/Library/Application Support/Godot/export_templates/4.7.2.stable 에 version.txt · windows_{debug,release}_x86_64(.exe/_console.exe) 있음. report 에 SHA512-SUMS.txt 대조 기록. 스크립트는 템플릿이 없으면 안내 후 exit 3"
-    },
-    {
-     "ok": true,
-     "criterion": "뽑은 zip 에 위 파일이 다 들었는지 · .pck 가 열리는지 검사한다 (테스트). 윈도우에서 실제로 켜지는지는 사람이 친구와 본다 — report 에 「사람이 볼 것」으로 적는다",
-     "evidence": "tests/export/test_windows_build.gd + windows_build_check.gd: 실제 zip 검사(전체 실행에서 Pending 0 — 진짜 zip 을 봤다), 그리고 검사 자체를 손으로 만든 zip 으로 깨 본다 — dll 빠짐 · 앱 ID 123 · .pck 에 godotsteam.gdextension 빠짐 · .pck 7바이트 잘림을 각각 잡는지 단언. .pck 목록을 끝까지 읽어 파일 끝과 맞는지 본다. 빌드 폴더 check.log 6/6. report 에 윈도우 실행은 사람이 볼 것으로 적힘"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 참가자 몸 세우는 자리 1.5m 에 「임시」가 없다 — _seat_visitor 의 Vector3(1.5, 0.0, 0.0) 줄에 「서버장 옆 1.5m — 임시, 몸 동기화 단계 전까지」 주석을 달아라",
-     "evidence": "game/core/game_root.gd _seat_visitor 의 그 줄 끝에 문구 그대로 주석이 달렸다 (git diff 확인)"
-    }
-   ],
-   "issues": [
-    "SteamApi 의 진짜 신호 잇기는 테스트 밖이다 — core/net/steam_api.gd start() 안에서 Steam 신호(lobby_created result==1 · lobby_joined response==1/4)를 우리 신호로 바꾸는 람다는 가짜가 start() 를 덮어써 한 번도 돌지 않는다. 이름 · 인자 수는 QA 가 ClassDB 로 맞는 것을 봤지만 값 해석(ENTER_OK=1 · ENTER_FULL=4 · LOBBY_PUBLIC=2 · WORLDWIDE=3)이 GodotSteam 상수와 같은지는 지켜지지 않는다. headless 에서도 Engine.get_singleton(\"Steam\") 이 있으니(초기화 없이) tests/core/net 에 `ClassDB.class_get_integer_constant(\"Steam\", \"LOBBY_TYPE_PUBLIC\") == SteamApi.LOBBY_PUBLIC` 같은 단언을 네 상수에 대해 더하고, 신호 변환은 static 함수로 빼 단위 테스트하라",
-    "SteamApi.set_lobby_data 가 부를 때마다 setLobbyJoinable 도 부른다 — core/net/steam_api.gd: 키 하나 적을 때마다 같은 호출이 반복된다. 로비가 섰을 때 한 번(SteamRoom._on_created 또는 create_lobby 답) 부르게 옮겨라 (동작 차이는 없다)"
-   ],
-   "good": [
-    "ui_shots 에 「menu_room」 찍는 자리를 더했다 (ESC 창의 방 코드 그림 확인용) — 기준 밖이지만 화면 확인 도구라 해가 없다",
-    "참가 칸이 방 코드와 ENet 주소를 둘 다 받는다 · 메뉴 문구 「참가 (IP)」→「참가」 (spec/12_ui/menu.md 갱신) — 방 코드 참가 기준의 자연스러운 부분"
-   ]
-  },
-  "test": "\nok      0s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           362\nTests            2749\nPassing Tests    2749\nFailing Tests       0\nRisky/Pending       0\nAsserts        109854\nTime           689s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "42342c5a"
- },
- {
   "time": "2026-10-15 00:12:19",
   "epoch": 1791990739,
   "type": "pass",
@@ -9694,5 +9584,39 @@
   },
   "test": "uild/test_buildings_tidy.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/core/net/test_net_link_one_place.gd\nok      3s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      3s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      3s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      0s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           526\nTests            3953\nPassing Tests    3953\nFailing Tests       0\nRisky/Pending       0\nAsserts        182307\nTime           777s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "042f5b5a"
+ },
+ {
+  "time": "2026-10-20 18:52:00",
+  "epoch": 1792489920,
+  "type": "pass",
+  "title": "통과 — G-924 단계 1 (서버장이 띄엄띄엄 서는 경우는 안 쟀다 (G-267 단계 1))",
+  "group": "G-924",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "서버장이 띄엄띄엄 서는 판(3초마다 프레임 하나를 200~400 ms 붙잡음)을 끊김 재기에 더해 1분 쟀다 — 끊김 0, 멈출 때마다 튐(짐승 30 · 몸 15)",
+   "approach": "30 · 15 fps 판은 고른 느림이라 App Nap · 가려진 창처럼 프레임 하나가 수백 ms 걸리는 꼴은 안 쟀다. stutter_probe 서버장에 <멈춤 주기 초> <ms 아래> <ms 위> 를 받아 걷는 동안 그 주기마다 _process 에서 OS.delay_msec(200~400)으로 프레임을 붙잡게 했다(그동안 망도 안 돈다). CASES 에 여덟째 판을 더하고 host.json 에 멈춘 횟수(hitches)를 적어 0 보다 큰지 단언한다. NARU_STUTTER_SECONDS=60 으로 여덟 판을 쟀더니: 서버장 55 fps · 멈춤 20번 · 끊김(0.2초 넘게 섰다 다시 감) 짐승 · 주민 · 몸 모두 0. 다만 튐(한 프레임에 기대 걸음의 세 배 넘게)이 짐승 30(마리당 멈춤 하나에 0.75) · 몸 15 — NetInterp 가 0.25초까지 잇고 늦은 만큼 따라잡아 「뚝뚝」이 아니라 「휙」으로 보인다. 다른 일곱 판은 G-267.2 표와 같았다. performance.md 끊김 표에 줄 하나 · 둘째 짐작 줄에 결과. 짧은 여느 돌림(SHORT 세 판)은 그대로 둬 godot 수를 늘리지 않았다. 바뀐 곳 그물(test_net_interp · test_net_measure · test_net_stutter) 18개 통과 — 전체는 돌리지 않았다",
+   "why": "",
+   "files": [
+    "game/tests/perf/stutter_probe.gd",
+    "game/tests/perf/test_net_stutter.gd",
+    "spec/00_core/performance.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "서버장이 띄엄띄엄 서는 경우는 안 쟀다 — 30 · 15 fps 는 고른 느림이다. App Nap · 가려진 창은 프레임 한두 개가 수백 ms 걸리는 꼴일 수 있다. 사람이 본 끊김의 다른 짐작을 닫으려면 서버장 프레임에 가끔 OS.delay_msec(200~400)을 끼우는 판을 하나 더 재라(기준 밖)",
+     "evidence": "stutter_probe.gd 서버장 _process 가 걷는 동안 <멈춤 주기> 마다 OS.delay_msec(randi_range(200,400)) 로 프레임을 붙잡고 host.json 에 hitches 를 적는다. test_net_stutter.gd CASES 여덟째 판 「서버장 멈춤 200~400 ms · 3초마다」가 그 인자를 넘기고 assert_gt(hitches, 0) 로 실제로 멈췄는지 단언한다(멈춤 길이 고장 나 0 이면 떨어진다). QA 가 NARU_STUTTER_SECONDS=20 으로 여덟 판을 다시 돌렸다 — 3개 통과, 여덟째 판 서버 55 fps · 멈춤 6번 · 짐승/주민/몸 끊김 0 · 튐 짐승 18 · 몸 9. 구현 세션의 1분 결과(멈춤 20 · 끊김 0 · 튐 30/15)와 같은 꼴이다. performance.md 끊김 표에 줄이 섰고 둘째 짐작 줄에 결과가 적혔다(143줄). test_performance_doc_has_the_stutter_table 이 CASES 이름마다 표 줄을 찾으니 여덟째 줄도 지킨다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 3 개 ---\ntest.sh: 파일 3 개를 6 개씩 한꺼번에 돌린다\nok      2s  res://tests/core/net/test_net_interp.gd\nok     12s  res://tests/perf/test_net_stutter.gd\nok     14s  res://tests/perf/test_net_measure.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             3\nTests              18\nPassing Tests      18\nFailing Tests       0\nRisky/Pending       0\nAsserts           184\nTime           14s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "dbb4d636"
  }
 ]
