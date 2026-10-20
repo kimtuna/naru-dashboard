@@ -4484,11 +4484,13 @@
 - [x] 1. 위에 탭 · 마우스
   - 기준: 설정 화면 **위에 탭 버튼**(키보드 · 마우스 — 뒤에 탭이 더 붙을 수 있게). 마우스 탭: **감도** 미끄럼(지금 값이 가운데쯤 · 범위 임시) · 바로 반영 · 사용자 설정으로 저장(월드 저장이 아니다) · 껐다 켜도 남는다
   - 기준: 메인 메뉴의 설정과 ESC 의 설정이 같은 화면이다
-- [ ] 2. 키보드 — 키 다시 잡기
+- [x] 2. 키보드 — 키 다시 잡기
   - 기준: 키보드 탭에 동작마다(input_actions.gd) 지금 키 · 누르면 「키를 누르세요」 · 다음 누른 키로 바뀐다 · 겹치면 알린다(바꾸지 않거나 맞바꾸기 — spec 에 한 줄) · 「처음대로」 · 저장 · 복원
   - 기준: 키 안내 글자(HUD · 창의 「[E]」 같은 것)가 바뀐 키를 따른다 · input.md 의 「미정」을 고친다 · ui_shots 두 탭 · ko/en
   - 기준: (앞 단계 QA) 「월드 저장이 아니다」 단언이 늘 참이다 — test_settings_screen.gd test_sensitivity_is_saved_as_a_user_setting_and_survives_restart 의 assert_false(_file.begins_with(SaveStore.DEFAULT_ROOT)) 는 _file 이 테스트가 만든 임시 폴더라 언제나 통과한다. 실제 자리를 보게 assert_false(USER_PREFS.DEFAULT_PATH.begins_with(SaveStore.DEFAULT_ROOT)) 로 바꾸고, 가능하면 캐릭터/월드 저장본(SaveStore 가 쓰는 사전)에 'mouse' · 'sensitivity' 키가 없는지도 단언하라 (막는 것은 아니다 — 쓰는 길이 UserPrefs 뿐이라 지금은 맞다)
   - 기준: (앞 단계 QA) 미끄럼 걸음이 화면에 박혔다 — settings_screen.gd:24 _sensitivity.step = 0.0001 은 범위(UserPrefs.SENSITIVITY_MIN/MAX)와 떨어져 화면 쪽에 박힌 수다. user_prefs.gd 에 SENSITIVITY_STEP 상수로 옮겨 범위와 같이 「임시」로 적고 화면은 그것을 읽게 하라
+- [ ] 3. (앞 단계 QA) 이동 동작 이름이 어긋난다
+  - 기준: 이동 동작 이름이 어긋난다 — ko.po KEYBIND_move_up「앞으로」 · move_down「뒤로 걷기」 · move_left「왼쪽」 · move_right「오른쪽」으로 꼴이 섞였다(en 은 Move forward/back/left/right). 「앞으로 걷기 · 뒤로 걷기 · 왼쪽으로 걷기 · 오른쪽으로 걷기」처럼 한 꼴로 맞춰라 (막는 것은 아니다)
 
 ## [ ] G-264 설명서 — ESC 데이터베이스 · 목차
 - 차선: 3d-lane2
