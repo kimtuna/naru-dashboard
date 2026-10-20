@@ -1,41 +1,5 @@
 [
  {
-  "time": "2026-10-15 20:34:02",
-  "epoch": 1792064042,
-  "type": "pass",
-  "title": "차선 합치기 — 3d-start(b82d7c0c) → 3d-lane2",
-  "group": "G-223",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "제작 시설 대기열의 「만들기」 줄에서 「만들기」 글을 뺐다 — 이름 · 개수만 보이고, 「유지」 줄은 「유지」 글이 남는다",
-   "approach": "대기열 줄 맨 앞 Mode 칸이 만들기 줄에도 「만들기」를 적고 있었다. Mode 칸은 남기되 만들기 줄에서는 글을 비우고 숨기며, 유지 줄에서만 「유지」를 적고 보인다(HFlowContainer 라 숨긴 칸은 자리를 차지하지 않는다). 표 머리줄의 「만들기」 · 「유지」 칸 이름은 대기열이 아니라서 그대로 둔다. 테스트: 만들기 줄에 보이는 글자 중 「만들기」가 없고 이름 · 개수는 보이며, 유지 줄은 「유지」가 보인다. 칸이 하나 빠져 줄이 넓어지자 「흐른 까닭은 들여 쓴다」 테스트에서 까닭이 더 이상 아랫줄로 흐르지 않아, 이름이 긴 물건을 흉내 내도록 이름 칸 최소 폭을 넓혀 흐름을 다시 만들었다. 화면 사진(harness/shot.sh --ui workbench, ko · en)에서 「의자 × 3」 · 「침대 × 1」 줄에 만들기 글이 없고 「유지 테이블 지금 0 / 유지 5」는 남은 것을 확인했다.",
-   "why": "유지 대기열 줄의 「유지」 글은 무엇이 다른지 보이려 임시로 남긴다 (current.md 기준의 「(임시)」) — station_window.gd 주석에 적음",
-   "files": [
-    "game/ui/hud/station_window.gd",
-    "game/tests/ui/hud/test_station_keep_window.gd",
-    "game/tests/ui/hud/test_station_doing_line.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "대기열 줄(ui/hud/station_window.gd:432 · :461 의 `Mode` 칸, STATION_QUEUE_MAKE)에 「만들기」 글이 없다 — 이름 · 개수만. 유지 대기열(STATION_QUEUE_KEEP)은 무엇이 다른지 보여야 하니 그 글은 남긴다 (임시) (테스트 · 화면 사진)",
-     "evidence": "station_window.gd 의 _queue_line 이 Mode 칸을 빈 글 · 숨김으로 만들고 _refresh_queue 가 유지 줄에서만 STATION_QUEUE_KEEP 을 적고 켠다. 「(임시)」는 코드 주석에 적혀 있다. test_station_keep_window.gd::test_the_queue_line_says_keep_only_for_keep_lines 가 만들기 줄의 Mode 가 안 보이는지, 보이는 Label 가운데 STATION_QUEUE_MAKE 가 없는지, Item · Count 가 보이는지, 유지 줄 Mode 가 STATION_QUEUE_KEEP 이고 보이는지를 확인한다. 옛 코드(STATION_QUEUE_MAKE 를 적고 보임)라면 assert_false(visible) 와 보이는 글 검사에서 깨진다. 전체 테스트 383개 파일 · 2877개 통과, guard 통과(test.log). 화면 사진 /tmp/g2233/workbench_ko.png 에서 「의자 × 3」 · 「침대 × 1」 줄에 만들기 글이 없고 「유지 테이블 지금 0 / 유지 5」는 남아 있다. 표 머리줄의 「만들기」 칸 이름은 대기열이 아니라서 그대로 두었다"
-    }
-   ],
-   "issues": [],
-   "good": [
-    "test_station_doing_line.gd::test_a_flowed_reason_is_indented_inside_its_line 에서 Item 칸 최소 폭을 160 으로 넓혔다. 칸이 하나 빠져 줄이 넓어지니 흐름 검사가 계속 돌게 하려는 것이라 덤은 아니고, 지키던 것(흐른 까닭이 들여 쓰여 줄 안에 든다)도 그대로 지킨다"
-   ]
-  },
-  "test": "es://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           383\nTests            2877\nPassing Tests    2877\nFailing Tests       0\nRisky/Pending       0\nAsserts        122317\nTime           742s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "6c3cd228"
- },
- {
   "time": "2026-10-15 20:53:07",
   "epoch": 1792065187,
   "type": "fail",
@@ -9030,5 +8994,60 @@
    "decision": null
   },
   "test": "'.\n    [2874] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2875] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2876] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2877] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2878] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2879] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2880] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2881] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2882] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2883] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2884] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2885] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2886] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2887] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2888] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2889] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2890] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2891] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2892] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2893] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2894] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2895] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2896] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2897] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2898] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2899] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2900] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2901] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2902] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2903] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2904] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2905] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2906] <engine-2>Invalid call. Nonexistent function 'standing' in base 'Nil'.\n    [2907] <engine-2>Invalid access to property or key 'multiplayer' on a base object of type 'Nil'.\n    [2908] <engine-2>Invalid access to property or key 'inventory' on a base object of type 'Nil'.\n    [2909] <engine-2>Invalid call. Nonexistent function 'slot' in base 'Nil'.\n    [2910] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2911] <engine-2>Invalid call. Nonexistent function 'cast_at' in base 'Nil'.\n          at line 207\n\nTotals\n------\nScripts               1\nTests                 8\nPassing Tests         7\nFailing Tests         1\nAsserts           92/96\nOrphans              19\nTime              39.272s\n\n\n---- 1 failing tests ----\n\nWARNING: 19 ObjectDB instances were leaked at exit (run with `--verbose` for details).\n   at: cleanup (core/object/object.cpp:2536)\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           531\nTests            3995\nPassing Tests    3994\nFailing Tests       1\nRisky/Pending       0\nAsserts        189438\nTime           772s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/multiplayer/test_fish_on_server.gd\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\ntest.sh: 스크립트 오류가 있다\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-20 20:58:03",
+  "epoch": 1792497483,
+  "type": "pass",
+  "title": "통과 — G-268 단계 2 (케이지는 계속 쓴다)",
+  "group": "G-268",
+  "step": "2",
+  "attempt": "2",
+  "report": {
+   "problem": "케이지는 계속 쓴다 — 짐승이 케이지에서 나가면 빈 케이지가 가방으로(차 있으면 발밑으로) 돌아온다 · 안 쓰는 nearby() 지움 · hunting/netcode/permissions spec 고침",
+   "approach": "가방에서 짐승이 나가는 길은 둘뿐이다 — Captives.place_for(땅 · 우리에 놓기, Ranch.place) 와 Stations.put_bird(새장). 둘 다 케이지를 bag.add 로만 돌려주어 가방이 차 있으면 케이지가 사라졌다. Captives.give_back_cage(bag, entry, parent, feet) 하나로 모아 남는 것은 DroppedItem 으로 발밑에 떨군다. 도축은 땅의 주검에, 길들여 풀기는 이미 놓인 개체에 하므로 그때는 케이지가 이미 돌아와 있다 — spec 에 한 줄로 적었다. 허공 줍기를 걷은 뒤 아무도 안 부르던 Captives.nearby() 를 지웠다. netcode.md · permissions.md 의 「줍기」를 「든 케이지로 가두기(G-268.1)」로 고쳤다. 설명서(manual_toc.json)는 목차 제목(「케이지」)뿐이라 고칠 줄이 없었다. 앞 회차 전체 검사에서 떨어진 test_fish_on_server.gd 는 혼자 돌리니 8/8 통과 — 무거운 동시 실행 중 참가자가 늦게 들어온 타이밍 흔들림으로 보인다(이 묶음은 낚시를 건드리지 않았다). 끝내기 전 바뀐 곳 그물: 190 파일 1630 테스트 모두 통과.",
+   "why": "",
+   "files": [
+    "game/life/hunting/captives.gd",
+    "game/craft/stations/stations.gd",
+    "game/tests/life/hunting/test_cage_reuse.gd",
+    "spec/04_life/hunting.md",
+    "spec/11_multiplayer/netcode.md",
+    "spec/11_multiplayer/permissions.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "짐승이 케이지에서 나오면(놓아주기 · 우리 · 새장에 넣기 · 도축 · 길들여 풀기) 빈 케이지가 가방으로 돌아온다(captives.gd:206 의 놓아줄 때 돌려주기를 모든 나가는 길에) — 가방이 차 있으면 발밑에 떨군다 (테스트)",
+     "evidence": "가방에서 짐승 칸이 비는 곳을 grep 으로 다 찾았다 — Captives.place_for(땅 · 우리 놓기, 서버 대행 net_world:775 도 이것) · Stations.put_bird(새장, cage_panel 도 CAGE_PUT 으로 이것) · _escape(케이지 없는 칸만). 앞의 둘이 모두 Captives.give_back_cage 를 부른다. 도축 · 길들이기는 놓인 개체에 하므로 가방 칸과 무관하다. tests/life/hunting/test_cage_reuse.gd 6개: 한 케이지로 잡고 놓고 또 잡기(catch_for→place_for 두 번, 칸이 {cage_medium,1} 로 돌아옴) · 케이지 더미가 3이 됨 · put_bird 뒤 cage_small 2 · 케이지 없던 칸은 케이지 0 · 가방이 꽉 차면 DroppedItem 1개가 feet 의 x,z 에 · 자리 있으면 떨어지지 않음. give_back_cage 를 일부러 빈 함수로 만들어 그 파일만 돌리니 6개 가운데 5개가 떨어졌다(되돌림 확인). 마지막 전체 검사(test.log 20:56): 3995/3995 통과 · guard 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "spec/04_life/hunting.md 「잡기」를 사람 원문과 함께 고친다 · 설명서(G-264)에 잡기 줄이 있으면 같이 고친다",
+     "evidence": "hunting.md:57 에 첫 원문(G-268.1), :63 케이지 줄에 둘째 원문 「케이지는 1회용이 아닌 계속 사용할 수 있게하는거고」과 돌아오는 길 · 발밑 떨굼을 적었다. 사람 결정 줄은 지워지지 않았다(G-238.2 의 「케이지째 놓으면 가방으로」를 넓힌 것). 설명서는 manual_toc.json 의 MANUAL_cages(「케이지」 제목)뿐이고 ko/en.po 에 잡기 설명 줄이 없어 고칠 것이 없다. 145줄"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 쓰지 않는 Captives.nearby() 가 남았다 — game/life/hunting/captives.gd:310 의 nearby() 는 허공 줍기를 걷은 뒤 어디서도 부르지 않는다(grep 결과 테스트 · ui 모두 없음). 지우거나, 남길 까닭이 있으면 주석에 적어라",
+     "evidence": "nearby() 를 지웠다. grep 으로 부르는 곳이 남지 않았다. 남은 REACH 상수의 주석도 「줍는다」에서 「깨어 빠져나온 짐승이 이 안에 선다」로 고쳤고 **임시** 표시를 그대로 두었다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) netcode · permissions spec 의 「잡힌 짐승 줍기」가 낡았다 — spec/11_multiplayer/netcode.md:52 · :100 과 permissions.md:14 가 아직 「줍기」라고만 적는다. 「든 케이지로 가두기(G-268.1)」로 고쳐 hunting.md 와 맞춰라",
+     "evidence": "netcode.md:52 · :100, permissions.md:14 세 곳이 다 「든 케이지로 가두기(G-268.1)」로 바뀌었다. spec/11_multiplayer 에 짐승 「줍기」 줄이 더 남지 않았다(grep)"
+    }
+   ],
+   "issues": [
+    "[결정] 케이지에 든 곰은 나갈 길이 없다 — 곰은 AnimalKinds.WILD_ONLY 라 place_for 가 거부하고 새장에도 못 들어간다. 그래서 곰을 대형 케이지에 넣으면 그 케이지는 영영 돌아오지 않아 「케이지는 계속 쓴다」와 맞지 않는다. 곰을 들판에 놓아주는 길(기르지는 않고 깨어 달아남)을 둘지, 곰은 아예 케이지에 못 넣게 할지 사람이 골라야 한다",
+    "가방이 찼을 때 떨구는 길은 실제로 안 닿는다 — place_for · put_bird 는 짐승 칸을 비운 뒤에 케이지를 돌려주므로 bag.add 가 늘 자리를 찾는다. 떨구는 길은 give_back_cage 를 직접 부르는 테스트로만 확인된다. 막는 것은 아니니 captives.gd give_back_cage 주석에 「지금 나가는 길은 칸을 먼저 비우므로 떨굴 일이 없고, 칸을 먼저 비우지 않는 길이 생길 때를 위한 받침」이라고 적어 두어라"
+   ],
+   "good": []
+  },
+  "test": "world/storage/test_chest_shift_click.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/automation/villagers/test_villager_body.gd\nok      1s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/player/equipment/test_armor_health.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           531\nTests            3995\nPassing Tests    3995\nFailing Tests       0\nRisky/Pending       0\nAsserts        189448\nTime           761s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "ed4e98bd"
  }
 ]
