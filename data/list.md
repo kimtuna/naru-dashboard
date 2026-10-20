@@ -4717,8 +4717,10 @@
 - [x] 2. (앞 단계 QA) 경비 테스트 머리줄이 옛 md 를 가리킨다
   - 기준: 경비 테스트 머리줄이 옛 md 를 가리킨다 — game/tests/life/ranching/test_guard_pen.gd:2 · test_guard_watch.gd:2 · game/tests/automation/villagers/test_villager_answers_cry.gd:2 가 아직 「spec/04_life/ranching-breeding.md」라 적혀 있다. 셋 다 「spec/04_life/guard-pen.md」로 바꿔라
   - 기준: (앞 단계 QA) 낡은 미정 줄 — spec/04_life/ranching-breeding.md 123줄 「경비 동물(거위)이 벌통을 털러 오는 곰 · 오소리를 보고 우는가 — 경비 시설(G-244)이 아직 없어 미정」은 G-244.2 로 이미 풀렸다(guard-pen.md 「반경에 든 적대 짐승」에 벌통을 터는 곰 · 오소리가 든다). 그 줄을 지우거나 guard-pen.md 를 가리키게 고쳐라
-- [ ] 1. hive_raid.gd 머리 주석에 같은 낡은 미정이 남았다 (G-926 단계 2)
+- [x] 1. hive_raid.gd 머리 주석에 같은 낡은 미정이 남았다 (G-926 단계 2)
   - 기준: hive_raid.gd 머리 주석에 같은 낡은 미정이 남았다 — game/life/ranching/hive_raid.gd:12 「경비 동물(거위)이 다가오는 곰 · 오소리를 보고 우는 것은 경비 시설(G-244)과 같이 온다 — 지금은 spec 미정이다」는 G-244.2 로 풀렸다. 「경비 거위는 반경에 든 곰 · 오소리를 보고 운다 (G-244.2, spec/04_life/guard-pen.md · Ranch.tick_guard)」처럼 고치고, 3줄의 spec 가리킴도 맞는지 본다
+- [ ] 1. animal.gd 주석이 없는 Ranch.tick_guard 를 가리킨다 (G-926 단계 1)
+  - 기준: animal.gd 주석이 없는 Ranch.tick_guard 를 가리킨다 — game/life/hunting/animal.gd:648 「… 반경에 든 짐승에게 쓴다 (Ranch.tick_guard)」의 Ranch.tick_guard 는 정의된 곳이 없다(grep 으로 이 주석 한 곳뿐). 경비를 돌리는 것은 GuardWatch.tick(game/life/ranching/guard_watch.gd:77)이다. 「(GuardWatch.tick)」으로 고치고, 필요하면 test_ranching_spec_room.gd 에 game 아래 .gd 어디에도 「Ranch.tick_guard」가 없다는 단언을 더하라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).

@@ -1,58 +1,5 @@
 [
  {
-  "time": "2026-10-16 05:37:24",
-  "epoch": 1792096644,
-  "type": "pass",
-  "title": "통과 — G-226 단계 2 (안 보이는 것은 그리지도 · 꾸미지도 않는다)",
-  "group": "G-226",
-  "step": "2",
-  "attempt": "2",
-  "report": {
-   "problem": "G-226.2 안 보이는 것은 그리지 않는다 — 지형 가리개 · 놓인 것의 거리(FarCull)에 QA 지적 셋을 고쳤다: 깊이 안 보는 표시는 가리개 무시 · 건물 조각은 1600m · 몸에 붙은 것은 몸 거리, 메시를 바꾸면 다시 잰다",
-   "approach": "앞 회차의 가리개 · FarCull 위에 QA 지적 셋을 고쳤다. ① 깊이를 안 보는 것(Label3D · 재질의 no_depth_test — 시설 멈춤 표시 · 주민 이름표 · 방 오버레이)에 FarCull 이 저절로 ignore_occlusion_culling 을 건다. shots.gd 에 behind_hill(_before) 자리를 더해 70m 너머 언덕 뒤 시설을 찍었다 — 고친 뒤는 멈춤 글자가 보이고, 끈 판은 가리개에 가려 사라진다(그리기 210 → 194). ② 건물 조각(Buildings 아래)은 조각 크기 대신 큰 나무와 같은 1600m — 집이 조각마다 따로 사라지지 않는다(QA 의 (나)). ③ 주민 손(VillagerHands)은 데이터뿐이라 그림이 없다. 그림으로 든 것은 사람 손(HeldItem — 처음엔 메시가 없어 거리가 안 걸렸다) · 자라는 작물이라, 몸(CharacterBody3D)에 붙은 것은 몸 충돌 크기의 거리보다 짧지 않게 하고, 메시 · 크기를 바꾸면 FarCull.refresh 로 다시 잰다. 처음엔 '내가 건 거리' 표를 메타로 붙였는데, 저장 왕복 검사(SaveRoundTrip)가 메타를 게임 상태로 세어 test_round_trip 이 떨어졌다 — 메타를 버리고 '윗줄에 FarCull 이 있나 + FarCull 꼴의 거리인가'로 가르게 바꿨다.",
-   "why": "",
-   "files": [
-    "game/core/far_cull.gd",
-    "game/world/terrain/terrain_occluder.gd",
-    "game/world/terrain/test_island.gd",
-    "game/world/terrain/island_shape.gd",
-    "game/world/terrain/island_cache.gd",
-    "game/project.godot",
-    "game/player/inventory_hotbar/held_item.gd",
-    "game/life/farming/crops.gd",
-    "game/core/debug/shots.gd",
-    "spec/00_core/performance.md",
-    "game/tests/core/test_far_cull.gd",
-    "game/tests/core/test_unseen_work_goes_on.gd",
-    "game/tests/world/terrain/test_terrain_occluder.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "1단계에서 잰 자리로 켜 보고 나아지는 것만 남긴다 — ① occlusion culling(지형 · 큰 건물 · 벽을 가리개로, Terrain3D 가 가리개를 굽는 길이 있으면 그것) ② 놓인 것의 visibility_range(지금 나무가 쓰는 거리와 같은 꼴 — **보이는 거리는 사람 눈에 차이가 없게**, 멀리서 사라지는 게 보이면 안 된다) ③ 화면 밖 · 먼 것은 **보기만** 멈춘다",
-     "evidence": "① terrain_occluder.gd + project.godot use_occlusion_culling=true. test_terrain_occluder.gd 가 가리개가 땅 위로 나오지 않음(울퉁불퉁한 맵 · 진짜 섬) · 섬 끝까지 덮음 · island_cache 왕복 · 섬에 가리개가 섬을 단언한다. Terrain3D bake_mesh 와 견준 숫자(0.6초 vs 0.14초)가 performance.md 에 있다. ② far_cull.gd: 크기×300m(최소 100m) · 10% 흐려짐 · 건물 조각 1600m(큰 나무와 같음) · 몸에 붙은 것은 몸 거리 · 메시를 바꾸면 refresh. test_far_cull.gd 11개. ③ 꾸밈 처리가 없음을 확인했다 — island 아래 _process 스크립트(crafting_station · villager · room_overlay · death_chest · crops …)는 다 게임 일이거나 remote 따라가기이고, 파티클은 물보라뿐(이미 거리 있음). 전후 숫자(그리기 783→643 등)와 화소 비교가 performance.md 에 있다. 앞 QA 지적 셋 — QA 가 일부러 깨 봤다: ignore_occlusion_culling 줄을 빼면 test_marks_drawn_over_everything_are_not_occlusion_culled 가 멈춤 표시 · 이름표 · 오버레이 판에서 떨어졌고, BUILDING=0 이면 test_a_house_piece_gets_the_house_range_not_its_own 이, 몸 거리를 빼면 test_a_thing_on_a_body… · test_on_the_island_the_held_item… 가 떨어졌다. 되돌린 뒤 diff 없음을 확인했다"
-    },
-    {
-     "ok": true,
-     "criterion": "**게임 일은 안 보여도 계속한다** — 주민 일 · 시설 제작 · 작물 · 몹 · 배고픔은 보이든 말든 똑같이 흐른다(테스트: 카메라를 돌려 안 보이게 해도 제작 · 주민 일이 같은 시간에 끝난다). 멈추는 것은 그림 · 애니메이션 · 소리 · 꾸밈뿐",
-     "evidence": "tests/core/test_unseen_work_goes_on.gd — 같은 판을 두 번 세워 카메라를 앞에 둘 때 · 5km 밖에 등 돌려 둘 때 제작자 주민이 의자 둘을 상자에 넣는 게임 초가 0.5초 안으로 같고 재료 소모도 같음을 단언한다. 안 보일 때는 판의 모든 그릴 것이 FarCull 거리 밖임을 먼저 단언해 정말 안 그리는 상태임을 확인한다. test_far_cull.gd test_only_drawing_stops_not_processing 이 process_mode · visible 이 그대로임을 본다. test.log 통과"
-    }
-   ],
-   "issues": [
-    "섬 위 건물 조각 검사가 상수와만 견준다 — tests/core/test_far_cull.gd test_on_the_island_built_pieces_are_not_shorter_than_trees 는 assert_gte(…, FarCull.BUILDING) 이라 BUILDING 을 0 으로 낮춰도 그대로 통과한다(QA 가 깨 봄). 지금은 옆 단위 검사가 BUILDING == ResourceView.RANGE[\"pine\"] 을 묶어 지키니 막히지는 않는다. 상수 대신 ResourceView.RANGE[\"pine\"] 과 견주게 바꿔라",
-    "작물이 자랄 때 다시 재는 검사가 없다 — life/farming/crops.gd:723 의 FarCull.refresh(plant_node) 를 지워도 떨어지는 검사가 없다. tests/core/test_far_cull.gd 에 섬에 작물을 심고 단계를 올린 뒤 plant_node.visibility_range_end 가 새 크기의 FarCull.range_for 와 같은지 단언을 더하라",
-    "손에 든 것 바꿔 들기 검사가 바꿔 들지 않는다 — test_on_the_island_the_held_item_is_remeasured_when_switched 는 wood 하나만 들고 _ours 만 본다. 크기가 다른 두 아이템을 차례로 들어 거리가 각 크기(또는 몸 거리 이상)로 바뀌는지 단언하라"
-   ],
-   "good": []
-  },
-  "test": " 4s  res://tests/build/test_building_grades.gd\nok      3s  res://tests/build/test_foundation_wheel_attach.gd\nok      2s  res://tests/automation/villagers/test_villager_door.gd\nok      3s  res://tests/ui/hud/test_room_names.gd\nok      4s  res://tests/build/test_foundation_attach.gd\nok      5s  res://tests/combat/tools_as_weapons/test_ammo_kinds.gd\nok      2s  res://tests/build/test_building_collapse.gd\nok      2s  res://tests/craft/stations/test_millstone.gd\nok      3s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      3s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      3s  res://tests/life/food/test_food.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      3s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      3s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_villager_window_release.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      3s  res://tests/world/frontier_islands/test_locked_island.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/build/test_size_4x4.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      2s  res://tests/core/test_game_root_tidy.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/core/test_window_fit.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           163\nTests            1360\nPassing Tests    1360\nFailing Tests       0\nRisky/Pending       0\nAsserts         86576\nTime           485s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "a175f7d4"
- },
- {
   "time": "2026-10-16 06:05:12",
   "epoch": 1792098312,
   "type": "pass",
@@ -8935,5 +8882,40 @@
   },
   "test": "      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      0s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      1s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      0s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      0s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           537\nTests            4033\nPassing Tests    4033\nFailing Tests       0\nRisky/Pending       0\nAsserts        191877\nTime           777s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "2c87196d"
+ },
+ {
+  "time": "2026-10-21 02:05:11",
+  "epoch": 1792515911,
+  "type": "pass",
+  "title": "통과 — G-926 단계 1 (hive_raid.gd 머리 주석에 같은 낡은 미정이 남았다 (G-926 단계 2))",
+  "group": "G-926",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "hive_raid.gd 머리 주석 12줄의 낡은 미정을 풀린 것(G-244.2 · guard-pen.md · GuardWatch.tick)으로 고쳤다 — 바뀐 곳만 27개 파일 229개 테스트 통과",
+   "approach": "hive_raid.gd 12줄은 「경비 거위가 곰 · 오소리를 보고 우는 것은 G-244 와 같이 온다 — spec 미정」이라 적혀 있었지만 G-244.2 로 이미 풀렸다(GuardWatch.threatens 가 RAIDERS 곰 · 오소리를 적대로 본다). 기준의 예가 든 Ranch.tick_guard 는 코드에 없다 — 우는 일은 GuardWatch.tick 이 하므로 그것을 가리키게 「경비 거위는 반경에 든 곰 · 오소리를 보고 운다 (G-244.2, spec/04_life/guard-pen.md · GuardWatch.tick)」로 고쳤다. 3줄의 ranching-breeding.md 가리킴은 습격(G-241.3) 줄이 그 md 에 그대로 있어 맞다 — 고치지 않았다. 다시 어긋나지 않게 test_ranching_spec_room.gd 에 머리 주석 검사(미정 없음 · guard-pen.md · GuardWatch.tick 이 실제로 있음 · 3줄이 습격이 사는 md)를 더했다.",
+   "why": "",
+   "files": [
+    "game/life/ranching/hive_raid.gd",
+    "game/tests/life/ranching/test_ranching_spec_room.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "hive_raid.gd 머리 주석에 같은 낡은 미정이 남았다 — game/life/ranching/hive_raid.gd:12 「경비 동물(거위)이 다가오는 곰 · 오소리를 보고 우는 것은 경비 시설(G-244)과 같이 온다 — 지금은 spec 미정이다」는 G-244.2 로 풀렸다. 「경비 거위는 반경에 든 곰 · 오소리를 보고 운다 (G-244.2, spec/04_life/guard-pen.md · Ranch.tick_guard)」처럼 고치고, 3줄의 spec 가리킴도 맞는지 본다",
+     "evidence": "hive_raid.gd:12 가 「경비 거위는 반경에 든 곰 · 오소리를 보고 운다 (G-244.2, spec/04_life/guard-pen.md · GuardWatch.tick)」로 바뀌었다. 기준 예의 Ranch.tick_guard 는 함수로 없고(정의 0건 — animal.gd:648 주석에만 남아 있다), 실제로 우는 곳은 GuardWatch.tick(guard_watch.gd:77 → _alert, threatens 가 RAIDERS 곰 · 오소리를 적대로 본다)이라 그쪽을 가리킨 것이 맞다. guard-pen.md 21 · 37줄에 벌통을 터는 곰 · 오소리가 적대로 든다. 3줄의 spec/04_life/ranching-breeding.md 는 그 md 94줄 「**습격** (G-241.3)」이 있어 맞다. test_ranching_spec_room.gd::test_hive_raid_head_points_to_guard_watch 가 머리 16줄에 「spec 미정」 없음 · guard-pen.md · GuardWatch.tick 가리킴 · guard_watch.gd 에 func tick( 있음 · 3줄이 ranching-breeding.md · 그 md 에 습격 줄 있음을 단언한다 — 옛 줄로 되돌리면 「spec 미정」 단언과 guard-pen.md 단언이 깨지므로 껍데기가 아니다. test.log 는 전체 실행(537 파일 4034 테스트 모두 통과, guard 통과)이고 test_ranching_spec_room.gd 도 ok."
+    }
+   ],
+   "issues": [
+    "animal.gd 주석이 없는 Ranch.tick_guard 를 가리킨다 — game/life/hunting/animal.gd:648 「… 반경에 든 짐승에게 쓴다 (Ranch.tick_guard)」의 Ranch.tick_guard 는 정의된 곳이 없다(grep 으로 이 주석 한 곳뿐). 경비를 돌리는 것은 GuardWatch.tick(game/life/ranching/guard_watch.gd:77)이다. 「(GuardWatch.tick)」으로 고치고, 필요하면 test_ranching_spec_room.gd 에 game 아래 .gd 어디에도 「Ranch.tick_guard」가 없다는 단언을 더하라"
+   ],
+   "good": []
+  },
+  "test": "pec_readme_building_kinds.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      2s  res://tests/build/test_placer.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           537\nTests            4034\nPassing Tests    4034\nFailing Tests       0\nRisky/Pending       0\nAsserts        191867\nTime           777s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "d781896e"
  }
 ]
