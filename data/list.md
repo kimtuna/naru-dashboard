@@ -4712,8 +4712,11 @@
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
-- [ ] 1. ranching-breeding.md 가 148줄이다 (G-269 단계 1)
+- [x] 1. ranching-breeding.md 가 148줄이다 (G-269 단계 1)
   - 기준: ranching-breeding.md 가 148줄이다 — 150줄 한도에 두 줄 남았다. 다음에 이 파일에 줄을 더하는 단계는 스탯 갈래를 kept-animals.md 나 새 md 로 나눠라
+- [ ] 2. (앞 단계 QA) 경비 테스트 머리줄이 옛 md 를 가리킨다
+  - 기준: 경비 테스트 머리줄이 옛 md 를 가리킨다 — game/tests/life/ranching/test_guard_pen.gd:2 · test_guard_watch.gd:2 · game/tests/automation/villagers/test_villager_answers_cry.gd:2 가 아직 「spec/04_life/ranching-breeding.md」라 적혀 있다. 셋 다 「spec/04_life/guard-pen.md」로 바꿔라
+  - 기준: (앞 단계 QA) 낡은 미정 줄 — spec/04_life/ranching-breeding.md 123줄 「경비 동물(거위)이 벌통을 털러 오는 곰 · 오소리를 보고 우는가 — 경비 시설(G-244)이 아직 없어 미정」은 G-244.2 로 이미 풀렸다(guard-pen.md 「반경에 든 적대 짐승」에 벌통을 터는 곰 · 오소리가 든다). 그 줄을 지우거나 guard-pen.md 를 가리키게 고쳐라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
