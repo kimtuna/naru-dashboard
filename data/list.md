@@ -4689,13 +4689,17 @@
   - 기준: 망치를 들고 겨누면 조준점 옆에 「우클릭: 해체 · 좌클릭: 올리기(재료)」 — 못 올리면(철 · 재료 부족) 까닭 한 줄. 멀티 — 참가자도 서버가 한다 · 권한(G-221)은 지금 해체 · 올리기와 같다
   - 기준: (앞 단계 QA) 다시 읽기 간격 0.5초에 「임시」 표시가 없다 — report 의 temporary 에는 「0.5초 — 임시 값」이라 적었는데 game/ui/hud/bag.gd 의 STATS_REFRESH 주석에는 「임시」가 없다(두 단 사이 16px 는 「임시 폭」이라 적혀 있다). STATS_REFRESH 주석 끝에 「(임시 값)」을 붙여라
   - 기준: (앞 단계 QA) 영어 전투 단 이름과 값이 붙어 보인다 — 1280×720 · 1920×1080 en 에서 「Defense 30%」 「Speed 120%」가 이름과 값 사이 틈 없이 붙어 한 낱말처럼 읽힌다(몸 단은 「Health 100 / 245」로 틈이 있다). bag.gd _build_stats 의 GridContainer 에 h_separation 을 몸 단과 비슷하게 주거나 값 Label 에 custom_minimum_size.x 를 줘서 틈을 만들고, harness/shot.sh --ui <폴더> bag 로 en 을 다시 찍어 확인하라
-- [ ] 3. 건축 키 — Tab 고르기 · R 돌리기 · F 스냅
+- [x] 3. 건축 키 — Tab 고르기 · R 돌리기 · F 스냅
   - **사람 결정 2026-10-20** (원문 그대로, 앞의 「t를 스냅으로」를 고쳤다): 「다시 정정할게 도면에서 저거 토대 벽 이런거 바꾸는걸 탭으로 하고 벽 가구를 돌리는걸 r로 하고 스냅 바꾸는걸 f로 해.」
   - 이 세션이 2026-10-20 봤다: 지금 도면 고르기 = R(reload, buildings.gd:228 pick_next) · 돌리기 = T(build_rotate — 놓인 벽 · 문 180° 뒤집기 buildings.gd:1695 · 든 가구 90° furnitures.gd rotate_held) · 계단 붙는 자리 = Tab(build_stairs_flip). F 는 비어 있다(project.godot)
   - 기준: 도면을 들고 **Tab = 토대 · 벽 · 문 … 지을 것 바꾸기** · **R = 돌리기**(놓인 벽 · 문 뒤집기 · 든 가구 90°) · **F = 스냅 바꾸기**(계단 위 ↔ 아래). T 는 비운다. 총을 든 R(장전 · 꾹 눌러 탄 고르기)은 그대로 — 든 것에 따라 갈린다 (테스트)
   - 기준: 들고 있을 때 화면 구석에 그 아이템의 키 안내 한 줄 · spec/06_build/building.md · 설명서(G-264) · input_actions.gd 주석을 고친다
   - 기준: (앞 단계 QA) 낡은 「도면 우클릭」 주석 · spec 줄이 남았다 — 해체가 망치로 바뀌었는데 game/core/net/net_world.gd:19 는 「해체(도면 우클릭 …) · 올리기 · 내리기」(내리기는 없앴다), game/build/placeable.gd:14 · 36-43 은 「도면 우클릭 해체가 깎는다 · 도면 우클릭 세 번」, game/i18n/ko.po:2361 주석은 「도면 해체」, spec/04_life/bird-cage.md:26 은 「도면 우클릭 해체가 막히고」라 적혀 있다. 「망치 우클릭」으로 고치고 net_world.gd 에서 「내리기」를 빼라. tests/build/test_take_not_hit_wording.gd 가 bird-cage.md · placeable.gd 의 옛 문구를 그대로 단언하니 같이 고쳐라
   - 기준: (앞 단계 QA) movement-controls.md 사람 결정 줄에 「바뀌었다」가 없다 — spec/02_player/movement-controls.md:38 「도면을 든 손은 건설 모드다 … 우클릭은 상호작용 대신 해체」와 spec/06_build/building.md:78 「도면을 든 손은 건설 모드다 — 좌클릭 놓기 · 우클릭 해체」에 다른 파일처럼 「→ 같은 날 해체는 망치 우클릭으로 바뀌었다 (사람 결정 2026-10-20, G-271.2)」를 붙여라(원문은 지우지 않는다)
+- [ ] 4. (앞 단계 QA) 없앤 「내리기」가 코드 주석에 둘 남았다
+  - 기준: 없앤 「내리기」가 코드 주석에 둘 남았다 — game/core/net/acts.gd:52 「… 치기 · 한 등급 내리기」, game/core/net/net_world.gd:546 꼬리 주석 「해체 · 내리기도 건축이다」. 내리기는 G-271.2 에서 없앴다. 「내리기」를 빼라(acts.gd 는 「해체」로). test_take_not_hit_wording.gd BLUEPRINT_TAKE_GONE 에 acts.gd 「내리기」를 더하면 다시 안 생긴다
+  - 기준: (앞 단계 QA) netcode.md 에 계단 키가 Tab 으로 남았다 — spec/11_multiplayer/netcode.md:40 「미리 보기 · 도면 고르기 · 휠 · Tab 은 각자」. 계단 스냅은 이제 F 이고 Tab 은 도면 고르기다. buildings.gd:126 처럼 「· 휠 · F 는 각자」로 고쳐라
+  - 기준: (앞 단계 QA) QA 훑기 테스트 주석이 T 키를 말한다 — game/tests/build/test_building_qa_sweep.gd:150 「벽 · 문은 T 로 돌아선다」. R 로 고쳐라
 
 ## [ ] G-272 아이템마다 키를 사람이 바꾼다
 - 차선: 3d-start
@@ -4721,6 +4725,14 @@
   - 기준: hive_raid.gd 머리 주석에 같은 낡은 미정이 남았다 — game/life/ranching/hive_raid.gd:12 「경비 동물(거위)이 다가오는 곰 · 오소리를 보고 우는 것은 경비 시설(G-244)과 같이 온다 — 지금은 spec 미정이다」는 G-244.2 로 풀렸다. 「경비 거위는 반경에 든 곰 · 오소리를 보고 운다 (G-244.2, spec/04_life/guard-pen.md · Ranch.tick_guard)」처럼 고치고, 3줄의 spec 가리킴도 맞는지 본다
 - [x] 1. animal.gd 주석이 없는 Ranch.tick_guard 를 가리킨다 (G-926 단계 1)
   - 기준: animal.gd 주석이 없는 Ranch.tick_guard 를 가리킨다 — game/life/hunting/animal.gd:648 「… 반경에 든 짐승에게 쓴다 (Ranch.tick_guard)」의 Ranch.tick_guard 는 정의된 곳이 없다(grep 으로 이 주석 한 곳뿐). 경비를 돌리는 것은 GuardWatch.tick(game/life/ranching/guard_watch.gd:77)이다. 「(GuardWatch.tick)」으로 고치고, 필요하면 test_ranching_spec_room.gd 에 game 아래 .gd 어디에도 「Ranch.tick_guard」가 없다는 단언을 더하라
+
+## [ ] G-927 루프가 찾은 것 — 스스로 갚는다
+- 차선: 3d-start
+- QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
+  루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
+- 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
+- [ ] 1. 키 안내 줄 자리가 spec 에 「임시」로 안 적혔다 (G-271 단계 3)
+  - 기준: 키 안내 줄 자리가 spec 에 「임시」로 안 적혔다 — item_keys_hint.gd 와 report 는 왼쪽 위 자리를 임시라 하지만 spec/06_build/building.md 미정 줄은 「화면 왼쪽 위에 … 한 줄이 뜬다」로 임시 표시가 없고 spec/12_ui/hud.md 에는 줄이 없다. hud.md 미정에 「든 아이템 키 안내 줄 — 지금 임시로 왼쪽 위(HINT_CONTROLS 밑)」 한 줄을 적어라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
