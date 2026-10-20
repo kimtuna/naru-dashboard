@@ -4673,7 +4673,7 @@
 - [x] 3. (앞 단계 QA) 넷이 셋이 된 테스트 이름
   - 기준: 넷이 셋이 된 테스트 이름 — game/tests/craft/stations/test_station_recipes.gd 의 test_the_four_new_stations_are_made_at_a_station_and_land_in_the_bag 는 화로를 빼서 이제 셋(용광로 · 조리대 · 연구대)을 본다. 이름을 test_the_new_stations_are_made_at_a_station_and_land_in_the_bag 처럼 고쳐라 (막는 것은 아니다)
 
-## [ ] G-271 가방에 플레이어 스탯 · 망치로 해체 · 올리기 · 건축 키 Tab · R · F
+## [x] G-271 가방에 플레이어 스탯 · 망치로 해체 · 올리기 · 건축 키 Tab · R · F
 - 차선: 3d-start · 시작 2026-10-20 23:46
 - 순서: G-270 뒤
 - **사람 요청 2026-10-20** (원문 그대로)
