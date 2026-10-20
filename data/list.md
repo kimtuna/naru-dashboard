@@ -4728,7 +4728,7 @@
 - [x] 1. animal.gd 주석이 없는 Ranch.tick_guard 를 가리킨다 (G-926 단계 1)
   - 기준: animal.gd 주석이 없는 Ranch.tick_guard 를 가리킨다 — game/life/hunting/animal.gd:648 「… 반경에 든 짐승에게 쓴다 (Ranch.tick_guard)」의 Ranch.tick_guard 는 정의된 곳이 없다(grep 으로 이 주석 한 곳뿐). 경비를 돌리는 것은 GuardWatch.tick(game/life/ranching/guard_watch.gd:77)이다. 「(GuardWatch.tick)」으로 고치고, 필요하면 test_ranching_spec_room.gd 에 game 아래 .gd 어디에도 「Ranch.tick_guard」가 없다는 단언을 더하라
 
-## [ ] G-927 루프가 찾은 것 — 스스로 갚는다
+## [x] G-927 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-start · 시작 2026-10-21 05:32
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
