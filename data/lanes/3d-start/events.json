@@ -1,74 +1,5 @@
 [
  {
-  "time": "2026-10-15 00:12:19",
-  "epoch": 1791990739,
-  "type": "pass",
-  "title": "통과 — G-221 단계 4 (서로 보인다 — 몸 · 움직임 · 든 것 · 입은 것)",
-  "group": "G-221",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "G-221.4 서로 보인다 — 몸 소식(자리·시선·걷기/공중/등반·웅크림·든 것·입은 것)을 주인→서버→다른 이로 0.1초마다 나르고, 서버장·참가자 화면 모두에 이름표 달린 남의 몸이 선다. 남의 몸은 입력·카메라를 쥐지 않는다(guard). Steam 상수·신호 변환을 ClassDB 로 맞춰 보고 setLobbyJoinable 을 로비가 설 때 한 번으로 옮겼다. 바뀐 곳 그물: 178개 파일 1415개 테스트 통과",
-   "approach": "판(Net) 아래 「Bodies」(NetBodies)를 판과 같이 세워 참가자가 게임 화면을 세우기 전에도 RPC 받을 자리가 있게 했다. 각자 제 몸을 VisitorBody.state_of 로 담아 0.1초마다 서버에 알리고(unreliable_ordered), 서버는 참가자마다 「나를 뺀 모두」(서버장 몸 포함)를 보낸다 — 소식에서 빠진 몸은 나간 것으로 거둔다. 이름은 서버가 쥔 캐릭터 사본의 이름으로 덮는다. GameRoot 는 이제 서버장·참가자 둘 다 Visitors 를 두고 소식에 맞춰 세우기·움직이기·거두기를 한다(_sync_visitors). VisitorBody 는 받은 자리로 부드럽게 따라붙고(6m 넘으면 곧바로), 웅크리면 몸이 낮아지며, 손에는 Player 와 같은 HeldItem, 입은 것은 칸마다 몸 위 상자로 그린다. 처음에 basis slerp 가 웅크림 scale 과 부딪혀 엔진 오류가 났다 — rotation.y lerp_angle 로 바꿨다. 입력 guard: 남의 몸·몸 소식 코드에 입력 함수·Input.·Pointer.·Camera3D 가 없음을 글자로 보고, 서버장 화면에서 웅크리기 키·마우스가 내 몸만 움직이고 화면 카메라가 내 것임을 본다. 테스트는 바닥+진짜 Player 만 있는 작은 섬(tests/multiplayer/tiny_island.gd)으로 두 기계를 ENet 으로 붙여 돈다. Steam QA: 상수 6개(RESULT_OK 더함)를 ClassDB 와 맞추고, 신호 변환을 정적 함수(lobby_made·entry)와 메서드(_on_steam_lobby_created/_joined)로 빼 직접 불러 시험했다. setLobbyJoinable 은 SteamApi.set_joinable 로 갈라 SteamRoom._on_created 에서 한 번 부른다. 사람이 볼 것: 진짜 Steam 으로 친구와 붙었을 때 서로의 몸이 걷고 웅크리는 모양(그림은 찍지 않았다 — 남의 몸은 shot.sh 자리에 없다).",
-   "why": "몸 소식 주기 0.1초 (NetBodies.PERIOD) — 끊겨 보이지 않을 만큼, 12명이어도 가볍게; 남의 몸이 따라붙는 빠르기 15/초 · 6m 넘으면 곧바로 옮김 (VisitorBody.FOLLOW · SNAP); 웅크린 몸 높이 0.65배 (VisitorBody.CROUCH_SCALE) — 내 몸(Player)은 웅크려도 모양이 그대로라 남에게 보일 것만 정했다; 입은 것은 칸마다 몸 위 상자 자리·크기 (VisitorBody.WORN_AT) — 아트 전; 첫 몸 소식 전까지 내 옆 1.5m 에 세움 (GameRoot._seat_visitor); 소식 하나 최대 16칸 (NetBodies.MAX_KEYS)",
-   "files": [
-    "game/core/net/net_bodies.gd",
-    "game/core/net/net_session.gd",
-    "game/core/net/steam_api.gd",
-    "game/core/net/steam_room.gd",
-    "game/core/game_root.gd",
-    "game/multiplayer/visitor_body.gd",
-    "game/tests/core/net/fake_steam.gd",
-    "game/tests/core/net/test_steam_api.gd",
-    "game/tests/multiplayer/tiny_island.gd",
-    "game/tests/multiplayer/test_bodies_seen.gd",
-    "game/tests/multiplayer/test_visitor_input_guard.gd",
-    "spec/11_multiplayer/netcode.md",
-    "spec/01_settings/save.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "참가자와 서버장이 서로의 몸이 걷고 · 뛰고 · 웅크리는 것을 본다. 이름표가 뜬다 (테스트)",
-     "evidence": "tests/multiplayer/test_bodies_seen.gd — 진짜 ENet 으로 메뉴부터 서버 열기·참가를 거쳐 두 기계를 붙이고, 양쪽 화면의 VisitorBody 이름표(미르/보리)·자리, 걷기(WALK→IDLE · 실제 이동 0.5m 넘음 · 멈춘 자리에 따라붙음), 뛰기(AIR, 진짜 물리 is_on_floor), 웅크림(서로 따로 · 키 낮아짐)을 단언. 셋째 참가자가 둘을 보고 나가면 몸이 사라지는 것도 본다. QA 가 visitor_body.gd apply 에서 웅크림을 false 로 고정해 돌리니 웅크림 단언 3개가 떨어졌다(되돌림 확인)"
-    },
-    {
-     "ok": true,
-     "criterion": "든 것 · 입은 것이 남에게도 보인다 (테스트)",
-     "evidence": "test_held_and_worn_are_seen — 서버장이 도끼를 들면 참가자 화면 손(HeldItem.shown_item)에 axe · 메시 보임, 참가자의 투구·가방이 서버장 화면 worn()·몸 위 상자(shown_worn)로 서고, 벗고/내려놓으면 사라진다. QA 가 apply 의 show_item 을 빈 값으로 고정하니 「서버장이 든 도끼가 참가자에게 보인다」가 떨어졌다(되돌림 확인)"
-    },
-    {
-     "ok": true,
-     "criterion": "마우스 · 카메라는 각자 제 것만 — 남의 몸이 내 입력을 받지 않는다 (guard · 테스트)",
-     "evidence": "test_visitor_input_guard.gd — (guard) visitor_body.gd · net_bodies.gd 의 주석 밖 코드에 _input 류 함수 · Input. · Pointer. · Camera3D · make_current · set_process_input 가 없음을 글자로 검사. (테스트) 남의 몸이 선 서버장 화면에서 남의 몸 아래 카메라 0개 · 화면 카메라가 내 Player 의 것 · 남의 몸 아래 모든 노드가 입력 처리를 안 함 · 웅크리기 키는 내 몸만 · Pointer.simulate_motion 으로 내 시선만 돌고 남의 몸 yaw/자리 그대로. 전체 guard 도 통과(test.log)"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) SteamApi 의 진짜 신호 잇기는 테스트 밖이다 — … 네 상수에 대해 단언을 더하고, 신호 변환은 static 함수로 빼 단위 테스트하라",
-     "evidence": "tests/core/net/test_steam_api.gd — ClassDB.class_get_integer_constant 로 LOBBY_PUBLIC · COMPARE_EQUAL · WORLDWIDE · ENTER_OK · ENTER_FULL · RESULT_OK 를 GodotSteam 상수와 맞춤. 신호 변환을 static lobby_made · entry 와 메서드 _on_steam_lobby_created/_joined 로 빼 start() 에서 그 메서드를 connect — 테스트가 Steam 상수(SUCCESS/FULL/BANNED, OK/FAIL)를 넣어 우리 신호 값을 단언하고, ClassDB 신호 인자 수(2·4)와 받는 메서드 인자 수가 같음도 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) SteamApi.set_lobby_data 가 부를 때마다 setLobbyJoinable 도 부른다 — … 로비가 섰을 때 한 번 부르게 옮겨라",
-     "evidence": "steam_api.gd set_lobby_data 에서 setLobbyJoinable 를 빼 set_joinable 로 가르고 SteamRoom._on_created 에서 한 번 부른다. test_lobby_is_made_joinable_once 가 가짜 Steam 으로 로비를 열어 joinable == [id] 한 번만임을 단언"
-    }
-   ],
-   "issues": [
-    "MAX_KEYS 에 「임시」 표시가 없다 — game/core/net/net_bodies.gd:18-20 의 MAX_KEYS := 16 은 report temporary 에 임시로 적혔지만 코드 주석에는 「임시」가 없다. PERIOD 처럼 주석 첫머리에 「— 임시.」를 달아라",
-    "Player 손 자리를 베껴 둔 상수 — game/multiplayer/visitor_body.gd HAND_AT 는 player.tscn 의 Body/Hand 자리를 숫자로 베꼈다(주석에 「같다」고만). player.tscn 이 바뀌면 조용히 어긋난다. Player 의 Hand 노드 자리를 읽어 쓰거나, 두 값이 같음을 단언하는 테스트를 tests/multiplayer 에 더하라"
-   ],
-   "good": [
-    "남의 몸이 등반 중(CLIMB)인 것도 소식에 담았다 — 기준은 걷기·뛰기·웅크림까지다 (작은 덤, 테스트는 없다)"
-   ]
-  },
-  "test": "ests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      1s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/craft/stations/test_station_keep.gd\nok      0s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           365\nTests            2760\nPassing Tests    2760\nFailing Tests       0\nRisky/Pending       0\nAsserts        113457\nTime           690s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "28095aeb"
- },
- {
   "time": "2026-10-15 00:29:00",
   "epoch": 1791991740,
   "type": "fail",
@@ -9618,5 +9549,40 @@
   },
   "test": "--- 바뀐 곳만: 3 개 ---\ntest.sh: 파일 3 개를 6 개씩 한꺼번에 돌린다\nok      2s  res://tests/core/net/test_net_interp.gd\nok     12s  res://tests/perf/test_net_stutter.gd\nok     14s  res://tests/perf/test_net_measure.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             3\nTests              18\nPassing Tests      18\nFailing Tests       0\nRisky/Pending       0\nAsserts           184\nTime           14s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "dbb4d636"
+ },
+ {
+  "time": "2026-10-20 18:56:17",
+  "epoch": 1792490177,
+  "type": "pass",
+  "title": "통과 — G-924 단계 2 (App Nap 은 15 fps 까지만 재었다 (G-267 단계 2))",
+  "group": "G-924",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "끊김 재기에 「서버 5 fps」 판을 더해 1분 쟀다 — 끊김 0 · 튐 0 이라 App Nap 막기는 하지 않았다",
+   "approach": "App Nap · 가려진 창은 15 fps 보다 더 느려질 수 있는데 15 fps 까지만 재었다. test_net_stutter CASES 에 서버장 Engine.max_fps = 5 판을 15 fps 다음에 넣고(끊김 판 번호 OUTAGE · SHORT 를 6 → 7 로 옮김) NARU_STUTTER_SECONDS=60 으로 아홉 판을 한꺼번에 쟀다: 서버 5 fps · 참가자 60 fps · 받음 1455 B/s · 짐승 · 주민 · 몸 끊김 0 · 튐 0 · 가장 긴 멈춤 0 ms. NetInterp 가 100 ms 뒤를 메워 그리니 소식이 0.2초 간격으로 성겨져도 그림은 매 프레임 간다. 끊김이 안 났으므로 App Nap 막기는 하지 않았다 (기준: 끊김이 나면 막는다). 다른 여덟 판은 앞 표와 같았다(서버장 멈춤 판 튐 짐승 28 · 몸 15). performance.md 끊김 표에 줄 하나 · 둘째 짐작 줄에 결과. 짧은 여느 돌림은 그대로 세 판. 바뀐 곳 그물(test_net_interp · test_net_measure · test_net_stutter) 18개 통과 — 전체는 돌리지 않았다",
+   "why": "",
+   "files": [
+    "game/tests/perf/test_net_stutter.gd",
+    "spec/00_core/performance.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "App Nap 은 15 fps 까지만 재었다 — 맥이 가려진 창 · App Nap 에서 그보다 더 느려지는지(예 1~5 fps)는 재지 않았다. test_net_stutter CASES 에 「서버 5 fps」 판을 더해 보고 끊김이 나면 App Nap 막기를 하라",
+     "evidence": "test_net_stutter.gd CASES 에 [\"서버 5 fps\", 5, …] 가 15 fps 다음에 들어갔고, SHORT · OUTAGE 번호도 6→7 로 옮겨 짧은 판(깨끗 · 잃음 5% · 끊김)이 그대로 맞다 (test.log 18개 통과). 1분 판 로그 /tmp/stut60.log 23줄 「STUTTER 서버 5 fps · 서버 5 fps (멈춤 0) · 받음 1455 B/s · 짐승 0 끊김 튐 0 · 주민 0 · 몸 0」 — 실제로 쟀다. 긴 판에서는 assert_gt(h.fps, c[1]*0.8) 로 서버장이 정말 5 fps 근처로 돌았는지도 단언한다. 끊김 0 이라 기준대로 App Nap 막기는 안 했다. performance.md 끊김 표에 「| 서버 5 fps |」 줄(뒤 0 · 0 · 1.5 KB/s — 로그 값과 맞다)과 둘째 짐작 줄 결과가 들어갔고, test_performance_doc_has_the_stutter_table 이 CASES 마다 표 줄이 있는지 보니 그 줄을 지우면 떨어진다 (같은 로그 171줄이 문서 고치기 전 바로 그 이유로 떨어졌다). 낡은 「여덟 판 · 열여섯 · 15 fps 까지」 글은 spec · game 에 남지 않았다. performance.md 145줄"
+    }
+   ],
+   "issues": [
+    "느린 서버 판의 끊김 0 을 단언하지 않는다 — 1분 판(NARU_STUTTER_SECONDS)에서 「서버 30 · 15 · 5 fps」 판은 STUTTER 줄만 찍고 끊김 수를 단언하지 않아, 5 fps 에서 끊김이 생겨도 테스트는 통과한다. 이번 기준은 「재 보고 끊기면 막기」라 막지는 않지만, test_net_stutter.gd test_guests_count_stalls_over_a_lossy_link 끝에서 fps 만 낮춘 판(c[2]==0 · c.size()<=5 이고 c[1]<60)은 stalls[i] == 0 을 assert_eq 로 단언해 두면 App Nap 쪽 회귀를 잡는다"
+   ],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 3 개 ---\ntest.sh: 파일 3 개를 6 개씩 한꺼번에 돌린다\nok      2s  res://tests/core/net/test_net_interp.gd\nok     13s  res://tests/perf/test_net_stutter.gd\nok     15s  res://tests/perf/test_net_measure.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             3\nTests              18\nPassing Tests      18\nFailing Tests       0\nRisky/Pending       0\nAsserts           185\nTime           15s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "351af40e"
  }
 ]
