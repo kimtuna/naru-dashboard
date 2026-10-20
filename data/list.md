@@ -4591,9 +4591,11 @@
 - [x] 3. 끊김 시험이 몸의 튐을 단언하지 않는다 (G-267 단계 3)
   - 기준: 끊김 시험이 몸의 튐을 단언하지 않는다 — test_net_stutter.gd 는 g.body.stalls 를 끊김 합에 더하지만 G-267.3 이 고친 것은 튐(jumps)이다. 보간을 빼도 이 시험은 그대로 통과할 수 있다(지금은 test_visitor_interp 가 막는다). 잃음 5% 판의 int(g.body.jumps) 를 깨끗 판 수준(SAME_LEVEL 안쪽)으로 assert_between 하라. 짐승 jumps 도 같이 보면 좋다
   - 기준: (앞 단계 QA) 느린 서버 판의 끊김 0 을 단언하지 않는다 — 1분 판(NARU_STUTTER_SECONDS)에서 「서버 30 · 15 · 5 fps」 판은 STUTTER 줄만 찍고 끊김 수를 단언하지 않아, 5 fps 에서 끊김이 생겨도 테스트는 통과한다. 이번 기준은 「재 보고 끊기면 막기」라 막지는 않지만, test_net_stutter.gd test_guests_count_stalls_over_a_lossy_link 끝에서 fps 만 낮춘 판(c[2]==0 · c.size()<=5 이고 c[1]<60)은 stalls[i] == 0 을 assert_eq 로 단언해 두면 App Nap 쪽 회귀를 잡는다
-- [ ] 4. STUTTER 줄의 몸 칸 글자가 어긋났다 (G-267 단계 3)
+- [x] 4. STUTTER 줄의 몸 칸 글자가 어긋났다 (G-267 단계 3)
   - 기준: STUTTER 줄의 몸 칸 글자가 어긋났다 — test_net_stutter.gd print 의 「몸 %d 끊김 튐 %d」는 짐승 칸(「끊김 %.1f/분 … 튐 %d」)과 꼴이 달라 「끊김」 뒤에 숫자가 없다. 「몸 끊김 %d · 튐 %d」처럼 고쳐라
   - 기준: (앞 단계 QA) 1분 판 튐 한계가 느슨하다 — test_net_stutter.gd 의 jump_level 이 SAME_LEVEL × ceil(초/5) 라 1분 판에서는 24 다. 재어 본 값은 짐승 6 · 몸 1 이고 보간을 뺀 5초 판 몸 튐이 4 라, 1분 판에서 몸 보간이 빠져도(5초에 4 → 1분 ~48) 걸리겠지만 짐승 쪽은 여유가 크다. 막는 것은 아니다 — 1분 판에서 재어 본 값(짐승 6)에 맞춰 몸 · 짐승 한계를 따로(예: 몸 SAME_LEVEL, 짐승 12) 잡으면 더 단단하다
+- [ ] 5. (앞 단계 QA) 1분 판을 새 한계로 돌려 보지 않았다
+  - 기준: 1분 판을 새 한계로 돌려 보지 않았다 — report 에 「1분 판은 돌리지 않았다」고 적혀 있다. 몸 한계가 1분 판에서도 2 인데 재어 본 값이 1 이라 여유가 하나뿐이다(막는 것은 아니다 — 1분 판은 NARU_STUTTER_SECONDS 를 줄 때만 돈다). 다음에 NARU_STUTTER_SECONDS=60 TEST_DIR=res://tests/perf/test_net_stutter.gd ./tools/test.sh 로 한 번 돌려 몸 튐이 2 안에 드는지 보고, 넘으면 몸 한계를 1분 판만 3 쯤으로 잡아라
 
 ## [ ] G-268 짐승은 케이지로만 잡는다 · 케이지는 계속 쓴다
 - 차선: 3d-lane2
