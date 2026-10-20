@@ -1,48 +1,5 @@
 [
  {
-  "time": "2026-10-15 20:04:59",
-  "epoch": 1792062299,
-  "type": "pass",
-  "title": "통과 — G-223 단계 2 (월드 만들기에서 시드를 뺀다)",
-  "group": "G-223",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "월드 만들기 화면에서 시드 칸(SeedRow)을 뺐다 — 새 월드의 시드는 늘 무작위로 정해 저장한다. 바뀐 곳 16개 파일 143개 테스트 통과",
-   "approach": "world_create.tscn 의 SeedRow 와 그 번역 키(MENU_SEED · MENU_SEED_PLACEHOLDER)를 지웠다. 글을 시드로 바꾸던 seed_from(text) 는 받을 글이 없어져 new_seed() 하나로 줄였다 — 빈 칸일 때와 똑같이 maxi(randi(), 1) 이라 0(옛 저장본 자리)이 되지 않는다. 저장본의 world_seed 와 그걸 읽어 자원 배치를 정하는 곳(world_data.gd · game_root.gd · island_resources.gd)은 그대로다. 테스트: 화면에 글 칸이 이름 하나뿐인지, 화면으로 만든 월드 둘의 저장본 시드가 서로 다르고 0 이 아닌지 본다. held_keys 테스트의 world_seed 칸 항목은 칸이 없어져 뺐다. spec 에는 시드 칸이 적혀 있지 않아 menu.md 에 「시드 칸은 없다, 늘 무작위」 한 줄을 사람 결정 2026-10-15 로 넣었다. 돌린 것: tests/ui/menu 12개 파일 93개 통과, changed_tests 그물 16개 파일 143개 통과(전체는 아니다).",
-   "why": "",
-   "files": [
-    "game/ui/menu/world_create.tscn",
-    "game/ui/menu/world_create.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/ui/menu/test_world_create.gd",
-    "game/tests/core/input/test_held_keys.gd",
-    "spec/12_ui/menu.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "월드 만들기 화면(ui/menu/world_create.gd · SeedRow)에 시드 칸이 없다. 월드는 지금처럼 만들어진다 — 저장본의 `world_seed` 를 읽는 곳이 있으면 그대로 두고 값만 화면에서 안 받는다 (테스트) — 새 월드의 시드는 지금 빈 칸일 때처럼 무작위(world_create.gd `seed_from`). 시드는 자원 배치를 정하므로(game_root.gd 「이 월드의 시드가 자원 배치를 정한다」) 없애지 않는다",
-     "evidence": "world_create.tscn 에서 SeedRow 를 지웠고 world_create.gd 는 new_seed()=maxi(randi(),1) 로 늘 무작위 시드를 저장본에 넣는다. world_seed 를 읽는 world_data · game_root · island_resources 는 손대지 않았다. test_there_is_no_seed_field 는 SeedRow 가 없는지와 LineEdit 이 이름 칸 하나뿐인지를 본다. test_two_worlds_get_different_seeds 는 화면으로 만든 두 월드의 저장본 시드가 서로 다른지 보고, test_a_new_world_keeps_its_own_seed 는 시드가 0 이 아니고 저장본과 같은지 본다. new_seed 를 `return 7` 로 일부러 깨 보니 test_world_create.gd 가 떨어졌다(되돌린 것까지 확인했다). seed_from · set_seed_text · MENU_SEED 를 쓰는 곳은 더 남아 있지 않다. held_keys 의 world_seed 항목도 함께 뺐다"
-    },
-    {
-     "ok": true,
-     "criterion": "spec(world-settings 등)에 시드 칸이 적혀 있으면 사람 결정 2026-10-15 로 고친다",
-     "evidence": "spec 을 grep 해 보니 시드 칸을 적은 곳은 없었다(world-settings.md 에도 없다). 그래서 spec/12_ui/menu.md 에 「시드 칸은 없다, 늘 무작위」 한 줄을 사람 결정 2026-10-15 로 넣었다. 지운 사람 결정 줄은 없고 menu.md 는 34줄이다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "--- 바뀐 곳만: 16 개 ---\ntest.sh: 파일 16 개를 6 개씩 한꺼번에 돌린다\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      5s  res://tests/ui/menu/test_pause_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok     20s  res://tests/craft/stations/test_stations.gd\nok     41s  res://tests/core/input/test_held_keys.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            16\nTests             143\nPassing Tests     143\nFailing Tests       0\nRisky/Pending       0\nAsserts          7950\nTime           41s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "9acfa589"
- },
- {
   "time": "2026-10-15 20:21:43",
   "epoch": 1792063303,
   "type": "pass",
@@ -9018,5 +8975,72 @@
   },
   "test": "ld/test_build_piece_tidy.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/build/test_placer.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           526\nTests            3957\nPassing Tests    3957\nFailing Tests       0\nRisky/Pending       0\nAsserts        188588\nTime           772s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "e5b3fe8d"
+ },
+ {
+  "time": "2026-10-20 19:54:55",
+  "epoch": 1792493695,
+  "type": "pass",
+  "title": "통과 — G-268 단계 1 (케이지를 들고 짐승을 우클릭해야 잡힌다)",
+  "group": "G-268",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "짐승은 케이지를 들고 조준점의 잡힌 짐승을 우클릭해야 그 케이지에 든 가방 한 칸이 된다 — 맨손 · 허공 우클릭 줍기를 걷고, 겨누면 「우클릭: 케이지에 넣기」, 안 들어가면 「케이지가 작다」 · 「아직 깨어 있다」 · 「가방에 빈 칸이 없다」. 참가자도 서버가 사본 가방의 든 케이지로 가둔다",
+   "approach": "예전 우클릭은 Captives._unhandled_input 이 조준과 상관없이 REACH 안 가장 가까운 잡힌 짐승을 집었다(nearby). 이것을 걷고, 손에 케이지를 들었을 때만 Aim.at 이 짚은 짐승을 catch → catch_for(bag, a) 로 가둔다: 고른 칸의 케이지 하나를 덜어 칸 하나뿐이면 그 칸이 곧 짐승 칸(cage=그 케이지)이 되고, 남으면 빈 칸으로 간다. 잡힘(is_captured) · 덩치(Cage.fits) 조건은 그대로 쓰고 안 맞으면 까닭 키를 돌려준다. 칸 꼴은 entry_of 하나로 모아 pick_up_for(케이지 없는 낮은 길 — 시험 · 사진용)와 같이 쓴다. 서버는 PICK 바람을 받으면 사본 가방(고른 칸을 안다)으로 catch_for 하고 까닭을 acts().give 로 돌려보낸다. 케이지를 든 채 묶인 개체를 누르면 Tether 가 목줄을 풀던 길이 있어 비켜서게 했다. TraceLabel 은 케이지를 들고 산 짐승을 겨누면 안내를 띄우고(놓아 기르는 개체면 제 한 줄 밑), 맨손이면 띄우지 않아 쓰다듬기와 겹치지 않는다. hunting.md 는 146줄 제한 시험(test_animal_spawn_spec)이 있어 새 줄 대신 57줄에 이어 적었다. 바뀐 곳 그물(changed_tests.py, 163 파일 · 1323개) 모두 통과 — 전체는 돌리지 않았다.",
+   "why": "",
+   "files": [
+    "game/life/hunting/captives.gd",
+    "game/core/net/net_world.gd",
+    "game/life/ranching/tether.gd",
+    "game/ui/hud/trace_label.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "spec/04_life/hunting.md",
+    "game/tests/life/hunting/test_cage_catch.gd",
+    "game/tests/life/hunting/test_carry_cage.gd",
+    "game/tests/multiplayer/test_hunt_on_server.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "맨손 · 다른 것을 들고는 짐승을 칸으로 못 집는다 — 허공 우클릭 줍기(captives.gd _unhandled_input 의 nearest)를 걷는다",
+     "evidence": "captives.gd _unhandled_input 에서 nearby() 줍기가 빠지고 held_cage 일 때만 aimed() 짐승을 catch 한다. test_cage_catch.gd 의 test_bare_hands_do_not_pick_up_an_aimed_captive · test_bare_hands_do_not_pick_up_a_captive_nearby_either(허공 조준 전제 assert_null) · test_holding_something_else_does_not_pick_up 이 진짜 오른쪽 버튼으로 칸 0개 · 짐승이 땅에 남는지 본다. test_carry_cage 의 옛 우클릭 시험도 맨손이면 안 든다고 단언하도록 바뀌었다"
+    },
+    {
+     "ok": true,
+     "criterion": "케이지를 들고 조준점의 짐승을 우클릭하면 그 케이지에 들어가 가방 한 칸(케이지에 든 짐승)이 된다. 클릭은 우클릭(상호작용) — Claude 가 정함: 좌클릭은 평타 · 망원경 지정이라 겹친다",
+     "evidence": "test_a_held_cage_takes_the_aimed_captive_into_that_slot — 든 칸 0 이 captive_deer · cage=cage_medium · 체력 유지 · 케이지 0개 · picked_up 신호 · 땅에서 사라짐. test_from_a_stack_one_cage_is_used_and_the_rest_stay_in_hand — 3개 묶음에서 하나만 쓰이고 짐승은 빈 칸으로"
+    },
+    {
+     "ok": true,
+     "criterion": "들어가는 조건은 지금 그대로 — 마취 · 잡힘 조건(G-256 · G-258)과 덩치(cage.gd: 제 덩치 이상 케이지)는 바꾸지 않는다. 안 들어가면 까닭 한 줄(「케이지가 작다」 · 「아직 깨어 있다」)",
+     "evidence": "catch_for 가 a.is_captured() · Cage.fits 를 그대로 쓴다. test_a_cage_too_small_says_so_and_uses_nothing · test_an_awake_animal_says_so_and_uses_nothing 이 notice.text 와 케이지가 안 쓰였는지 본다. QA 가 catch_for 의 Cage.fits 검사를 지워 돌리니 12개 중 1개가 떨어졌다(되돌림 확인) — 껍데기가 아니다. 가방이 차면 케이지를 돌려놓는 경우도 test_a_full_bag_gives_the_cage_back"
+    },
+    {
+     "ok": true,
+     "criterion": "케이지를 들고 조준하면 조준점 옆에 「우클릭: 케이지에 넣기」가 뜬다. 맨손이면 쓰다듬기(taming.gd)만 — 둘이 겹치지 않는다",
+     "evidence": "trace_label.gd 가 held_cage 일 때 Captives.HINT 를 붙인다. test_holding_a_cage_shows_the_hint_and_bare_hands_do_not(ko · en 글자 · 화면 안 · 맨손이면 안 보임) · test_a_kept_animal_shows_its_line_and_the_hint_below(맨손이면 Ranch.line 만). Taming.tends 는 맨손 · 곡물만이라 케이지를 들면 쓰다듬기가 비켜서고, Tether 도 케이지를 든 손이면 비켜선다(test_a_tied_kept_animal_is_not_untied_by_a_cage). 키는 ko.po · en.po 둘 다(test_the_keys_are_in_ko_and_en)"
+    },
+    {
+     "ok": true,
+     "criterion": "멀티 — 참가자도 같다(서버가 잡는다) (테스트)",
+     "evidence": "net_world.gd _hunt PICK 이 사본 가방으로 catch_for 하고 까닭을 acts().give 로 보낸다. test_hunt_on_server.gd::test_the_server_cages_only_with_a_fitting_cage_in_hand — 진짜 ENet 으로 깬 짐승이면 「아직 깨어 있다」가 미르에게, 맨손이면 서버가 안 넣고 짐승이 남고, 작은 케이지면 「케이지가 작다」 · 케이지가 안 쓰임. test_the_guest_picks_up_a_captive... 는 서버 사본 칸의 cage=cage_medium 을 본다. test.log 에서 통과"
+    }
+   ],
+   "issues": [
+    "쓰지 않는 Captives.nearby() 가 남았다 — game/life/hunting/captives.gd:310 의 nearby() 는 허공 줍기를 걷은 뒤 어디서도 부르지 않는다(grep 결과 테스트 · ui 모두 없음). 지우거나, 남길 까닭이 있으면 주석에 적어라",
+    "netcode · permissions spec 의 「잡힌 짐승 줍기」가 낡았다 — spec/11_multiplayer/netcode.md:52 · :100 과 permissions.md:14 가 아직 「줍기」라고만 적는다. 「든 케이지로 가두기(G-268.1)」로 고쳐 hunting.md 와 맞춰라"
+   ],
+   "good": [
+    "가방에 빈 칸이 없을 때 케이지를 돌려놓고 「가방에 빈 칸이 없다」(CAPTIVE_BAG_FULL) 한 줄 — 기준에 없지만 묶음 케이지 처리에 따른 자연스러운 덧붙임",
+    "Tether 가 케이지를 든 손이면 목줄 풀기를 비켜선다 — 우클릭이 겹치지 않게 한 것"
+   ]
+  },
+  "test": "i/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      3s  res://tests/ui/hud/test_hive_window.gd\nok      4s  res://tests/ui/hud/test_hotbar.gd\nok      4s  res://tests/ui/hud/test_no_output_slots.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_search_field_shared.gd\nok      4s  res://tests/ui/hud/test_room_window.gd\nok      3s  res://tests/ui/hud/test_station_doing_line.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_queue_window.gd\nok      3s  res://tests/ui/hud/test_station_row_columns.gd\nok      3s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/automation/villagers/test_villager_gear.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      4s  res://tests/ui/hud/test_villager_gear_window.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      4s  res://tests/ui/hud/test_villager_window.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/core/net/test_steam_server_gone.gd\nok      3s  res://tests/life/hunting/test_captive_age.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      3s  res://tests/life/ranching/test_bond.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_food_shown.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/life/ranching/test_hive_raid.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/life/ranching/test_shearing.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_trough_window.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           163\nTests            1323\nPassing Tests    1323\nFailing Tests       0\nRisky/Pending       0\nAsserts         38543\nTime           160s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "fabeb357"
  }
 ]
