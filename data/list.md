@@ -4452,7 +4452,7 @@
   - 기준: 매 프레임 광선 질의가 새 Array · Dictionary 를 만든다 — 쓰는 중 _aimed_animal 이 부르는 Aim.at(game/player/movement_controls/aim.gd:32-34)이 프레임마다 PhysicsRayQueryParameters3D · q.exclude = [rid] 배열 · intersect_ray 결과 Dictionary 를 새로 만든다. 막는 것은 아니다(광선 하나). 줄이려면 망원경이 PhysicsRayQueryParameters3D 하나를 쥐고 from/to 만 바꿔 쓰거나(exclude 는 한 번만) 플레이어 카메라에 RayCast3D 를 두어라
   - 기준: (앞 단계 QA) 테두리 · 조준선 「바뀔 때만」 테스트가 이름만큼 보지 않는다 — test_telescope_light.gd test_the_outline_colour_and_crosshair_are_set_only_on_change 는 색이 그대로인지만 보므로 매 프레임 같은 색을 넣어도 통과한다. 넣은 횟수를 세는 값(_rebuilds 처럼)을 두거나 테스트 이름을 실제로 보는 것(색이 유지된다)에 맞춰라
 
-## [ ] G-262 건설 모드 — 좌클릭 놓기(도면 · 시설) · 도면 우클릭 해체 · 빨간 표시
+## [x] G-262 건설 모드 — 좌클릭 놓기(도면 · 시설) · 도면 우클릭 해체 · 빨간 표시
 - 차선: 3d-lane2 · 시작 2026-10-20 05:47
 - 순서: G-261 뒤
 - spec: spec/06_build/building.md, spec/04_life/farming.md, spec/05_craft/facilities.md
