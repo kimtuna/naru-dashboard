@@ -4492,7 +4492,7 @@
 - [x] 3. (앞 단계 QA) 이동 동작 이름이 어긋난다
   - 기준: 이동 동작 이름이 어긋난다 — ko.po KEYBIND_move_up「앞으로」 · move_down「뒤로 걷기」 · move_left「왼쪽」 · move_right「오른쪽」으로 꼴이 섞였다(en 은 Move forward/back/left/right). 「앞으로 걷기 · 뒤로 걷기 · 왼쪽으로 걷기 · 오른쪽으로 걷기」처럼 한 꼴로 맞춰라 (막는 것은 아니다)
 
-## [ ] G-264 설명서 — ESC 데이터베이스 · 목차
+## [x] G-264 설명서 — ESC 데이터베이스 · 목차
 - 차선: 3d-lane2 · 시작 2026-10-20 12:16
 - 순서: G-263 뒤
 - spec: spec/12_ui/menu.md
