@@ -4626,7 +4626,7 @@
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
 - [x] 1. put_bird 주석이 닿지 않는 떨굼을 말한다 (G-268 단계 3)
   - 기준: put_bird 주석이 닿지 않는 떨굼을 말한다 — game/craft/stations/stations.gd:559 「가방이 차 있으면 새장 곁에 떨군다」는 put_bird 가 :569 에서 칸을 먼저 비우므로 일어나지 않는다. captives.gd give_back_cage 주석처럼 「칸을 먼저 비우므로 케이지는 늘 그 칸에 돌아온다」로 고쳐라 (막는 것은 아니다)
-- [ ] 2. (앞 단계 QA) 「늘 그 칸에」는 엄밀히 틀린 말이다
+- [x] 2. (앞 단계 QA) 「늘 그 칸에」는 엄밀히 틀린 말이다
   - 기준: 「늘 그 칸에」는 엄밀히 틀린 말이다 — game/craft/stations/stations.gd:559 와 game/life/hunting/captives.gd 의 같은 뜻 주석. Inventory.add(game 의 inventory.gd:114)는 같은 케이지가 쌓인 칸(_stack_onto_existing)이나 앞쪽 빈 칸(_put_in_empty_slots)에 먼저 넣으므로, 케이지는 비운 그 칸이 아닌 다른 칸에 들어갈 수 있다. 맞는 말은 「칸을 먼저 비우므로 케이지는 늘 가방에 돌아온다(떨굴 일이 없다)」다. 주석 낱말만 고치면 된다 (막는 것은 아니다)
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
