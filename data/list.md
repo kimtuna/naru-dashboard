@@ -4524,7 +4524,7 @@
 - [x] 2. 공유 PlayerConfig 를 고쳐 쓴다 (G-263 단계 1)
   - 기준: 공유 PlayerConfig 를 고쳐 쓴다 — player.gd:188 _follow_sensitivity 가 config.mouse_sensitivity(player_config.tres, 모든 Player 가 함께 쓰는 Resource)를 덮어쓴다. 남의 몸(원격 플레이어)까지 같은 값을 갖게 되고 테스트가 끝나도 메모리의 tres 값이 남는다. 지금은 감도를 내 카메라만 읽어 해가 없지만, 카메라 회전(player.gd:196-197)이 UserPrefs.mouse_sensitivity 를 바로 읽게 하거나 config 를 duplicate 해 두는 편이 낫다 — 바꾸면 tests/crosshair.gd 등 config.mouse_sensitivity 로 나누는 곳도 같이 고친다
 
-## [ ] G-266 잡은 짐승 · 새장 — 배고픔 100% · 새장 창 쪽 나누기 · 해체해도 새가 남는다 · 망원경은 곁의 새장만 · 새는 앉아 있다 · 먹이가 보인다
+## [x] G-266 잡은 짐승 · 새장 — 배고픔 100% · 새장 창 쪽 나누기 · 해체해도 새가 남는다 · 망원경은 곁의 새장만 · 새는 앉아 있다 · 먹이가 보인다
 - 차선: 3d-lane2 · 시작 2026-10-20 17:27
 - **사람 요청 2026-10-20** (원문 그대로)
   - 「잡힌 동물의 배고픔은 100%로」
