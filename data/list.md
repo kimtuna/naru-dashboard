@@ -4579,7 +4579,7 @@
   - 기준: (앞 단계 QA) ENet 조이기 값에 「임시」 표시가 없다 — game/core/net/net_link.gd THROTTLE_INTERVAL_MS · THROTTLE_UP · THROTTLE_DOWN(0) 은 report 의 temporary 에 올랐는데 코드 주석에는 **임시** 가 없다. 다른 임시 값(NetInterp.DELAY · MOTION_CHUNK)처럼 주석에 「**임시**」를 달아라
   - 기준: (앞 단계 QA) 남의 몸은 아직 메우지 않는다 — 남의 몸은 unreliable 이라 머리 막힘은 없지만 그림은 옛 다가가기 그대로다(report: 「보간은 그대로 뒀다」). 끊김 시험(stutter_island)에 남의 몸을 더해 재 보고, 끊김이 보이면 net_bodies.gd 받는 쪽에 NetInterp 를 붙여라
 
-## [ ] G-924 루프가 찾은 것 — 스스로 갚는다
+## [x] G-924 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-start · 시작 2026-10-20 18:47
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
