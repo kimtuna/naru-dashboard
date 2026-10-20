@@ -4475,7 +4475,7 @@
   - 기준: netcode.md 에 놓인 것 「치기」가 남았다 — spec/11_multiplayer/netcode.md 38 · 46 · 93 · 95 · 99줄에 건축 · 놓기 · 농사 쪽 「치기」 RPC가 아직 적혀 있다(G-262.3 에서 서버가 받지 않게 걷었다). 나무 · 바위 치기(34 · 88줄)는 그대로 두고, 놓인 것 쪽의 「치기」만 지워라. spec/04_life/bird-cage.md:16 「치기도 도면 우클릭 해체도 막히고」는 「도면 우클릭 해체가 막히고」로, spec/11_multiplayer/permissions.md:12 건축 단위의 「치기」는 「해체」로 고쳐라
   - 기준: (앞 단계 QA) 코드 주석에 좌클릭 치기가 남았다 — 놓인 것은 이제 안 부서지는데 아직 「좌클릭 평타로 몇 대 치면 부서진다」고 적힌 곳: craft/stations/crafting_station.gd:5 · :173(「치기(Stations.hit_station)도」), life/farming/field_patch.gd:5, world/storage/storage_chest.gd:79, core/net/net_world.gd:19(참가자가 바라는 것 목록의 「치기」), build/placeable.gd:216, i18n ko.po · en.po 의 TAKE_* 위 주석 「치기 · 도면 우클릭 해체가 같이 띄운다」. 「도면 해체(마지막 한 대 = take)」로 고쳐라
 
-## [ ] G-263 설정 — 키보드 · 마우스 탭
+## [x] G-263 설정 — 키보드 · 마우스 탭
 - 차선: 3d-lane2 · 시작 2026-10-20 10:44
 - 순서: G-262 뒤
 - spec: spec/12_ui/menu.md, spec/01_settings/input.md
