@@ -1,51 +1,5 @@
 [
  {
-  "time": "2026-10-14 15:21:27",
-  "epoch": 1791958887,
-  "type": "pass",
-  "title": "통과 — G-218 단계 1 (걷는 중에 길을 다시 묻는다 · 끼여도 곧장 포기하지 않는다)",
-  "group": "G-218",
-  "step": "1",
-  "attempt": "2",
-  "report": {
-   "problem": "G-218.1 — PathWalk 가 걷는 중 지도 차례가 바뀌면 길을 다시 묻고, 주민은 끼여도 길을 다시 물어 STUCK_RETRIES(2)번 더 끼일 때만 STUCK — QA 가 짚은 두 테스트를 더했다. 바뀐 곳만 59개 파일 351개 통과",
-   "approach": "앞 시도의 구현(PathWalk 한 곳에서 지도 차례가 바뀌면 다시 묻기 · 끼이면 _ask 로 다시 묻고 stuck_retries 번 더 끼일 때만 STUCK, 주민 walker 는 STUCK_RETRIES)은 그대로 두고 QA 가 짚은 증거 빈칸을 메웠다. (1) plan 뒤 길을 내비메시가 주지 않을 엉뚱한 길로 바꿔 넣고 몸을 세워 STUCK_TIME 을 넘기면, 길이 TO 근처에서 끝나는 진짜 길로 바뀌었는지 본다 — 끼임 가지의 _ask 를 `if false:` 로 빼 보니 이 테스트만 떨어졌다. (2) 진짜 섬 판에서 나무로 걷던 나무꾼을 제자리에 붙들어, 첫 STUCK_TIME 뒤에도 _skip(FORGET 목록)이 비어 있고 같은 나무로 계속 걷다가 STUCK_RETRIES 번 더 끼인 뒤에야 빼 두는지 본다 — 주민 walker 의 stuck_retries 를 0 으로 되돌려 보니 이 테스트가 떨어졌다. 깨 본 뒤 원래대로 되돌렸다. 바뀐 곳 그물(changed_tests.py, 59개 파일 351개) 통과.",
-   "why": "PathWalk.STUCK_RETRIES = 2 — 끼였을 때 길을 다시 묻고 더 걸어 보는 번수, 기준이 준 임시값",
-   "files": [
-    "game/core/path_walk.gd",
-    "game/automation/villagers/villager.gd",
-    "game/automation/villagers/job_work.gd",
-    "game/automation/villagers/gather_work.gd",
-    "game/tests/core/test_path_walk_replan.gd",
-    "game/tests/automation/villagers/test_villager_gathering.gd",
-    "game/tests/automation/villagers/test_villager_g217_every_job.gd",
-    "spec/07_automation/npc-villagers.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "**걷는 중에 걸을 땅이 바뀌면 길을 다시 묻는다** — 지금은 길을 한 번만 묻는다(`core/path_walk.gd:52` plan). 상자 · 벽을 놓아 다시 구워도 옛 길로 가다 처박힌다. `NavigationServer3D.map_changed` 를 듣거나 걷는 동안 잠깐마다(임시 0.5 ~ 1초) 다시 묻는다 — PathWalk 한 곳에서 (테스트: 걷는 중 앞에 상자를 놓으면 돌아간다)",
-     "evidence": "PathWalk.step 이 map_get_iteration_id 가 map_at 과 다르면 _ask 로 다시 묻는다 — JobWork._stride 의 옛 다시 묻기는 지우고 PathWalk 한 곳으로 옮겼다. test_path_walk_replan.gd::test_walking_asks_again_when_the_ground_changes 가 걷는 중 가운데 띠를 도려낸 내비메시로 바꾸고 띠를 지나지 않고 남쪽 다리로 돌아 닿는지 본다. QA 가 step 의 지도 차례 비교를 `if false and` 로 꺼 보니 이 파일 2개가 떨어졌다(되돌렸다). 진짜 섬 판 test_villager_g217_every_job.gd 도 walk.map_at 로 옮겨 통과."
-    },
-    {
-     "ok": true,
-     "criterion": "**끼이면 곧장 포기하지 않는다** — 지금은 STUCK 이면 그 대상을 바로 뺀다(`gather_work.gd:95` _blocked). 먼저 길을 다시 묻고, 몇 번(임시 2번) 더 끼일 때만 뺀다 (테스트)",
-     "evidence": "PathWalk.step 끼임 가지가 _retried < stuck_retries 면 _ask 로 다시 묻고 시계를 되돌린다. 주민 walker 는 STUCK_RETRIES=2(임시 표시 있음), 짐승은 0. test_a_stuck_villager_really_asks_the_map_again — 끼임 가지의 _ask 를 QA 가 꺼 보니 이 테스트가 떨어졌다(바꿔 넣은 길이 그대로). test_villager_gathering.gd::test_a_stuck_woodcutter_asks_again_before_giving_up_the_tree — 진짜 섬에서 나무꾼을 붙들어 첫 STUCK_TIME 뒤 _skip 이 비고 같은 나무로 걷다가 2번 더 끼인 뒤에야 빼는지 본다. QA 가 Villager.walker 의 stuck_retries 를 0 으로 바꾸니 이 테스트가 「처음 끼였을 때 나무를 빼 두지 않는다」에서 떨어졌다(되돌렸다). 앞 회차 QA 지적 둘 다 메웠다."
-    }
-   ],
-   "issues": [
-    "g217_every_job 주석이 낡았다 — game/tests/automation/villagers/test_villager_g217_every_job.gd 13 · 16 · 179 줄 주석과 249 줄 단언 메시지가 아직 「_stride 의 다시 묻기 · JobWork._stride」라 적는다. 다시 묻기는 이제 PathWalk.step 에 있다 — 그 넷을 PathWalk.step 으로 고쳐라"
-   ],
-   "good": []
-  },
-  "test": "mation/villagers/test_villager_watering.gd\nok     36s  res://tests/automation/villagers/test_villager_chests_full.gd\nok     37s  res://tests/automation/villagers/test_villager_crafter.gd\nok     27s  res://tests/automation/villagers/test_villager_chest_saved_room.gd\nok     26s  res://tests/automation/villagers/test_villager_harvesting.gd\nok     40s  res://tests/automation/villagers/test_villager.gd\nok    173s  res://tests/automation/villagers/test_villager_g217_every_job.gd\nok     24s  res://tests/automation/villagers/test_villager_can_churn.gd\nok     25s  res://tests/automation/villagers/test_villager_chest_shared.gd\nok     21s  res://tests/automation/villagers/test_villager_walks_in.gd\nok     20s  res://tests/automation/villagers/test_villager_blind_spots.gd\nok     19s  res://tests/automation/villagers/test_villager_jobs.gd\nok     18s  res://tests/automation/villagers/test_villager_many_fields.gd\nok     15s  res://tests/automation/villagers/test_villager_jobs_detour.gd\nok     19s  res://tests/automation/villagers/test_villager_room_doors.gd\nok     19s  res://tests/automation/villagers/test_villager_planting.gd\nok     15s  res://tests/automation/villagers/test_villager_as_built.gd\nok     10s  res://tests/automation/villagers/test_villager_gather_close.gd\nok     15s  res://tests/automation/villagers/test_villager_reach.gd\nok     11s  res://tests/automation/villagers/test_villager_hands_room.gd\nok     15s  res://tests/automation/villagers/test_villager_as_played.gd\nok     13s  res://tests/automation/villagers/test_villager_body_slope.gd\nok      6s  res://tests/core/test_path_walk_replan.gd\nok      9s  res://tests/automation/villagers/test_villager_home.gd\nok      8s  res://tests/automation/villagers/test_villager_torch_detour.gd\nok      9s  res://tests/automation/villagers/test_villager_door_close.gd\nok      4s  res://tests/automation/villagers/test_villager_chest_detour.gd\nok     12s  res://tests/core/debug/test_ui_shots.gd\nok      6s  res://tests/automation/villagers/test_villager_cleaning.gd\nok      4s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      3s  res://tests/build/test_bed.gd\nok      3s  res://tests/core/test_open_chest_window.gd\nok      3s  res://tests/ui/hud/test_villager_window.gd\nok      3s  res://tests/automation/villagers/test_villager_door.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      2s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      3s  res://tests/core/test_game_root_tidy.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/craft/stations/test_cook_table.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      2s  res://tests/life/medicine/test_medicine.gd\nok      1s  res://tests/automation/villagers/test_job_work_shared.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok    405s  res://tests/automation/villagers/test_villager_g217_real_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            59\nTests             351\nPassing Tests     351\nFailing Tests       0\nRisky/Pending       0\nAsserts          9013\nTime           405s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "afc0e65a"
- },
- {
   "time": "2026-10-14 15:49:51",
   "epoch": 1791960591,
   "type": "fail",
@@ -8948,5 +8902,58 @@
   },
   "test": "s/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_summon.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      0s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      0s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           520\nTests            3913\nPassing Tests    3913\nFailing Tests       0\nRisky/Pending       0\nAsserts        180410\nTime           753s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "65f9acaf"
+ },
+ {
+  "time": "2026-10-20 12:24:51",
+  "epoch": 1792466691,
+  "type": "fail",
+  "title": "QA 불합격 — G-264 단계 1 (시도 1)",
+  "group": "G-264",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "ESC 창에 「데이터베이스」 — 왼쪽 목차(갈래 14 · 항목 125, ui/manual/manual_toc.json 에서 읽는다), 항목을 고르면 오른쪽에 「설명은 아직이다」 · ko/en · ui_shots database. 바뀐 곳만 46 파일 403 개 통과",
+   "approach": "ESC 창(PauseMenu)에 설정 화면과 같은 꼴의 안쪽 화면 ManualScreen 을 달았다 — 왼쪽 Tree 목차, 오른쪽 항목 이름 + 「설명은 아직이다」. 목차는 manual_toc.json 하나에서 읽고, 이름은 이미 있는 번역 키(ITEM_ 시설 · LIVESTOCK_ 동물 · ROOM_ 방 · GUILD_TITLE …)를 그대로 쓰고 없는 주제만 MANUAL_ 키를 새로 뒀다. 생활 · 농사 · 낚시 · 사냥 · 목장 · 새장 · 건설 · 제작 · 시설 · 주민 · 전투 · 멀티에 섬 · 설정 갈래를 더했다. 빠뜨림 검사는 stations.json · AnimalKinds.WILD · livestock.json · BirdCage.KINDS · rooms.json 을 목차와 맞대 보아 새 시설 · 동물 · 방을 더하면 떨어진다 — 그때 목차에 한 줄 더하면 된다. 고른 항목은 화면의 기억이라 저장하지 않는다(save.md 안 담는다 목록). 로그의 「game_root.tscn:65 ... pause_menu.tscn non-existent」 한 줄은 HEAD 에서도 dim_note 테스트에 나오는 원래 있던 것이다(확인함).",
+   "why": "데이터베이스 창 크기(목차 260×420 · 오른쪽 360) — 디자인은 사람이 나중에",
+   "files": [
+    "game/ui/manual/manual_toc.json",
+    "game/ui/menu/manual_screen.gd",
+    "game/ui/menu/manual_screen.tscn",
+    "game/ui/menu/pause_menu.gd",
+    "game/ui/menu/pause_menu.tscn",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "game/tests/ui/menu/test_manual_screen.gd",
+    "game/tests/ui/menu/test_pause_menu.gd",
+    "spec/12_ui/menu.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "ESC 메뉴에 「데이터베이스」 버튼 → 창. 왼쪽 목차(갈래 — 생활 · 농사 · 낚시 · 사냥 · 목장 · 새장 · 건설 · 제작 · 시설 · 주민 · 전투 · 멀티 …)와 항목 이름, 오른쪽은 항목을 고르면 「설명은 아직이다」 한 줄(본문은 확정된 뒤 쓴다). 목차는 데이터 파일 하나(예: game/ui/manual/manual_toc.json)에서 읽는다 · ko/en",
+     "evidence": "test_manual_screen.gd — test_the_pause_menu_opens_the_database(버튼 → 창 · 뒤로 닫힘), test_reset_folds_the_database, test_the_toc_comes_from_the_data_file(나무 갈래·항목 수 = json), test_the_toc_has_the_named_categories(사람이 적은 12 갈래 + 빈 갈래 없음), test_picking_an_entry_says_not_yet(고르면 [이름, 「설명은 아직이다」]), test_it_reads_korean_and_english(ko→en 전환 시 목차·오른쪽 다 옮김), test_every_name_is_in_korean_and_english(모든 키 ko/en). test_pause_menu.gd 의 항목 목록에 MENU_DATABASE. test.log 에 둘 다 ok"
+    },
+    {
+     "ok": false,
+     "criterion": "지금 게임에 있는 것으로 목차를 채운다 — spec/ 의 문서 갈래와 지금까지 만든 시설 · 창 · 동물을 보고 빠뜨리지 않는다 · ui_shots 한 장",
+     "evidence": "test_the_toc_misses_nothing_in_the_game 이 stations.json · AnimalKinds.WILD · livestock.json · BirdCage.KINDS · rooms.json 을 맞대 보는 것은 진짜다. 그러나 (1) 게임에 있는 횃불(game/world/lighting/torch.gd · torches.gd, craft/recipes/hand.json 의 torch, spec/03_world/lighting.md)이 목차 어디에도 없다 — 빠뜨렸다. (2) ui_shots 에 database 자리만 더했고 사진은 한 장도 찍지 않았다 — .loop/out/ 아래 어디에도 database*.png 가 없다(앞 단계 G-263 은 .loop/out/shots_g263/ 에 남겼다)"
+    }
+   ],
+   "issues": [
+    "횃불 · 조명이 목차에 없다 — game/world/lighting/torch.gd 로 횃불이 게임에 있고(손 제작 hand.json 의 torch, 놓고 부수기) spec/03_world/lighting.md 도 있는데 manual_toc.json 에 torch · lighting 항목이 없다. 생활(또는 건설) 갈래에 {\"id\": \"torch\", \"name\": \"MANUAL_torch\"}(ko 「횃불 · 조명」 / en 「Torches · Lighting」)을 더하고, test_the_toc_misses_nothing_in_the_game 에 손 제작 hand.json 의 놓는 물건(torch)도 목차에 있는지 보는 단언을 더해라. 다른 spec 문서 갈래(03_world · 04_life · 06_build 등)도 지금 게임 코드가 있는 것은 한 번 더 맞대 보라",
+    "데이터베이스 ui_shots 사진이 없다 — ui_shots.gd 에 \"database\" 자리를 더했을 뿐 실제로 찍지 않았다. ui_shots 를 database 자리로 돌려 ko · en 사진을 .loop/out/shots_g264/database_ko.png · database_en.png 로 남기고 report.json 에 그 경로를 적어라 (G-263 이 shots_g263 에 남긴 것과 같은 꼴)"
+   ],
+   "good": [
+    "사람이 적은 12 갈래 밖에 「섬」(world) · 「설정」(settings) 갈래를 더했다 — 기준의 「…」 안이라 흠은 아니다"
+   ]
+  },
+  "test": "--- 바뀐 곳만: 46 개 ---\ntest.sh: 파일 46 개를 6 개씩 한꺼번에 돌린다\nok      9s  res://tests/ui/layout/test_window_layout.gd\nok     10s  res://tests/settings/save/test_round_trip.gd\nok      7s  res://tests/core/debug/test_ui_shots.gd\nok      6s  res://tests/world/terrain/test_island_in_game.gd\nok     17s  res://tests/craft/stations/test_g212_human_save.gd\nok      5s  res://tests/core/debug/test_dev_box_open.gd\nok     22s  res://tests/craft/stations/test_stations.gd\nok      6s  res://tests/ui/menu/test_pause_menu.gd\nok      5s  res://tests/core/debug/test_dev_box.gd\nok      3s  res://tests/ui/hud/test_kept_window.gd\nok      4s  res://tests/ui/hud/test_room_names.gd\nok      4s  res://tests/ui/hud/test_room_window.gd\nok      5s  res://tests/ui/hud/test_station_g230_look.gd\nok      3s  res://tests/ui/hud/test_villager_gear_window.gd\nok      3s  res://tests/core/net/test_steam_quit.gd\nok      3s  res://tests/core/debug/test_dev_animals.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      3s  res://tests/multiplayer/test_server_from_game.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok     32s  res://tests/combat/tools_as_weapons/test_fire_rate.gd\nok      3s  res://tests/ui/menu/test_world_settings_screen.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/net/test_steam_game.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      3s  res://tests/core/test_game_root_tidy.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            46\nTests             403\nPassing Tests     403\nFailing Tests       0\nRisky/Pending       0\nAsserts         17390\nTime           40s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
