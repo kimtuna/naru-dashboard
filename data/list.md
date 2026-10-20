@@ -4662,10 +4662,12 @@
   - 기준: 창에 **칸 다섯** — 컵 · 물뿌리개처럼 물을 담는 것(crops.gd:363 refill 이 채우는 것)을 **한 칸에 하나씩** 넣는다. 넣어 두면 물이 찬 것이 된다. 차는 시간은 **임시**. 다 찬 것은 꺼낸다
   - 기준: 만드는 곳 · 재료는 **임시**(사람이 안 정했다 — 가장 흔한 재료로 싸게, 「임시」라고 레시피 파일에 적는다). 번역 ko · en · 저장 · 멀티(참가자가 넣고 꺼내도 서버가 지킨다) (테스트)
   - 기준: spec/05_craft/facilities.md 에 피처펌프 줄을 사람 원문과 함께 더한다
-- [ ] 2. 조리용 화로를 걷는다
+- [x] 2. 조리용 화로를 걷는다
   - 기준: 조리용 화로(cook_stove)를 아이템 · 시설 · 번역 · 제작 목록에서 뺀다. 조리는 조리대(cook_table) 하나만 (stations.json 의 「조리용 화로는 … 남기고(G-207.4)」 줄도 사람 결정으로 고친다)
   - 기준: 옛 저장본에 놓인 · 가방에 든 조리용 화로는 열 때 사라지지 않고 **재료로 돌려준다**(또는 조리대로 바꾼다 — Claude 가 고르고 report 에 까닭) (테스트)
   - 기준: `grep -rn cook_stove` 가 테스트 · 옛 저장본 옮기기 말고는 0
+- [ ] 3. (앞 단계 QA) 넷이 셋이 된 테스트 이름
+  - 기준: 넷이 셋이 된 테스트 이름 — game/tests/craft/stations/test_station_recipes.gd 의 test_the_four_new_stations_are_made_at_a_station_and_land_in_the_bag 는 화로를 빼서 이제 셋(용광로 · 조리대 · 연구대)을 본다. 이름을 test_the_new_stations_are_made_at_a_station_and_land_in_the_bag 처럼 고쳐라 (막는 것은 아니다)
 
 ## [ ] G-271 가방에 플레이어 스탯 · 망치로 해체 · 올리기 · 건축 키 Tab · R · F
 - 차선: 3d-start
