@@ -4646,10 +4646,14 @@
   - 기준: (앞 단계 QA) 새장 창 스탯 줄이 창에 붙었는지는 테스트가 안 본다 — test_animal_stats_roll.gd 의 test_the_cage_page_shows_the_birds_own_numbers 는 정적 CagePanel.stats_text 의 꼴만 본다. refresh() 에서 그 줄을 빼도 통과한다. test_bird_cage_window.gd 에 새를 넣고 창을 연 뒤 bird_label(0).text 에 그 새의 stats() 로 만든 stats_text 가 들어 있는지 단언을 더하라
   - 기준: (앞 단계 QA) summon 길의 굴림을 지키는 테스트가 없다 — island_animals.gd summon() 에 AnimalStats.roll 을 더했지만 test_animal_stats_roll 은 populate · spawn_family 만 본다. test_summon.gd 나 test_animal_stats_roll 에 summon 으로 난 개체의 stats 가 넷 · 종 값 ±SPREAD 안인지 단언을 더하라
 
-- [ ] 3. 케이지에 든 곰(들짐승만 · WILD_ONLY)도 나갈 길이 있다
+- [x] 3. 케이지에 든 곰(들짐승만 · WILD_ONLY)도 나갈 길이 있다
   - 결정: Claude 가 정함 2026-10-20 (decisions-done 「케이지에 든 곰은 나갈 길이 없다」) — 곰도 땅에 놓을 수 있다. 놓으면 기르지 않고 깨어 달아나는 들짐승으로 풀리고 빈 케이지는 가방으로 돌아온다
   - 기준: captives.gd place_for 가 WILD_ONLY 를 거부하던 것을 「들판에 풀어 준다」로 — 우리 · 새장에는 여전히 못 넣는다. K 창 떠나보내기(2단계)도 곰에 된다 (테스트)
   - 기준: (앞 단계 QA) 권한 없는 떠나보내기가 말없이 삼켜진다 — net_world.gd _release_animal 은 _kit_for(id, Acts.HUNT) 가 null 이면 그냥 return 해, 참가자는 단추를 눌러도 아무 일이 없고 까닭도 못 듣는다(주민 창의 떠나보내기 _kit_for(id, Acts.FOLK) 는 「말없이 삼켜지지 않게」 까닭을 보낸다, net_world.gd:1258). 이름 바꾸기(_name_animal)도 같은 흠이다. 권한만 없을 때 그 참가자에게 거절 한 줄을 보내고, test_kept_names_on_server 에서 권한을 끈 채 떠나보낼 때 참가자 기계에 그 알림이 뜨는지 단언하라 (기준 밖 — 막는 것은 아니다)
+- [ ] 4. (앞 단계 QA) hunting.md 곰 줄이 스스로 어긋난다
+  - 기준: hunting.md 곰 줄이 스스로 어긋난다 — spec/04_life/hunting.md:16 이 「잡은 곰은 땅에 놓지 못한다 … 놓으면 들판에 풀린다 (G-269.3)」로 한 줄 안에서 서로 반대말을 한다. 사람 결정 원문(「곰: 그냥 큼 기를 수 없음」)은 두고, 「땅에 놓지 못한다」를 「놓아 기르지 못한다 — 놓으면 들판에 풀린다 (G-269.3)」처럼 고쳐 한 뜻으로 맞춰라
+  - 기준: (앞 단계 QA) 참가자 기계가 서버 답 전에 「풀어 줬다」를 띄운다 — captives.gd place_slot 의 remote 길에서 ask_place 앞에 _say_set_free 를 부른다. 서버가 권한 없음 · 사본 가방 불일치로 거절해도 참가자는 「곰은(는) 기를 수 없어 들판에 풀어 줬다」와 「권한이 없다」를 함께 본다. 알림을 서버 place_for 성공 뒤 그 사람에게 보내는(acts().give) 쪽으로 옮기고, test_hunt_on_server 에 권한을 끈 참가자가 곰을 놓을 때 그 한 줄이 안 뜨는지 단언하라
+  - 기준: (앞 단계 QA) 풀어 준 곰이 저장 안 담는 목록에 이름이 없다 — spec/01_settings/save.md:42 의 「한 번 잡았다 가방에서 깨어 나간 들판 짐승 … 담지 않는다」가 뜻으로는 덮지만, Ranch.set_free 로 풀린 곰(G-269.3)도 같은 까닭으로 안 담는다고 그 괄호에 한 마디 더하라
 
 ## [ ] G-270 피처펌프 · 조리용 화로를 걷는다
 - 차선: 3d-start · 시작 2026-10-20 22:35
