@@ -4521,7 +4521,7 @@
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
 - [x] 1. placeable.gd 머리 주석에 치기가 남았다 (G-262 단계 4)
   - 기준: placeable.gd 머리 주석에 치기가 남았다 — game/build/placeable.gd:12-13 「자원처럼 몇 번 쳐야 한다 · 실수로 한 번 쳤다고」, :35-38 HITS 설명 「지금은 무엇으로 치든 세 대다 · 자리를 옮기려고 칠 때」, :42 「치다 말고 딴 것을 치면」이 G-262.3 뒤에도 맨손 · 도구로 치는 것처럼 적혀 있다(이번 기준이 짚은 216줄 밖). 사람 결정 2026-09-22 줄은 지우지 말고 그 아래에 「G-262 부터 대수는 도면 우클릭 해체가 깎는다(마지막 한 대 = take) — 맨손 · 도구로는 안 깎인다」를 덧붙이고, HITS · HITS_LEFT 설명의 「치다」를 「도면 우클릭」으로 고쳐라. test_take_not_hit_wording.gd GONE 표에 「무엇으로 치든 세 대다」 「치다 말고 딴 것을 치면」을 더해라
-- [ ] 2. 공유 PlayerConfig 를 고쳐 쓴다 (G-263 단계 1)
+- [x] 2. 공유 PlayerConfig 를 고쳐 쓴다 (G-263 단계 1)
   - 기준: 공유 PlayerConfig 를 고쳐 쓴다 — player.gd:188 _follow_sensitivity 가 config.mouse_sensitivity(player_config.tres, 모든 Player 가 함께 쓰는 Resource)를 덮어쓴다. 남의 몸(원격 플레이어)까지 같은 값을 갖게 되고 테스트가 끝나도 메모리의 tres 값이 남는다. 지금은 감도를 내 카메라만 읽어 해가 없지만, 카메라 회전(player.gd:196-197)이 UserPrefs.mouse_sensitivity 를 바로 읽게 하거나 config 를 duplicate 해 두는 편이 낫다 — 바꾸면 tests/crosshair.gd 등 config.mouse_sensitivity 로 나누는 곳도 같이 고친다
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
