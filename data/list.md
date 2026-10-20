@@ -4481,12 +4481,14 @@
 - spec: spec/12_ui/menu.md, spec/01_settings/input.md
 - **사람 결정 2026-10-20**: 「Esc 설정에 위에 버튼으로 만들어서 키보드랑 마우스 감도 설정 할 수 있게」
 - 이 세션이 2026-10-20 봤다: 설정 화면(ui/menu/settings_screen.gd)은 빈 자리(MENU_SETTINGS_EMPTY). 키 다시 잡기는 없다(input.md:44 「미정」). 마우스 감도는 player_config.gd:51 mouse_sensitivity 0.003 박힌 값
-- [ ] 1. 위에 탭 · 마우스
+- [x] 1. 위에 탭 · 마우스
   - 기준: 설정 화면 **위에 탭 버튼**(키보드 · 마우스 — 뒤에 탭이 더 붙을 수 있게). 마우스 탭: **감도** 미끄럼(지금 값이 가운데쯤 · 범위 임시) · 바로 반영 · 사용자 설정으로 저장(월드 저장이 아니다) · 껐다 켜도 남는다
   - 기준: 메인 메뉴의 설정과 ESC 의 설정이 같은 화면이다
 - [ ] 2. 키보드 — 키 다시 잡기
   - 기준: 키보드 탭에 동작마다(input_actions.gd) 지금 키 · 누르면 「키를 누르세요」 · 다음 누른 키로 바뀐다 · 겹치면 알린다(바꾸지 않거나 맞바꾸기 — spec 에 한 줄) · 「처음대로」 · 저장 · 복원
   - 기준: 키 안내 글자(HUD · 창의 「[E]」 같은 것)가 바뀐 키를 따른다 · input.md 의 「미정」을 고친다 · ui_shots 두 탭 · ko/en
+  - 기준: (앞 단계 QA) 「월드 저장이 아니다」 단언이 늘 참이다 — test_settings_screen.gd test_sensitivity_is_saved_as_a_user_setting_and_survives_restart 의 assert_false(_file.begins_with(SaveStore.DEFAULT_ROOT)) 는 _file 이 테스트가 만든 임시 폴더라 언제나 통과한다. 실제 자리를 보게 assert_false(USER_PREFS.DEFAULT_PATH.begins_with(SaveStore.DEFAULT_ROOT)) 로 바꾸고, 가능하면 캐릭터/월드 저장본(SaveStore 가 쓰는 사전)에 'mouse' · 'sensitivity' 키가 없는지도 단언하라 (막는 것은 아니다 — 쓰는 길이 UserPrefs 뿐이라 지금은 맞다)
+  - 기준: (앞 단계 QA) 미끄럼 걸음이 화면에 박혔다 — settings_screen.gd:24 _sensitivity.step = 0.0001 은 범위(UserPrefs.SENSITIVITY_MIN/MAX)와 떨어져 화면 쪽에 박힌 수다. user_prefs.gd 에 SENSITIVITY_STEP 상수로 옮겨 범위와 같이 「임시」로 적고 화면은 그것을 읽게 하라
 
 ## [ ] G-264 설명서 — ESC 데이터베이스 · 목차
 - 차선: 3d-lane2
@@ -4515,6 +4517,8 @@
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
 - [ ] 1. placeable.gd 머리 주석에 치기가 남았다 (G-262 단계 4)
   - 기준: placeable.gd 머리 주석에 치기가 남았다 — game/build/placeable.gd:12-13 「자원처럼 몇 번 쳐야 한다 · 실수로 한 번 쳤다고」, :35-38 HITS 설명 「지금은 무엇으로 치든 세 대다 · 자리를 옮기려고 칠 때」, :42 「치다 말고 딴 것을 치면」이 G-262.3 뒤에도 맨손 · 도구로 치는 것처럼 적혀 있다(이번 기준이 짚은 216줄 밖). 사람 결정 2026-09-22 줄은 지우지 말고 그 아래에 「G-262 부터 대수는 도면 우클릭 해체가 깎는다(마지막 한 대 = take) — 맨손 · 도구로는 안 깎인다」를 덧붙이고, HITS · HITS_LEFT 설명의 「치다」를 「도면 우클릭」으로 고쳐라. test_take_not_hit_wording.gd GONE 표에 「무엇으로 치든 세 대다」 「치다 말고 딴 것을 치면」을 더해라
+- [ ] 2. 공유 PlayerConfig 를 고쳐 쓴다 (G-263 단계 1)
+  - 기준: 공유 PlayerConfig 를 고쳐 쓴다 — player.gd:188 _follow_sensitivity 가 config.mouse_sensitivity(player_config.tres, 모든 Player 가 함께 쓰는 Resource)를 덮어쓴다. 남의 몸(원격 플레이어)까지 같은 값을 갖게 되고 테스트가 끝나도 메모리의 tres 값이 남는다. 지금은 감도를 내 카메라만 읽어 해가 없지만, 카메라 회전(player.gd:196-197)이 UserPrefs.mouse_sensitivity 를 바로 읽게 하거나 config 를 duplicate 해 두는 편이 낫다 — 바꾸면 tests/crosshair.gd 등 config.mouse_sensitivity 로 나누는 곳도 같이 고친다
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
