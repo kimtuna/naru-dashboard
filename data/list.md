@@ -4807,7 +4807,7 @@
   - 기준: 속도 배율에서 배고픔을 지운다 — inventory-hotbar.md:37 · equipment-modules.md:39 · player.gd:366 주석 (속도는 목마름만, 2026-10-14). spec/02_player/hunger-thirst.md 에 3단계 결정을 원문과 함께
   - 기준: (앞 단계 QA) OTHER_SENSE 가 파일 통째로 허락한다 — game/tests/player/inventory_hotbar/test_no_item_load.gd 의 OTHER_SENSE 12 파일은 영어 weight 를 아무 뜻으로나 써도 걸리지 않는다. 막는 것은 아니다. 파일마다 허락할 낱말(예: fish_kinds.gd 는 "weight(" · "weights", island_mountain.gd 는 "cliff_weight" · "_ledge_weight")을 적어 그 밖의 weight 가 나오면 실패하게 좁혀라
   - 기준: (앞 단계 QA) 죽음 목적 문장이 바뀌었다 — spec/08_combat/damage-death.md:4 「죽음에 무게를 주되」를 「죽음이 가볍지 않게 하되」로 바꿨다. 뜻은 같고 사람 결정 표시가 붙은 줄은 아니다. 다만 그 줄이 사람이 쓴 문장이었다면 git log -L 로 출처를 보고, 사람이 쓴 것이면 줄 끝에 「(G-275.2 — 아이템 무게와 헷갈려 낱말만 바꿨다)」를 달아 둬라
-- [ ] 4. 시설 목록 · 선착장 · 새장 · 숙련도 · 로드맵
+- [x] 4. 시설 목록 · 선착장 · 새장 · 숙련도 · 로드맵
   - 기준: 「시설 열둘」 → 지금 시설 15종 표로(축사는 빼고 · 피처펌프 · 착유기 · 무기 제작대 · 장비 제작대를 넣는다. 조리용 화로는 G-270.2 로 뺐다) — crafting-stations.md:52-54 · facilities.md · stations.json `_twelve` 주석 · 결과 칸 기본값 주석 3 → 실제 5
   - 기준: frontier-islands.md:11 「남을 사람이 있으면 배가 안 떠난다」 → 지금 코드(game_root.gd:569 — 섬 여럿을 같이 돌리고 탄 사람만 건너간다, G-225)
   - 기준: bird-cage.md:18,22 · caged_bird.gd:195 주석 「새가 스스로 나간다」 → 횃대에 앉아 있고 사냥 명령 때만 난다(G-266.5)
