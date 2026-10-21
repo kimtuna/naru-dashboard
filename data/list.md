@@ -4815,7 +4815,7 @@
   - 기준: roadmap.md 표 — 1단계의 「(싱글)」을 빼고(멀티 2026-10-14) · 옆섬 무역 단계를 넣고(메인섬 → 옆섬 무역 → 원정섬, 원정은 맨 마지막) · 도구를 지금 것으로 · 「빼는 것」에서 목장 · 자동화를 뺀다. listen-server.md · central-gateway.md 의 단계 번호를 같은 표에 맞춘다
   - 기준: (앞 단계 QA) 갑옷 가득 테스트가 실제 갑옷을 안 입힌다 — test_fed_heals.gd test_never_above_max_even_with_armor 는 health.set_max(DEFAULT_MAX+10) 를 손으로 부르고 ArmorModules.max_health({}) 는 맨몸만 본다. 막는 것은 아니다(heal 이 max_health 에서 자른다). 사슴 2세트처럼 가득을 늘리는 장비를 실제로 입혀 Player 의 Health.max_health 가 바뀐 뒤 초록 회복이 그 값에서 멈추는지 보는 단언으로 바꾸면 좋다
   - 기준: (앞 단계 QA) 테스트 함수 이름이 낡았다 — game/tests/player/inventory_hotbar/test_items.gd 의 test_speed_layers_are_only_needs_crouch_slope_and_buffs 는 이제 목마름만 속도 층이다. test_speed_layers_are_only_thirst_crouch_slope_and_buffs 처럼 이름을 바꿔라
-- [ ] 5. 잔 어긋남 · 데스 상자 주인
+- [x] 5. 잔 어긋남 · 데스 상자 주인
   - 기준: 약초 「턱에만」 줄을 산비탈 약초와 맞춘다 · 「광석 여덟」 → 코드의 아홉 · 약 목록에서 해독제를 뺀다 · 같은 부위 「투구」/「모자」를 하나로(번역 키 · spec — 코드에서 많이 쓰는 쪽) · hud.md:29 데스 상자 검색 칸 줄(G-274.2 로 뺐다)을 고친다
   - 기준: 벌통 터는 짐승 표가 둘(guard_watch.gd:34 · hive_raiders.json)이다 — **hive_raiders.json 하나**로 모으고 guard_watch.gd 는 그것을 읽는다 (테스트: 두 곳이 다른 값이면 깨지던 것이 없다)
   - 기준: death_chest.gd:86 — 캐릭터 id 가 비면 아무나 연다. 「죽은 본인만 연다」가 그때도 지켜지게(빈 id 상자는 그 섬의 주인 · 혼자면 나만 — 옛 저장본을 열어 빈 id 상자가 생기는 길을 먼저 찾는다) (테스트)
