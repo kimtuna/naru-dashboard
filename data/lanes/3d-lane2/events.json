@@ -1,67 +1,5 @@
 [
  {
-  "time": "2026-10-16 20:32:00",
-  "epoch": 1792150320,
-  "type": "pass",
-  "title": "통과 — G-228 단계 3 (나이 — 주민은 이미 있다 · 생포한 짐승만 더한다)",
-  "group": "G-228",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "생포한 짐승에게만 나이(태어난 날 born)를 달아 칸 · 상자 · 축사 · 저장 · 멀티로 따라가게 하고, 칸 오른쪽 아래 · 축사 창에 보이게 했다. 해체 막대를 찍는 자리(butcher)를 더했다. 바뀐 곳만: 168개 파일 1387개 테스트 통과",
-   "approach": "주민 나이는 이미 있어 손대지 않았다. 짐승 나이는 칸에 '태어난 날(born, GameClock 의 날)' 하나만 담고 나이는 오늘에서 센다(Captives.age_of). 그래서 칸 사전을 그대로 옮기는 상자 · 저장 · 멀티(가방 · 축사 목록 동기화)가 따로 고칠 것 없이 따라가고, 어디에 두든 같이 나이가 든다(나이를 매 프레임 깎는 방식이었다면 상자에선 멈췄다). 시계를 쥐지 않은 칸 그림이 날을 읽을 수 있게 GameClock.today(마지막으로 움직인 시계의 날, static)를 두었다. 생포 = 가방에 넣을 때(서버의 pick_up_for)라 멀티에서도 서버가 정한다. 깨어 도망가면 칸과 함께 나이도 사라진다. 축사(Herd)는 들일 때 born 을 받아 담고 저장하며, 축사에서 난 새끼는 그날이 태어난 날(0살)이다. 나이 전 저장본의 칸 · 가축은 나이가 없다(지어내지 않는다). 표시: 칸 오른쪽 아래(잡은 짐승은 한 칸에 하나라 개수 자리가 빈다)에 「3살」, 축사 창 가축 줄 아래에 「닭 2살 · 염소 4살」 — 가축 이름 키 LIVESTOCK_* 를 새로 만들었다. 칸의 나이 글자는 말이 바뀌면 다시 옮긴다(SlotCount). (앞 단계 QA) ui_shots 에 butcher 자리를 더했다 — 주검 곁에서 begin(held) 로 누르고 있는 채 막대를 60% 채워 두고 찍는 동안 더 차지 않게 했다. 찍어 보니 막대가 단추 바로 아래에 맞게 그려진다. 찍으면서 점수표 글자가 앞 사진의 말(영어)로 남는 것을 봐서 말마다 창을 다시 그리게 했다. barn · bag 사진에도 나이가 보이게 가축 · 잡은 사슴을 넣었고 ko · en 둘 다 잘리지 않는다.",
-   "why": "Captives.AGE_MIN~AGE_MAX = 1~5살 — 잡을 때의 나이 범위. 사람이 안 정했다; Captives.DAYS_PER_YEAR = 7 — 게임 7일(실제 4시간 40분)에 한 살. 나이가 드는 빠르기를 사람이 안 정했다; 축사에서 난 새끼는 0살에서 시작 — 기준에 없던 자리라 그날을 태어난 날로 두었다",
-   "files": [
-    "game/life/hunting/captives.gd",
-    "game/life/ranching/herd.gd",
-    "game/craft/stations/stations.gd",
-    "game/world/day_night/game_clock.gd",
-    "game/ui/hud/item_slot.gd",
-    "game/ui/hud/station_window.gd",
-    "game/ui/hud/station_window.tscn",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "spec/04_life/hunting.md",
-    "game/tests/life/hunting/test_captive_age.gd",
-    "game/tests/ui/hud/test_barn_window.gd",
-    "game/tests/core/debug/test_ui_shots.gd",
-    "game/tests/multiplayer/test_hunt_on_server.gd",
-    "game/tests/multiplayer/test_station_on_server.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "**생포한 짐승에게만** 나이를 단다 (풀린 짐승 · 사체에는 없다). 생포할 때 정해지고 · 칸(captive_* 아이템) · 상자 · 축사 · 저장 · 멀티로 따라간다 (테스트)",
-     "evidence": "test_captive_age.gd — 생포(pick_up)하면 칸에 born 이 생기고 1~5살 범위 · 풀린 짐승/주검/깨어 도망간 짐승엔 없음 · 상자 왕복과 상자 저장본 JSON · 축사 put_animal + Herd.to_dict/restore JSON · 캐릭터 SaveStore 저장/불러오기. 멀티: test_hunt_on_server 가 서버가 정한 born 이 참가자 가방 칸에 같은 값으로 오는지, test_station_on_server 가 born=-20 이 서버 축사와 참가자 축사 사본 둘 다에 있는지 본다. QA 가 Herd.restore 에서 born 을 null 로 바꿔 돌리자 test_captive_age 가 떨어졌다(9/10) — 껍데기가 아니다. 되돌림 확인"
-    },
-    {
-     "ok": true,
-     "criterion": "생포한 짐승을 보는 곳(칸 설명 · 축사)에 나이가 보인다. 나이 범위 · 나이가 드는 빠르기는 **임시**. 나이로 무엇이 달라지는지는 사람이 안 정했다 — 만들지 않는다",
-     "evidence": "test_the_slot_shows_the_age(칸 오른쪽 아래 「N살」, 말 바꾸면 다시 옮김, 여느 칸은 개수 그대로) · test_the_barn_window_shows_each_animals_age(염소 3살 · 나이 없는 닭은 이름만 · 제작대엔 줄 없음) · test_the_age_keys_are_translated(ko/en 둘 다). AGE_MIN/AGE_MAX/DAYS_PER_YEAR 는 코드 주석과 spec/04_life/hunting.md 에 임시라고 적혀 있다. 나이로 달라지는 효과는 없다. 사진 /tmp/naru_g228_3/bag_en.png 에 'Age 3', barn_ko.png 에 '닭 2살 · 닭 0살 · 염소 4살 · 양 1살' 이 잘리지 않고 보인다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 해체 막대를 그림으로 본 적이 없다 — … shot.sh 에 주검 옆에서 단추를 누르고 있는 자리를 하나 더해 막대가 단추 아래 제대로 그려지는지 찍어 두어라",
-     "evidence": "UiShots.PLACES 에 butcher 가 생겼고 _butcher 가 바닥 · 주검을 세워 begin(held)로 누른 채 60% 채운다. test_butcher_shot_holds_the_button_with_the_bar_under_it 가 창 · 막대가 보이고 값 0.6 · 막대 위끝이 단추 아래끝 밑 · 화면 안인지 본다. QA 가 /tmp/naru_g228_3/butcher_ko.png 를 직접 봤다 — 「도축 (우클릭)」 단추 바로 아래 막대가 반쯤 차 있다"
-    }
-   ],
-   "issues": [],
-   "good": [
-    "축사에서 난 새끼에게 그날을 태어난 날로 준다(0살) — 기준엔 없지만 축사로 나이가 따라가는 데서 나온 자리. spec 에 임시가 아닌 줄로 적혔다(「축사에서 난 새끼는 0살」)",
-    "가축 이름 번역 키 LIVESTOCK_* 8개를 새로 만들었다 (축사 나이 줄에 쓴다)",
-    "butcher 사진에서 점수표 글자가 앞 말로 남던 것을 말마다 다시 그리게 했다 · bag/barn 사진에 잡은 사슴 · 가축을 넣었다"
-   ]
-  },
-  "test": "p_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      3s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           315\nTests            2403\nPassing Tests    2403\nFailing Tests       0\nRisky/Pending       0\nAsserts        117972\nTime           525s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "0a266f7b"
- },
- {
   "time": "2026-10-16 20:46:34",
   "epoch": 1792151194,
   "type": "pass",
@@ -9027,5 +8965,65 @@
   },
   "test": "_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           548\nTests            4129\nPassing Tests    4129\nFailing Tests       0\nRisky/Pending       0\nAsserts        197479\nTime           785s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "b903dfd6"
+ },
+ {
+  "time": "2026-10-21 16:25:02",
+  "epoch": 1792567502,
+  "type": "pass",
+  "title": "통과 — G-275 단계 3 (배고픔은 체력 — 바닥이면 깎이고 · 초록이면 아주 천천히 찬다)",
+  "group": "G-275",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "배고픔 게이지가 초록(GREEN_ABOVE 위)이면 체력이 1분에 1 찬다(임시) — 최대 체력까지 · 서버 사본도 같은 틱. 속도 배율 문서에서 배고픔을 걷고, 무게 낱말 검사를 파일마다 허락한 낱말로 좁혔다",
+   "approach": "HungerThirst.tick 에 _regen 을 더했다 — 배고픔이 NeedGauge.GREEN_ABOVE 보다 많고 살아 있고 가득이 아니면 흐른 초를 쌓아 REGEN_SECONDS(60초)마다 Health.heal(1). heal 이 max_health(갑옷이 set_max 로 바꾼 값)에서 자르므로 넘지 않는다. 같이 하는 판은 서버의 Vitals 가 같은 tick 을 부르고 참가자 기계는 틱을 끄고 hp 를 받아 쓰므로 서버가 센다. 새 자투리 _regen_carry 는 저장 왕복 검사(test_round_trip)가 잡아 「안 담는다」에 까닭과 함께 적었다(save.md · DONT_SAVE). OTHER_SENSE 는 파일 → 허락 식별자 목록(정규식으로 그 말이 든 식별자 통째, 함수면 「(」까지)으로 바꿨고, 허락한 낱말이 실제로 그 파일에 있는지도 본다. damage-death.md:4 는 git log -L 로 보니 151dd029 「사람 결정 반영」 커밋에서 온 줄이라 꼬리 「(G-275.2 — 아이템 무게와 헷갈려 낱말만 바꿨다)」를 달았고, 그 꼬리만 한국어 무게 검사에서 빼 준다(KO_HISTORY). 바뀐 곳 그물(changed_tests.py, 386 파일) 한 번: 3136/3139 — test_round_trip 3개가 _regen_carry 로 떨어져 고친 뒤 그 파일만 다시 돌려 23/23 통과.",
+   "why": "HungerThirst.REGEN_SECONDS = 60초에 체력 1 — 사람 말 「엄청 천천히」, Claude 가 정했다 (체력 100 이면 1 에서 가득까지 1시간 반 남짓)",
+   "files": [
+    "game/player/hunger_thirst/hunger_thirst.gd",
+    "game/player/movement_controls/player.gd",
+    "game/tests/player/hunger_thirst/test_fed_heals.gd",
+    "game/tests/player/inventory_hotbar/test_no_item_load.gd",
+    "game/tests/player/inventory_hotbar/test_items.gd",
+    "game/tests/settings/save/test_round_trip.gd",
+    "spec/02_player/hunger-thirst.md",
+    "spec/02_player/inventory-hotbar.md",
+    "spec/02_player/equipment-modules.md",
+    "spec/01_settings/save.md",
+    "spec/08_combat/damage-death.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "배고픔 게이지가 초록(GREEN_ABOVE 위) 인 동안 체력이 아주 천천히 오른다 — 빠르기 임시(예: 1분에 1). 최대 체력(ArmorModules.max_health)을 넘지 않는다 · 멀티 — 서버가 셈한다 (테스트)",
+     "evidence": "hunger_thirst.gd _regen · is_fed(hunger > NeedGauge.GREEN_ABOVE) · REGEN_SECONDS 60 에 「임시」. test_fed_heals.gd 7개: 59초엔 그대로 · 60초에 +1 · 0.5초씩 2분에 +2, 경계(GREEN_ABOVE 그 자리)·빨강은 안 참, 초록 벗어나면 자투리 버림, 죽은 몸, set_max 로 늘린 가득까지만, 가득일 때 시간 안 쌓음, NetVitals._tick 이 서버 사본을 채우고 state_of 의 hp 에 실림. net_vitals.gd:138 참가자 기계는 hunger_thirst set_process(false). 일부러 깨 봄: is_fed 를 hunger > 0.0 으로 바꾸면 test_fed_heals 2개가 떨어졌다(되돌림 확인). 전체 549 파일 4138 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "속도 배율에서 배고픔을 지운다 — inventory-hotbar.md:37 · equipment-modules.md:39 · player.gd:366 주석 (속도는 목마름만, 2026-10-14). spec/02_player/hunger-thirst.md 에 3단계 결정을 원문과 함께",
+     "evidence": "세 곳 모두 배고픔을 걷었고 grep 으로 「배고픔 · 목마름 배율/웅크림」 남은 곳 없음. hunger-thirst.md 에 사람 결정 2026-10-21 원문 그대로 + 초록 규칙 · 수용 기준 · 임시 수치 줄. test_items.gd 의 층 단언 문구도 맞춤"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) OTHER_SENSE 가 파일 통째로 허락한다 — … 파일마다 허락할 낱말을 적어 그 밖의 weight 가 나오면 실패하게 좁혀라",
+     "evidence": "OTHER_SENSE 를 파일 → 허락 식별자 목록 사전으로 바꿨고 test_english_word_only_where_it_means_something_else 가 목록 밖 식별자를 「파일 — 낱말」로 실패시킨다. test_other_sense_words_are_narrow 가 허락 낱말이 실제로 있는지와 item_weight 같은 식별자가 따로 갈리는지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 죽음 목적 문장이 바뀌었다 — … git log -L 로 출처를 보고, 사람이 쓴 것이면 줄 끝에 「(G-275.2 — 아이템 무게와 헷갈려 낱말만 바꿨다)」를 달아 둬라",
+     "evidence": "git log -L4,4 로 151dd029 「사람 결정 반영」에서 온 줄임을 확인. damage-death.md:4 끝에 꼬리가 붙었고 test_death_purpose_line_tells_why_the_word_changed 가 확인. 한국어 낱말 검사는 KO_HISTORY 로 그 꼬리만 뺀다"
+    }
+   ],
+   "issues": [
+    "갑옷 가득 테스트가 실제 갑옷을 안 입힌다 — test_fed_heals.gd test_never_above_max_even_with_armor 는 health.set_max(DEFAULT_MAX+10) 를 손으로 부르고 ArmorModules.max_health({}) 는 맨몸만 본다. 막는 것은 아니다(heal 이 max_health 에서 자른다). 사슴 2세트처럼 가득을 늘리는 장비를 실제로 입혀 Player 의 Health.max_health 가 바뀐 뒤 초록 회복이 그 값에서 멈추는지 보는 단언으로 바꾸면 좋다",
+    "테스트 함수 이름이 낡았다 — game/tests/player/inventory_hotbar/test_items.gd 의 test_speed_layers_are_only_needs_crouch_slope_and_buffs 는 이제 목마름만 속도 층이다. test_speed_layers_are_only_thirst_crouch_slope_and_buffs 처럼 이름을 바꿔라"
+   ],
+   "good": []
+  },
+  "test": "   2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/core/test_grid.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           549\nTests            4138\nPassing Tests    4138\nFailing Tests       0\nRisky/Pending       0\nAsserts        197543\nTime           784s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "84d79f30"
  }
 ]

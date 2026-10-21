@@ -4800,7 +4800,7 @@
   - 사람 답 2026-10-21: 「무게에 관련된건 다 없앰.」 — 지금 무게는 아무 효과가 없고 weights.json 은 「게임에 있는 아이템인가」 목록으로만 쓰인다
   - 기준: inventory-hotbar.md:33 · equipment.md:30 · tools-as-weapons.md:26,42-59 · rooms.md:48 의 무게 줄을 지운다. 코드에서도 무게 값 · 무게 글(UI · 번역 키 · 주석)을 걷는다. weights.json 이 「있는 아이템 목록」 몫을 하면 그 몫만 남는 이름(예: items.json)으로 옮기고 부르는 곳을 다 고친다 — `grep -rni 'weight\|무게\|kg' game/ spec/` 가 그 목록 몫 말고 0 (테스트)
   - 기준: (앞 단계 QA) farming.md 밭 거두기 줄의 사람 결정 출처가 빠졌다 — spec/04_life/farming.md:50 이 원래 「도면을 든 우클릭으로 밭을 한 번에 거둔다 (사람 결정 2026-10-20 …)」였는데 「(G-271.2 · G-273.6 …)」로만 바뀌어 「사람 결정 2026-10-20」 표시가 사라졌다. crafting-stations.md:13 에서도 「도면을 든 우클릭(해체)만 한 번에 거둔다 (사람 결정 2026-10-20)」 이력이 빠졌다. building.md 에 원래 결정이 남아 있어 규칙이 잃어지지는 않았다. 그래도 두 줄 끝에 「(사람 결정 2026-10-20 — 처음엔 도면 우클릭, 같은 날 망치로)」를 다시 붙이고, test_take_spec_lines.gd 에 그 두 문서에 「사람 결정 2026-10-20」이 있는지 보는 단언을 더해라
-- [ ] 3. 배고픔은 체력 — 바닥이면 깎이고 · 초록이면 아주 천천히 찬다
+- [x] 3. 배고픔은 체력 — 바닥이면 깎이고 · 초록이면 아주 천천히 찬다
   - **사람 결정 2026-10-21** (원문 그대로): 「배고픔은 hp를 깎음. 0이 되면 점점 줄어들고, 초록색 바가 되면 엄청 천천히 참.」
   - 이 세션이 2026-10-21 봤다: 바닥이면 깎는 것은 이미 있다 — hunger_thirst.gd:89 `_starve` 5초(STARVE_SECONDS)에 1 · 체력 1(STARVE_FLOOR)에서 멈춤(임시 — 굶어 죽는지는 사람이 안 정했다, 그대로 둔다). 초록 = need_gauge.gd:16 GREEN_ABOVE 0.5 보다 많이 남음
   - 기준: 배고픔 게이지가 **초록(GREEN_ABOVE 위)** 인 동안 체력이 **아주 천천히** 오른다 — 빠르기 **임시**(예: 1분에 1). 최대 체력(ArmorModules.max_health)을 넘지 않는다 · 멀티 — 서버가 셈한다 (테스트)
@@ -4813,6 +4813,8 @@
   - 기준: bird-cage.md:18,22 · caged_bird.gd:195 주석 「새가 스스로 나간다」 → 횃대에 앉아 있고 사냥 명령 때만 난다(G-266.5)
   - 기준: logging.md:37 · farming.md:55 · mining.md:80 「숙련도는 아직 없다」 → 「숙련도는 있다(G-232) — 나무꾼 덤 · 씨앗이 돌아올 확률에는 아직 안 쓴다」. test_seed_back.gd:138 이 붙잡은 옛 글을 같이 고친다 (게임 동작은 그대로)
   - 기준: roadmap.md 표 — 1단계의 「(싱글)」을 빼고(멀티 2026-10-14) · 옆섬 무역 단계를 넣고(메인섬 → 옆섬 무역 → 원정섬, 원정은 맨 마지막) · 도구를 지금 것으로 · 「빼는 것」에서 목장 · 자동화를 뺀다. listen-server.md · central-gateway.md 의 단계 번호를 같은 표에 맞춘다
+  - 기준: (앞 단계 QA) 갑옷 가득 테스트가 실제 갑옷을 안 입힌다 — test_fed_heals.gd test_never_above_max_even_with_armor 는 health.set_max(DEFAULT_MAX+10) 를 손으로 부르고 ArmorModules.max_health({}) 는 맨몸만 본다. 막는 것은 아니다(heal 이 max_health 에서 자른다). 사슴 2세트처럼 가득을 늘리는 장비를 실제로 입혀 Player 의 Health.max_health 가 바뀐 뒤 초록 회복이 그 값에서 멈추는지 보는 단언으로 바꾸면 좋다
+  - 기준: (앞 단계 QA) 테스트 함수 이름이 낡았다 — game/tests/player/inventory_hotbar/test_items.gd 의 test_speed_layers_are_only_needs_crouch_slope_and_buffs 는 이제 목마름만 속도 층이다. test_speed_layers_are_only_thirst_crouch_slope_and_buffs 처럼 이름을 바꿔라
 - [ ] 5. 잔 어긋남 · 데스 상자 주인
   - 기준: 약초 「턱에만」 줄을 산비탈 약초와 맞춘다 · 「광석 여덟」 → 코드의 아홉 · 약 목록에서 해독제를 뺀다 · 같은 부위 「투구」/「모자」를 하나로(번역 키 · spec — 코드에서 많이 쓰는 쪽) · hud.md:29 데스 상자 검색 칸 줄(G-274.2 로 뺐다)을 고친다
   - 기준: 벌통 터는 짐승 표가 둘(guard_watch.gd:34 · hive_raiders.json)이다 — **hive_raiders.json 하나**로 모으고 guard_watch.gd 는 그것을 읽는다 (테스트: 두 곳이 다른 값이면 깨지던 것이 없다)
