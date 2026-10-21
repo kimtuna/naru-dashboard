@@ -1,48 +1,5 @@
 [
  {
-  "time": "2026-10-15 19:45:01",
-  "epoch": 1792061101,
-  "type": "fail",
-  "title": "QA 불합격 — G-222 단계 1 (시도 2)",
-  "group": "G-222",
-  "step": "1",
-  "attempt": "2",
-  "report": {
-   "problem": "참가자 몸 0 을 진짜 섬(TestIsland) 둘을 ENet 으로 붙여 QA 가 짚은 세 길(첫 몸 소식 · 한 번 틱 · 먹기/물)로 재현하려 했으나 셋 다 멀쩡했다 — 결과를 테스트로 남기고, 맥 저장본이 0 이 된 까닭(들어오기 전에 이미 굶었다)을 근거와 함께 적는다. 게임 코드는 고치지 않았다",
-   "approach": "test.log(바뀐 곳만: changed_tests.py 가 고른 2개 파일)에서 6개 테스트 · 59개 단언이 통과했다.\n\n무엇을 해 봤나 — QA 가 짚은 셋을 진짜 섬(메뉴 기본 island_scene = TestIsland)으로 참가하는 test_join_body_island.gd 에 담았다. 저장본 몸은 배고픔 0.4 · 목마름 0.3 · 체력 60, 가방에 밀빵 3개다.\n(3) 첫 몸 소식: 참가자 기계가 받은 첫 _vitals 는 h 0.4 · t 0.3 · hp 60 이었다. 서버장 사본도, 참가자 화면도 같았다. 섬을 세우고 되돌린 몸을 빈 값이나 0 으로 덮지 않는다.\n(2) 한 번 틱: 참가자 HungerThirst 는 is_processing=false 였다. 2초 동안 서버 사본이 준 양은 흐른 초/LASTS_SECONDS 의 1.5배 안에 들었다. 체력은 그대로였고, 참가자 화면은 서버 사본을 1% 안으로 따라갔다.\n(1) 먹기 · 물: 참가자가 Food.eat_held 로 빵을 먹자 서버 사본 배고픔이 min(전+빵, 1) 만큼 올랐고, 참가자 화면과 가방(3→2)도 따라왔다. WATER 한 모금도 서버 사본 목마름을 SIP 만큼 올렸고 화면에 왔다.\n작은 섬 test_join_body.gd 로는 0.8/0.7/60 으로 들어오는 것과, 나갔다 다시 들어와도 같은 값인 것을 확인했다. 수용 기준의 서버장 사본 · 참가자 화면 · 다시 들어옴이 여기에 걸린다.\n\n맥 저장본이 0 이 된 까닭 — 참가 길 때문이 아니라, 들어오기 전에 이미 굶은 몸이었다. 근거는 셋이다.\n① 지금 맥 저장본 ㅁㄴㅇ(1789959457_2a520c0c)은 배고픔 0 · 목마름 0 · 체력 1 이다. 체력 1 은 STARVE_FLOOR 다. 체력이 1 까지 내려가려면 배고픔 0 인 채 5초에 1씩 8분 남짓 흘러야 한다. 들어올 때 값이 0 으로 덮이는 흠이었다면 체력은 그대로였을 것이다.\n② 같은 캐릭터의 백업이 날마다 줄어 있다. ~/Desktop/naru-saves/G-212(10-13)은 0.13/0.0/100, G-218.2(10-14 15:02)은 0.53/0.53/100 이다. 0.53 에서 바닥까지 7분, 다시 체력 1 까지 8분이면 된다.\n③ places 에 10-15 15:43 에 만든 서버장 월드가 있다. 18:38 참가(mac-join.log) 앞에 이미 한 판을 들어갔다는 뜻이다. 그 판이나 그 뒤 혼자 한 판에서 먹지 않고 15분 넘게 지나 바닥에 닿았다고 본다.\n서버장이 멀쩡했던 것은 서버장 캐릭터가 따로이기 때문이다. 다만 맥 가방 7번 칸에 밀빵 72개가 있다. 사람이 먹으려 했는데 안 됐다면, 그 판의 권한 칸 · 입력 문제(이 묶음의 다른 단계)일 수 있다. 먹기 RPC 자체는 권한을 묻지 않고, 위 (1) 에서 됐다.\n\n덤으로 본 것 — 한 godot 안 두 기계로 진짜 섬을 세우면, 섬을 세우는 몇 초 동안 ENet 을 돌보지 못해 참가자가 「서버가 닫혔다」로 끊겼다(ENet 최소 시간 초과 5초). 테스트에서만 peer.set_timeout 을 넉넉히 잡았다. 진짜 두 기계에서는 서버장이 계속 돌아 사람 시험에서는 일어나지 않았다. 섬을 세우는 것이 아주 느린 참가자 기계라면 같은 일이 날 수 있어 적어 둔다. 엔진의 deprecated 경고가 검사를 떨어뜨려서, test_dead_save.gd 처럼 섬은 before_all 에서만 세웠다.",
-   "why": "",
-   "files": [
-    "game/tests/multiplayer/test_join_body.gd",
-    "game/tests/multiplayer/test_join_body_island.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": false,
-     "criterion": "**재현부터** — 배고픔 · 목마름 · 체력이 찬 캐릭터(저장본)로 참가하는 테스트를 먼저 만들어 떨어지는 것을 본다. 그 뒤 고친다",
-     "evidence": "떨어지는 것을 끝내 보지 못했다. 앞 QA가 짚은 세 길(첫 몸 소식 · 한 번 틱 · 먹기/물)은 ENet + 진짜 섬으로 확인해 배제했다(test_join_body_island.gd). 그런데 그 다음 '맥 저장본은 들어오기 전에 이미 굶었다'는 결론이 근거와 맞지 않는다. 캐릭터 1789959457_2a520c0c.sav 와 월드 worlds/1790014507_e428c509.sav 는 둘 다 10-15 19:11:41 에 저장됐다. 참가 판(18:38)은 18:43 에 Steam 충돌(signal 11)로 끝났고, 그 뒤 19:11 까지 혼자 한 판이 있었다. 그러니 지금 0/0/1 은 참가한 뒤의 값이다. 들어오기 전 몸을 알려 주지 못한다. 월드 id 1790014507 은 9-22 에 만든 것이라 '10-15 15:43 에 만든 서버장 월드'(③)와도 맞지 않는다. 남은 차이 — 사람은 NARU_STEAM=1 로 Steam 길로 들어왔는데, 테스트는 ENet 길만 탔다. 사람이 눈으로 본 것('들어오면 0, 서버장은 정상')이 아직 설명되지 않았다"
-    },
-    {
-     "ok": false,
-     "criterion": "참가자는 제 캐릭터 저장본의 배고픔 · 목마름 · 체력 그대로 들어온다 — 서버장 화면의 그 사람 사본 · 참가자 화면 둘 다 (테스트). 나갔다 다시 들어와도 그 값이다",
-     "evidence": "ENet 길로는 진짜 테스트가 있다. test_join_body.gd 는 0.8/0.7/60 으로 들어오는 것과 다시 들어오는 것을, test_join_body_island.gd 는 진짜 섬에서 0.4/0.3/60 을 본다. 일부러 깨 봤다 — net_vitals.gd vitals_of 의 set_levels 를 (0,0)으로 바꾸자 두 파일 다 실패했고, 본 뒤 되돌렸다(git status 깨끗). 다만 사람이 실제로 탄 Steam 참가 길(start_steam_join → SteamRoom → join_peer)은 테스트가 없다. 기준이 말하는 '참가자'의 길 하나가 빠졌으니, 의심스러우면 불합격으로 친다"
-    }
-   ],
-   "issues": [
-    "Steam 참가 길로 몸을 재현하지 않았다 — 사람은 NARU_STEAM=1 로 Steam 로비를 거쳐 들어왔다. 테스트는 ENet(127.0.0.1)만 탔다. tests/core/net/fake_steam.gd 와 test_steam_game.gd 가 Steam 길로 서버장·참가자를 세우는 방식을 그대로 쓰고, 저장본 몸 0.4/0.3/60 · 가방에 밀빵이 있는 캐릭터로 Steam 참가를 하는 테스트를 짜라. 단언할 것: 서버장 사본 vitals_of(id) · 참가자 화면 hunger_thirst/health · 참가자가 받은 첫 _vitals 소식이 저장본 값이다. Steam 길에서는 peer id · 붙는 순서(_welcome 과 _hello · 섬을 세우는 사이 첫 _push)가 ENet 과 다를 수 있다 — vitals_of 가 member_character 를 받기 전에 불려 null/기본값이 되는지, 섬을 세우는 동안 몸 소식이 먼저 오는지 본다",
-    "맥 저장본이 0 이 된 까닭의 근거가 틀렸다 — 캐릭터·월드 저장 시각은 둘 다 10-15 19:11:41 이다. 참가 판은 18:43 Steam 충돌로 끝났고(mac-join.log), 그 뒤 혼자 한 판이 19:11 까지 이어졌다. 그러니 0/0/1 은 참가한 뒤의 값이고, '들어오기 전에 이미 굶었다'를 뒷받침하지 못한다. 월드 1790014507 은 9-22 에 만든 것이다. report 에 근거를 적을 때 파일 시각(stat)을 확인하고, 시간 순서가 맞지 않는 결론은 쓰지 마라. Steam 길로도 재현이 안 되면, 무엇을 배제했는지만 적고 '사람 눈으로 다시 볼 것'을 남겨라",
-    "참가 화면 첫 프레임의 몸을 보지 않았다 — 사람은 '들어오면' 0 이라고 했다. 테스트는 첫 _vitals 를 받은 뒤의 값만 잰다. 참가자 GameRoot 가 선 직후 몸 소식이 오기 전 HUD(배고픔·목마름·체력 막대)가 무엇을 보이는지도 단언하라. 저장본에서 되돌린 값이어야 하고, 0 이나 빈 값이면 안 된다. 서버장 화면에 선 참가자 몸(NetBodies 가 싣는 health_of)도 그 사이 -1/0 으로 그려지지 않는지 본다"
-   ],
-   "good": [
-    "test_join_body_island.gd 는 ENet peer.set_timeout 을 테스트에서만 60초로 늘렸다. 한 godot 안 두 기계라서 생기는 끊김이라고 설명은 붙어 있다. 그러나 섬을 세우는 동안 5초 넘게 ENet 을 돌보지 못하면 느린 참가자 기계에서도 끊길 수 있다고 report 가 적었다 — 기준 밖이지만 짚어 둔다"
-   ]
-  },
-  "test": "--- 바뀐 곳만: 2 개 ---\ntest.sh: 파일 2 개를 6 개씩 한꺼번에 돌린다\nok      2s  res://tests/multiplayer/test_join_body.gd\nok     28s  res://tests/multiplayer/test_join_body_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             2\nTests               6\nPassing Tests       6\nFailing Tests       0\nRisky/Pending       0\nAsserts            59\nTime           28s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-15 19:50:34",
   "epoch": 1792061434,
   "type": "stop",
@@ -9269,5 +9226,56 @@
   },
   "test": "settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      3s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      1s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           544\nTests            4107\nPassing Tests    4107\nFailing Tests       0\nRisky/Pending       0\nAsserts        196805\nTime           782s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "9360f330"
+ },
+ {
+  "time": "2026-10-21 11:16:57",
+  "epoch": 1792549017,
+  "type": "pass",
+  "title": "차선 합치기 — 3d-lane2(8e713305) → 3d-start",
+  "group": "G-273",
+  "step": "6",
+  "attempt": "1",
+  "report": {
+   "problem": "망치 해체(Placeable.take)로 돌아오는 것이 해체한 사람 가방에 곧장 든다 — 가방이 차면 그 사람 발밑. 시설 · 상자 · 횃불 · 침대 · 가구 · 밭 · 건축물 같은 길, 멀티는 사본 가방 · 참가자 자리",
+   "approach": "까닭: 해체는 마지막 한 대(hit_all → _vanish_dropping)라 돌아오는 것이 제자리에 떨어졌다 — 바다 위 염전은 물 위라 손이 안 닿았다. 풀이: Placeable.take 가 해체하는 동안(_taking) 부서져 떨어진 덩어리만 모아(_taken — 무너진 것 fall 은 빼고) 끝나면 해체한 사람 가방(bag)에 넣고, 못 넣은 몫만 그 사람 발밑(feet)으로 옮긴다. 놓는 곳마다 따로 고치지 않고 take 한 곳에서 하므로 시설 · 상자 · 횃불 · 침대 · 가구 · 밭 · 건축물이 같은 길이다(건축물은 hit_piece 가 이미 가방에 넣고 남은 몫만 발밑으로). Placer.take_thing · Buildings.take_target/take_piece 가 bag · feet 를 받고, 없으면 이 섬 캐릭터의 가방 · 자리. 서버는 참가자의 사본 가방과 where(id) 자리를 넘긴다(net_world). 새장째 싣기(_pack_cage)는 그대로. 「제자리에 떨어진다」를 보던 옛 테스트 넷(test_build_mode_take · test_chest_break · test_build_on_server · test_pickup)을 새 규칙으로 고쳤다 — test_pickup 은 걸어서 줍기를 보는 것이라 해체 대신 대수를 채운 치기로 떨어뜨린다. spec/06_build/building.md 해체 줄에 바뀐 규칙을 적었다. 바뀐 곳 그물(changed_tests 290 파일, 2341개) 첫 판: 2339 통과 · test_build_mode_take 2개 실패(옛 「그 자리에 떨어졌다」 단언) → 고친 뒤 그 파일 포함 4 파일 다시 돌려 28개 모두 통과.",
+   "why": "",
+   "files": [
+    "game/build/placeable.gd",
+    "game/build/placer.gd",
+    "game/build/buildings.gd",
+    "game/life/farming/farmland.gd",
+    "game/core/net/net_world.gd",
+    "game/craft/stations/stations.gd",
+    "game/world/storage/chests.gd",
+    "spec/06_build/building.md",
+    "game/tests/build/test_take_into_bag.gd",
+    "game/tests/build/test_build_mode_take.gd",
+    "game/tests/world/storage/test_chest_break.gd",
+    "game/tests/multiplayer/test_build_on_server.gd",
+    "game/tests/player/pickup/test_pickup.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "망치 해체(마지막 한 대 = take)로 돌아오는 것은 해체한 사람의 가방에 곧장 든다 — 가방이 차서 못 넣은 몫만 그 사람 발밑에 떨어진다(제자리 말고). 시설 · 상자 · 횃불 · 건축물(재료) 모두 같은 길. 새장은 지금처럼 새를 싣고(G-266.3) 가방으로.",
+     "evidence": "Placeable.take 한 곳에서 _taken 을 모아 _hand_over 로 가방 → 남은 몫은 feet 로 옮긴다(무너진 것 land!=null 은 뺀다). test_take_into_bag: 염전(SEA 자리) 해체 → 가방 1 · 떨어진 것 0, 가방 꽉 → 발밑 NEAR 0.6 안 · 바다 자리에서 3m 넘게. 건축물 토대 재료 가방행 · 가방 꽉이면 발밑. test_build_mode_take 가 우클릭으로 작업대·상자·횃불·침대·의자·밭이 가방에 들고 바닥 0 을 본다, test_chest_break 상자. 대수 채운 치기는 제자리(대조 테스트). 새장(_pack_cage)은 손대지 않았고 전체 4107 통과. 일부러 _hand_over 를 pass 로 바꾸자 test_take_into_bag 4개가 실패 — 껍데기 아님(본 뒤 되돌림)."
+    },
+    {
+     "ok": true,
+     "criterion": "멀티 — 참가자가 해체하면 그 사람 사본 가방으로(hit_thing_for 의 bag) (테스트: 바다 위 염전을 해체하면 가방에 염전이 든다 · 가방이 차면 발밑)",
+     "evidence": "net_world._build_for 가 take_thing/take_piece 에 사본 가방과 where.call(id) 자리를 넘긴다. test_take_into_bag.test_a_guest_take_goes_into_their_copy_bag_or_at_their_feet: 사본 가방에 염전 · 서버장 가방엔 0 · 사본이 차면 참가자 자리 발밑. test_build_on_server 의 실제 서버 경로에서 참가자가 의자 · 침대를 해체하면 바닥 0 · 사본 가방 +1."
+    }
+   ],
+   "issues": [
+    "참가자 가방이 찼을 때 발밑 — 실제 서버 경로 테스트가 없다 — 가방이 찼을 때 발밑으로 가는 것은 Stations.take_thing(copy, there) 을 바로 불러서만 본다. net_world 가 where.call(id) 를 제대로 넘기는지는 tests/multiplayer/test_build_on_server.gd 에서 확인하지 않는다. 그 파일에 참가자 사본 가방(kit)을 채운 뒤 gi.beds.ask.call(&\"take\", …) 를 보내고, 침대 하나가 참가자 자리(_walk_guest 로 옮긴 곳) 근처에 떨어지는지 보는 단언을 하나 더해라"
+   ],
+   "good": []
+  },
+  "test": "settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      3s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      1s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           544\nTests            4107\nPassing Tests    4107\nFailing Tests       0\nRisky/Pending       0\nAsserts        196805\nTime           782s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "ffe98374"
  }
 ]
