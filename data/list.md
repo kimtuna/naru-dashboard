@@ -4753,11 +4753,13 @@
   - 이 세션이 2026-10-21 봤다: player_stats.gd:10 기력 = Climbing.stamina — 절벽에 붙을 때만 쓰는 값이라(spec/04_life/climbing.md 「절벽을 이동할 때 생기고 준다」) 평소엔 늘 100%. :24 「이동」 묶음에 빠르기 하나뿐이라 묶음 이름과 스탯이 겹쳐 보인다
   - 기준: 가방 스탯 칸에서 **기력을 뺀다**(등반 중 기력 막대는 그대로). **「이동」 묶음을 없애고** 빠르기를 몸 묶음으로 — Claude 가 정함 (테스트 · ui_shots)
   - 기준: (앞 단계 QA) 맨손 테스트 이름 · 메시지가 「셋」 그대로다 — game/tests/craft/recipes/test_hand_craft.gd 의 test_exactly_three_recipes_are_made_by_hand 와 메시지 「맨손 레시피는 이 셋뿐이다」, game/tests/ui/hud/test_bag_hand_craft.gd 의 test_only_the_three_hand_recipes_show_up_there 가 이제 다섯(상자 · 제작대 · 횃불 · 도면 · 망치)을 본다. 이름을 test_only_these_recipes_are_made_by_hand 처럼, 메시지를 「맨손 레시피는 이것뿐이다」로 고쳐라 (막는 것은 아니다)
-- [ ] 4. 설정 키 탭 — 묶음 제목만 보이고 눌러서 편다
+- [x] 4. 설정 키 탭 — 묶음 제목만 보이고 눌러서 편다
   - 기준: 설정 키보드 · 마우스 탭의 묶음(노란 제목 — 공통 · 도면 · 총 …, G-272)이 **처음엔 접혀** 제목만 보이고, 누르면 그 아래 키 줄이 펴진다(다시 누르면 접힌다). 제목 옆에 ▶ / ▼. 펼친 상태는 창을 닫으면 잊어도 된다
   - 기준: 1280×720 · 1920×1080 · ko · en ui_shots — 접힌 · 편 모습
   - 기준: (앞 단계 QA) player_stats.gd 단 나눔 주석이 낡았다 — game/player/player_stats.gd CATEGORIES 위 주석 「장비칸 옆이 좁아 셋을 가로로 못 놓는다」는 묶음이 셋이던 때의 까닭이다. 이제 묶음이 둘이니 「몸(넷)이 한 단, 전투가 그 옆 단」만 남기고 「셋을 가로로 못 놓는다」 구절을 지워라
   - 기준: (앞 단계 QA) spec 에 「Claude 가 정함」 표시가 없다 — spec/02_player/inventory-hotbar.md 스탯 줄의 「「이동」 묶음은 빠르기 하나뿐이라 몸으로 (G-273.3)」에 기준 문구대로 「Claude 가 정함」을 붙여 사람 결정과 구별되게 하라 (코드 주석에는 있다)
+- [ ] 5. (앞 단계 QA) 언어 테스트가 실패 시 locale 을 못 되돌린다
+  - 기준: 언어 테스트가 실패 시 locale 을 못 되돌린다 — game/tests/ui/menu/test_key_group_fold.gd test_language_change_keeps_the_mark 가 set_locale("en") 뒤 단언이 실패하면 "ko" 로 되돌리는 줄에 닿지 않아 같은 프로세스의 뒤 테스트가 영어로 돈다. after_each 에서 TranslationServer.set_locale("ko") 로 옮겨라 (막는 것은 아니다 — 지금은 통과한다)
 
 ## [ ] G-274 죽은 자리를 지도에 · 데스 상자는 「모두 가져오기」 하나
 - 차선: 3d-lane2 · 시작 2026-10-21 09:01
