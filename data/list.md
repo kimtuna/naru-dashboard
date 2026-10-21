@@ -4758,7 +4758,7 @@
   - 기준: 1280×720 · 1920×1080 · ko · en ui_shots — 접힌 · 편 모습
   - 기준: (앞 단계 QA) player_stats.gd 단 나눔 주석이 낡았다 — game/player/player_stats.gd CATEGORIES 위 주석 「장비칸 옆이 좁아 셋을 가로로 못 놓는다」는 묶음이 셋이던 때의 까닭이다. 이제 묶음이 둘이니 「몸(넷)이 한 단, 전투가 그 옆 단」만 남기고 「셋을 가로로 못 놓는다」 구절을 지워라
   - 기준: (앞 단계 QA) spec 에 「Claude 가 정함」 표시가 없다 — spec/02_player/inventory-hotbar.md 스탯 줄의 「「이동」 묶음은 빠르기 하나뿐이라 몸으로 (G-273.3)」에 기준 문구대로 「Claude 가 정함」을 붙여 사람 결정과 구별되게 하라 (코드 주석에는 있다)
-- [ ] 5. (앞 단계 QA) 언어 테스트가 실패 시 locale 을 못 되돌린다
+- [x] 5. (앞 단계 QA) 언어 테스트가 실패 시 locale 을 못 되돌린다
   - 기준: 언어 테스트가 실패 시 locale 을 못 되돌린다 — game/tests/ui/menu/test_key_group_fold.gd test_language_change_keeps_the_mark 가 set_locale("en") 뒤 단언이 실패하면 "ko" 로 되돌리는 줄에 닿지 않아 같은 프로세스의 뒤 테스트가 영어로 돈다. after_each 에서 TranslationServer.set_locale("ko") 로 옮겨라 (막는 것은 아니다 — 지금은 통과한다)
 
 - [ ] 6. 망치로 해체한 것은 곧장 가방으로
