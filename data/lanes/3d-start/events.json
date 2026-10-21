@@ -1,24 +1,5 @@
 [
  {
-  "time": "2026-10-15 20:01:27",
-  "epoch": 1792062087,
-  "type": "start",
-  "title": "루프 시작",
-  "report": {
-   "problem": "Steam 참가 길(가짜 Steam · 방 코드)로 저장본 몸 0.4/0.3/60 · 밀빵 캐릭터가 들어오는 테스트를 더했다 — 첫 프레임 몸 · HUD, 첫 몸 소식, 서버장 사본, 서버장 화면의 참가자 체력, 먹기까지 전부 저장본 그대로라 Steam 길로도 0 이 재현되지 않았다 (바뀐 곳만: 3 파일 7 검사 통과)",
-   "approach": "재현을 먼저 시도했지만 세 길 모두에서 몸이 떨어지지 않았다. 그래서 코드는 고치지 않았고, 아래에서 무엇을 배제했는지만 적는다.\n\n배제한 것 (테스트별):\n- test_join_body_steam (새로 만듦, 가짜 Steam: 방 코드 → 로비 → 접속 → _hello → _welcome):\n  - 서버가 캐릭터 사본을 받기 전에 vitals_of 가 기본값으로 서지 않는다. 매 프레임 확인했다.\n  - 섬을 세우는 동안 몸 소식이 먼저 오지 않는다. GameRoot ready 때까지 받은 소식이 0개였다.\n  - 첫 프레임(몸 소식 전)의 몸 · 배고픔/목마름 게이지 · 체력 막대가 저장본 값이다.\n  - 첫 _vitals 소식, 서버장 사본, 참가자 화면 모두 0.4/0.3/60 이다.\n  - 서버장 화면의 참가자 몸(VisitorBody 체력)이 붙는 사이 한 번도 0 · -1 로 그려지지 않았고, 끝 값은 60 이다.\n  - 먹기(EAT, 본 칸 비교)를 하면 서버 사본이 빵 한 개만큼 오르고 참가자 화면 · 가방도 따라온다.\n- test_join_body_island (진짜 섬, ENet):\n  - 첫 몸 소식이 되돌린 저장본을 0 이나 빈 값으로 덮지 않는다.\n  - 시간은 서버에서 한 번만 흐른다. 참가자 HungerThirst 는 처리가 꺼져 있고, 줄어든 양은 경과 시간/LASTS_SECONDS 와 맞는다.\n  - 먹기 · 물 마시기가 서버 사본과 참가자 화면에 온다.\n- test_join_body (작은 섬, ENet): 나갔다 다시 들어와도 저장본 값 그대로다.\n\n맥 저장본 시간 순서 (stat 와 파일 내용으로 확인):\n- mac-join.log 는 18:37:48 에 생겼고 마지막으로 쓰인 것은 19:11:41 이다. 프로세스는 하나(pid 39432)이고, 끝은 종료(NSApplication terminate) 중 Steam 충돌이다.\n- 캐릭터 · 월드 저장본은 둘 다 19:11:41 에 쓰였다. 맥 자기 월드(1790014507, 9-22 생성)도 그때 저장됐으니, 끝날 때는 혼자 판이었다. 참가자는 서버장 월드를 저장하지 않는다.\n- 캐릭터 places 에 서버장 월드 둘이 있다. 1792046582 는 10-15 15:43 생성, 1792057408 은 10-15 18:43:28 생성이고, 둘 다 섰던 자리가 적혀 있다.\n- 그래서 0/0/1 은 참가 판과 그 뒤 혼자 판을 거친 19:11 의 값이다. 들어갈 때의 값은 저장본으로 알 수 없다.\n- 참고로 가득에서 0/0/1 까지는 먹지 않으면 약 21분이다 (13.3분 + 체력 99×5초). 18:43 부터 19:11 은 28분이다.\n\n사람 눈으로 다시 볼 것: 들어가기 직전에 혼자 판에서 그 캐릭터의 게이지를 보고, 들어간 직후의 게이지와 견준다. 직후에 0 이면 그 화면을 찍어 준다.",
-   "why": "",
-   "files": [
-    "game/tests/multiplayer/test_join_body.gd",
-    "game/tests/multiplayer/test_join_body_island.gd",
-    "game/tests/multiplayer/test_join_body_steam.gd"
-   ],
-   "decision": {
-    "question": "G-222.1 참가자 몸 0 을 테스트(ENet 작은 섬 · ENet 진짜 섬 · 가짜 Steam 길, 첫 프레임 HUD 포함)로 재현하지 못했다. 다음 시험 때 들어가기 직전(혼자 판)의 그 캐릭터 배고픔 · 목마름 · 체력 게이지와 들어간 직후의 게이지를 같이 봐 줄 수 있나? 직후에 0 이면 그 화면과 맥 로그를 남겨 주면 그것으로 재현한다."
-   }
-  }
- },
- {
   "time": "2026-10-15 20:33:01",
   "epoch": 1792063981,
   "type": "pass",
@@ -9287,5 +9268,36 @@
   },
   "test": "l.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/automation/villagers/test_keeper_particle.gd\nok      2s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/automation/villagers/test_villager_gear.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_bond.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_manual_screen.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           546\nTests            4123\nPassing Tests    4123\nFailing Tests       0\nRisky/Pending       0\nAsserts        197168\nTime           785s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "26884b25"
+ },
+ {
+  "time": "2026-10-21 11:33:21",
+  "epoch": 1792550001,
+  "type": "stop",
+  "title": "루프 끝 — 목록을 모두 처리했다",
+  "group": "G-928",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "참가자 사본 가방이 찼을 때 침대를 해체하면 서버의 진짜 길(net_world)로 참가자 발밑에 떨어지는지 보는 테스트를 더했다 — 바뀐 곳만: 1개 파일 13개 테스트 통과",
+   "approach": "가방이 찼을 때 발밑으로 가는 것은 Stations.take_thing(copy, there) 을 바로 불러서만 보고 있었다. test_build_on_server.gd 에 참가자가 침대를 놓고 (-1,0,0) 으로 걸어간 뒤(_walk_guest) 사본 가방을 돌로 가득 채우고 gi.beds.ask.call(&\"take\", …) 를 보내는 테스트를 더했다 — 침대가 사본 가방에 들지 않고, 한 무더기가 참가자 자리 0.6 안에 · 제자리에서 2 넘게 떨어진 곳에 떨어지는지 본다. net_world 의 where.call(id) 를 잠깐 null 로 바꿔 돌리니 이 테스트만 떨어졌다(제자리 (-3.5,-1.5) 에 떨어짐) — 단언이 그 길을 지킨다. 바꾼 것은 되돌렸다. 게임 코드는 바꾸지 않았다.",
+   "why": "",
+   "files": [
+    "game/tests/multiplayer/test_build_on_server.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "참가자 가방이 찼을 때 발밑 — 실제 서버 경로 테스트가 없다 — 가방이 찼을 때 발밑으로 가는 것은 Stations.take_thing(copy, there) 을 바로 불러서만 본다. net_world 가 where.call(id) 를 제대로 넘기는지는 tests/multiplayer/test_build_on_server.gd 에서 확인하지 않는다. 그 파일에 참가자 사본 가방(kit)을 채운 뒤 gi.beds.ask.call(&\"take\", …) 를 보내고, 침대 하나가 참가자 자리(_walk_guest 로 옮긴 곳) 근처에 떨어지는지 보는 단언을 하나 더해라",
+     "evidence": "test_build_on_server.gd 의 test_a_guest_with_a_full_bag_takes_a_bed_and_it_drops_at_their_feet — 참가자가 침대를 (-4,0,-2) 에 놓고 _walk_guest 로 (-1,0.2,0) 에 간 뒤 kit 전 칸을 돌 STACK_MAX 로 채우고 gi.beds.ask.call(&\"take\", …) 를 보낸다. 서버에서 침대가 사라지고, 사본 가방에 침대가 0, 떨어진 침대 1개가 발밑 0.6 안 · 제자리에서 2 넘게인지 단언한다. QA 가 net_world.gd:624 의 where.call(id) 를 null 로 바꿔 그 파일만 돌리니 이 테스트만 떨어졌다(침대가 제자리 (-3.5,0.15,-1.5) 에 떨어짐 — 2.9 > 0.6) · 되돌린 뒤 net_world.gd 는 diff 없음. 전체 4123 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "l.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/automation/villagers/test_keeper_particle.gd\nok      2s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/automation/villagers/test_villager_gear.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_bond.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_manual_screen.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           546\nTests            4123\nPassing Tests    4123\nFailing Tests       0\nRisky/Pending       0\nAsserts        197168\nTime           785s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
