@@ -4796,7 +4796,7 @@
 - [x] 1. 「치면 부서진다」 → 망치 해체
   - 사람 답 2026-10-21: 「망치로 다 바꿈.」
   - 기준: movement-controls.md:40,59 · farming.md:47 · crafting-stations.md:11,62-63,73 · storage.md:31-32,51 · bird-cage.md:24 · guard-pen.md:19 · ranching-breeding.md:52 를 「망치 해체로만 거둔다(G-271.2 · 2026-10-20) · 거둔 것은 가방으로(G-273.6)」로. `grep -rn '치면 부서\|쳐서 부수\|치기로 거' spec/` 로 남은 곳을 더 찾는다
-- [ ] 2. 무게를 다 없앤다
+- [x] 2. 무게를 다 없앤다
   - 사람 답 2026-10-21: 「무게에 관련된건 다 없앰.」 — 지금 무게는 아무 효과가 없고 weights.json 은 「게임에 있는 아이템인가」 목록으로만 쓰인다
   - 기준: inventory-hotbar.md:33 · equipment.md:30 · tools-as-weapons.md:26,42-59 · rooms.md:48 의 무게 줄을 지운다. 코드에서도 무게 값 · 무게 글(UI · 번역 키 · 주석)을 걷는다. weights.json 이 「있는 아이템 목록」 몫을 하면 그 몫만 남는 이름(예: items.json)으로 옮기고 부르는 곳을 다 고친다 — `grep -rni 'weight\|무게\|kg' game/ spec/` 가 그 목록 몫 말고 0 (테스트)
   - 기준: (앞 단계 QA) farming.md 밭 거두기 줄의 사람 결정 출처가 빠졌다 — spec/04_life/farming.md:50 이 원래 「도면을 든 우클릭으로 밭을 한 번에 거둔다 (사람 결정 2026-10-20 …)」였는데 「(G-271.2 · G-273.6 …)」로만 바뀌어 「사람 결정 2026-10-20」 표시가 사라졌다. crafting-stations.md:13 에서도 「도면을 든 우클릭(해체)만 한 번에 거둔다 (사람 결정 2026-10-20)」 이력이 빠졌다. building.md 에 원래 결정이 남아 있어 규칙이 잃어지지는 않았다. 그래도 두 줄 끝에 「(사람 결정 2026-10-20 — 처음엔 도면 우클릭, 같은 날 망치로)」를 다시 붙이고, test_take_spec_lines.gd 에 그 두 문서에 「사람 결정 2026-10-20」이 있는지 보는 단언을 더해라
@@ -4805,6 +4805,8 @@
   - 이 세션이 2026-10-21 봤다: 바닥이면 깎는 것은 이미 있다 — hunger_thirst.gd:89 `_starve` 5초(STARVE_SECONDS)에 1 · 체력 1(STARVE_FLOOR)에서 멈춤(임시 — 굶어 죽는지는 사람이 안 정했다, 그대로 둔다). 초록 = need_gauge.gd:16 GREEN_ABOVE 0.5 보다 많이 남음
   - 기준: 배고픔 게이지가 **초록(GREEN_ABOVE 위)** 인 동안 체력이 **아주 천천히** 오른다 — 빠르기 **임시**(예: 1분에 1). 최대 체력(ArmorModules.max_health)을 넘지 않는다 · 멀티 — 서버가 셈한다 (테스트)
   - 기준: 속도 배율에서 배고픔을 지운다 — inventory-hotbar.md:37 · equipment-modules.md:39 · player.gd:366 주석 (속도는 목마름만, 2026-10-14). spec/02_player/hunger-thirst.md 에 3단계 결정을 원문과 함께
+  - 기준: (앞 단계 QA) OTHER_SENSE 가 파일 통째로 허락한다 — game/tests/player/inventory_hotbar/test_no_item_load.gd 의 OTHER_SENSE 12 파일은 영어 weight 를 아무 뜻으로나 써도 걸리지 않는다. 막는 것은 아니다. 파일마다 허락할 낱말(예: fish_kinds.gd 는 "weight(" · "weights", island_mountain.gd 는 "cliff_weight" · "_ledge_weight")을 적어 그 밖의 weight 가 나오면 실패하게 좁혀라
+  - 기준: (앞 단계 QA) 죽음 목적 문장이 바뀌었다 — spec/08_combat/damage-death.md:4 「죽음에 무게를 주되」를 「죽음이 가볍지 않게 하되」로 바꿨다. 뜻은 같고 사람 결정 표시가 붙은 줄은 아니다. 다만 그 줄이 사람이 쓴 문장이었다면 git log -L 로 출처를 보고, 사람이 쓴 것이면 줄 끝에 「(G-275.2 — 아이템 무게와 헷갈려 낱말만 바꿨다)」를 달아 둬라
 - [ ] 4. 시설 목록 · 선착장 · 새장 · 숙련도 · 로드맵
   - 기준: 「시설 열둘」 → 지금 시설 15종 표로(축사는 빼고 · 피처펌프 · 착유기 · 무기 제작대 · 장비 제작대를 넣는다. 조리용 화로는 G-270.2 로 뺐다) — crafting-stations.md:52-54 · facilities.md · stations.json `_twelve` 주석 · 결과 칸 기본값 주석 3 → 실제 5
   - 기준: frontier-islands.md:11 「남을 사람이 있으면 배가 안 떠난다」 → 지금 코드(game_root.gd:569 — 섬 여럿을 같이 돌리고 탄 사람만 건너간다, G-225)
