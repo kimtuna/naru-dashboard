@@ -1,62 +1,5 @@
 [
  {
-  "time": "2026-10-16 03:33:07",
-  "epoch": 1792089187,
-  "type": "fail",
-  "title": "QA 불합격 — G-225 단계 6 (시도 1)",
-  "group": "G-225",
-  "step": "6",
-  "attempt": "1",
-  "report": {
-   "problem": "섬 여럿 ③ — 맞추기 · 몸 소식은 그 섬에 선 사람에게만, 바람(치기 · 놓기 · 줍기 · 상자 · 휘두르기 · 쏘기)은 바란 사람이 선 섬에 한다. 연 섬 · 월드 설정 · 배 · 길드는 모두에게. 바뀐 곳에 걸리는 221개 파일 1762개 테스트 가운데 1761개 통과 — 떨어진 test_folk_on_server 1개는 부하 때 풀린 주민을 람다가 쥐어 난 오류라 약한 참조로 고쳤고, 그 파일만 다시 돌려 7/7 통과",
-   "approach": "월드 맞추기(NetWorld)가 판에 하나뿐이라 서버장 섬의 것이 모든 참가자에게 갔다. 이제 섬마다 하나씩 선다: NetSession.world_at(id) → 판 아래 「World_<섬 id>」 (RPC 는 노드 경로로 가므로 서버와 참가자가 같은 섬이면 같은 이름). world() 는 이 기계 사람이 선 섬(here)의 것이고, 섬을 가리지 않는 연 섬 · 월드 설정 · 배는 「World」(everywhere)가 모두에게 보낸다. 서버는 GameRoot.island_of 를 NetSession.island_of 로 받아 섬 맞추기마다 그 섬에 선 사람에게만 보내고(_members), 다른 섬 사람의 바람은 받지 않는다(_kit_for · 상자 열기의 _here). 서버장 섬 맞추기는 GameRoot 아래에서 멀리 선 섬(Afar)을 빼고 훑는다(beyond). 멀리 선 섬이 서면 _fit_afar_world 가 그 섬의 캐기 · 놓는 곳 · 상자 · 짐승 · 주민 · 줍기 · 시설을 그 섬 맞추기에 걸고, 내리면 detach 한다. 몸 소식(NetBodies)은 같은 섬끼리만, 서버의 남의 몸은 그 사람이 선 섬 세계(멀리 선 섬이면 그 SubViewport 의 Visitors)에 선다 — _where_is · _takers_on · _throw_for · _chest_of 가 그 섬의 것을 쓴다. 휘두르기 · 쏘기는 그 사람이 선 섬 세계에서(NetVitals.scope_of), 쏜 그림은 같은 섬 사람에게만. 짐승은 다른 세계의 몸을 쫓지 않고(자리가 겹쳐도), 멀리 선 섬의 빈 몸은 줍지 않는다(Pickup.mine). 참가자는 월드를 받을 때 · 배를 받을 때 그 섬 맞추기 자리를 먼저 세운다. 앞 단계 QA 두 가지: _lower_afar 앞에 _afar null 막음, test_dock_crew 에 places 와 island_of 가 같은지 단언. test_islands_afar 첫 테스트는 미르 몸이 이제 서버장 화면이 아니라 SULFUR 세계에 서므로 미르를 실제로 건너게 하고 단언을 바꿨다. 사람이 다른 섬으로 가는 길(CREW_SPLIT_NOTICE 막음)은 그대로다 — 테스트는 서버가 미르만 보내는 길(set_island_of + everywhere().sail_crew)로 갈랐다. 막음을 걷는 것은 G-225.7",
-   "why": "",
-   "files": [
-    "game/core/net/net_session.gd",
-    "game/core/net/net_world.gd",
-    "game/core/net/net_bodies.gd",
-    "game/core/net/net_vitals.gd",
-    "game/core/game_root.gd",
-    "game/player/pickup/pickup.gd",
-    "game/life/hunting/animal.gd",
-    "game/tests/multiplayer/test_islands_split.gd",
-    "game/tests/multiplayer/test_islands_afar.gd",
-    "game/tests/multiplayer/test_dock_crew.gd",
-    "game/tests/multiplayer/test_folk_on_server.gd",
-    "spec/11_multiplayer/netcode.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": false,
-     "criterion": "맞추기(놓는 곳 · 짐승 · 주민 · 떨어진 것 · 지도 · 몸 소식)는 그 섬에 선 사람에게만 간다. 바람(치기 · 놓기 · 줍기 …)은 바란 사람이 선 섬에 한다. 시계 · 날 · 연 섬 · 길드 · 배 명단은 모두 같다 (테스트: 두 섬에 갈린 둘이 서로의 몸 · 짐승을 받지 않고, 각자 제 섬에서 친 것이 제 섬에만 남는다)",
-     "evidence": "test_islands_split.gd 의 몸 소식 단언은 진짜다 — net_bodies.gd 의 섬 거르기(where_of(who) == at)를 빼자 「미르는 HOME 의 서버장 몸을 받지 않는다」가 떨어졌다. 그러나 서버 쪽 섬 가르기 두 곳은 아무 테스트도 지키지 않는다: ① net_world.gd _members 의 섬 거르기를 빼고(늘 s.members()) 돌려도 test_islands_split 3개가 다 통과했다 ② net_world.gd _here 를 `return true` 로 바꿔도 test_islands_split · test_islands_afar · test_dock_crew 11개가 다 통과했다. 짐승 단언은 참가자가 떠난 섬의 World_home 을 detach 해서 지켜질 뿐, 서버가 「그 섬에 선 사람에게만」 보내는지는 안 본다. 「바람은 바란 사람이 선 섬에 한다」도 제 섬 맞추기로 바란 길만 보고, 다른 섬 맞추기로 온 바람을 서버가 거절하는 막아야 할 경우가 없다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) _lower_afar 가 _afar 가 null 이면 터진다 — game/core/game_root.gd _lower_afar 의 `_afar.get_node_or_null(id)` 는 지금 부르는 곳이 모두 _afar 가 있을 때뿐이라 괜찮지만, 앞에 `if _afar == null: return` 을 두어 다음 단계에서 부르는 곳이 늘어도 안전하게 하라",
-     "evidence": "game_root.gd:393 _lower_afar 맨 앞에 `if _afar == null: return` 이 들어갔다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 참가자 명단 값이 캐릭터 places 에 되써지지 않는다 — set_island_of 는 서버 _places 만 바꾸고 참가자 캐릭터 places 의 island 는 그대로다. 지금은 참가자가 서버장과 다른 섬에 설 길이 막혀(CREW_SPLIT_NOTICE) 어긋날 일이 없지만, G-225.7 에서 막음을 걷을 때 참가자 places 와 island_of 가 같은지 보는 단언을 test_dock_crew.gd 에 넣어라",
-     "evidence": "test_dock_crew.gd test_everyone_aboard_sails_and_comes_back_through_the_window 에 mir.character.places[world.id].island == host.island_of(mir_id) 와 island_of == SULFUR 단언이 들어갔다 (G-225.7 몫을 미리 넣었지만 단언만이라 해가 없다)"
-    }
-   ],
-   "issues": [
-    "서버의 섬 거르기(_members)를 지키는 테스트가 없다 — game/core/net/net_world.gd _members 를 `return s.members()` 로 늘 모두에게 보내게 바꿔도 test_islands_split.gd 3개가 다 통과했다. 짐승이 미르에게 안 가는 것은 미르 기계가 World_home 을 detach 해서일 뿐이다. test_islands_split.gd 에 서버가 보내는 쪽을 보는 단언을 넣어라 — 예: HOME 짐승을 세운 뒤 host.net.world_at(Islands.HOME)._members() 에 mir_id 가 없고 host.net.world_at(SULFUR)._members() 에는 있는지, 또는 미르 기계의 World_home 이 섬이 갈린 뒤 아무 맞추기도 받지 않는지(받은 짐승 · 떨어진 것 수가 0인지를 detach 전에 붙인 신호 등으로) 본다. 고친 뒤 _members 거르기를 빼면 떨어지는지 확인하라",
-    "다른 섬으로 온 바람을 거절하는 테스트가 없다 — net_world.gd _here 를 `return true` 로 바꿔도 test_islands_split · test_islands_afar · test_dock_crew 가 다 통과했다. test_islands_split.gd 에 막아야 할 경우를 넣어라: 미르가 SULFUR 에 선 채로 미르 기계의 HOME 맞추기(mir.net.world_at(Islands.HOME))로 HOME 바위 치기 · 상자 열기(_chest_open)를 바라게 하고, 서버 HOME 바위 내구가 150 그대로인지 · 상자가 안 열리는지 단언한다. 고친 뒤 _here 를 빼면 떨어지는지 확인하라"
-   ],
-   "good": [
-    "test_dock_crew.gd 의 places = island_of 단언은 기준대로 넣었고, test_folk_on_server.gd 의 약한 참조 고침은 부하 때 떨어지던 테스트를 고친 것이라 덤이지만 해가 없다"
-   ]
-  },
-  "test": "sts/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_body_gauges_layout.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/build/test_room_overlay.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           315\nTests            2442\nPassing Tests    2442\nFailing Tests       0\nRisky/Pending       0\nAsserts         76815\nTime           678s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-16 03:57:44",
   "epoch": 1792090664,
   "type": "pass",
@@ -8944,5 +8887,30 @@
   },
   "test": "st_guard_pen_window.gd\nok      1s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_settings_screen.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/automation/villagers/test_job_work_shared.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/build/test_take_spec_lines.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/core/test_grid.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           574\nTests            4271\nPassing Tests    4271\nFailing Tests       0\nRisky/Pending       0\nAsserts        205642\nTime           814s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "e8a55f18"
+ },
+ {
+  "time": "2026-10-22 22:58:56",
+  "epoch": 1792677536,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-286 단계 1 (시도 1)",
+  "group": "G-286",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "드릴이 닿은 것이 굳은 용암 판이면 땅 대신 판을 깬다 (Volcano.carve) — 누르는 동안 틈마다 · 참가자는 서버에 바라고 서버가 깨 모두에게 보낸다. 바뀐 곳 그물 144 파일 1141 개 통과",
+   "approach": "굳은 판 몸통은 땅 층이라 드릴이 그대로 복셀 파기로 넘어갔다. Shovel._bore 가 닿은 것(자리 · 몸통)을 돌려주게 바꾸고, 그 몸통이 Volcano.rock_body 면 땅 대신 TestIsland.break_rock(at) → Volcano.carve(at, 1.5m) 를 부른다. 드릴 되풀이(_process 의 틈)는 그대로 쓰니 누르는 동안 틈마다 깬다. 깬 구멍 너머로는 밑의 땅이 겨눠져 판다. 참가자는 새 ask_rock 으로 NetWorld.break_rock → 서버 _break_rock(「땅 파기」 권한 · 드릴을 들었나 · 손 닿는 거리)이 깨고, 퍼뜨리기는 G-283 의 carved 신호 길을 그대로 탄다. 시험 섬 DigIsland 에 기울기 · 화산을 장면에 담게(@export) 해 진짜 ENet 두 기계로 서버가 깨고 참가자 판에도 구멍이 나는 것을 봤다. 새 상태는 없다(깬 자리는 G-283 의 섬 저장 carved). 깨서 나오는 것은 없다. 바뀐 곳 그물(changed_tests.py) 144 파일 · 1141 개 통과",
+   "why": "드릴 한 번에 깨는 판 반지름 TestIsland.ROCK_BITE = VolcanoDig.DRILL_RADIUS(1.5m) — 땅 파는 드릴 공과 같게 임시로",
+   "files": [
+    "game/world/terrain/shovel.gd",
+    "game/world/terrain/test_island.gd",
+    "game/core/net/net_world.gd",
+    "game/tests/multiplayer/dig_island.gd",
+    "game/tests/multiplayer/test_dig_on_server.gd",
+    "game/tests/world/terrain/test_drill_rock.gd",
+    "spec/03_world/frontier-islands.md"
+   ],
+   "decision": null
+  },
+  "test": "hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/world/map/test_map_memory.gd\n\n================ 떨어진 파일: res://tests/multiplayer/test_lava_rock_on_server.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\nSCRIPT ERROR: Parse Error: Could not resolve external class member \"make\".\n          at: GDScript::reload (res://tests/multiplayer/test_lava_rock_on_server.gd:46)\n          GDScript backtrace (most recent call first):\n              [0] load_script_using_custom_warnings (res://addons/gut/warnings_manager.gd:173)\n              [1] _parse_script (res://addons/gut/test_collector.gd:76)\n              [2] add_script (res://addons/gut/test_collector.gd:128)\n              [3] add_script (res://addons/gut/gut.gd:1070)\n              [4] _apply_options (res://addons/gut/gut_config.gd:139)\n              [5] apply_options (res://addons/gut/gut_config.gd:207)\n              [6] run_tests (res://addons/gut/gui/GutRunner.gd:192)\n              [7] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n              [8] main (res://addons/gut/cli/gut_cli.gd:297)\n              [9] _init (res://addons/gut/gut_cmdln.gd:39)\nSCRIPT ERROR: Parse Error: Could not resolve external class member \"volcano\".\n          at: GDScript::reload (res://tests/multiplayer/test_lava_rock_on_server.gd:84)\n          GDScript backtrace (most recent call first):\n              [0] load_script_using_custom_warnings (res://addons/gut/warnings_manager.gd:173)\n              [1] _parse_script (res://addons/gut/test_collector.gd:76)\n              [2] add_script (res://addons/gut/test_collector.gd:128)\n              [3] add_script (res://addons/gut/gut.gd:1070)\n              [4] _apply_options (res://addons/gut/gut_config.gd:139)\n              [5] apply_options (res://addons/gut/gut_config.gd:207)\n              [6] run_tests (res://addons/gut/gui/GutRunner.gd:192)\n              [7] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n              [8] main (res://addons/gut/cli/gut_cli.gd:297)\n              [9] _init (res://addons/gut/gut_cmdln.gd:39)\nERROR: Failed to load script \"res://tests/multiplayer/test_lava_rock_on_server.gd\" with error \"Parse error\".\n   at: load (modules/gdscript/gdscript_resource_format.cpp:46)\n   GDScript backtrace (most recent call first):\n       [0] load_script_using_custom_warnings (res://addons/gut/warnings_manager.gd:173)\n       [1] _parse_script (res://addons/gut/test_collector.gd:76)\n       [2] add_script (res://addons/gut/test_collector.gd:128)\n       [3] add_script (res://addons/gut/gut.gd:1070)\n       [4] _apply_options (res://addons/gut/gut_config.gd:139)\n       [5] apply_options (res://addons/gut/gut_config.gd:207)\n       [6] run_tests (res://addons/gut/gui/GutRunner.gd:192)\n       [7] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n       [8] main (res://addons/gut/cli/gut_cli.gd:297)\n       [9] _init (res://addons/gut/gut_cmdln.gd:39)\n\u001b[33m[GUT WARNING]:  \u001b[0mIgnoring script res://tests/multiplayer/test_lava_rock_on_server.gd because it does not extend GutTest\n\n\n\n\n[GUT ERROR]:  Nothing was run.\nOn the one hand nothing failed, on the other hand nothing did anything.\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           574\nTests            4274\nPassing Tests    4274\nFailing Tests       0\nRisky/Pending       0\nAsserts        205728\nTime           816s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/multiplayer/test_lava_rock_on_server.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\ntest.sh: 스크립트 오류가 있다\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
