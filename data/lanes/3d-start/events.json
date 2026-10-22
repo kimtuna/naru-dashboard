@@ -1,64 +1,5 @@
 [
  {
-  "time": "2026-10-15 21:24:56",
-  "epoch": 1792067096,
-  "type": "pass",
-  "title": "통과 — G-222 단계 4 (혼자 하던 게임에서 서버를 연다 — ESC → 월드 설정 → 멀티 서버)",
-  "group": "G-222",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "혼자 하던 게임에서 ESC → 월드 설정 「멀티 서버」로 그 자리에서 서버를 열고 닫는다 (Steam 판은 방 코드) · 켠 채 저장해도 혼자로 연다(임시) · 권한 단위 「임시」 표시 되살림. 바뀐 곳만: 209개 파일 1617개 테스트 통과",
-   "approach": "월드 설정 화면에 「멀티 서버」 CheckButton 을 더하고 신호(server_toggled)를 PauseMenu 를 거쳐 GameRoot.set_server_open 으로 올렸다. 켜면 메뉴의 「서버 열기」와 같은 길(NetSession.put(부모) → host_steam / host(net_port))로 판을 세워 이미 있던 _join_net 에 잇는다 — 메뉴로 나가지 않는다. 끄면 판을 dispose(참가자는 「서버가 닫혔다」) 하고 남의 몸 · Acts.net · 시계 알림 · 방 코드를 혼자 상태로 되돌린다. 서버장 쪽에 걸던 것(섬 담당 · 몸 상태)은 remote=false 라 혼자일 때와 같은 값이어서 되돌릴 것이 없었다. 판을 여러 번 열 수 있게 「친구 초대」 연결을 _join_net 에서 _ready 로 옮겼다(두 번 열면 겹쳐 걸렸을 것). 게임 화면이 포트를 메뉴에서 물려받는다(net_port, 테스트는 0). 열려 있었나는 저장하지 않는다 — 다시 들어오면 혼자로 연다(임시), world-settings.md · save.md 「안 담는다」에 적었다. QA: permissions.md 권한 단위 줄과 guild.gd UNITS 주석에 「임시」를 되살렸다.",
-   "why": "「멀티 서버」를 켠 채 저장한 월드는 다시 열 때 혼자로 연다 — 사람이 그대로 열지 정하지 않았다 (world-settings.md 미정)",
-   "files": [
-    "game/core/game_root.gd",
-    "game/ui/menu/menu_root.gd",
-    "game/ui/menu/pause_menu.gd",
-    "game/ui/menu/world_settings_screen.gd",
-    "game/ui/menu/world_settings_screen.tscn",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/core/net/guild.gd",
-    "spec/01_settings/world-settings.md",
-    "spec/01_settings/save.md",
-    "spec/11_multiplayer/permissions.md",
-    "game/tests/multiplayer/test_server_from_game.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "혼자 하는 중 ESC 의 월드 설정에 「멀티 서버」 켜기가 있다 — 켜면 메뉴로 나가지 않고 그 자리에서 서버가 열리고(Steam 판은 방 코드가 뜬다), 끄면 참가자에게 「서버가 닫혔다」가 가고 혼자 하던 대로 이어진다 (테스트: ENet 판으로 켜고 · 붙고 · 끄기)",
-     "evidence": "tests/multiplayer/test_server_from_game.gd test_open_join_and_shut_from_the_world_settings 는 ESC → 월드 설정 버튼을 눌러 MultiServer CheckButton 을 켜고, server_open() · MenuRoot 가 안 섰음 · 게임 화면이 그대로임을 확인한다. 이어 ENet 참가자를 실제로 붙이고(world_name 이 서버장 월드, 서버장 쪽 visitors 1명) 끈 뒤 참가자 MainMenu notice == MENU_NET_SERVER_CLOSED, 서버장 net==null · visitors 0 · _acts.remote() false · 프레임이 돈다를 보고, 다시 켜서 둘째 참가자가 붙는 것까지 본다. test_steam_build_shows_the_room_code 는 가짜 Steam 으로 방 코드가 ESC 창에 뜨고 끄면 사라지며 로비 인원이 0 이 되는지 본다. 깨 보기: _shut_server 의 _menu.set_room(\"\") 를 지우자 「닫으면 방 코드가 사라진다」가 떨어졌다(되돌림 확인, cmp 동일). 전체 테스트 2889개 통과(test.log)"
-    },
-    {
-     "ok": true,
-     "criterion": "켠 채 저장하고 다시 들어오면 어떻게 되는지(그대로 연다 / 혼자로 연다)는 정하지 않았다 — 혼자로 연다(임시)로 하고 spec 에 적는다",
-     "evidence": "test_saved_with_the_server_open_comes_back_solo 가 켠 채 _leave_to_main_menu 로 저장하고 다시 혼자 들어와 server_open() false · 스위치 꺼짐을 확인한다. world-settings.md 에 「켠 채 저장하고 다시 들어오면 혼자로 연다 (임시)」와 미정 줄, save.md 「안 담는다」에 까닭과 함께 적었다. game_root.gd set_server_open 주석에도 (임시)"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 권한 단위 목록의 「임시」 표시가 빠졌다 — … permissions.md:12 를 「권한 단위 (임시 — 헐기·섬 열기 말고는 Claude 가 1단계 표에서 뽑았다, G-221.19)」로, guild.gd UNITS 주석에 「(**임시** — 나머지 칸은 Claude 가 뽑았다)」를 되살려라",
-     "evidence": "git diff: permissions.md:12 가 지시 문장 그대로 「**권한 단위** (임시 — 헐기·섬 열기 말고는 Claude 가 1단계 표에서 뽑았다, G-221.19)」, guild.gd:15 UNITS 주석에 「**임시** — 나머지 칸은 Claude 가 뽑았다」가 들어갔다. 사람 결정 줄은 지워지지 않았다"
-    }
-   ],
-   "issues": [
-    "test_body_on_server 가 한 번 떨어졌다 — 흔들리는 테스트로 보인다. QA 가 tests/multiplayer 폴더를 두 번 돌렸는데 첫 판(game_root.gd 의 _shut_server 에서 set_room(\"\") 한 줄만 바꾼 상태, 이 테스트는 그 함수를 안 지난다)에서 「미르가 서버장이 붙은 자리를 본다」가 떨어졌고, 되돌린 뒤 둘째 판과 전체 판에서는 통과했다. game/tests/multiplayer/test_body_on_server.gd 의 그 단언이 고정 프레임 · 시간을 기다리는지 보고, Sides.wait_until 로 조건을 기다리게 바꿔라",
-    "저장 단언이 지어낸 키를 본다 — test_server_from_game.gd 의 `to_dict().has(\"server\")` 는 아무도 쓰지 않는 키 이름이라 늘 참이다. 그 테스트의 뜻은 다음 단언(다시 들어오면 server_open() false)이 지키니 이 줄은 지우거나, 저장한 월드 dict 가 켜기 전 dict 와 키 목록이 같다는 단언으로 바꿔라"
-   ],
-   "good": [
-    "메뉴에서 「서버 열기」로 들어온 판도 월드 설정 스위치로 닫을 수 있다 (test_menu_hosted_server_can_be_shut_from_the_world_settings) — 기준 문장의 연장이라 흠은 아니다",
-    "「친구 초대」 신호 연결을 _join_net 에서 _ready 로 옮겼다 — 판을 여러 번 열 때 겹쳐 걸리지 않게 하려는 것으로 필요한 정리다"
-   ]
-  },
-  "test": "/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           386\nTests            2889\nPassing Tests    2889\nFailing Tests       0\nRisky/Pending       0\nAsserts        122948\nTime           714s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "73b1e8ba"
- },
- {
   "time": "2026-10-15 21:57:14",
   "epoch": 1792069034,
   "type": "pass",
@@ -9215,5 +9156,56 @@
   "epoch": 1792658374,
   "type": "start",
   "title": "루프 시작"
+ },
+ {
+  "time": "2026-10-22 17:46:28",
+  "epoch": 1792658788,
+  "type": "pass",
+  "title": "통과 — G-282 단계 1 (미래 재질 넷 — 상의 · 하의 · 모자 · 신발 아이템, 장비 칸에 끼운다)",
+  "group": "G-282",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "미래 옷 넷(future_armor · future_leggings · future_helmet · future_boots) — 아이템 · 이름 · 제 칸에만 끼움 · 수치 임시로 강철과 같다 · 개발용 상자에만 든다. 바뀐 곳만: 파일 101개 · 테스트 903개 통과",
+   "approach": "미래를 재질 하나로 더했다 — Armor.DEFENSE · ArmorModules.NORMAL_SLOTS · HEALTH 에 future 를 강철과 같은 값(14 · 2 · 65)으로 넣어 상의 · 모자 · 하의는 이름 규칙(<재질>_<벌>)만으로 방어 · 체력 · 모듈 칸이 따라온다. 신발(future_boots)은 Equipment.FITS 로 신발칸에만 들고, Armor.PIECES 에 boots 가 없어 스파이크처럼 방어 · 체력 · 모듈 칸이 없다. 레시피가 없으니 Armor.FUTURE 목록을 두고 개발용 상자가 그것을 하나씩 담는다. 저장 · 데스 상자는 기존 장비 딕셔너리 길을 그대로 탄다(테스트로 확인). NORMAL_SLOTS · HEALTH 표를 통째로 비교하던 test_armor_modules 두 곳에 future 줄을 더했다. 이름은 ko 「미래 상의 · 하의 · 모자 · 신발」, en Future top · bottoms · hat · shoes.",
+   "why": "미래 재질 방어 14 · 체력 65 · 일반 모듈 칸 2 — 강철과 같게 (사람이 안 정했다, armor.gd · armor_modules.gd); 미래 신발은 방어 · 체력 0 · 모듈 칸 없음 — 지금 신발(스파이크)과 같게",
+   "files": [
+    "game/player/equipment/equipment.gd",
+    "game/player/equipment/armor.gd",
+    "game/player/equipment/armor_modules.gd",
+    "game/core/debug/dev_box.gd",
+    "game/player/inventory_hotbar/items.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "spec/02_player/equipment.md",
+    "game/tests/player/equipment/test_future_wear.gd",
+    "game/tests/player/equipment/test_armor_modules.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "아이템 넷(이름 예: future_armor · future_leggings · future_helmet · future_boots — 기존 이름 규칙을 따른다) · items.json · ko.po/en.po 번역(「미래 상의 · 미래 하의 · 미래 모자 · 미래 신발」) · 끌어 놓아 제 칸(상의 · 하의 · 모자 · 신발)에만 끼워진다 (테스트)",
+     "evidence": "test_future_wear.gd test_the_four_are_items_with_names 가 items.json 등재 · ko.po 문자열 그대로 · en.po 키 존재를 보고, test_each_goes_only_into_its_own_slot 이 넷 × 장비 칸 여덟을 전부 돌려 제 칸만 true · 나머지는 false 이고 가방에서 안 빠지는지 단언한다 (막아야 할 경우 포함). 이름은 <재질>_<armor|helmet|leggings> 규칙을 따라 material_of 로 재질이 잡힌다"
+    },
+    {
+     "ok": true,
+     "criterion": "방어 · 체력은 **임시로 강철과 같게** — spec equipment.md 에 「미래 재질 — 수치 임시(강철과 같다), 사람이 안 정했다」로 적는다. 신발도 방어 합에 드는지는 지금 신발(스파이크)과 같게 한다",
+     "evidence": "armor.gd DEFENSE future 14 · armor_modules.gd NORMAL_SLOTS 2 · HEALTH 65 모두 「임시로 강철과 같다」 주석. equipment.md:32 에 기준 문장 그대로 적혔다. test_numbers_are_temporarily_the_same_as_steel 이 벌마다 · 합 · 체력을 강철과 비교하고, test_boots_count_like_spikes 가 신발 방어 · 체력 · 모듈 칸을 스파이크와 비교한다. 일부러 DEFENSE future 를 14→11 로 바꿔 돌리니 test_future_wear 가 깨졌다 (되돌림 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "개발용 상자에 넷이 들어 있다 · 저장 · 불러오기 · 데스 상자에 안 담김이 기존 장비와 같다 (테스트)",
+     "evidence": "test_the_dev_box_holds_all_four 가 DevBox.contents() 에 넷이 하나씩 드는지 본다. test_worn_future_wear_rides_in_the_save 가 넷을 끼운 CharacterData 를 JSON 으로 왕복해 칸마다 되살아나는지 본다. test_worn_future_wear_stays_on_you_when_you_die 가 실제 Player · Death 로 죽이고 장비가 그대로 · 데스 상자(1개, 나무는 들어감)에 미래 옷이 없음을 단언한다. test.log 바뀐 곳만 903/903 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "  res://tests/settings/test_item_key_groups.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_chest_window_search.gd\nok      3s  res://tests/world/storage/test_chest_shift_click.gd\nok      4s  res://tests/ui/hud/test_item_slot_fit.gd\nok      3s  res://tests/ui/hud/test_villager_gear_window.gd\nok      2s  res://tests/core/net/test_acts_alone.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      3s  res://tests/combat/tools_as_weapons/test_scope.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      3s  res://tests/combat/damage_death/test_death_chest_owner.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      3s  res://tests/life/hunting/test_captive_age.gd\nok      3s  res://tests/multiplayer/test_modules_on_server.gd\nok      3s  res://tests/life/climbing/test_grip_long_frame.gd\nok      3s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_armor_health.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      3s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      2s  res://tests/automation/villagers/test_villager_gear.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           101\nTests             903\nPassing Tests     903\nFailing Tests       0\nRisky/Pending       0\nAsserts         30644\nTime           82s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "92d4cd85"
  }
 ]
