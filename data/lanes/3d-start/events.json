@@ -1,74 +1,5 @@
 [
  {
-  "time": "2026-10-16 00:46:59",
-  "epoch": 1792079219,
-  "type": "fail",
-  "title": "QA 불합격 — G-225 단계 2 (시도 1)",
-  "group": "G-225",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "집 섬 선착장을 스폰 옆 물가 한 곳에 박고(못 부순다) 선착장 레시피 · 놓기 · 부수기(DockBuilder)를 뺐다. 옛 저장본의 놓인 선착장은 그 자리 재료 상자로, 가방 · 상자 · 바닥의 선착장 물건은 목재로 읽힌다. 바뀐 곳만 돈 테스트 210개 파일 · 1736개 전부 통과",
-   "approach": "내 섬은 islands.json 에서 dock_prebuilt:false 로 플레이어가 짓게 돼 있었다. 선착장은 이제 모든 섬에서 박힌 것이라 dock_prebuilt 와 DockBuilder(놓기 · 치기 · 저장)를 통째로 지우고, 내 섬에는 dock_near_spawn(임시) 을 달았다 — 스폰에서 사방 72방향으로 걸어 나가 처음 만나는 바다 가운데 가장 가까운 곳의 방향을 섬 가운데에서 본 각도로 바꿔, 개척 섬과 같은 dock_spot_at 으로 물가 평평한 땅을 찾는다. 지금 자리는 스폰에서 198m(가장 가까운 바다 200m, 옛 자리는 449m) — 사진으로 물가에 널판이 바로 걸친 것을 봤다. 옛 저장본: 섬 저장본의 docks 칸은 IslandState.apply 에서 그 자리에 목재 20이 든 상자 줄로 바꿔 chests 에 붙인다(받은 저장본은 안 건드리고, 다음 저장부터는 그냥 상자다). 가방 · 상자 · 바닥 · 죽은 자리 상자의 dock 물건은 OldItems.entry_of 가 목재 20개씩으로 바꾼다(REFUNDED 표). Dock 은 무리(Placeable.GROUP)와 placed_item 을 그대로 둔다 — 빼면 주민 길찾기가 기둥을 안 도려내고 놓기 겹침 판정에서도 빠진다. 부수는 길(DockBuilder.hit_dock)만 없어졌다. 선착장 레시피 · 무게 · 번역 키를 지우고 spec 에 결정 · 임시를 적었다(옛 09-21 결정 줄은 지우지 않고 바뀌었다고 표시). 남긴 것: 옛 저장본에서 제작대가 선착장을 만들던 중이면(5초짜리) 다 만든 dock 물건이 버퍼로 나오고, 그것은 다음에 불러올 때 가방에서 목재로 바뀐다.",
-   "why": "내 섬 선착장 자리 = 처음 나는 자리에서 가장 가까운 바다 쪽 물가(islands.json dock_near_spawn, Islands.SHORE_DIRECTIONS 72) — 사람이 자리를 아직 안 정했다; 옛 선착장 하나를 목재 20개로 돌려준다(OldItems.REFUNDED) — 옛 레시피 재료 그대로. 돌려주는 법은 spec 에 없다; 옛 저장본에 놓인 선착장은 그 자리에 상자를 세워 재료를 담는다(OldItems.dock_chests) — 재료가 소리 없이 사라지지 않게",
-   "files": [
-    "game/world/frontier_islands/islands.json",
-    "game/world/frontier_islands/islands.gd",
-    "game/world/frontier_islands/dock.gd",
-    "game/world/frontier_islands/dock_builder.gd (지움)",
-    "game/world/frontier_islands/island_state.gd",
-    "game/world/terrain/test_island.gd",
-    "game/settings/save/old_items.gd",
-    "game/settings/save/world_data.gd",
-    "game/core/net/net_world.gd",
-    "game/craft/recipes/workbench.json",
-    "game/player/inventory_hotbar/weights.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "spec/03_world/frontier-islands.md",
-    "spec/11_multiplayer/netcode.md",
-    "game/tests/world/frontier_islands/test_fixed_dock.gd (새로)",
-    "game/tests/world/frontier_islands/test_dock_building.gd (지움 — 몸통 검사는 test_fixed_dock 으로 옮김)",
-    "game/tests/world/frontier_islands/test_voyage.gd",
-    "game/tests/craft/test_from_empty_hands.gd",
-    "game/tests/settings/save/test_round_trip.gd",
-    "game/tests/settings/save/test_broken_stays_broken.gd",
-    "game/tests/multiplayer/test_build_on_server.gd",
-    "game/tests/multiplayer/build_island.gd",
-    "game/tests/build/test_placeable.gd",
-    "game/tests/build/test_collapse_takes_everything_placed.gd",
-    "game/tests/world/terrain/test_island_walk.gd",
-    "game/tests/world/storage/test_reach_temporary_notes.gd",
-    "game/tests/world/frontier_islands/test_locked_island.gd",
-    "game/tests/craft/stations/test_stations_aim_one_path.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": false,
-     "criterion": "집 섬에도 개척 섬처럼 선착장이 **처음부터 한 곳**에 박혀 있다(못 부순다). 자리는 사람이 아직 안 정했다 — 처음 나는 자리 가까운 물가(임시)로 하고 spec 에 「임시」로 적는다",
-     "evidence": "박힌 자리는 확인된다 — test_voyage.gd test_my_island_has_its_dock_fixed_from_the_start 가 진짜 섬에서 island.dock 이 처음부터 서 있고 dock_spot 자리인지 보고, test_fixed_dock.gd test_my_islands_dock_is_fixed_near_the_spawn 이 스폰에서 가장 가까운 바다 + DOCK_INLAND_REACH 안쪽 · 옛 자리보다 가깝다는 것을 본다. spec(frontier-islands.md 미정 · 규칙)과 islands.json _temporary 에 임시가 적혔다. 그러나 「못 부순다」를 동작으로 보는 테스트가 없다: 옛 test_voyage 의 「쳐도 부서지지 않는다 · 대수도 깎이지 않는다」 단언을 지우고, 남은 것은 dock_builder.gd 파일이 없다는 것(test_nothing_places_a_dock)뿐이다. Dock 은 여전히 Placeable.GROUP 에 들고 placed_item()='dock' 이라 Placeable.hit_all 에 넘기면 부서지는 몸이다 — 내 섬 선착장 기둥을 진짜로 쳐서 그대로인지 보는 테스트가 없다"
-    },
-    {
-     "ok": false,
-     "criterion": "선착장 레시피 · 놓기를 뺀다. 옛 저장본에 놓아 둔 선착장 · 가방의 선착장 물건이 있어도 읽힌다 — 놓인 것은 지우고 재료를 그 자리 상자/가방으로 돌려준다(임시) (테스트)",
-     "evidence": "레시피 · 놓기는 빠졌다(test_no_recipe_makes_a_dock · test_nothing_places_a_dock). 놓인 것 → 그 자리 목재 20 상자(test_an_old_placed_dock_turns_into_a_chest_of_its_wood), 가방 · 상자 칸 · 바닥 → 목재(test_an_old_dock_item_is_read_as_its_wood)는 진짜 단언으로 본다. 그러나 옛 저장본의 제작대 길이 빠졌다: crafting_station.gd restore_work(264 · 283)는 OldItems.is_dropped 만 보고 entry_of 를 거치지 않아, 저장된 job.output='dock'(만들던 중) · 버퍼의 {item:'dock'} 이 그대로 살아난다. 꺼내면 가방에 'dock' 물건이 들어가는데 이번에 번역 키(ITEM_dock) · 무게(weights.json dock)를 지웠으므로 이름 없는 · 무게 없는 물건이 되고, 다음 불러오기 전까지 재료로 바뀌지 않는다. 보고서도 「남긴 것」으로 인정했다 — 옛 저장본의 선착장 물건이 재료로 돌아오지 않는 길이 남았다"
-    }
-   ],
-   "issues": [
-    "선착장 「못 부순다」 테스트가 없다 — tests/world/frontier_islands/test_voyage.gd(진짜 섬)에 내 섬 선착장 기둥(PillarL)을 조준하고 진짜 좌클릭(도끼 · 맨손 둘 다)을 Placeable.HITS+1 번 넣은 뒤 island.dock 이 is_instance_valid 하고 같은 자리이며 Placeable.hits_left(island.dock) == Placeable.HITS 이고 바닥에 dock 물건이 안 떨어졌는지 단언하라. 개척 섬 선착장도 같은 단언을 되살려라(옛 test_voyage 에 있던 것을 지웠다). 부술 수 있게 바꾸면(예: Buildings 가 Dock 도 hit_all 하게) 깨지는지 한 번 확인하라",
-    "옛 제작대의 선착장이 재료로 안 바뀐다 — craft/stations/crafting_station.gd restore_work 에서 saved_job.output 이 OldItems.REFUNDED 에 있으면 그 일을 버리고 재료(목재 20 × count)를 버퍼로, 버퍼 칸은 OldItems.entry_of 를 거쳐 넣어라(칸 한도 BUFFER_STACK 넘침 처리 포함). 테스트: tests/world/frontier_islands/test_fixed_dock.gd 에 Stations.restore([{kind='workbench', job={output='dock', count=1, left=2.0, total=5.0}, buffer=[{item='dock', count=1}]}]) 를 넣고 버퍼에 dock 이 없고 wood 가 들었는지 · 다 돌린 뒤에도 dock 이 안 나오는지 단언하라",
-    "spec 에 낡은 부수기 규칙이 남았다 — spec/03_world/frontier-islands.md 「선착장은 물가 쪽 기둥을 겨눠 부순다 (사람 결정 2026-09-22)」 줄은 이제 모든 선착장이 안 부서지므로 맞지 않는다. 지우지 말고 2026-09-21 줄처럼 취소선 + 「2026-10-16 결정으로 부술 선착장이 없다 — 몸통이 기둥에만 있는 것(내리는 자리를 비운다)은 그대로」로 표시하라",
-    "사람 결정 아래 줄 하나를 지웠다 — spec/03_world/frontier-islands.md 의 2026-09-21 결정 밑 「물가에만 놓인다. 「내 섬 = 원정 선착장이자 남이 찾아오는 항구」(00_core/vision.md)를 제 손으로 짓는 것이다」를 통째로 지웠다. 위 줄처럼 취소선으로 남겨라(「항구」 뜻은 vision.md 와 이어져 있다)"
-   ],
-   "good": []
-  },
-  "test": "oing_keeps.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/multiplayer/test_looks_seen.gd\nok      2s  res://tests/multiplayer/test_server_from_game.gd\nok      2s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_barn_window.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    432s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           210\nTests            1736\nPassing Tests    1736\nFailing Tests       0\nRisky/Pending       0\nAsserts         62965\nTime           432s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-16 01:08:17",
   "epoch": 1792080497,
   "type": "pass",
@@ -8993,5 +8924,41 @@
   },
   "test": "player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/player/inventory_hotbar/test_no_item_load.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      3s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           563\nTests            4226\nPassing Tests    4226\nFailing Tests       0\nRisky/Pending       0\nAsserts        203724\nTime           811s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "a3f3d137"
+ },
+ {
+  "time": "2026-10-22 20:48:24",
+  "epoch": 1792669704,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-285 단계 1 (시도 1)",
+  "group": "G-285",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "드릴 아이템(핫바 도구) — 좌클릭을 누르는 동안 0.15초마다 보는 쪽으로 반지름 1.5m 씩 판다. 떼면 · 창이 뜨면 · 다른 칸을 들면 멈춘다. 규칙 · 서버 파기 · 권한은 삽 그대로. 바뀐 곳만(229 파일 · 1841 테스트) 돌려 test_tool_recipes 2개가 떨어졌고, 고친 뒤 그 파일과 드릴 테스트를 다시 돌려 18개 다 통과",
+   "approach": "드릴은 따로 손을 만들지 않고 삽의 손(Shovel)에 「누르고 있는 동안」을 더했다. tools.json 에 drill 한 줄을 적었다(digs + drills 0.15). Shovel 은 _drill_down 으로 누름을 기억하고 _process 에서 간격마다 use 를 부른다. 떼는 입력 · 조작 잠김(창) · 손에 든 것이 바뀌는 것으로 풀리고, 다시 눌러야 판다(Attack._trigger_down 과 같은 길). 간격은 _swing_left 하나가 막아서 참가자가 서버에 보내는 수도 틈마다 한 번이다. 파기 규칙은 VolcanoDig.try_dig 에 drill 갈래를 더했다: 반지름 1.5m 공을, 겉 방향 대신 보는 쪽으로 0.6m 파고들게 둔다. 금지 구역 · 바닥 · 건물 · 선착장 · 손 닿는 거리 검사는 삽과 같은 길을 지난다. 서버(_dig)는 RPC 를 바꾸지 않고, 그 사람 사본 손에 든 것이 드릴인지 보고 크기를 정한다. 막혔던 곳: 처음에는 조준점(카메라 광선)을 팠더니, 카메라가 머리 위 어깨 너머라 똑바로 옆을 봐도 굴 가운데가 발 위 2m 였다. 그래서 0.5m 턱이 서고 걸어 들어갈 때마다 굴이 솟았다(잰 것). 드릴은 몸(발 위 1.2m)에서 보는 쪽으로 처음 닿는 땅을 파게 바꿨다(Shovel._bore, 딥락 드릴처럼). 높이는 1.5 → 1.1 → 1.2 로 맞췄다: 1.5 는 솟고 1.1 은 꺼졌다. 이제 수평 굴 12.7m 를 걸어 들어가는 동안 높이가 0.47m 만 내려간다. 10초 드릴(headless, 비스듬히 내려가며 32번 팜)에서 가장 긴 프레임은 37.8ms 였다(1367 프레임). 기준에 「드릴 레시피 없음」이 있어서, 도구마다 레시피를 요구하던 test_tool_recipes 에 NO_RECIPE_YET(drill)를 두고 낡지 않게 검사를 더했다. test_no_shovel 의 「파는 도구는 삽 하나」는 삽 · 드릴 둘로 고쳤다. ESC 목차의 world 에 드릴 한 줄 · spec frontier-islands 「삽」 밑에 드릴 한 줄을 더했다. 드릴 우클릭은 삽처럼 쌓는다(삽 크기). 키 묶음이 삽과 같아 「쌓기」 줄이 그대로 맞는다",
+   "why": "드릴 간격 0.15초 (tools.json drills) — current.md 의 임시 값; 드릴 한 번 반지름 1.5m (VolcanoDig.DRILL_RADIUS) — current.md 의 임시 값. 지름 3m 라 사람이 들어간다; 드릴 한 번 파고드는 깊이 0.6m (VolcanoDig.DRILL_DEPTH) — 누르는 동안 초당 4m 남짓 나아간다; 드릴이 파고드는 높이 발 위 1.2m (Shovel.BORE_HEIGHT) — 수평 굴이 솟지도 꺼지지도 않게 재서 맞춘 값; 드릴 손 모양 0.14×0.45×0.14m 상자 · 색 c89a3c — 아트는 프로토타입 범위 밖; 드릴 우클릭 = 삽 크기 한 번 쌓기 — 사람이 드릴 우클릭을 정하지 않아 키 묶음(삽)을 그대로 따랐다",
+   "files": [
+    "game/combat/tools_as_weapons/tools.json",
+    "game/combat/tools_as_weapons/tool_catalog.gd",
+    "game/player/inventory_hotbar/items.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/world/terrain/shovel.gd",
+    "game/world/terrain/volcano_dig.gd",
+    "game/world/terrain/voxel_ground.gd",
+    "game/world/terrain/test_island.gd",
+    "game/core/net/net_world.gd",
+    "game/ui/manual/manual_toc.json",
+    "spec/03_world/frontier-islands.md",
+    "game/tests/world/terrain/test_drill.gd",
+    "game/tests/world/terrain/test_drill_tunnel.gd",
+    "game/tests/multiplayer/test_dig_on_server.gd",
+    "game/tests/multiplayer/dig_island.gd",
+    "game/tests/combat/tools_as_weapons/test_no_shovel.gd",
+    "game/tests/craft/recipes/test_tool_recipes.gd"
+   ],
+   "decision": null
+  },
+  "test": "'.\n    [1422] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1423] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1424] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1425] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1426] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1427] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1428] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1429] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1430] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1431] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1432] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1433] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1434] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1435] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1436] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1437] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1438] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1439] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1440] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1441] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1442] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1443] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1444] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1445] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1446] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1447] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1448] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1449] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1450] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1451] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1452] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1453] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1454] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1455] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n    [1456] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1457] <engine-2>Invalid access to property or key 'voxel_ground' on a base object of type 'Nil'.\n          at line 142\n\nTotals\n------\nScripts               1\nTests                 6\nPassing Tests         5\nFailing Tests         1\nAsserts           47/51\nTime              17.683s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           229\nTests            1842\nPassing Tests    1841\nFailing Tests       1\nRisky/Pending       0\nAsserts         50555\nTime           441s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/multiplayer/test_dig_on_server.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\ntest.sh: 스크립트 오류가 있다\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
