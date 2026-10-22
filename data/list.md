@@ -4979,7 +4979,7 @@
   - 기준: facilities.md 가 148줄로 한도 턱밑이다 — spec/05_craft/facilities.md 가 150줄 한도까지 2줄 남았다. 다음에 이 파일에 줄을 더할 일이 생기면 지열 절을 03_world/frontier-islands.md 쪽으로 넘기거나 자리 규칙 절을 따로 나눠라 (막는 것은 아니다)
 
 ## [ ] G-290 온천 — 설치물을 놓으면 주민 스트레스가 내려간다
-- 차선: 3d-lane2
+- 차선: 3d-lane2 · 시작 2026-10-23 04:30
 - 순서: G-289 뒤
 - spec: spec/07_automation/villager-persona.md (스트레스), spec/05_craft/facilities.md
 - **사람 요청 2026-10-23** (원문 그대로): 「6. 온천은 스팟이 있고 거기에 설치물을 설치함. npc가 사용하면 npc 스트레스 감소」
