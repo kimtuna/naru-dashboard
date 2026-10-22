@@ -1,44 +1,5 @@
 [
  {
-  "time": "2026-10-16 06:44:16",
-  "epoch": 1792100656,
-  "type": "fail",
-  "title": "차선 합치기 실패 — 3d-lane2(d7e66177) → 3d-start",
-  "group": "G-227",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "처음 보는 몸은 STEADY_EVERY 번 내리 전부(이름·외형·입은 것)를 싣는다 — 첫 소식을 잃어도 다음 소식에 서 있다. performance.md 사람당 표를 고친 뒤 60초 한 재기로 갈았다. 바뀐 곳 17파일 90개 통과",
-   "approach": "서버는 처음 보는 몸에 전부를 한 번 싣고 곧바로 _told[id][who]=true 로 적었다. _snapshot 은 unreliable 이라 그 한 번을 잃으면 다음 소식에 n·a·e 가 없어 1초 동안 기본 외형 · 맨몸으로 그렸다. _told 의 값을 true 대신 「전부를 더 실을 횟수」로 바꿔 처음 보는 몸은 STEADY_EVERY(10)번 내리 전부를 싣는다 — 그 뒤는 전과 같다. 테스트하려고 보낼 것을 고르는 부분을 _outgoing(members, where, mine) 으로, 받는 쪽 채우기를 static _received 로 떼었다(보내는 내용 · 순서는 그대로). 새 테스트는 첫 _outgoing 결과를 버리고 2~9번째 소식마다 이름 · 외형 · 입은 것이 있는지, 그 소식으로 VisitorBody 를 그려 이름표 · 외형 · 입은 것 · 자리가 서는지, 10번이 지나면 다시 바이트 한 줄만 가는지 본다(고치기 전 코드면 두 번째 소식에 n 이 없어 떨어진다). QA 두 번째: NARU_PERF_SECONDS=60 으로 고친 뒤 다시 재어 「사람당」 표 전체를 그 한 재기 숫자로 갈았고(서버 보냄 4.0 KB/s · RPC 23.0/s · 받음 17.2/s, 참가자 보냄 0.53 · 받음 2.0 KB/s · RPC 받음 11.5/s), 고치기 전 5분 숫자는 표 아래 한 줄로 옮겼다. _snapshot 은 2.57 KB/s 로 고치기 전과 같다 — 1초 전부 싣기는 들어올 때뿐이다. 전체 테스트는 돌리지 않았다 — 바뀐 곳(changed_tests) 17파일 90개 통과",
-   "why": "",
-   "files": [
-    "game/core/net/net_bodies.gd",
-    "game/tests/multiplayer/test_send_less.gd",
-    "spec/00_core/performance.md",
-    "spec/11_multiplayer/netcode.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "몸 첫 소식을 잃으면 이름·외형이 1초 빈다 — net_bodies.gd _send_to_members 는 처음 보는 몸에 전부를 한 번 싣고 곧바로 _told[id][who]=true 로 적는데, _snapshot 은 unreliable 이라 그 한 번을 잃을 수 있다. … test_send_less 에 「첫 _snapshot 하나를 버린 뒤에도 이름표 · 외형이 다음 소식에 서 있다」 단언을 더하라",
-     "evidence": "_told 값이 남은 횟수(기본 STEADY_EVERY=10)가 되어 처음 보는 몸은 10번 내리 전부를 싣는다(left>0 검사가 먼 몸 분기보다 앞이라 먼 몸도 전부). 보내는 내용·순서는 그대로, _outgoing/_received 로 떼기만 했다. test_send_less::test_a_lost_first_snapshot_still_brings_name_and_look_next_time 은 _ticks=1(1초 차례 아님)의 첫 소식을 버리고 2~9번째마다 n·a·e 를 보고, VisitorBody.apply 로 이름표·외형·입은 것·placed() 를 보고, 10번 뒤에는 PackedByteArray 만 가는지 본다. 일부러 깨 봄: told.get(who, STEADY_EVERY) → told.get(who, 1)(고치기 전과 같은 꼴)로 바꾸니 이 테스트가 떨어졌다(8개 중 1개 실패) — 되돌린 뒤 diff 가 원래대로인지 확인했다. 전체 402파일 2969개 통과 · guard 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) performance.md 사람당 표에 창이 섞였다 — … 다음 재기 때 표 전체를 같은 창 · 같은 시점(고친 뒤) 숫자로 갈거나, 「RPC 받음」 열이 어느 재기(전/나)인지 표 아래 줄에 적어라",
-     "evidence": "표 제목이 「G-227.3 — 고친 뒤 60초 창 한 번, 표 전체가 같은 재기」로 바뀌고 다섯 열 모두 갈렸다. 고치기 전 5분 숫자는 표 아래 한 줄로 옮겼다. QA 가 NARU_PERF_SECONDS=60 으로 test_net_measure 를 다시 돌려 PERF 줄을 보니 서버 보냄 3999 · 받음 1065 B/s · RPC 23.0/s, 참가자 보냄 533 · 받음 1996~2005 B/s · RPC 받음 11.5~11.6/s, 참가자 RPC 보냄 8.6/s(서버 받음 17.2 = 8.6×2), _snapshot 2561 B/s — 표 숫자와 맞는다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "ests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/recipes/test_workbench_gear.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           402\nTests            2969\nPassing Tests    2969\nFailing Tests       0\nRisky/Pending       0\nAsserts        128632\nTime           739s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-16 06:44:18",
   "epoch": 1792100658,
   "type": "stop",
@@ -8761,5 +8722,53 @@
    "decision": null
   },
   "test": "ld_data_keys_note.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      1s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\n\n================ 떨어진 파일: res://tests/ui/theme/test_ui_theme.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/ui/theme/test_ui_theme.gd\n* test_the_theme_is_the_project_theme\n* test_colors_gaps_slot_size_and_font_live_in_the_theme\n* test_no_ui_scene_writes_its_own_color_gap_or_font\n* test_no_hud_script_writes_a_color_value\n    [Failed]:  res://ui/hud/pitch_gauge.gd 가 색 값을 적는다: const LINE_COLOR := Color(1, 1, 1, 0.75)\n      at line 98\n    [Failed]:  res://ui/hud/pitch_gauge.gd 가 색 값을 적는다: const MARK_COLOR := Color(1.0, 0.75, 0.2, 0.95)\n      at line 98\n* test_window_scenes_do_not_write_sizes_the_theme_holds\n* test_the_stamina_bar_width_is_written_once\n* test_the_stamina_bar_follows_its_own_width\n* test_every_window_uses_the_theme_slot_size\n* test_every_window_title_uses_the_theme_font_size\n* test_every_window_box_uses_the_theme_gap\n* test_slot_colors_come_from_the_theme\n10/11 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/ui/theme/test_ui_theme.gd\n- test_no_hud_script_writes_a_color_value\n    [Failed]:  res://ui/hud/pitch_gauge.gd 가 색 값을 적는다: const LINE_COLOR := Color(1, 1, 1, 0.75)\n          at line 98\n    [Failed]:  res://ui/hud/pitch_gauge.gd 가 색 값을 적는다: const MARK_COLOR := Color(1.0, 0.75, 0.2, 0.95)\n          at line 98\n\nTotals\n------\nScripts               1\nTests                11\nPassing Tests        10\nFailing Tests         1\nAsserts           10415/10417\nTime              0.875s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           399\nTests            3230\nPassing Tests    3229\nFailing Tests       1\nRisky/Pending       0\nAsserts        172195\nTime           667s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/ui/theme/test_ui_theme.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-23 03:29:33",
+  "epoch": 1792693773,
+  "type": "pass",
+  "title": "통과 — G-287 단계 2 (기울기(pitch) 표시 — 드릴을 든 동안)",
+  "group": "G-287",
+  "step": "2",
+  "attempt": "2",
+  "report": {
+   "problem": "드릴을 든 동안 화면 가운데에 기울기(pitch) 숫자 「−12°」와 10°마다의 수평선 눈금을 띄운다 (1인칭 · 3인칭 모두, 내려놓거나 창이 뜨면 숨는다). drill_fp 찍는 자리는 8° 내려다봐 부스러기와 「−8°」가 보인다. 전체(파일 577개 · 테스트 4289개) 통과",
+   "approach": "앞 시도는 기울기 표시(PitchGauge — 가운데 숫자 + 미끄러지는 눈금줄, Shovel 이 프레임마다 조준 방향의 위아래 각을 넣는다)를 다 만들었으나 test_ui_theme 의 「HUD 코드에 색 값을 적지 않는다」에 걸렸다 — pitch_gauge.gd 가 Color(...) 를 상수로 적었다. 두 색을 테마 Palette(pitch_line · pitch_mark)로 옮기고 다른 HUD 처럼 UiTheme.color 로 꺼낸다. 앞 단계 QA 흠(drill_fp 주석과 그림의 부스러기)은 찍는 자리가 8° 내려다보게 해 풀었다 — .loop/out/shots_g287_2/drill_fp.png 에 굴 바닥의 부스러기 · 오른쪽 아래 드릴 · 가운데 「−8°」와 눈금이 보인다. 바뀐 곳 그물을 반으로 나누려던 split 이 맥에서 실패해 목록이 비었고, 그래서 전체가 돌았다: test.log 「파일 577 개」 · Tests 4289 · 떨어짐 0 (.loop/out/g287_2_changed_a.log).",
+   "why": "기울기 표시 모양 · 크기 — 1°=2px · 눈금 10° 마다 · 위아래 반 높이 70px · 수평 줄 반 너비 60px · 나머지 34px · 시선 표시 70~90px (pitch_gauge.gd) — 조준점 둘레만 쓰게 작게 고른 값; pitch_line · pitch_mark 색 (naru_theme.tres) — 흰 반투명 · 금빛, 눈에 띄게 고른 값",
+   "files": [
+    "game/ui/hud/pitch_gauge.gd",
+    "game/ui/theme/naru_theme.tres",
+    "game/world/terrain/shovel.gd",
+    "game/player/movement_controls/player.tscn",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/core/debug/shots.gd",
+    "spec/03_world/frontier-islands.md",
+    "game/tests/world/terrain/test_drill_pitch.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "드릴을 든 동안 화면에 지금 보는 위아래 각도가 보인다 — 숫자(예: 「−12°」, 수평 0 · 위 + · 아래 −) 와 가운데의 수평선 눈금 (딥락 드릴러처럼) · 1인칭 · 3인칭 모두 · 드릴을 내리면 사라진다 (테스트 + 찍는 자리)",
+     "evidence": "tests/world/terrain/test_drill_pitch.gd — 실제 플레이어 HUD/Pitch 를 Shovel 이 움직이는 길 그대로 본다: 맨손 숨김 → 드릴 1인칭에서 set_look −12°/+20°/0° 에 「−12°」「+20°」「0°」 · horizon_offset 부호, switch_view 로 3인칭에서 「−30°」, 삽·빈손으로 바꾸면 숨고 다시 들면 보임, 창 잠금 때 숨음. format 의 부호·반올림·수학 빼기표도 따로 본다. test.log 에서 통과(3233/3233). 찍는 자리 .loop/out/shots_g287_2/drill_fp.png 에 「−8°」와 조준점 위로 비켜선 수평 줄 · 10° 눈금이, drill.png(3인칭)에 「0°」와 조준점 높이의 수평 줄이 보인다. 색은 테마 Palette(pitch_line · pitch_mark)로 옮겨 test_ui_theme 도 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) drill_fp 찍는 자리 주석과 그림이 어긋난다 — core/debug/shots.gd 의 drill_fp 주석은 「판 자리 부스러기가 보이는지」 본다고 하는데 .loop/out/shots_g287_1/drill_fp.png 에는 부스러기가 안 보인다(막는 것은 아니다 — 기준은 드릴 · 굴 안만 요구). 찍기 전에 몇 프레임 더 누르게 하거나 주석에서 부스러기를 빼라",
+     "evidence": "shots.gd 가 drill_fp 에서 DRILL_FP_PITCH −8° 로 내려다보게 했고, 주석도 그렇게 고쳤다. 새 drill_fp.png 에서 굴 바닥과 조준점 둘레에 회색 부스러기 조각이 여럿 보인다"
+    }
+   ],
+   "issues": [
+    "수평선 그림을 테스트가 지키지 않는다 — pitch_gauge.gd 의 horizon_offset() 은 _deg*PX_PER_DEG 를 따로 셈할 뿐이고 _draw() 는 그것을 쓰지 않고 (_deg - k)*PX_PER_DEG 를 다시 셈한다. 그래서 _draw 의 눈금줄을 지워도 test_drill_pitch 가 통과한다(이번 기준은 찍는 자리 그림으로 확인했다). _draw 가 그릴 줄의 y 목록을 내는 함수(예: rung_offsets() → {각: y})를 만들어 _draw 가 그것으로 그리게 하고, 테스트에서 −12° 일 때 0° 줄이 y=−24 · 10° 줄이 y=−44 에 있고 보이는 반 높이(70px) 밖의 줄은 없는지 단언하라",
+    "테마의 기울기 색에 「임시」 표시가 없다 — naru_theme.tres 의 pitch_line · pitch_mark 는 report 에서 임시라 했지만 pitch_gauge.gd 의 색 상수 주석(「테마의 Palette 에서 꺼낸다」)이나 spec 드릴 줄(「모양 · 크기 임시」)에는 색이 임시라는 말이 없다. spec/03_world/frontier-islands.md 기울기 줄을 「모양 · 크기 · 색 임시」로 고쳐라"
+   ],
+   "good": []
+  },
+  "test": "recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_pitcher_pump_g273.gd\nok      3s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      2s  res://tests/life/hunting/test_summon.gd\nok      3s  res://tests/life/hunting/test_captive_age.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      3s  res://tests/life/medicine/test_medicine.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      3s  res://tests/life/ranching/test_bird_cage_five.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/life/ranching/test_shearing.gd\nok      1s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/equipment/test_armor_health.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/test_translation.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           400\nTests            3233\nPassing Tests    3233\nFailing Tests       0\nRisky/Pending       0\nAsserts        172218\nTime           668s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "001855a6"
  }
 ]
