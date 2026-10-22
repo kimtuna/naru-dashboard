@@ -4851,7 +4851,7 @@
 - [x] 3. (앞 단계 QA) 멀티 건축 테스트가 전체 실행에서 떨어진다
   - 기준: 멀티 건축 테스트가 전체 실행에서 떨어진다 — tests/multiplayer/test_build_on_server.gd 의 test_breaking_a_foundation_collapses_what_stood_on_it_for_both 가 전체(엔진 6개 동시)에서 'slot' on Nil · 'buildings' on Nil · _pieces(hi)[0] Out of bounds(350줄)로 떨어졌고, 따로 돌리면 13/13 통과한다. 이번 변경(armor_modules.gd)과 닿는 곳이 없다 — 앞 회차에도 같은 파일이 떨어졌다. 349줄 Sides.wait_until 이 시간을 넘겨도 assert 만 실패하고 350줄이 빈 배열을 집어 연쇄 오류가 난다: _pair() 접속을 기다리는 시간을 늘리거나, wait_until 이 거짓이면 return 해 뒤 줄이 Nil 을 안 집게 하라. 부하에서 떨어지지 않는지 전체 실행으로 확인하라
 
-## [ ] G-283 굳은 용암이 땅이 된다 — 밟고 깬다
+## [x] G-283 굳은 용암이 땅이 된다 — 밟고 깬다
 - 차선: 3d-lane2 · 시작 2026-10-22 17:39
 - spec: spec/03_world/frontier-islands.md 「분출과 용암」
 - **사람 결정 2026-10-22** (원문 그대로): 「부착하면 화산이 굳는걸 캔다거나 땅을 캔다거나 할 수 있어」 — 굳은 용암을 캐려면 캘 것이 있어야 한다
