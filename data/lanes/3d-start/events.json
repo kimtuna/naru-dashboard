@@ -1,84 +1,5 @@
 [
  {
-  "time": "2026-10-15 22:30:34",
-  "epoch": 1792071034,
-  "type": "pass",
-  "title": "통과 — G-222 단계 6 (Steam — 끌 때 충돌 · 「접속하는 중」이 끝나지 않는다)",
-  "group": "G-222",
-  "step": "6",
-  "attempt": "1",
-  "report": {
-   "problem": "끄는 길을 한 곳(core/app_quit.gd)으로 모아 창을 먼저 숨기고 저장 → 접속 닫기·비우기 → 로비 나가기 → steamShutdown → 끄기 차례로 끄고, 5초 시한 · Steam 참가 15초 포기 · 중계망 미리 재기 · 주민 회전 부드럽게 · netcode.md 주민 줄 고침",
-   "approach": "참가자가 붙은 채 엔진이 내려가면 GodotSteam 이 엔진 정리 중에 죽었다. 끄는 길(게임 안 창 X · ESC 「게임 끄기」 · 메인 화면 창 X · 「끝내기」)을 모두 AppQuit.finish 로 모았다: 판 거두기(NetSession.leave — 차례를 바꿔 접속 close → multiplayer_peer 비우기 → 로비 나가기) → SteamApi.shutdown(steamShutdown, 한 번만) → 엔진 끄기. 메뉴 화면도 auto_accept_quit 를 끄고 닫기 알림을 받는다(게임 화면이 나갈 때 더는 true 로 되돌리지 않는다 — 옛 테스트 단언을 고쳤다). X 를 누르면 창을 곧바로 숨기고 소리를 끈 뒤(headless 에서는 하지 않는다) 사본 기다리기 → 저장 → 정리 → 끄기; 기다림이 5초(임시)를 넘으면 그때까지 받은 것으로 저장하고 끈다. 게임으로 넘긴 메뉴가 사라지기 전 한 프레임에 닫기 알림을 받으면 메뉴까지 엔진을 끄던 경합을 찾아 막았다(is_queued_for_deletion). Steam 참가는 로비에 들어간 뒤 15초(임시) 안에 월드를 못 받으면 「접속하지 못했다」로 돌아오고 로비에서 나온다. SteamApi.start 를 attach(싱글턴)로 나눠 붙자마자 initRelayNetworkAccess 를 한 번 부른다(가짜 싱글턴으로 테스트). 앞 단계 QA: 주민(Villager.walker)은 PathWalk.turn_rate 로 lerp_angle 하며 돈다 — 90° 꺾임에서 한 틱 최대 20° 아래, 짐승은 그대로 곧바로. netcode.md 65줄을 한 줄 안에서 고쳤다(150줄 유지). 충돌이 실제로 사라졌는지 · root 창 숨기기가 macOS 에서 실제로 창을 감추는지는 진짜 Steam · 창으로 사람이 봐야 한다.",
-   "why": "AppQuit.DEADLINE 5초 — 숨긴 채 끄기를 기다리는 가장 긴 시간 (사본 기다리기 1.5초 + 저장이 넉넉히 들어가게); NetSession.STEAM_JOIN_GIVE_UP 15초 — Steam 로비에 들어간 뒤 월드를 기다리는 시간 (붙는 데 3~8초 걸렸다); PathWalk.TURN_RATE 10/초 — 주민이 보는 쪽을 돌리는 빠르기 (60틱에서 90° 꺾임이 15°로 시작해 0.3초쯤에 다 돈다)",
-   "files": [
-    "game/core/app_quit.gd",
-    "game/core/game_root.gd",
-    "game/ui/menu/menu_root.gd",
-    "game/core/net/steam_api.gd",
-    "game/core/net/net_session.gd",
-    "game/core/path_walk.gd",
-    "game/automation/villagers/villager.gd",
-    "game/tests/core/net/fake_steam.gd",
-    "game/tests/core/net/test_steam_quit.gd",
-    "game/tests/core/test_path_walk_turn.gd",
-    "game/tests/settings/save/test_close_window_save.gd",
-    "spec/11_multiplayer/netcode.md",
-    "spec/01_settings/save.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "끄는 길(창 X · 메뉴의 끝내기 · 판에서 나가기)이 모두 한 곳을 지난다 — Steam 판이면 접속을 닫고 · `multiplayer_peer` 를 비우고 · 로비에서 나가고 · `steamShutdown` 을 부른 **뒤** 엔진을 끈다 (창 X 는 `auto_accept_quit` 를 끄고 닫기 요청을 받아서). 차례는 가짜 Steam 으로 테스트한다 — 충돌이 사라졌는지는 사람이 본다",
-     "evidence": "GameRoot._finish_quit · MenuRoot._on_quit 둘 다 AppQuit.finish 로 간다. test_steam_quit 의 다섯 테스트(참가자 창 X · ESC 게임 끄기 · 메뉴 창 X · 끝내기 · 붙던 중 메뉴 X)가 hide→save→leave_lobby(그 순간 접속 DISCONNECTED·peer 비었음 확인)→shutdown→quit 차례와 auto_accept_quit=false 를 단언한다. 일부러 깨 봄: leave() 에서 leave_lobby 를 close 앞으로 옮기면 '(접속 닫힘)' 단언이 떨어지고, AppQuit.finish 에서 shutdown 을 quit 뒤로 옮기면 5개가 떨어졌다 (되돌림)"
-    },
-    {
-     "ok": true,
-     "criterion": "X 를 누르면 **창이 곧바로 사라진다**(숨기기 — 꺼진 것처럼 보인다). 그 뒤 뒤에서 저장 → Steam 정리(위 차례) → 끈다. 숨긴 동안에도 저장이 끝나기 전에는 끄지 않는다 (테스트: 닫기 알림 뒤 창이 숨고 · 저장본이 쓰이고 · 그다음 끈다)",
-     "evidence": "test_close_window_save::test_the_window_hides_first_and_quits_after_the_save 가 hide 시점엔 저장본에 칸이 없고 quit 시점엔 있음을 저장본을 직접 읽어 확인. test_steam_quit 차례 단언에도 hide 가 맨 앞. AppQuit.hide_window 는 root.visible=false + 소리 끔(headless 제외) — 실제 창이 숨는지는 사람이 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "메뉴 화면(게임 밖)에서 X 로 꺼도 Steam 정리를 지난다 — 지금은 메인 화면이 auto_accept_quit 로 그냥 꺼진다(game_root.gd:229)",
-     "evidence": "MenuRoot._enter_tree 가 auto_accept_quit 를 끄고 _notification 이 닫기 요청을 받는다. test_closing_the_main_menu_lets_go_of_steam 이 auto_accept_quit=false 와 [hide, shutdown, quit] (두 번 보내도 한 번)을 단언. 옛 test_the_game_takes_over_the_close_request 단언도 새 방침에 맞게 고쳤다"
-    },
-    {
-     "ok": true,
-     "criterion": "끄는 데 오래 걸려도(사본 기다리기 1.5초 + 저장) 정해 둔 시간(임시 5초)이 넘으면 저장을 마친 것까지로 끈다 — 숨긴 채 영영 남지 않는다",
-     "evidence": "AppQuit.DEADLINE 5.0 (임시 표시). test_a_slow_quit_still_ends_at_the_deadline 이 before_save 를 1초로, 시한을 0.2초로 놓고 0.6초 안에 한 번 끄며 끌 때 저장본이 쓰였고 기다림이 끝나도 다시 끄지 않음을 단언. 타이머는 process_always·시간 배율 무시"
-    },
-    {
-     "ok": true,
-     "criterion": "Steam 으로 붙을 때도 포기 시간이 있다 — 로비에 들어간 뒤 일정 시간(임시 15초) 안에 월드를 못 받으면 「접속하지 못했다」로 돌아온다 (테스트: 가짜 Steam 이 답하지 않을 때)",
-     "evidence": "NetSession.STEAM_JOIN_GIVE_UP 15.0(임시). fake_steam.silent 가 답하지 않는 UDP 로 잇는다. test_a_silent_steam_join_gives_up 이 0.5초로 줄여 2.5초 안(ENet 자체 포기 전)에 MENU_NET_JOIN_FAILED 와 leave_lobby 를 단언. 일부러 깨 봄: 타이머를 지우면 5초 넘게 MENU_NET_JOINING 에 머물러 떨어졌다 (되돌림)"
-    },
-    {
-     "ok": true,
-     "criterion": "Steam 에 붙을 때 `initRelayNetworkAccess` 를 한 번 불러 중계망을 미리 잰다 (첫 접속이 빨라진다)",
-     "evidence": "SteamApi.attach 가 steamInitEx 직후 부른다. test_attaching_to_steam_warms_up_the_relay_once 가 가짜 싱글턴 호출 목록 [steamInitEx, initRelayNetworkAccess] · start 다시 불러도 한 번 · steamShutdown 한 번을 단언"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) netcode.md 주민 줄이 옛 방식을 적는다 — spec/11_multiplayer/netcode.md:65 「받은 자리로 다가간다」를 「받을 때 보이던 자리에서 새 모습까지 FOLLOW_TIME(임시 0.15초) 동안 고르게 잇는다 · 6m 넘으면 곧바로 옮긴다 (G-222.5)」로 고쳐라. 파일이 이미 150줄이라 한 줄 안에서 바꿔야 한다",
-     "evidence": "65줄이 그 문장으로 바뀌었고 파일은 150줄 그대로"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 서버장 주민이 길 꺾일 때 한 번에 돈다 — report 가 찾았다: PathWalk.step 의 look_at 으로 보는 쪽이 꺾이는 점에서 한 프레임에 돈다. 사람이 본 「살짝씩 끊김」이 이것일 수도 있다. 보는 쪽을 몇 프레임에 걸쳐 돌게(lerp_angle) 하고, 꺾이는 점에서 한 틱 yaw 변화가 정한 각 아래인지 재는 테스트를 붙여라",
-     "evidence": "PathWalk._face 가 turn_rate>0 이면 lerp_angle, Villager.walker 가 TURN_RATE 10(임시)을 준다. test_path_walk_turn 이 90° 꺾임에서 한 틱 최대 <20° · 여러 틱 · 끝에 -90° 를 단언, 짐승 대조 테스트로 꺾이는 점을 지나는지도 확인. 일부러 깨 봄: walker 의 turn_rate 줄을 빼면 87.1° 로 떨어졌다 (되돌림)"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "ts/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           389\nTests            2906\nPassing Tests    2906\nFailing Tests       0\nRisky/Pending       0\nAsserts        123225\nTime           721s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "5b0501d3"
- },
- {
   "time": "2026-10-15 22:42:46",
   "epoch": 1792071766,
   "type": "pass",
@@ -9175,5 +9096,54 @@
    "decision": null
   },
   "test": "their_feet\n    2 Orphans\n        * [<Node#1596033340730>]\n        * [<Node#1548134393699>]\n* test_a_late_joiner_sees_what_was_already_built\n    3 Orphans\n        * [<Node#1652018912363>]\n        * [<Node#1757648266137>]\n        * [<Node#1701226489795>]\n27 orphans\n12/13 passed.\n\n\n\n\n==============================================\n= 27 Orphans\n==============================================\ntest_build_on_server.gd\n    - test_a_guest_builds_turns_grades_opens_and_names_on_the_server_and_both_see_it\n        * [<Node#202014460733>]\n        * [<Node#258570458403>]\n    - test_preview_and_picking_stay_on_each_machine\n        * [<Node#378393334382>]\n        * [<Node#330460829002>]\n    - test_a_guest_out_of_reach_is_refused\n        * [<Node#437113589798>]\n        * [<Node#485046099156>]\n    - test_before_the_first_body_news_the_server_does_not_take_the_origin_as_the_guests_spot\n        * [<Node#544001236189>]\n    - test_build_alone_opens_placing_hitting_and_lowering\n        * [<Node#641174868588>]\n        * [<Node#593275919593>]\n    - test_breaking_a_foundation_collapses_what_stood_on_it_for_both\n        * [<Node#702344596542>]\n        * [<Node#750277105323>]\n    - test_a_guest_takes_a_foundation_and_a_chair_down_in_one_ask\n        * [<Node#961602916948>]\n        * [<Node#913703967422>]\n    - test_a_guest_hit_ask_does_not_wear_down_placed_things\n        * [<Node#1066041086122>]\n        * [<Node#1018108580838>]\n    - test_two_placing_on_one_spot_at_once_stand_only_one\n        * [<Node#1129492516753>]\n        * [<Node#1246563931776>]\n        * [<Node#1177391471099>]\n    - test_two_breaking_one_piece_get_the_materials_back_once\n        * [<Node#1321910411020>]\n        * [<Node#1369842919560>]\n    - test_a_guest_places_and_breaks_chest_bed_furniture_torch_and_anchor_on_the_server\n        * [<Node#1440441442022>]\n        * [<Node#1488373950266>]\n    - test_a_guest_with_a_full_bag_takes_a_bed_and_it_drops_at_their_feet\n        * [<Node#1596033340730>]\n        * [<Node#1548134393699>]\n    - test_a_late_joiner_sees_what_was_already_built\n        * [<Node#1652018912363>]\n        * [<Node#1757648266137>]\n        * [<Node#1701226489795>]\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/multiplayer/test_build_on_server.gd\n- test_breaking_a_foundation_collapses_what_stood_on_it_for_both\n    [Failed]:  Expected [<null>] to be anything but NULL:  미르 가 들어왔다\n          at line -1\n    [Failed]:  [0] expected to equal [1]:  서버장 화면에 미르 몸이 섰다\n          at line -1\n    [Failed]:  \n          at line 349\n    [Failed]:  Unexpected Errors:\n    [1] <engine-2>Out of bounds get index '0' (on base: 'Array[VisitorBody]')\n    [2] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [3] <engine-2>Invalid access to property or key 'multiplayer' on a base object of type 'Nil'.\n    [4] <engine-2>Invalid call. Nonexistent function 'slot' in base 'Nil'.\n    [5] <engine-2>Invalid access to property or key 'buildings' on a base object of type 'Nil'.\n    [6] <engine-2>Out of bounds get index '0' (on base: 'Array[Dictionary]')\n          at line 350\n\nTotals\n------\nScripts               1\nTests                13\nPassing Tests        12\nFailing Tests         1\nAsserts           203/207\nOrphans              27\nTime              21.93s\n\n\n---- 1 failing tests ----\n\nWARNING: 27 ObjectDB instances were leaked at exit (run with `--verbose` for details).\n   at: cleanup (core/object/object.cpp:2536)\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           563\nTests            4226\nPassing Tests    4225\nFailing Tests       1\nRisky/Pending       0\nAsserts        203731\nTime           813s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/multiplayer/test_build_on_server.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\ntest.sh: 스크립트 오류가 있다\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-22 18:20:09",
+  "epoch": 1792660809,
+  "type": "pass",
+  "title": "통과 — G-282 단계 2 (미래 옷 넷 모두 모듈 칸 — 신발 포함)",
+  "group": "G-282",
+  "step": "2",
+  "attempt": "2",
+  "report": {
+   "problem": "미래 상의 · 하의 · 모자 · 신발에 일반 모듈 칸 임시 1 — 신발은 미래 신발에만 새 칸(세트 칸 없음), 장비 제작대 모듈 탭에 뜨고 끼우고 빼기 · 저장 · 참가자 사본이 기존 길을 따른다",
+   "approach": "칸은 ArmorModules 가 재질 이름(<재질>_armor|helmet|leggings)으로만 가려 신발은 칸이 없었다. 신발 → 재질 표 BOOTS(future_boots 하나)를 두고 is_wear 로 묶어 has_slots · for_bench · slot_names · health_of 가 미래 신발도 보게 했다 — 신발은 일반 칸만, 자체 체력 0(끼운 모듈만). NORMAL_SLOTS 의 future 를 임시 1 로. 끼우기 · 빼기 · 저장 · 사본은 기존 칸 길을 그대로 탄다(테스트로 확인). 앞 회차 기계 검사에서 떨어진 tests/multiplayer/test_build_on_server.gd 는 이 변경과 무관한 참가자 접속 대기(Sides.wait_until) 시간 넘침이었다 — 따로 돌리니 통과(13개 중 13). 바뀐 곳 그물: 19개 파일 · 177개 테스트 모두 통과.",
+   "why": "미래 옷 일반 모듈 칸 1 (armor_modules.gd NORMAL_SLOTS future) — 사람은 「모듈을 낄 수 있다」까지만 정했다; 미래 신발은 세트 칸 없음 · 자체 체력 0 — 세트는 상의 · 모자 · 하의로 센다는 기존 규칙과 스파이크를 따랐다",
+   "files": [
+    "game/player/equipment/armor_modules.gd",
+    "game/tests/player/equipment/test_future_wear_modules.gd",
+    "game/tests/player/equipment/test_armor_modules.gd",
+    "game/tests/player/equipment/test_future_wear.gd",
+    "spec/02_player/equipment-modules.md",
+    "spec/02_player/equipment.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "미래 상의 · 하의 · 모자 · 신발에 모듈 칸이 있다 — 칸 수 임시 1 (상의는 아래 드릴을 낄 칸이 있어야 한다). 신발 칸은 미래 신발에만 새로 생긴다 — 스파이크 · 방패 · 배낭은 그대로 칸 없음. 장비 제작대 「모듈」 탭에 미래 옷이 뜬다 (테스트)",
+     "evidence": "test_future_wear_modules.gd — test_all_four_have_a_normal_slot_and_boots_have_no_set_slot 이 셋은 [set, 0] · 신발은 [0] · 칸 1 너머 거부 · 장비 제작대에만 놓임을 본다. test_spikes_shield_and_backpack_still_have_no_slots 가 스파이크 · 방패 둘 · 배낭의 칸 없음을 본다. test_future_wear_shows_up_in_the_armor_bench_module_tab 이 진짜 GameRoot · 장비 제작대 창에서 신발 · 상의를 끌어 놓아 칸이 펼쳐지고 끼우고 빼는 것을 본다. test_armor_modules.gd 의 future 기대값도 1 로. 일부러 BOOTS 의 future_boots 를 지우니 test_future_wear_modules.gd 가 떨어졌다(되돌림 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "기존 모듈을 끼우고 빼면 가방으로 돌아온다 · 저장 · 참가자 사본까지 따라간다 — 기존 모듈 칸과 같은 길 (테스트)",
+     "evidence": "test_putting_and_taking_on_each_returns_the_module_to_the_bag — 넷 각각 Acts.MOD_HOLD/PUT/TAKE 로 가방 수 2→1→2 · 다 빼면 여느 칸. test_moduled_future_wear_is_worn_and_rides_in_the_save — 넷을 모듈 안은 채 입고 CharacterData to_dict→JSON→from_dict 뒤 모듈이 남는다. test_modules_ride_along_in_the_copy_sent_to_the_owner — Kit.state()/take 로 가방 · 장비 · 자리의 모듈이 따라간다"
+    },
+    {
+     "ok": true,
+     "criterion": "spec equipment-modules.md 에 미래 옷 칸 줄 (사람 원문 · 칸 수 임시). 「신발에는 칸이 없다」 줄에 「미래 신발은 예외 (2026-10-22)」",
+     "evidence": "equipment-modules.md:26-29 — 「신발에는 칸이 없다. 미래 신발은 예외 (2026-10-22)」 · 미래 옷 칸 줄에 사람 원문 그대로 · 「1 (임시)」. equipment.md 수치 줄도 고쳤다. 91줄 · 45줄, 사람 결정 줄 지워진 것 없음"
+    }
+   ],
+   "issues": [
+    "멀티 건축 테스트가 전체 실행에서 떨어진다 — tests/multiplayer/test_build_on_server.gd 의 test_breaking_a_foundation_collapses_what_stood_on_it_for_both 가 전체(엔진 6개 동시)에서 'slot' on Nil · 'buildings' on Nil · _pieces(hi)[0] Out of bounds(350줄)로 떨어졌고, 따로 돌리면 13/13 통과한다. 이번 변경(armor_modules.gd)과 닿는 곳이 없다 — 앞 회차에도 같은 파일이 떨어졌다. 349줄 Sides.wait_until 이 시간을 넘겨도 assert 만 실패하고 350줄이 빈 배열을 집어 연쇄 오류가 난다: _pair() 접속을 기다리는 시간을 늘리거나, wait_until 이 거짓이면 return 해 뒤 줄이 Nil 을 안 집게 하라. 부하에서 떨어지지 않는지 전체 실행으로 확인하라"
+   ],
+   "good": []
+  },
+  "test": "es://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/build/test_build_piece_shared_shapes.gd\nok      2s  res://tests/build/test_take_spec_lines.gd\nok      2s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           563\nTests            4226\nPassing Tests    4226\nFailing Tests       0\nRisky/Pending       0\nAsserts        203717\nTime           816s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "420a5e30"
  }
 ]
