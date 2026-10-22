@@ -1,47 +1,5 @@
 [
  {
-  "time": "2026-10-18 09:04:31",
-  "epoch": 1792281871,
-  "type": "pass",
-  "title": "통과 — G-237 단계 3 (낚싯대 등급 — 덜 빠진다)",
-  "group": "G-237",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "낚싯대 세 단(나무 ×1 · 청동 ×0.75 · 철 ×0.5) — 미니게임 게이지가 빠지는 빠르기를 든 낚싯대에서 받는다. 바뀐 곳만: 151개 파일 1305개 테스트 통과",
-   "approach": "FishingGauge 의 빠지는 빠르기가 상수(DRAIN_RATE)뿐이라 낚싯대마다 바꿀 수 없었다. 인스턴스 값 drain 을 두고 start(motion, drain_scale) 가 DRAIN_RATE × 배수로 정하게 했다. Fishing 에 RODS {fishing_rod 1.0 · bronze_fishing_rod 0.75 · iron_fishing_rod 0.5} 를 두고, hook · hook_at 이 든 낚싯대의 배수(rod_drain)를 게이지에 넘긴다. 던지기 판단도 held == ROD 에서 RODS.has(held) 로 넓혀 세 낚싯대 모두 던진다. 청동 · 철 낚싯대는 나무 낚싯대 곁(작업대)에 목재 3 + 청동괴 / 철괴 1 로 두고 도구 목록 · 무게 · 번역을 더했다. 테스트는 게임 화면에서 각 낚싯대를 들고 물려 drain 과 바 밖 1초의 빠짐을 재고, 진짜 우클릭으로 철 낚싯대를 던져 본다.",
-   "why": "낚싯대 세 단과 배수 ×1 · ×0.75 · ×0.5 — 사람은 「완화」만 정했다 (fishing.gd RODS); 청동 낚싯대 목재 3 + 청동괴 1 · 철 낚싯대 목재 3 + 철괴 1, 작업대 — 재료 · 만드는 곳 미정 (workbench.json); 청동 · 철 낚싯대 무게 1.5kg (weights.json)",
-   "files": [
-    "game/life/fishing/fishing.gd",
-    "game/life/fishing/fishing_gauge.gd",
-    "game/craft/recipes/workbench.json",
-    "game/combat/tools_as_weapons/tools.json",
-    "game/player/inventory_hotbar/weights.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/life/fishing/test_rod_grades.gd",
-    "spec/04_life/fishing.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "낚싯대 세 단(**임시**): 나무(지금 `fishing_rod`) · 청동 · 철 — 게이지 빠지는 빠르기 ×1 · ×0.75 · ×0.5(**임시**). FishingGauge 가 든 낚싯대에서 값을 받는다. 재료 · 만드는 곳은 지금 낚싯대 레시피 곁에(**임시**) (테스트)",
-     "evidence": "fishing.gd RODS {fishing_rod 1.0 · bronze_fishing_rod 0.75 · iron_fishing_rod 0.5} 에 「임시」가 적혀 있고, hook · hook_at 이 든 낚싯대의 배수(rod_drain(_held_rod()))를 gauge.start 에 넘긴다. test_rod_grades.gd: test_three_rods_with_easing_drain 이 세 배수를 보고, test_gauge_takes_its_drain_from_the_held_rod 는 GameRoot 에서 칸을 골라 진짜로 든 채 물려 gauge.drain 과 바 밖 1초의 실제 빠짐(DRAIN_RATE×배수)을 재며, test_a_sturdier_rod_holds_on_longer 는 놓치기까지 버티는 시간이 나무<청동<철인지 보고, test_every_rod_casts_by_hand 는 진짜 우클릭으로 철 낚싯대를 던져 drain 이 ×0.5 인지 본다. test_higher_rods_are_items_made_beside_the_wooden_rod 는 레시피 시설이 나무 낚싯대와 같은지(workbench), 무게 · 번역 · 도구 목록 · 재료가 있는 아이템인지 본다. 일부러 깨 봤다: fishing_gauge.gd start 의 `drain = DRAIN_RATE * drain_scale` 를 `drain = DRAIN_RATE` 로 바꾸니 test_rod_grades 의 테스트 3개가 떨어졌다(되돌렸다). test.log: 바뀐 곳 210개 파일 1768개 테스트 모두 통과, test_rod_grades.gd ok, guard 통과. 레시피 임시는 workbench.json _temporary, spec/04_life/fishing.md 에 임시 세 단 줄과 미정 줄이 적혔다(62줄, 사람 결정 줄은 그대로)"
-    }
-   ],
-   "issues": [
-    "영어 번역은 테스트가 안 본다 — test_rod_grades.gd test_higher_rods_are_items_made_beside_the_wooden_rod 는 ko 로케일에서만 tr 을 본다. en.po 에 ITEM_bronze_fishing_rod · ITEM_iron_fishing_rod 는 들어 있다(이번 것은 괜찮다). 비슷한 테스트를 짤 때 en 로케일에서도 tr 이 키 그대로가 아닌지 단언하면 좋다"
-   ],
-   "good": []
-  },
-  "test": "/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_cook_table.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/craft/stations/test_station_queue.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/fishing/test_bait_grades.gd\nok      1s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      3s  res://tests/life/gathering/test_herb_regrowth.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_queue_window.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/automation/villagers/test_villager_skills.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok    436s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           210\nTests            1768\nPassing Tests    1768\nFailing Tests       0\nRisky/Pending       0\nAsserts         62629\nTime           436s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "c087f689"
- },
- {
   "time": "2026-10-18 09:33:49",
   "epoch": 1792283629,
   "type": "pass",
@@ -8985,5 +8943,42 @@
   },
   "test": " res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           580\nTests            4303\nPassing Tests    4303\nFailing Tests       0\nRisky/Pending       0\nAsserts        207354\nTime           851s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "b44155bd"
+ },
+ {
+  "time": "2026-10-23 04:58:48",
+  "epoch": 1792699128,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-290 단계 1 (시도 1)",
+  "group": "G-290",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "본섬에 온천 자리 1곳(김이 오르는 물웅덩이, islands.json 의 hot_spring — 지열 자리와 같은 표) · 온천 욕탕(온천 자리 위에만 · 서버 같은 검사 · 개발용 상자 · 망치 해체). 바뀐 곳만: 316개 파일 2596개 통과, 물 값을 고친 뒤 3개 파일 15개 다시 통과",
+   "approach": "G-289 지열 자리를 본떴다. 섬 목록(islands.json)에 hot_spring 칸을 지열 칸과 같은 꼴([x, z, 반지름])로 더하고, Islands 의 자리 표 읽기를 _spots_of(id, 칸) 하나로 묶어 geothermal_of · hot_spring_of 가 같이 쓴다. HotSpring 노드는 자리마다 옥빛 반투명 물웅덩이(납작한 원기둥, 땅 속으로 묻어 둘레 높낮이를 덮는다) · 돌 테두리 · 지열 자리와 같은 김(Geothermal._steam 을 steam 으로 열어 같이 쓴다)을 세운다. 고정 맵 자료라 저장에 안 담는다(다시 세운 섬 테스트). 본섬 자리는 처음 나는 자리 둘레를 headless 로 훑어 6m 둘레 높이 차 0.3m · 개울 · 연못 밖인 (-372, 216) 을 골랐다. 온천 욕탕은 stations.json 에 near=hot_spring · dev_only 로 적어 Stations._why_not_at 이 온천 자리 밖이면 WHY_HOT_SPRING(미리보기 빨강 · 까닭 한 줄)을 낸다 — 서버(place_for)도 같은 물음을 거친다. 개발용 상자는 dev_only 목록을 그대로 담는다. 진짜 본섬을 검사 안에서 세우면 Terrain3D 의 deprecated 알림이 실패로 잡혀서, 본섬을 쓰는 검사는 before_all 에서 섬을 세우는 test_hot_spring.gd 로 옮겼다. ESC 목차에 온천 욕탕 · 온천 자리 두 줄을 더했다. 찍는 자리 hot_spring · hot_spring_bath 를 더해 찍어 봤다 — 첫 그림에서 물낯이 둘레 높은 땅에 잘리고 물빛이 허옇게 바래 물낯을 0.2m 로 올리고 물빛을 짙게 했다. 다시 찍으니 돌 테두리 · 옥빛 물 · 김 · 물 위에 선 욕탕이 보인다. 그 뒤 온천 · 욕탕 · 지열 테스트 3개 파일(15개)을 다시 돌려 통과했다.",
+   "why": "본섬 온천 자리 (-372, 216) 반지름 3.5m 한 곳 — 몇 곳 · 어디는 사람이 안 정했다 (islands.json _temporary_hot_spring); HotSpring 물낯 높이 0.2m · 물 몸 깊이 0.6m · 돌 테두리 0.5m · 물 빛깔 — 모양만 보는 값; 온천 욕탕 크기 2.0×0.6×1.4m · 색 9a7a56 — 기본 도형 상자; 온천 욕탕은 레시피 없이 개발용 상자에서만 (dev_only) — 레시피는 사람이 안 정했다; 온천 자리 하나에 욕탕 여러 개를 막지 않는다 — 기준에 없어 정하지 않았다",
+   "files": [
+    "game/world/frontier_islands/islands.json",
+    "game/world/frontier_islands/islands.gd",
+    "game/world/terrain/hot_spring.gd",
+    "game/world/terrain/geothermal.gd",
+    "game/world/terrain/test_island.gd",
+    "game/craft/stations/stations.gd",
+    "game/craft/stations/station_catalog.gd",
+    "game/craft/stations/stations.json",
+    "game/player/inventory_hotbar/items.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/ui/manual/manual_toc.json",
+    "game/core/debug/shots.gd",
+    "game/tests/world/terrain/test_hot_spring.gd",
+    "game/tests/craft/stations/test_hot_spring_bath.gd",
+    "game/tests/craft/stations/test_geothermal_stations.gd",
+    "game/tests/core/test_docs_match_code_g275.gd",
+    "game/tests/build/test_placeable_previews.gd",
+    "game/tests/craft/stations/test_stations.gd"
+   ],
+   "decision": null
+  },
+  "test": "  [1423] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1424] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1425] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1426] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1427] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1428] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1429] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1430] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1431] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1432] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1433] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1434] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1435] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1436] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1437] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1438] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1439] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1440] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1441] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1442] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1443] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1444] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1445] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1446] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1447] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1448] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1449] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1450] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1451] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1452] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1453] <engine-2>Invalid access to property or key 'chests' on a base object of type 'Nil'.\n    [1454] <engine-2>Invalid access to property or key 'character' on a base object of type 'Nil'.\n    [1455] <engine-2>Invalid access to property or key 'global_position' on a base object of type 'Nil'.\n    [1456] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1457] <engine-2>Invalid access to property or key 'death' on a base object of type 'Nil'.\n          at line 318\n\nTotals\n------\nScripts               1\nTests                 7\nPassing Tests         6\nFailing Tests         1\nAsserts           144/147\nOrphans              17\nTime              20.286s\n\n\n---- 1 failing tests ----\n\nWARNING: 17 ObjectDB instances were leaked at exit (run with `--verbose` for details).\n   at: cleanup (core/object/object.cpp:2536)\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           316\nTests            2596\nPassing Tests    2595\nFailing Tests       1\nRisky/Pending       0\nAsserts         90583\nTime           483s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/multiplayer/test_chest_on_server.gd\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\ntest.sh: 스크립트 오류가 있다\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
