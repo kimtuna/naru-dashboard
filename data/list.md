@@ -4992,7 +4992,7 @@
   - 기준: 스트레스가 높은 주민(임시 기준)이 쉬는 때에 욕탕으로 걸어가 들어가 있는 동안 스트레스가 내려간다 (임시 값) · 한 번에 쓰는 수(임시 2) · 같이 하는 판에서 참가자 화면에도 들어가 있는 주민이 보인다 (테스트)
   - 기준: 욕탕이 없거나 갈 길이 없으면 가지 않는다 · 사람(플레이어)에게는 스트레스가 아직 없다 — 들어가도 아무 일 없다 (facilities.md:90)
   - 기준: (앞 단계 QA) spec 에 온천이 한 줄도 없다 — spec 전체에 「온천 · hot_spring」이 없다. G-289 처럼 spec/03_world/frontier-islands.md 에 「온천 자리」 항목(사람 요청 원문 · 자리 (-372,216) 반지름 3.5m 임시 · hot_spring.gd · 온천 욕탕 near=hot_spring · STATION_PLACE_NEEDS_HOT_SPRING · dev_only · 미정: 자리·수·레시피·내려가는 양·언제 가나)을 적고, spec/05_craft/facilities.md 36줄 곁에 「온천 욕탕은 온천 자리 위에만 — 표 밖」 한 줄(8줄 표 밖 목록에도 온천 욕탕), spec/01_settings/save.md 15줄 「지열 자리도」 옆에 온천 자리(islands.json 의 hot_spring)도 고정 맵 자료라 안 담는다고 더하라. facilities.md 는 142줄이라 150줄 한도에 주의
-- [ ] 3. spec — villager-persona.md 스트레스 줄 · facilities.md 에 온천 (사람 원문 · 임시)
+- [x] 3. spec — villager-persona.md 스트레스 줄 · facilities.md 에 온천 (사람 원문 · 임시)
   - 기준: (앞 단계 QA) villager-persona.md 문장이 끊겼다 — spec/07_automation/villager-persona.md 27~29줄: 「음식 · 술은 스트레스를 내린다 (G-205.1 …)」 뒤에 온천 줄을 끼워 넣어, 원래 그 문장에 이어지던 「— 이제 주민이 배고프거나 목마를 때 먹고 마시며 실제로 쓰인다」가 온천 줄 뒤에 붙어 온천 이야기처럼 읽힌다. 온천 줄을 「— 이제 주민이 …」 줄 아래로 옮겨라 (막는 것은 아니다)
 
 ## [ ] G-291 차량 · 차량 정비소 — 출고하고 몬다 · 끼이면 망치로 정비소로
