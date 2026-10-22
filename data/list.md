@@ -4850,7 +4850,7 @@
   - 기준: spec equipment-modules.md 에 미래 옷 칸 줄 (사람 원문 · 칸 수 임시). 「신발에는 칸이 없다」 줄에 「미래 신발은 예외 (2026-10-22)」
 
 ## [ ] G-283 굳은 용암이 땅이 된다 — 밟고 깬다
-- 차선: 3d-lane2
+- 차선: 3d-lane2 · 시작 2026-10-22 17:39
 - spec: spec/03_world/frontier-islands.md 「분출과 용암」
 - **사람 결정 2026-10-22** (원문 그대로): 「부착하면 화산이 굳는걸 캔다거나 땅을 캔다거나 할 수 있어」 — 굳은 용암을 캐려면 캘 것이 있어야 한다
 - 지휘 세션이 2026-10-22 봤다: 지금 굳은 용암은 **그림뿐이다** — world/terrain/volcano.gd 의 _sheet(MeshInstance3D 하나 · lava_sheet.gdshader 가 꼭짓점을 ground_height 위로 올린다)에 몸통이 없다. 식기(_cool, COOL_HOURS 1 · SHRINK_HOURS 6, 임시) 동안 left 1 → 0 으로 얇아지다 감춘다
