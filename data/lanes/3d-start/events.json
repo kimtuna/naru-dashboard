@@ -1,51 +1,5 @@
 [
  {
-  "time": "2026-10-16 05:46:16",
-  "epoch": 1792097176,
-  "type": "pass",
-  "title": "통과 — G-227 단계 1 (먼저 잰다)",
-  "group": "G-227",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "멀티 재기 도구(headless godot 셋 · ENet · 진짜 섬)를 만들고 5분 창으로 재어 spec/00_core/performance.md 에 「멀티」 표와 서버 갈래별 한 프레임 표(주민 0·10·30)를 적었다. 바뀐 곳 테스트 2파일 6개 통과",
-   "approach": "게임 코드는 손대지 않고 재는 도구만 만들었다. ① RPC 종류별 셈 — 엔진의 multiplayer:rpc 프로파일러는 디버거가 붙어야 값을 내놓아 headless 에서 못 읽는다(해 봤다). 그래서 SceneMultiplayer 를 감싼 MultiplayerAPIExtension(counting_multiplayer.gd)을 set_multiplayer 로 끼워 보낸 쪽에서 메서드별로 센다. 바이트는 ENetConnection.pop_statistic. ② 갈래별 시간 — 주민 · 짐승 · 시설 · 작물 · 맞추기 노드의 process_priority 를 갈래만의 띠로 옮기고 띠 앞뒤 표시 노드의 시각 차를 더한다(frame_bands.gd). ③ 서버장 · 참가자 둘을 저마다 다른 headless godot 으로 띄워(net_measure_probe.tscn) 메뉴 길 그대로 진짜 섬에 붙이고, 창 300초를 주민 0·10·30 으로 나눠 쟀다. 창이 끝나면 참가자 0 이 선착장 창에서 혼자 유황섬으로 건넌다. 재다가 찾은 가장 큰 것: 참가자가 들어올 때 22초 멈춘다 — 그중 14~16초가 ResourceView.set_gone_marks(빈 목록이어도 모든 자원 칸을 다시 그린다, IslandState.apply 에서). 그 사이 참가자 쪽 ENet 이 7초(NetLink.GIVE_UP_MAX_MS) 만에 서버를 포기해 이 맥에서는 진짜 섬에 아무도 못 들어왔다 — 재기용으로만 ENet 기다림을 양쪽 60~120초로 늘려 쟀다(performance.md 에 적었다). 다른 숫자: 서버 보냄 19.7 KB/s(참가자 둘) — _animals_seen 11.1 KB/s · _snapshot 8.0 KB/s 가 97%. 들어올 때 0.7~0.8 MB 중 _placed 342번 505 KB. 건널 때 서버 한 프레임 475 ms. 주민 관리(걸을 땅 굽기)가 주민이 처음 설 때 프레임당 8 ms. 큰 것부터 차례를 performance.md 끝에 적었다 — 다음 단계 후보. 테스트는 여느 때 3초 창(약 50초)으로 길이 살아 있는지만 보고, NARU_PERF_SECONDS=300 으로 표를 다시 잰다(하네스가 180초 침묵을 끊어 30초마다 한 줄 찍는다).",
-   "why": "net_measure_probe.gd STATIONS=8 · PLATES=4 — 재는 동안 같이 두는 시설 · 밭 수. 「시설 · 작물」 갈래가 빈 관리자만 재지 않게 정한 재기용 값; net_measure_probe.gd ENet set_timeout(32, 60000, 120000) — 재기용. 참가자가 섬을 세우며 22초 멈추는 사이 끊기지 않게. 게임 값(NetLink)은 그대로",
-   "files": [
-    "spec/00_core/performance.md",
-    "spec/README.md",
-    "game/tests/perf/counting_multiplayer.gd",
-    "game/tests/perf/frame_bands.gd",
-    "game/tests/perf/net_measure_probe.gd",
-    "game/tests/perf/net_measure_probe.tscn",
-    "game/tests/perf/test_net_measure.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "spec/00_core/performance.md 에 「멀티」 표를 더한다 — 서버장 + 참가자 둘(셋이면 셋)로 5분: 사람당 초당 보내고 받는 바이트 · RPC 수(종류별 위 10) · 서버 한 프레임 시간 · 들어올 때 건네는 월드 크기 · 걸린 시간 · 섬을 건널 때 걸린 시간",
-     "evidence": "performance.md 82줄에 「멀티」 절: 사람당 보냄/받음/RPC 표(서버장 · 참가자 0 · 1), RPC 종류별 표, 서버 _process/_physics 평균·p95·최대, 들어올 때(_welcome 17.7 KB · 22.4/22.6초 · set_gone_marks 14~16초) · 섬 건넘 1.1초 · 건널 때 서버 475 ms. test_net_measure.gd::test_three_godots_measure_the_multi_table 이 headless godot 셋(ENet, Steam 없음)을 메뉴 길로 진짜 섬에 붙여 같은 값을 모두 내고 단언한다(보낸/받은 바이트 >0, _snapshot · _report 종류, 위 10 이하, 프레임, welcome_bytes, join_ms, join_recv>welcome, cross_ms>0). test.log 의 3초 창 PERF 줄(월드 17716 B · 건넘 1143 ms · 건널 때 450 ms · _placed 342번 505120 B · 자원 다시 그리기 13877 ms · _snapshot 17.3/s 8019 B/s)이 표의 5분 값과 맞아 숫자가 지어낸 것이 아니다. RPC 수의 합(17.1+17.1+2.0+0.3+0.04=36.5)도 표 안에서 맞는다. test_performance_doc_has_the_multi_table 이 표 줄과 150줄 이하를 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "주민 · 몹 · 시설 · 작물이 서버에서 한 프레임에 쓰는 시간 (주민 0 · 10 · 30 일 때)",
-     "evidence": "performance.md 「서버 갈래별 한 프레임」 표 — 주민 저마다 · 주민 관리 · 짐승·몹(Animal 이 Mob 을 이어받는다 — 게임의 몹은 지금 짐승뿐) · 시설 8 · 작물 4칸 · 맞추기를 주민 0/10/30 열로. frame_bands.gd 가 process_priority 띠로 갈래 시간을 잰다. test_bands_sort_nodes_and_time_their_frames 는 2 ms 무거운 노드를 띠에 넣어 그 갈래에만 >1 ms 가 잡히고 다른 갈래는 <1 ms 인지 본다(진짜 확인). 셋 띄우는 테스트가 주민 30까지 섰는지 · 시설 · 작물이 섰는지 · 세 단계 × 갈래가 다 있는지 · 주민 30 몫 > 주민 0 몫을 단언한다"
-    }
-   ],
-   "issues": [
-    "참가자가 받는 RPC 수가 표에 없다 — performance.md 「사람당」 표는 RPC 보냄만 있다. counting_multiplayer.gd 는 보낸 쪽만 센다. 다음 재기 때 받는 쪽 셈(서버 RPC 를 받는 사람마다 나눈 값)을 「RPC 받음」 열로 더하거나, 서버 보냄을 사람 수로 나눈 값임을 표 아래 한 줄로 적어라",
-    "ENet 기다림 60~120초에 「임시」 표시가 없다 — net_measure_probe.gd 의 set_timeout(32, 60000, 120000) 두 곳은 주석에 「재기용」만 있다(report 는 temporary 로 올렸다). STATIONS · PLATES 처럼 「임시 — 재기용」으로 적어라. 들어올 때 22초 멈춤을 고치는 단계에서 이 늘림을 걷을 수 있는지 다시 재라"
-   ],
-   "good": []
-  },
-  "test": "--- 바뀐 곳만: 2 개 ---\ntest.sh: 파일 2 개를 6 개씩 한꺼번에 돌린다\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok     51s  res://tests/perf/test_net_measure.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             2\nTests               6\nPassing Tests       6\nFailing Tests       0\nRisky/Pending       0\nAsserts            86\nTime           51s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "8c7d8fb2"
- },
- {
   "time": "2026-10-16 06:22:00",
   "epoch": 1792099320,
   "type": "pass",
@@ -8805,5 +8759,38 @@
   },
   "test": "ests/ui/hud/test_no_output_slots.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/build/test_placeable_tidy.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/test_docs_match_code_g275.gd\nok      2s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/ranching/test_food_shown.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           575\nTests            4278\nPassing Tests    4278\nFailing Tests       0\nRisky/Pending       0\nAsserts        205740\nTime           816s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "4b1b983c"
+ },
+ {
+  "time": "2026-10-23 00:43:01",
+  "epoch": 1792683781,
+  "type": "stop",
+  "title": "루프 끝 — 목록을 모두 처리했다",
+  "group": "G-931",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "AnimalNav 제자리 assert 를 붙는 순간뿐 아니라 다시 굽기(rebake_wild) · 조각 메시 끼우기(FolkGround._apply) 때도 본다 — 바뀐 곳만 103개 파일 768개 통과",
+   "approach": "_enter_tree 의 assert 는 트리에 들어갈 때 한 번만 봐서, 붙인 뒤 지역이나 부모를 옮기면 놓쳤다. 확인을 assert_in_place() 하나로 뽑아(트리 밖이면 세계 좌표가 없으므로 붙을 때 보도록 넘긴다) _enter_tree · rebake_wild(메시를 갈기 직전) · FolkGround._apply(조각 메시를 끼우기 직전)에서 부른다. 테스트는 두 진입점이 메시를 갈기 전에 확인을 부르는지와, 트리 밖 · 제자리 지역이 확인을 지나는지 본다.",
+   "why": "",
+   "files": [
+    "game/life/hunting/animal_nav.gd",
+    "game/automation/villagers/folk_ground.gd",
+    "game/tests/life/hunting/test_nav_weld.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "제자리 assert 는 붙는 순간만 본다 — AnimalNav._enter_tree 의 assert 는 트리에 들어갈 때 한 번만 보므로, 붙인 뒤 지역이나 부모를 옮기면 잡지 못한다. 막는 것은 아니다(지금 그런 쓰임이 없다). 고치려면 bake 를 걸 때(rebake_wild · 굽는 쪽 진입점)에도 assert(in_place(self)) 를 한 줄 더 두어라",
+     "evidence": "animal_nav.gd 에 assert_in_place() 를 뽑아 _enter_tree · rebake_wild(메시 갈기 직전) · FolkGround._apply(조각 메시 끼우기 직전)에서 부른다. 트리 안 지역의 navigation_mesh 를 가는 곳은 grep 으로 이 둘뿐이다 (around · folk · wild 는 새로 만든, 트리 밖 지역이라 붙을 때 _enter_tree 가 본다). test_nav_weld.gd::test_rebaking_checks_in_place_again 이 두 함수 몸에서 assert_in_place() 가 'navigation_mesh = ' 보다 앞에 있는지 단언한다 — 줄을 빼거나 뒤로 옮기면 assert_gt/assert_lt 가 떨어진다. GDScript assert 는 GUT 안에서 잡을 수 없으니 글자 검사가 할 수 있는 확인이다. 트리 밖 · 제자리 지역이 확인을 지나는 것도 돌려 본다. 마지막 단계라 전체 575 파일 4278 테스트 통과 · guard 통과 (test.log)."
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "ests/ui/hud/test_no_output_slots.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/build/test_placeable_tidy.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/test_docs_match_code_g275.gd\nok      2s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/ranching/test_food_shown.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           575\nTests            4278\nPassing Tests    4278\nFailing Tests       0\nRisky/Pending       0\nAsserts        205740\nTime           816s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
