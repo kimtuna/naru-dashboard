@@ -4942,7 +4942,7 @@
   - 기준: 북쪽은 섬 좌표의 −Z (임시) · 화면 설정(display.md)에 나침반 보이기 켜기 · 끄기 (임시 · 기본 켬)
   - 기준: (앞 단계 QA) 수평선 그림을 테스트가 지키지 않는다 — pitch_gauge.gd 의 horizon_offset() 은 _deg*PX_PER_DEG 를 따로 셈할 뿐이고 _draw() 는 그것을 쓰지 않고 (_deg - k)*PX_PER_DEG 를 다시 셈한다. 그래서 _draw 의 눈금줄을 지워도 test_drill_pitch 가 통과한다(이번 기준은 찍는 자리 그림으로 확인했다). _draw 가 그릴 줄의 y 목록을 내는 함수(예: rung_offsets() → {각: y})를 만들어 _draw 가 그것으로 그리게 하고, 테스트에서 −12° 일 때 0° 줄이 y=−24 · 10° 줄이 y=−44 에 있고 보이는 반 높이(70px) 밖의 줄은 없는지 단언하라
   - 기준: (앞 단계 QA) 테마의 기울기 색에 「임시」 표시가 없다 — naru_theme.tres 의 pitch_line · pitch_mark 는 report 에서 임시라 했지만 pitch_gauge.gd 의 색 상수 주석(「테마의 Palette 에서 꺼낸다」)이나 spec 드릴 줄(「모양 · 크기 임시」)에는 색이 임시라는 말이 없다. spec/03_world/frontier-islands.md 기울기 줄을 「모양 · 크기 · 색 임시」로 고쳐라
-- [ ] 4. spec — movement-controls.md 에 드릴 시점 · 기울기, 화면(HUD) 쪽 spec 에 나침반 (사람 원문 · Claude 가 정한 것 · 임시 값)
+- [x] 4. spec — movement-controls.md 에 드릴 시점 · 기울기, 화면(HUD) 쪽 spec 에 나침반 (사람 원문 · Claude 가 정한 것 · 임시 값)
   - 기준: (앞 단계 QA) save.md 스트레스 문단이 둘로 갈렸다 — spec/01_settings/save.md 의 「HUD 나침반이 그리는 쪽」 줄이 「HUD 스트레스 표시」 줄과 그 이어짐 줄(「주민마다 · 문턱마다 남던 스트레스 경고 줄 …」) 사이에 끼어, 스트레스 이야기가 나침반 줄 밑에 붙어 읽힌다. 나침반 줄을 그 이어짐 줄 뒤로 옮겨라
 
 ## [x] G-288 같이 하는 판 — 참가자가 나간 섬의 자리를 잃는다
