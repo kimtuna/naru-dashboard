@@ -4978,7 +4978,7 @@
 - [x] 4. (앞 단계 QA) facilities.md 가 148줄로 한도 턱밑이다
   - 기준: facilities.md 가 148줄로 한도 턱밑이다 — spec/05_craft/facilities.md 가 150줄 한도까지 2줄 남았다. 다음에 이 파일에 줄을 더할 일이 생기면 지열 절을 03_world/frontier-islands.md 쪽으로 넘기거나 자리 규칙 절을 따로 나눠라 (막는 것은 아니다)
 
-## [ ] G-290 온천 — 설치물을 놓으면 주민 스트레스가 내려간다
+## [x] G-290 온천 — 설치물을 놓으면 주민 스트레스가 내려간다
 - 차선: 3d-lane2 · 시작 2026-10-23 04:30
 - 순서: G-289 뒤
 - spec: spec/07_automation/villager-persona.md (스트레스), spec/05_craft/facilities.md
