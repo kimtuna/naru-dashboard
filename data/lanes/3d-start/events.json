@@ -1,73 +1,5 @@
 [
  {
-  "time": "2026-10-15 20:57:48",
-  "epoch": 1792065468,
-  "type": "pass",
-  "title": "통과 — G-222 단계 3 (권한 칸 — 헐기를 건축에 합치고 섬 열기 칸을 뺀다)",
-  "group": "G-222",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "길드 권한에서 헐기를 건축에 합치고 섬 열기 칸을 뺐다 — 옛 저장본은 헐기→건축으로 고쳐 읽는다 · bag.gd 는 CharacterModel.wear 로 · spec 정리. 바뀐 곳 그물 206개 파일 1784개 테스트 통과",
-   "approach": "Guild.UNITS 에서 DEMOLISH · ISLAND 를 빼고 Acts.DEMOLISH 를 없앴다. 놓는 곳의 치기 · 내리기는 BUILD 로 묻는다(_build_unit 삭제). 섬 열기(_key)는 Acts.ISLAND 로 묻지만 단위가 아니라 Guild.unit_of 가 \"\" 를 줘 누구나 된다. 옛 저장본은 WorldData.from_dict 에서 Guild.upgraded 로 고친다 — demolish→build(겹치면 하나), island 는 버리고, 남는 것이 없는 사람은 지운다. 번역 키 GUILD_UNIT_DEMOLISH · ISLAND 삭제. bag.gd set_look 은 look().model().wear(appearance) 로 바꾸고 test_character_model ALLOWED 에서 뺐다. permissions.md 권한 단위 · netcode.md 미정에 사람 말을 적고, 남에게 보이는 것에 외형 · 섬 열기 권한 줄을 고쳤다(netcode.md 150줄 맞춤). 확인: changed_tests 그물 206개 파일 1784개 테스트 통과.",
-   "why": "",
-   "files": [
-    "game/core/net/guild.gd",
-    "game/core/net/acts.gd",
-    "game/core/net/net_world.gd",
-    "game/settings/save/world_data.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/ui/hud/bag.gd",
-    "game/tests/core/net/test_guild.gd",
-    "game/tests/ui/hud/test_guild_window.gd",
-    "game/tests/ui/menu/test_character_model.gd",
-    "game/tests/multiplayer/test_build_on_server.gd",
-    "game/tests/multiplayer/test_world_on_server.gd",
-    "game/tests/multiplayer/test_guild_on_server.gd",
-    "spec/11_multiplayer/permissions.md",
-    "spec/11_multiplayer/netcode.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "길드 창의 칸에서 「헐기」 · 「섬 열기」가 없다. 「건축」이 놓기 · 돌리기 · 올리기 · 문 · 방 이름 · 치기 · 내리기를 다 연다. 섬 열기(해금 아이템 넣기)는 권한을 묻지 않는다 (테스트)",
-     "evidence": "Guild.UNITS 에서 DEMOLISH·ISLAND 를 빼고 net_world._build 가 치기·내리기도 Acts.BUILD 로 묻는다(_build_unit 삭제). test_guild_window.gd::test_no_demolish_or_island_column 이 창 머리 칸 글자와 ko/en.po 에 헐기·섬 열기 키가 없음을 본다. test_build_on_server.gd::test_build_alone_opens_placing_hitting_and_lowering 은 건축만 켜면 놓이고, 건축을 끄면 치기·내리기가 거부되며 「권한이 없다」가 뜨고, 다시 건축만 켜면 헐린다 — 막아야 할 경우까지 넣었다. test_world_on_server.gd::test_opening_an_island_needs_no_permission 은 칸을 다 끈 참가자가 열쇠를 넣으면 서버가 섬을 열고 열쇠를 덜며 거부 알림이 없음을 ENet 둘로 본다. test_guild.gd::test_the_units_are_the_stage_one_table 이 아홉 칸 · unit_of(ISLAND)==\"\" 를 본다. 전체 2885개 통과(test.log)"
-    },
-    {
-     "ok": true,
-     "criterion": "저장본에 「헐기」 · 「섬 열기」로 켜 둔 것이 있어도 읽힌다 — 헐기를 켜 둔 사람은 건축으로 친다 (테스트)",
-     "evidence": "WorldData.from_dict 가 Guild.upgraded 로 고쳐 읽는다(demolish→build, 겹치면 하나, island 버림, 빈 사람 지움). test_guild.gd::test_old_demolish_and_island_grants_are_read_as_build 가 [demolish,chest]→[build,chest], [build,demolish,island]→[build], [island]→없음(그래도 섬은 연다)을 보고 SaveStore 로 저장·다시 읽어 고친 것이 그대로 남는지까지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "permissions.md 의 「권한 단위」를 사람 결정 2026-10-15 로 고친다. netcode.md 「미정 — 서로 다른 섬에 흩어질 때」에 위 사람 말을 적는다 (흩어져 따로 가는 것 자체는 이 단계에서 짓지 않는다 — 큰 일이라 사람과 따로 묶음으로 잡는다)",
-     "evidence": "permissions.md:12-18 권한 단위에서 헐기·섬 열기를 빼고 건축에 치기·내리기를 넣었으며 두 사람 결정 줄을 원문 인용으로 적었다. netcode.md 미정 「서로 다른 섬에 흩어질 때」 아래에 사람 말과 「따로 가는 것은 아직 안 지었다」를 적었다. 흩어져 가는 코드는 짓지 않았다(배는 여전히 서버장만). netcode.md 150줄 · permissions.md 34줄. 기존 사람 결정 줄은 지워지지 않았다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) netcode.md 남에게 보이는 것에 외형이 없다 — spec/11_multiplayer/netcode.md:141 「남에게 보이는 것」 줄에 「고른 외형(몸 소식 a, CharacterModel 로 입는다)」을 더해라. 코드(visitor_body.gd 머리 주석)는 고쳤는데 spec 이 따라가지 않았다",
-     "evidence": "netcode.md 「남에게 보이는 것」 줄에 「고른 외형(몸 소식 a, CharacterModel 로 입는다)」가 그대로 들어갔다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) bag.gd 가 외형 파일을 따로 읽는다 — ui/hud/bag.gd:141 set_look 이 AppearanceOptions.load_from() 을 스스로 불러 apply 한다. CharacterModel.wear 와 같은 일이니 look().model().wear(appearance) 로 바꾸고 test_character_model.gd 의 ALLOWED 에서 bag.gd 를 빼라 (막는 것은 아니다 — 같은 CharacterModel.apply 로 가므로 그림은 한 곳이다)",
-     "evidence": "bag.gd set_look 이 look().model().wear(appearance) 로 바뀌었고(CharacterModel.wear 가 load_from+apply), test_character_model.gd ALLOWED 에서 bag.gd 줄이 빠졌다 — 이제 bag.gd 가 외형 파일을 따로 읽으면 그 테스트가 깨진다. 전체 통과"
-    }
-   ],
-   "issues": [
-    "권한 단위 목록의 「임시」 표시가 빠졌다 — 사람은 헐기·섬 열기 두 칸만 정했는데 permissions.md:12 「권한 단위」와 game/core/net/guild.gd:15 주석에서 「임시」를 지웠다(나머지 아홉 칸은 여전히 Claude 가 1단계 표에서 뽑은 것). permissions.md:12 를 「권한 단위 (임시 — 헐기·섬 열기 말고는 Claude 가 1단계 표에서 뽑았다, G-221.19)」로, guild.gd UNITS 주석에 「(**임시** — 나머지 칸은 Claude 가 뽑았다)」를 되살려라. 미정 줄(permissions.md:32)은 이미 「사람이 더 쪼개거나 합치면 고친다」라 그대로 둬도 된다"
-   ],
-   "good": []
-  },
-  "test": "ests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      2s  res://tests/automation/villagers/test_villager_door.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      2s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      0s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           385\nTests            2885\nPassing Tests    2885\nFailing Tests       0\nRisky/Pending       0\nAsserts        122785\nTime           741s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "6cbd3dc2"
- },
- {
   "time": "2026-10-15 21:24:56",
   "epoch": 1792067096,
   "type": "pass",
@@ -9277,5 +9209,11 @@
    "good": []
   },
   "test": "l.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/automation/villagers/test_keeper_particle.gd\nok      2s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/automation/villagers/test_villager_gear.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_bond.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_manual_screen.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           546\nTests            4123\nPassing Tests    4123\nFailing Tests       0\nRisky/Pending       0\nAsserts        197168\nTime           785s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-22 17:39:34",
+  "epoch": 1792658374,
+  "type": "start",
+  "title": "루프 시작"
  }
 ]

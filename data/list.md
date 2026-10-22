@@ -4835,7 +4835,7 @@
 - 끝 (2026-10-22, 지휘 세션이 손으로): 도랑 없으면 뭍 98% 가 덮인다 · 계산 120ms (tests/world/terrain/test_volcano_island.gd)
 
 ## [ ] G-282 미래 옷 — 상의 · 하의 · 모자 · 신발, 모듈을 낀다
-- 차선: 3d-start
+- 차선: 3d-start · 시작 2026-10-22 17:39
 - spec: spec/02_player/equipment.md, spec/02_player/equipment-modules.md
 - **사람 결정 2026-10-22** (원문 그대로): 「상의는 미래 상의 하의 모자 신발 만들어줘. 이건 다음 모듈을 낄 수 있는거야.」
 - 지휘 세션이 2026-10-22 봤다: 장비 칸 여덟 · 상의 · 모자 · 하의에 모듈 칸이 이미 있다 (equipment.gd:12-34 FITS · armor.gd:14-29 MATERIALS · PIECES · DEFENSE · armor_modules.gd:38-50 NORMAL_SLOTS · HEALTH · :97 material_of 는 「<재질>_<armor|helmet|leggings>」 이름으로 재질을 가린다). **신발에는 모듈 칸이 없다** (equipment-modules.md:26 — 방패 · 배낭 · 스파이크 칸 없음)
