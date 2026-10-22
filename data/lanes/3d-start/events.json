@@ -1,69 +1,5 @@
 [
  {
-  "time": "2026-10-16 13:32:13",
-  "epoch": 1792125133,
-  "type": "fail",
-  "title": "QA 불합격 — G-225-4 단계 1 (시도 1)",
-  "group": "G-225-4",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "다른 섬에 다녀오면 느려지는 까닭 둘을 고쳤다 — 오르막에서 엔진이 배율보다 한 번 더 깎던 것(cos²θ) · 서버장이 오갈 때마다 참가자 섬에 짐승·주민 몸이 한 벌씩 쌓이던 것. 바뀐 곳만 고른 256개 파일 · 2064개 테스트 통과",
-   "approach": "① 걸음: player.gd 는 수평으로만 밀고 move_and_slide 가 비탈면으로 미끄러뜨려 오르막에서 수평 거리가 cos²θ 만큼만 났다 — slope_factor 로 이미 늦춘 위에 한 번 더 깎였다. 맨 비탈 판에서 배율대로 vs 실제: 15° 5.20→4.83 · 25° 4.60→3.77 · 35° 3.90→2.61 m/s. 유황 섬 선착장→스폰 목표 4.79 · 실제 4.05. 진짜 섬 사람 길(스폰→숲→언덕→선착장)의 오르막 프레임 평균은 목표 5.19 · 실제 4.77 (−8%). 고친 것: 땅 위 오르막이면 걷는 속도를 비탈면에 눕히는 위 속력을 싣는다(_climb_along_floor). 고친 뒤 15°/25°/35° 5.18/4.59/3.89 (배율대로), 유황 선착장→스폰 4.74/4.79, 사람 길 오르막 5.19/5.28. 처음 판은 진짜 섬 언덕(42° 땅이 46° 면에 막히는 자리)에서 그 골을 타고 몸이 떠올라 턱 오르기가 면 위로 들고 떨어지기를 10초 내내 되풀이했다(5초 중 252걸음 뜸) — 걸을 수 없는 면에 닿아 있으면 위 속력을 싣지 않고, 실은 걸음이 면에 닿거나 땅을 놓치면 그 걸음을 수평으로만 다시 걷게 했다(0/300). 수평 속도를 1/cos²θ 로 늘리는 길도 해 봤으나 엔진이 땅 위 수평 속도를 남겨 다음 걸음이 거기서 또 늘어 폭주했다. ② 벽시계: 서버장+참가자, 건너기 전 · 유황섬 · 돌아온 뒤 · 갈라 섬 · 다시 모임 모두 물리 59.9~60.1 걸음/초, 벽시계 거리/초 = 게임 속도 (평지 5.80 m/s · 차이 0.01 이내). 물리 시간이 늦게 흐르지 않는다. 그러나 노드 · 몸 수에서 새는 것을 찾았다: 서버장만 오가면 HOME 이 섬을 다시 세워 짐승 번호가 새것이 되는데 맞추기가 옛 번호를 잊어 「사라졌다」를 못 보내 참가자 섬에 짐승 몸이 쌓였다(몸 86→92→98). 서버 섬이 새로 서면 남아 있는 참가자에게 짐승·주민을 통째로 다시 보내게 했다(net_world.gd attach_hunt/attach_folk → _send_animals/_send_folk). 고친 뒤 86→86→86. 앞 단계 QA 둘(sail_to 가 crew 를 인자로 받고 「사람 길 아님」 주석 · _depart / notice.gd 낡은 주석)은 3d-start 를 합칠 때 이미 들어와 있어 확인만 했다. 벽시계 재기는 앞 회차가 창 있는 판으로 잰 것(.loop/out/g2254_wall2.log — 그 판 FPS 12~118, 물리 60/s)과 이번 회차 headless 재기(창 godot 은 훅이 막는다)가 같은 결론이다. 사람 확인: 다음 시험 판에서 F3 FPS 를 같이 본다 — 렌더가 무거워 FPS 가 낮아도 물리는 60/s 를 지켰다.",
-   "why": "",
-   "files": [
-    "game/player/movement_controls/player.gd",
-    "game/core/net/net_world.gd",
-    "game/tests/multiplayer/test_speed_after_sailing.gd",
-    "game/tests/multiplayer/beast_world_island.gd",
-    "game/tests/player/movement_controls/test_slope_ground_speed.gd",
-    "game/tests/player/movement_controls/test_slope_real_island.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "재현부터 — 평지에서 걸은 속도를 재고, 섬을 갔다 와서(서버장 · 참가자 둘 다, 3단계 전 길이든 뒤 길이든) 같은 자리에서 다시 잰다. 느려지면 까닭을 고치고 테스트로 남긴다. 재현이 안 되면 report 에 잰 숫자를 남기고 사람에게 서버장 · 참가자 어느 쪽이었나 묻는다",
-     "evidence": "test_speed_after_sailing.gd 의 오가기 전후 걸음 테스트(서버장·참가자) + 새 test_guest_beasts_do_not_pile_up_when_host_sails_alone. 창 있는 판 g2254_wall2.log 에 건너기 전·유황섬·돌아온 뒤 서버장/참가자 속도가 있다(5.79/5.78 → 5.80/5.78). net_world.gd 의 attach_hunt/attach_folk 다시 보내기를 끄니 짐승·주민이 1→2→3→4→5 로 쌓이며 9개 단언이 깨졌다 — 진짜 테스트"
-    },
-    {
-     "ok": false,
-     "criterion": "① 진짜 섬 5.21 m/s vs 시험 섬 5.40 m/s (−3.5%) — 평지라 고른 자리에서도 빠진다. 그 3.5% 가 어디서 오나(slope_factor · 잔 턱 relief · 땅에 걸리는 미끄럼 · can_walk_to 로 0 이 되는 프레임) 프레임마다 갈라 적는다. 진짜 섬 · 유황 섬을 사람이 걷는 길(스폰 → 숲 → 마을 → 선착장, 언덕 포함)로 걸려 평균 속도를 잰다 — 그 길에서 config.move_speed 보다 얼마나 덜 가나",
-     "evidence": "까닭 하나(오르막에서 move_and_slide 가 cos²θ 로 한 번 더 깎음)를 찾아 player.gd _climb_along_floor 로 고쳤고 테스트는 진짜다 — _climb_along_floor 를 0 으로 놓으니 test_slope_ground_speed 가 15/25/35° 모두 깨졌고(4.83/3.77/2.61), 면 앞 되걷기를 끄니 test_slope_real_island 가 뜬 걸음 252/300 으로 깨졌다. 그러나 기준이 적으라고 한 숫자가 report 에 없다: (가) 문제의 5.21 vs 5.40 평지 자리를 고친 뒤 다시 잰 값이 없다 — 그 3.5% 가 이 고침으로 사라졌는지 모른다. (나) slope_factor · relief · 미끄럼 · can_walk_to 0 프레임 으로 갈라 적은 표가 없다 — 오르막 프레임 평균만 있다. (다) 사람 길 전체 평균이 config.move_speed 보다 얼마나 덜 가나가 없다 — 「배율대로 목표 vs 실제」 오르막 프레임만 적었다. 사람은 「돌아다니는 내내」 느렸다고 했으니 이 셋이 있어야 그 느낌이 풀렸는지 판단된다"
-    },
-    {
-     "ok": true,
-     "criterion": "② 벽시계 속도 — 창 있는 판에서 서버장 + 참가자, 건너기 전 · 유황섬 · 돌아온 뒤 각각 물리 시간 · 프레임 시간 · 벽시계 거리/초를 잰다. 옛 섬이 풀리지 않고 남는가(노드 수 · 물리 바디 수 전후)도 본다",
-     "evidence": ".loop/out/g2254_wall2.log 는 Metal Forward+ 로 돈 창 있는 판이다 — 여섯 시점 모두 phys_per_s 58.8~60.1, game/wall 속도 차 0.12 이내, fps·worst_frame·phys_ms 기록. 노드 4528→4530, 몸 86→86→92→98 로 새는 것을 찾아 고쳤다(위 짐승·주민 테스트)"
-    },
-    {
-     "ok": true,
-     "criterion": "느려지는 것이 보이면 고치고 테스트로 남긴다. 보이지 않으면 잰 숫자를 report 에 남기고 사람에게 다시 묻지 않는다 — 다음 사람 시험 판에서 F3(FPS)와 같이 보게 「사람 확인」으로 남긴다",
-     "evidence": "보인 둘(오르막 이중 감속 · 참가자 섬 짐승/주민 쌓임)을 고치고 테스트 셋을 남겼다(일부러 깨서 셋 다 깨짐 확인 · 되돌림). report 에 「사람 확인: F3 FPS」 적음, needs_decision null"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) sail_to 가 아직 모두를 끌고 간다 — sail_to 를 테스트 도우미로 이름을 바꾸거나 crew 를 인자로 받게 하고, 주석에 「사람 길 아님」을 적어라",
-     "evidence": "game_root.gd:536 sail_to(to_island, crew: Array[int] = []) — [ME] + crew 만 _sail_crew 로 넘긴다. 531줄 「**사람 길이 아니다**」 주석"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 낡은 주석 둘 — _depart 주석 → 「_sail_crew → NetWorld.sail_crew」, notice.gd 6줄 → open_dock_window",
-     "evidence": "game_root.gd:981 「(_sail_crew → NetWorld.sail_crew)」 · notice.gd:6 「(core/game_root.gd 의 open_dock_window)」"
-    }
-   ],
-   "issues": [
-    "기준 ① 숫자가 report 에 없다 — 고친 뒤 (가) 앞 회차가 5.21(진짜 섬) vs 5.40(시험 섬) 을 잰 바로 그 평지 자리·방향에서 다시 재 적어라(고친 뒤 몇 m/s 인지, 차이가 남으면 몇 %). (나) 진짜 섬 · 유황 섬 사람 길(스폰→숲→마을→선착장, 언덕 포함)을 걸리며 프레임마다 손실을 slope_factor 몫(base_speed - base_speed*slope_factor) · 엔진 미끄럼 몫(want - moved, 땅 위) · relief/_step_up 몫 · can_walk_to 로 0 이 된 프레임 수 · 공중 프레임 수로 갈라 합계를 표로 report.how 에 적어라. (다) 그 길 전체 평균 수평 속도 / config.move_speed 비율을 고치기 전 · 뒤 둘 다 적어라. 재는 탐침은 tests/probe_* 로 짜고 다 쓰면 지운다(.uid 포함). 테스트 파일은 이미 진짜이니 손대지 않아도 된다",
-    "test_slope_real_island 가 멀티 하네스 밖 시험 섬 하나에만 묶였다 — FROM(-288.7, 37.6, 347.3) 은 지형 생성이 바뀌면 그 자리가 면 앞이 아닐 수 있다. 테스트 머리에서 FROM 앞 몇 m 안에 걸을 수 없는 면(법선 y < cos(floor_max_angle))이 있는지 단언해 두면 지형이 바뀌어도 조용히 빈 테스트가 되지 않는다"
-   ],
-   "good": []
-  },
-  "test": "s  res://tests/build/test_build_piece_tidy.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      0s  res://tests/core/net/test_net_link_one_place.gd\nok      0s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           411\nTests            3006\nPassing Tests    3006\nFailing Tests       0\nRisky/Pending       0\nAsserts        130079\nTime           625s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-16 14:25:03",
   "epoch": 1792128303,
   "type": "pass",
@@ -8817,5 +8753,65 @@
   },
   "test": "      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      3s  res://tests/settings/save/test_old_barn.gd\nok      3s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/save/test_old_stove.gd\nok      3s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      3s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      3s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_hive_window.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_dig_save.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\nok      3s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           578\nTests            4295\nPassing Tests    4295\nFailing Tests       0\nRisky/Pending       0\nAsserts        206715\nTime           851s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "b44155bd"
+ },
+ {
+  "time": "2026-10-23 05:07:18",
+  "epoch": 1792699638,
+  "type": "pass",
+  "title": "통과 — G-291 단계 1 (차량 정비소 · 출고)",
+  "group": "G-291",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "차량 정비소(vehicle_garage) 시설 — 개발용 상자에만 · 창의 「출고」 단추로 정비소 앞 빈 자리에 차 1대(임시)가 선다 · 밖이면 「이미 나가 있다」 · 차는 정비소에 붙어 섬 저장 · 다시 세운 섬 · 참가자 화면에 안/밖 · 자리가 같다",
+   "approach": "차를 따로 떠도는 물건이 아니라 정비소가 쥔 상태(Garage: 안/밖 · 자리 · 쪽)로 두고, 차 몸(Vehicle, 기본 도형 상자)을 정비소의 자식으로 붙였다. 그래서 시설 저장본(Stations.standing → 「garage」)과 참가자 화면(Stations.shared → sync → _fill → show_car)이 따로 길을 내지 않고 정비소 줄과 함께 간다. 출고(Stations.dispatch / 창 GaragePanel 「출고」 → Stations.act GARAGE_OUT)는 앞(+z) → 뒤 → 오른쪽 → 왼쪽 순으로 빈 자리를 잰다 — 땅을 짚은 것이 놓인 것 · 사람 · 차가 아니고 차 몸만 한 상자가 바닥 0.3m 위에서 아무것에도 안 걸려야 빈 자리. 처음엔 이 광선을 stations.gd 에 적었다가 「stations.gd 는 제 광선을 쏘지 않는다」 지킴 테스트(test_stations · test_stations_aim_one_path)에 걸려 Garage.spot_beside 로 옮겼다. 정비소는 dev_only 라 개발용 상자에 저절로 들고, 시설 표 밖 · dev_only 목록을 적은 두 테스트(test_docs_match_code_g275 · test_geothermal_stations)에 한 이름씩 더했다. ESC 데이터베이스 목차에 한 줄, 창 그림(--ui vehicle_garage, ko · en)을 찍어 잘림 없이 「차 1대가 안에 있다 · 출고」가 보이는 것을 봤다. 바뀐 곳 그물(272 파일): 2277 통과 · 1 실패(test_from_empty_hands — 연구대 놓기, 이번 변경과 닿지 않는다. 앞선 같은 그물에선 통과했고 혼자 다시 돌리니 통과 — 병렬 부하 때의 시간 흔들림으로 본다).",
+   "why": "Garage.CARS = 1 — 정비소마다 차 1대 (current.md 「1대 (임시)」, 차량 수는 사람이 안 정했다); 정비소 크기 2.6×2.2×2.6m · 색 5a6470 — 기본 도형, Claude 가 정함; Vehicle.SIZE 1.4×1.0×2.2m · 색 — 차량 종류를 사람이 안 정했다; Garage.GAP 0.5m (정비소 벽 ~ 차) · Garage.CLEARANCE 0.3m (빈 자리 잴 때 바닥 위 띄움) — Claude 가 정함; 출고 자리 순서 앞(+z) → 뒤 → 오른쪽 → 왼쪽 — 시설에 돌림(yaw)이 없어 +z 를 앞으로 잡았다",
+   "files": [
+    "game/life/vehicles/garage.gd",
+    "game/life/vehicles/vehicle.gd",
+    "game/craft/stations/stations.json",
+    "game/craft/stations/station_catalog.gd",
+    "game/craft/stations/crafting_station.gd",
+    "game/craft/stations/stations.gd",
+    "game/ui/hud/garage_panel.gd",
+    "game/ui/hud/station_window.gd",
+    "game/player/inventory_hotbar/items.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/ui/manual/manual_toc.json",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "game/tests/life/vehicles/test_garage.gd",
+    "game/tests/multiplayer/test_garage_on_server.gd",
+    "game/tests/craft/stations/test_geothermal_stations.gd",
+    "game/tests/core/test_docs_match_code_g275.gd",
+    "spec/04_life/vehicles.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "「차량 정비소」 시설 (번역 · 기본 도형 · 개발용 상자에만) — 창에 「출고」 단추 · 정비소마다 차 **1대 (임시)** · 차가 밖에 있으면 「이미 나가 있다」 · 출고하면 정비소 앞 빈 자리에 차가 선다 (테스트)",
+     "evidence": "tests/life/vehicles/test_garage.gd — test_the_garage_is_a_station_only_in_the_dev_box(시설 목록 · dev_only · 레시피 없음 · DevBox 에 든다 · CARS==1 · garage.gd 에 **임시**), test_names_are_in_korean_and_english(ko/en.po 에 키 여섯 · tr 로 「차량 정비소」「출고」), test_it_stands_as_a_plain_box_with_its_car_inside(BoxMesh · 차는 자식 · 안이면 안 보이고 충돌층 0), test_dispatch_puts_the_car_on_the_empty_spot_in_front(+z 앞 GAP 떨어진 자리 · 보이고 충돌층 1), test_a_car_already_out_is_not_dispatched_again(SAY_GARAGE_ALREADY_OUT · Notice 글자 · 자리 그대로 · vehicles 무리 1대), test_a_blocked_front_sends_the_car_to_another_free_side · test_with_no_free_side_the_car_stays_inside(막힌 앞은 피하고 넷 다 막히면 안에 남는다 — 막아야 할 경우가 들어 있다), test_the_window_has_a_dispatch_button_and_says_already_out(실제 StationWindow 의 GaragePanel 단추를 눌러 출고 · 상태 줄이 바뀌고 다시 누르면 「이미 나가 있다」). test.log 바뀐 곳 272 파일 2278 통과 · guard 통과."
+    },
+    {
+     "ok": true,
+     "criterion": "차는 정비소에 붙어 있다 — 섬 저장 · 다시 세운 섬 · 참가자 화면에 정비소 안/밖 · 자리가 같다 (테스트)",
+     "evidence": "test_garage.gd test_the_car_inside_or_out_and_its_spot_survive_save_and_rebuilt_island — 밖 정비소 · 안 정비소 둘을 IslandState 로 월드에 담아 디스크에 썼다 읽고 Stations 를 새로 세워 되돌린 뒤 안/밖 · 자리 · 쪽 · 몸 위치 · 다시 출고하면 「이미 나가 있다」를 본다. test_an_old_save_line_without_the_car_keeps_it_inside 로 옛/틀린 줄은 안. tests/multiplayer/test_garage_on_server.gd — 서버장 출고가 참가자 화면에 같은 at · yaw · 몸 위치로, 참가자가 창 단추로 바라면 서버의 차가 나가고 같은 자리. 일부러 깨 봄: stations.gd standing() 의 d[\"garage\"] 줄을 끄니 저장 테스트가 5개 단언으로 떨어졌다(되돌림 확인). spec/01_settings/save.md 월드 목록에 「차량 정비소의 차」 한 줄 더함."
+    }
+   ],
+   "issues": [
+    "땅이 없는 쪽에도 차가 선다 — game/life/vehicles/garage.gd 의 spot_beside 는 아래로 쏜 광선이 아무것도 못 짚어도(바다 위 · 섬 끝 낭떠러지) 그 자리를 정비소 높이 그대로 빈 자리로 친다. 땅을 못 짚은 쪽은 continue 로 건너뛰고, 땅(바닥) 없이 정비소만 세운 테스트에서 넷 다 비면 SAY_GARAGE_NO_ROOM 이 되는지 단언을 더하라 (막는 것은 아니다 — 지금 기준은 놓인 것만 말한다)"
+   ],
+   "good": [
+    "ESC 데이터베이스 목차(manual_toc.json)에 정비소 한 줄 · ui_shots 에 vehicle_garage 찍는 자리 — 기준 밖이지만 시설을 더할 때의 관례라 순서를 흐트러뜨리지 않는다"
+   ]
+  },
+  "test": "_five_slots.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_loom.gd\nok      2s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      3s  res://tests/craft/stations/test_smoker.gd\nok      3s  res://tests/craft/stations/test_pitcher_pump_g273.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_cage_reuse.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      3s  res://tests/life/hunting/test_captive_age.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/life/ranching/test_shearing.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_future_wear_modules.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_manual_screen.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    441s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           272\nTests            2278\nPassing Tests    2278\nFailing Tests       0\nRisky/Pending       0\nAsserts         76057\nTime           441s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "f0e51f72"
  }
 ]
