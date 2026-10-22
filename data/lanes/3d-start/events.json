@@ -1,72 +1,5 @@
 [
  {
-  "time": "2026-10-16 21:10:38",
-  "epoch": 1792152638,
-  "type": "fail",
-  "title": "QA 불합격 — G-230 단계 1 (시도 1)",
-  "group": "G-230",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "제작 창에서 진행 막대·위쪽 타이머를 없애고 남은 초를 만드는 중인 대기열 줄 이름 옆에만 띄웠다. 검색칸을 왼쪽 표 위(표 너비 안)로 옮기고 옆에 분류 고르기를 놓았다 (바뀐 곳만: 151파일 1237개 통과)",
-   "approach": "막대(Side/Craft/Time 의 Bar·Left)는 오른쪽 칸 맨 위에 있었다 — 씬에서 걷어내고 테마의 쓰지 않게 된 Window bar_width 도 지웠다(bar_height 는 주민 창이 써서 남겼다). 대기열 줄(QueueLine)에 이름 바로 다음 Left 라벨을 두고, 그 줄이 만드는 중일 때(CraftingStation.in_flight)만 「4.6초」(번역 STATION_QUEUE_LEFT)를 띄운다. 「− 칸 + ×」는 그대로다. 검색칸은 패널 전체 너비(Box)에 있어 표보다 넓었다 — 왼쪽 Main 안 Find 줄(검색칸 + OptionButton 분류)로 옮겨 표 너비를 넘지 않게 했다. 레시피에는 분류가 없어서 레시피 파일 줄에 category 칸을 더하고(RecipeCatalog 가 읽는다, 없으면 \"\") 제작대(workbench) 110줄에 분류 일곱을 매겼다. 고르기는 「전체」 + 그 시설에 적힌 분류이고, 분류가 없는 시설(용광로 등)은 숨는다. 이름과 분류 둘 다 맞는 줄만 남고, 다른 시설을 열면 「전체」로 돌아간다. 사람이 말한 사진은 ~/Desktop/naru-saves/G-230-2026-10-16/ 에 아직 없어 꼴은 위 글귀대로 정했다. ui_shots: workbench·workbench_search·smelter·beehive·barn 1280×720, workbench·workbench_search·smelter 1920×1080 — 한국어·영어를 다 열어 봤고 넘치거나 겹치는 곳이 없다. 고르기 상태는 검색어처럼 창의 잠깐 상태라서 저장하지 않는다.",
-   "why": "제작대 분류 일곱(가구 · 설치 / 도구 / 무기 · 탄 / 방어구 / 시설 / 씨앗 / 재료)과 줄마다 매긴 분류 — 레시피 분류는 사람이 정한 적이 없어 Claude 가 정했다 (workbench.json _fields · spec 미정); 다른 시설에는 분류를 두지 않았다 — 줄이 18개 이하라 고르기를 숨겼다; 남은 초의 꼴 「%.1f초」/「%.1fs」(STATION_QUEUE_LEFT) — 사람이 보고 정한다",
-   "files": [
-    "game/ui/hud/station_window.gd",
-    "game/ui/hud/station_window.tscn",
-    "game/ui/theme/naru_theme.tres",
-    "game/craft/recipes/recipe_catalog.gd",
-    "game/craft/recipes/workbench.json",
-    "game/craft/stations/crafting_station.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/ui/hud/test_station_g230_look.gd",
-    "game/tests/ui/hud/test_station_output.gd",
-    "game/tests/ui/hud/test_station_queue_side.gd",
-    "game/tests/ui/hud/test_station_window_frame_cost.gd",
-    "game/tests/ui/hud/test_station_window_temporary_note.gd",
-    "game/tests/ui/layout/test_window_layout.gd",
-    "spec/05_craft/crafting-stations.md",
-    "spec/12_ui/hud.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "맨 위의 진행 바와 타이머를 둘 다 없앤다 — 맨 위에는 아무 진행 표시도 없다 · 목록 줄 옆에도 타이머를 달지 않는다",
-     "evidence": "씬에서 Side/Craft/Time(Bar·Left)을 걷어냈다. test_station_g230_look 의 test_there_is_no_progress_bar_and_no_time_on_top 이 창 안 ProgressBar 0개 · 「n초」 글자는 QueueLine 안 한 곳뿐임을, test_recipe_rows_carry_no_timer 가 표의 침대 줄에 Left·「초」 글자가 없음을 본다. 전체 테스트 3035개 통과(test.log 전체)"
-    },
-    {
-     "ok": true,
-     "criterion": "「이름으로 찾기」 칸이 목록 너비를 넘지 않는다. 검색칸 옆에 분류(카테고리) 를 놓는다. 그 아래 목록은 지금 그대로",
-     "evidence": "Search 를 Main/Find 줄로 옮기고 옆에 OptionButton Category. test_the_search_stays_within_the_list_and_the_category_sits_beside_it 가 검색·분류 사각형이 목록(scroll) 좌우 끝 안 · 분류가 검색 오른쪽 같은 높이 · 목록 위임을 잰다. test_picking_a_category_keeps_only_its_rows · test_the_category_names_are_translated_keys(ko·en) · test_a_station_without_categories_hides_the_picker_and_reopening_resets_it 가 거르기·번역·용광로에서 숨기·다시 열면 「전체」를 본다. 사진 shots_720/1080 workbench_* 에서도 목록 안에 선다"
-    },
-    {
-     "ok": true,
-     "criterion": "남은 시간은 오른쪽 대기열에만 — 대기열 줄의 이름 옆에 타이머만 보인다(대기열에 목재가 있으면 「목재」 옆에 타이머). 바는 뺀다 (G-225 의 「용광로 − 칸 + ×」 줄은 그대로)",
-     "evidence": "test_the_time_left_sits_next_to_the_queue_lines_name 이 만드는 중인 침대 줄 Left 가 Item 바로 다음 인덱스 · 같은 높이 · 오른쪽 · 숫자가 craft_left 와 같음 · Less/Count/More/Drop 그대로임을, test_the_waiting_line_has_no_timer_and_the_time_goes_away_when_done 이 기다리는 줄엔 없고 줄어들며 다 되면 사라짐을 본다"
-    },
-    {
-     "ok": false,
-     "criterion": "1280×720 · 1920×1080 · 한국어 · 영어 화면 찍기(ui_shots)로 넘치거나 겹치는 곳이 없다",
-     "evidence": "구현 세션의 사진(대기열 맨 앞이 짧은 「Chair」)에는 넘침이 없다. 그러나 QA 가 ui_shots.gd 의 대기열 첫 줄만 chair→double_barrel_shotgun(제작대에 실제로 있는 레시피)으로 잠깐 바꿔 harness/shot.sh --ui 로 1280×720 을 찍자(찍은 뒤 되돌림), 영어 「Double-barrel shotgun 4.6s − 3 +」 뒤의 「×」가 다음 줄로 꺾여 혼자 떨어졌다. 이번에 이름 옆에 더한 타이머(약 40px) 때문에 QueueLine(HFlowContainer)이 오른쪽 칸 너비(340)를 넘는다 — 넘치는 곳이 있다"
-    }
-   ],
-   "issues": [
-    "긴 이름 + 타이머면 대기열 줄이 꺾인다 — 기준 4 불합격 사유. 오른쪽 칸(Window station_side_width 340)에서 영어 「Double-barrel shotgun 4.6s − 3 + ×」가 한 줄에 안 들어가 QueueLine(HFlowContainer, game/ui/hud/queue_line.gd)이 「×」를 다음 줄로 보낸다 — 만들기 시작/끝날 때마다 줄 높이도 튄다. 고치는 길: 이름 Label 이 남는 자리를 채우고 넘치면 말줄임(text_overrun_behavior = OVERRUN_TRIM_ELLIPSIS, clip_text, size_flags_horizontal EXPAND_FILL)하게 하고 타이머 · − 칸 + × 는 늘 같은 줄 오른쪽에 서게 하라(필요하면 QueueLine 을 꺾이지 않는 꼴로). 테스트: test_station_g230_look 에 제작대에서 이름이 가장 긴 레시피(영어로 잰다 — 지금은 double_barrel_shotgun · anti_materiel_rifle)를 en 로캘로 만드는 중으로 두고 그 줄의 Item · Left · Less · Count · More · Drop 의 global_rect 중심 y 가 모두 같고(±2) Drop.end.x ≤ 오른쪽 칸(Side) end.x 인지 단언하라. ui_shots 의 workbench 자리도 대기열 첫 줄을 이름 긴 레시피로 두어(또는 자리를 하나 더 두어) 사진으로 남겨라",
-    "spec 의 「레시피 카테고리는 사람이 먼저 본다」 구절이 지워졌다 — spec/05_craft/crafting-stations.md 43행 G-209.3 줄 끝. 이번 사람 요청(분류를 넣어라)으로 낡은 구절이라 지운 것은 맞지만, 분류 일곱 · 줄마다의 배정은 Claude 가 지었으니 미정 줄(이미 있음)에 「사람이 보고 고른다」를 분명히 남겨 두면 좋다 (막는 것은 아니다)"
-   ],
-   "good": [
-    "레시피 파일에 category 칸을 새로 두고 제작대 110줄에 분류 일곱을 매겼다 — 사람 요청이 「검색칸 옆에 카테고리」라 필요한 것이고 임시로 적혀 있다(spec 미정 · workbench.json _fields)",
-    "테마의 쓰지 않게 된 Window bar_width 를 지웠다"
-   ]
-  },
-  "test": " res://tests/build/test_build_piece_tidy.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/core/test_window_fit.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/test_project_setup.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           415\nTests            3035\nPassing Tests    3035\nFailing Tests       0\nRisky/Pending       0\nAsserts        130862\nTime           640s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-16 21:34:21",
   "epoch": 1792154061,
   "type": "pass",
@@ -8809,5 +8742,36 @@
   },
   "test": "es://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      2s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/test_guard.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_food_shown.gd\nok      2s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           596\nTests            4387\nPassing Tests    4387\nFailing Tests       0\nRisky/Pending       0\nAsserts        211854\nTime           845s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "75382713"
+ },
+ {
+  "time": "2026-10-23 08:36:30",
+  "epoch": 1792712190,
+  "type": "stop",
+  "title": "루프 끝 — 이 차선(3d-start) 몫을 다 했다. 다른 차선 몫으로 남은 것: G-932",
+  "group": "G-933",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "test_car_drill.gd 에 흐르는 용암 위에서 드릴 차가 판을 안 깬다는 테스트를 더했다 (바뀐 곳만: 1 파일 7 개 통과)",
+   "approach": "spec 은 「흐르는 용암에서는 아무 일도 없다」고 적었지만 차 드릴로 확인하는 테스트가 없었다. 첫 분출이 다 퍼진 때(FIRST_HOUR + SPREAD_HOURS + 0.05, 아직 흐른다)로 시계를 맞추고, 차가 갈 길이 흐르는 용암에 덮였음(covered)과 flowing() 을 앞선 조건으로 확인한 뒤 드릴 차를 90 걸음 몰아 carves 0 · carved_points 0 · 복셀 기록 0 을 본다. 0 이 드릴이 죽어서가 아님을 보이려고, 같은 차로 굳기 시작한 때로 시계를 옮겨 다시 몰면 깨는 것(carves > 0)을 대조로 붙였다. 참고: 흐르는 동안은 _cooling 도 -1 이라 carve 가 두 겹으로 막힌다 — 이 테스트는 행동(흐르는 동안 안 깬다)을 지키며, flowing() 한 줄만 지워서는 떨어지지 않는다.",
+   "why": "",
+   "files": [
+    "game/tests/life/vehicles/test_car_drill.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "흐르는 용암 위에서 안 깬다는 테스트가 없다 — spec/04_life/vehicles.md 는 「흐르는 용암 … 에서는 아무 일도 없다」고 적었고 Volcano.carve 의 flowing() 검사가 막지만, 차 드릴로 확인하는 테스트는 없다. 분출이 흐르는 때로 시계를 맞추고 드릴 차를 몰아 carves 0 을 보는 테스트를 test_car_drill.gd 에 더해라",
+     "evidence": "test_car_drill.gd::test_flowing_lava_is_left_alone_by_the_drill — 시계를 FIRST_HOUR+SPREAD_HOURS+0.05 로 맞춰 flowing() 과 차 길이 covered 임을 앞선 조건으로 확인하고, 드릴 차를 90 걸음 몰아 나아갔음 · 내내 흘렀음을 본 뒤 carves 0 · carved_points 0 · voxel records 0 을 단언한다. 굳은 뒤 같은 차가 깨는 대조(carves > 0)도 있다. 일부러 깨 봄: volcano.gd:516 에서 `_cooling < 0` 과 `flowing()` 검사를 빼자 이 테스트가 line 255 · 256 에서 [6] != [0] 으로 떨어졌다(되돌림 확인, 다시 돌려 7/7 통과). 전체 테스트 4387 개 통과 · guard 통과 (test.log)."
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "es://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      2s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/test_guard.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_food_shown.gd\nok      2s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           596\nTests            4387\nPassing Tests    4387\nFailing Tests       0\nRisky/Pending       0\nAsserts        211854\nTime           845s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
