@@ -4975,7 +4975,7 @@
   - 기준: 만드는 목록은 **사람이 정할 때까지 비워 둔다** — 창을 열면 「아직 만드는 것이 없다」(번역). 목록 표만 만들어 둔다 (지어내지 않는다)
 - [x] 3. spec — facilities.md 에 「지열 자리 · 지열 용광로 · 대장간」 (사람 원문 · 임시 · 미정 목록)
   - 기준: (앞 단계 QA) 붉은 바닥 cull_mask 가 숫자로 박혔다 — game/world/terrain/geothermal.gd _glow 의 d.cull_mask = 0xFFFFF & ~SPARED_LAYER 에서 0xFFFFF(20층 전부)를 그대로 적었다. Decal 기본 cull_mask 를 읽어(d.cull_mask & ~SPARED_LAYER) 빼는 꼴로 바꾸면 층 수 가정이 사라진다 (막는 것은 아니다)
-- [ ] 4. (앞 단계 QA) facilities.md 가 148줄로 한도 턱밑이다
+- [x] 4. (앞 단계 QA) facilities.md 가 148줄로 한도 턱밑이다
   - 기준: facilities.md 가 148줄로 한도 턱밑이다 — spec/05_craft/facilities.md 가 150줄 한도까지 2줄 남았다. 다음에 이 파일에 줄을 더할 일이 생기면 지열 절을 03_world/frontier-islands.md 쪽으로 넘기거나 자리 규칙 절을 따로 나눠라 (막는 것은 아니다)
 
 ## [ ] G-290 온천 — 설치물을 놓으면 주민 스트레스가 내려간다
