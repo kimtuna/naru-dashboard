@@ -1,54 +1,5 @@
 [
  {
-  "time": "2026-10-18 07:31:11",
-  "epoch": 1792276271,
-  "type": "fail",
-  "title": "차선 합치기 실패 — 3d-start(04300373) → 3d-lane2",
-  "group": "G-236",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "거두면 그 작물의 씨앗이 50%(임시)로 하나 같이 나온다 — 사람 가방 · 가방이 차면 바닥 · 주민 농부는 손에 들어 방 상자로. 물 마름 규칙을 사람 결정대로 spec 에 적고 미정에서 지웠다. 바뀐 곳만: 67개 파일 478개 테스트 통과",
-   "approach": "Crops.harvest 가 작물을 준 뒤 seed_back_chance(기본 SEED_BACK_CHANCE 0.5) 로 굴려 씨앗 하나를 같은 _give 길로 준다 — 가방이 차면 바닥, into(주민의 손)가 있으면 그리로. 주민이 손에 다 드나 먼저 보는 yields_at 에 돌아올지 모르는 씨앗 한 칸을 넣어, 운 좋은 날 씨앗이 손에 안 들어 바닥에 흘리는 일을 막았다. 굴림은 crops.rng 라 테스트가 씨앗을 박는다. 씨앗 수를 정확히 세던 기존 테스트(test_crops · test_crop_kinds · 주민 농사 둘)는 seed_back_chance = 0 으로 굴림을 껐다. 숙련도 덤: G-232 가 이 줄기에 없어 spec 미정에 「숙련도 덤 — G-232 뒤」 한 줄을 적었다(덤을 더할 자리 seed_back_chance 는 있다). 물 마름: next_day 주석과 spec 규칙에 「물을 안 준 날은 안 자랄 뿐 죽지 않는다 (사람 결정 2026-10-18)」를 적고 미정에서 지웠다 — 물뿌리개 한 통 크기 주석이 「물 마름 미정」을 까닭으로 들던 것도 고쳤다.",
-   "why": "Crops.SEED_BACK_CHANCE = 0.5 — 두 번 거두면 한 번 다시 심을 만큼. 사람이 플레이해 보고 고른다 (spec 미정); 숙련도 덤(농사 5레벨마다 +5%p) — G-232 가 이 줄기에 없어 지금은 0",
-   "files": [
-    "game/life/farming/crops.gd",
-    "game/life/farming/watering_can.gd",
-    "spec/04_life/farming.md",
-    "game/tests/life/farming/test_seed_back.gd",
-    "game/tests/life/farming/test_crops.gd",
-    "game/tests/life/farming/test_crop_kinds.gd",
-    "game/tests/life/farming/test_farming_temporary_notes.gd",
-    "game/tests/automation/villagers/test_villager_harvesting.gd",
-    "game/tests/automation/villagers/test_villager_farm_cycle.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "거두면 그 작물의 씨앗이 **50% 로 하나**(**임시**) 같이 나온다 — 가방이 차면 바닥에(지금 `_give` 와 같다). 주민 농부가 거둘 때도 같다(방 상자로) (테스트)",
-     "evidence": "crops.gd harvest() 가 작물 뒤 seed_of(kind) 를 rng.randf() < seed_back_chance 로 같은 _give 길에 준다. SEED_BACK_CHANCE=0.5 에 「임시」 주석. test_seed_back.gd: 확률 1 → 씨앗 1 · 확률 0 → 0 · 기본 0.5 로 400번 굴려 40~60% · 가방이 차면 씨앗·밀이 바닥(DroppedItem) · into 로 받는 손에 씨앗 · 임시 표시 검사. test_villager_harvesting.gd test_seeds_that_come_back_go_to_the_room_not_the_ground 가 주민 농부가 거둔 씨앗이 상자(또는 다시 심음)로 가고 바닥·사람 가방으로 새지 않음을 본다. 전체 테스트 3195 통과 · guard 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "농사 숙련도 덤(5레벨마다 +5%p, **임시**)은 G-232(차선 1) 가 이 줄기에 있으면 붙이고, 없으면 spec 미정에 「숙련도 덤 — G-232 뒤」 한 줄",
-     "evidence": "git log 에 G-232 가 없다. farming.md 미정에 「숙련도 덤 — G-232 뒤 (농사 5레벨마다 … +5%p, 임시)」 한 줄. test_the_spec_tells_the_seed_back_and_the_skill_bonus_place 가 미정 절에서 확인"
-    },
-    {
-     "ok": true,
-     "criterion": "farming.md 에 씨앗이 돌아오는 것 · 「물을 안 준 날은 안 자랄 뿐 죽지 않는다 (사람 결정 2026-10-18)」를 적고 미정 「물 마름 규칙」을 지운다",
-     "evidence": "farming.md 규칙에 두 줄 추가(사람 결정 · 날짜), 미정 첫 줄에서 「물 마름 규칙」 삭제. test_farming_temporary_notes.gd test_the_water_drying_rule_is_decided 가 규칙 절 문장·미정 절에 「물 마름」 없음·next_day 주석을 단언. 사람 결정 줄 삭제 없음, md 56줄"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_back.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           435\nTests            3195\nPassing Tests    3195\nFailing Tests       0\nRisky/Pending       0\nAsserts        140793\nTime           654s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-18 07:31:14",
   "epoch": 1792276274,
   "type": "pass",
@@ -9038,5 +8989,54 @@
   },
   "test": "//tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/automation/villagers/test_job_work_shared.gd\nok      2s  res://tests/automation/villagers/test_keeper_particle.gd\nok      2s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\nok      1s  res://tests/automation/villagers/test_villager_skills.gd\nok      2s  res://tests/build/test_build_piece_shared_shapes.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/core/net/test_net_link_one_place.gd\nok      2s  res://tests/core/test_grid.gd\nok      2s  res://tests/core/test_guard.gd\nok      2s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           577\nTests            4285\nPassing Tests    4285\nFailing Tests       0\nRisky/Pending       0\nAsserts        205925\nTime           825s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "39352bd7"
+ },
+ {
+  "time": "2026-10-23 02:50:21",
+  "epoch": 1792691421,
+  "type": "pass",
+  "title": "통과 — G-289 단계 1 (지열 자리)",
+  "group": "G-289",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "유황 섬에 지열 자리 2곳 — 김이 오르고 바닥이 붉게 단다. 자리 표는 islands.json 의 geothermal 한 곳(자리 · 반지름), 어느 섬에든 적으면 선다. 다시 세운 섬 · 참가자 섬에 같은 자리, 용암이 덮어도 남는다",
+   "approach": "자리 표를 섬 목록(islands.json) 한 곳에 geothermal [[x, z, 반지름]] 으로 두고 Islands.geothermal_of 로 읽는다 — 코드는 섬 이름을 모른다. TestIsland 가 표에 적힌 섬에만 Geothermal 노드를 세운다: 자리마다 붉게 빛나는 둥근 Decal(비탈 · 용암 판 위에도 비치게 위아래 8m) + 위로 오르는 김(CPUParticles3D). 고정 맵 자료라 저장하지 않는다 — 다시 세운 섬 · 참가자 섬(GameRoot._make_island 같은 길)이 같은 표에서 같은 자리를 세운다(테스트: 섬 저장을 JSON 으로 오가게 하고 다른 시드로 다시 세워 견준다). 태울 것(Volcano.things)에 넣지 않아 용암이 덮고 식어 사라진 뒤에도 남는다(테스트: 첫 분출이 자리를 덮는지 먼저 확인). 자리는 유황 섬 높이 맵을 훑어 8m 둘레 높이 차가 작은 평지 둘을 골랐다. 첫 그림에서 바닥이 네모로 하얗게 번졌다 — Decal 빛(emission)은 알파를 안 봐서 가장자리 빛깔을 검게 줄이고 세기를 낮췄다. 찍는 자리 geothermal · geothermal_lava 를 더해 둘 다 눈으로 봤다. ESC 데이터베이스 목차(세계)에 「지열 자리」 한 줄. 바뀐 곳 테스트(test.log: 135 파일 · 1051 개)에서 내 테스트 한 줄(그라디언트 끝 색을 엉뚱한 점 번호로 읽음)만 떨어졌고, 고친 뒤 그 파일만 다시 돌려 5개 통과",
+   "why": "유황 섬 지열 자리 2곳 (210, 185) · (190, -215), 반지름 6m — 사람이 몇 곳 · 어디를 안 정했다. 스폰 남쪽 · 남동쪽 바닷가 평지를 골랐다 (지휘 세션 · 사람이 옮긴다); 붉은 바닥 빛 세기 1.6 · 김 알갱이 60개 · 4초 · 오르기 1.6m/초 · 크기 2.4m — 그림이 보이는 정도로 맞춘 값",
+   "files": [
+    "game/world/terrain/geothermal.gd",
+    "game/world/terrain/test_island.gd",
+    "game/world/frontier_islands/islands.gd",
+    "game/world/frontier_islands/islands.json",
+    "game/core/debug/shots.gd",
+    "game/ui/manual/manual_toc.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/world/terrain/test_geothermal.gd",
+    "spec/03_world/frontier-islands.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "화산 섬(sulfur)에 지열 자리 **2곳 (임시 · 자리는 지휘 세션 · 사람이 옮긴다)** — 땅에서 김이 오르고 바닥이 붉게 달아 보인다 · 섬 저장 · 참가자 화면에 같다 · 용암이 덮어도 자리는 남는다 (테스트 + 찍는 자리)",
+     "evidence": "test_geothermal.gd(test.log 에서 통과): test_the_volcano_island_steams_and_glows_at_two_spots 가 실제 sulfur TestIsland 에서 2곳 · 뭍 위 땅 높이 · 김(emitting, 위로) · 붉은 Decal(가운데 r>2g · r>5b, 가장자리 검정)을 본다. test_a_rebuilt_island_has_the_same_spots 가 IslandState 를 JSON 으로 오가게 해 다른 시드로 다시 세운 섬(GameRoot._make_island 도 같은 TestIsland 길 — 확인함)에 같은 자리 · 높이를 보고, 저장본에 geothermal 이 없음을 단언한다(고정 맵 자료 — save.md 「지형은 고정 맵 데이터에서」 줄에 적었다). test_lava_covers_the_spots_but_they_stay 가 첫 분출이 자리를 덮는지 앞선 조건으로 확인한 뒤 흐르는 동안 · 판이 걷힌 뒤 둘 다 남는지 본다. 일부러 깨 봄: test_island.gd 의 volcano.things 에 Geothermal.GROUP 을 넣자 이 테스트가 떨어졌다(되돌림, diff 원래대로). 찍는 자리 geothermal · geothermal_lava 가 shots.gd 에 있다. 2곳 · 자리는 islands.json _temporary_geothermal 과 spec 에 임시로 적혔다"
+    },
+    {
+     "ok": true,
+     "criterion": "지열 자리 표 한 곳(자리 · 반지름) — 나중에 다른 섬에도 둘 수 있게",
+     "evidence": "islands.json 의 geothermal [[x, z, 반지름]] 한 곳, Islands.geothermal_of 로 읽고 TestIsland._build_geothermal 은 섬 이름을 모른다. test_the_table_lives_in_the_island_list(sulfur 2 · home 0 · 없는 섬 0) · test_any_island_with_a_row_gets_spots(임시 표에 home 한 줄 → 자리 · 반지름 그대로, 반지름 안/밖 spot_at) 가 확인한다. _fields 설명도 더했다"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "ESC 데이터베이스 목차(세계)에 「지열 자리」 한 줄 (MANUAL_geothermal, ko · en 둘 다) — 본문은 다른 항목처럼 아직 없음"
+   ]
+  },
+  "test": "_occluder.gd\nok      5s  res://tests/world/terrain/test_drill_rock.gd\nok      4s  res://tests/world/terrain/test_heat.gd\nok      3s  res://tests/build/test_bed.gd\nok      3s  res://tests/build/test_building_collapse.gd\nok      3s  res://tests/core/debug/test_dev_animals.gd\nok      3s  res://tests/core/test_far_cull.gd\nok      3s  res://tests/craft/stations/test_pitcher_pump_island.gd\nok      4s  res://tests/craft/stations/test_salt_pan_island.gd\nok      3s  res://tests/life/food/test_food.gd\nok      3s  res://tests/life/gathering/test_herb_regrowth.gd\nok      4s  res://tests/life/hunting/test_wild_kinds.gd\nok      4s  res://tests/life/gathering/test_herbs.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      3s  res://tests/life/ranching/test_cage_take_keeps_birds.gd\nok      4s  res://tests/ui/hud/test_room_window.gd\nok      3s  res://tests/world/day_night/test_day_in_world.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      3s  res://tests/world/terrain/test_drill_look.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      3s  res://tests/craft/recipes/test_tool_recipes.gd\nok      3s  res://tests/world/terrain/test_foundation_hides_grass.gd\nok      3s  res://tests/multiplayer/test_guest_left_afar.gd\nok      3s  res://tests/multiplayer/test_islands_afar.gd\nok      3s  res://tests/multiplayer/test_join_spot.gd\nok      2s  res://tests/multiplayer/test_lava_on_server.gd\nok      2s  res://tests/multiplayer/test_lava_rock_on_server.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      3s  res://tests/settings/save/test_spot_per_island.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      4s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/test_docs_match_code_g275.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      1s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok    440s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           135\nTests            1051\nPassing Tests    1051\nFailing Tests       0\nRisky/Pending       0\nAsserts         29352\nTime           440s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "3e1a7728"
  }
 ]
