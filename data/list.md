@@ -5031,7 +5031,7 @@
   - 기준: 「차량 드릴」 모듈 아이템 (번역 · 개발용 상자에만) — 차의 모듈 칸에만 들고 손 드릴 · 옷 칸에는 안 든다 · 끼운 차 앞에 드릴 모양이 보인다 (테스트)
   - 기준: 드릴을 끼운 차가 나아가면 **차 앞의 굳은 용암 판(위에 덮인 것)을 걷어 낸다** — Volcano.carve 를 차 앞 폭(임시 2.5m)으로 · 땅(복셀)은 파지 않는다 · 같이 하는 판은 서버가 걷는다 · 나오는 것 없음 (테스트: 굳은 판 위를 몰면 지나간 줄이 비어 있다)
   - 기준: 덮인 것이 없는 곳 · 화산 섬이 아닌 섬에서는 아무 일도 안 한다 (지금 덮이는 것은 화산 섬 용암뿐 — 사람 「현재는 화산맵 밖에 없어서」) · 걷어 내는 동안 프레임을 재서 적는다
-- [ ] 2. 보이는 것 · spec — 걷는 동안 드릴이 돌고 부스러기 (찍는 자리) · vehicles.md 에 차량 드릴 절
+- [x] 2. 보이는 것 · spec — 걷는 동안 드릴이 돌고 부스러기 (찍는 자리) · vehicles.md 에 차량 드릴 절
   - 기준: (앞 단계 QA) 차량 드릴이 목차의 「시설」 갈래에 들었다 — game/ui/manual/manual_toc.json 에서 vehicle_drill 줄이 facilities(MANUAL_CAT_facilities) 아래 vehicle_garage 다음에 있다. 모듈이지 시설이 아니다. 모듈을 다루는 갈래(예: 장비 · 모듈 쪽)로 옮기거나, 다른 모듈(vehicle_module · scope_*)처럼 목차에 안 넣는 쪽으로 맞춰라. 옮기면 test_car_drill.gd 의 목차 단언은 그대로 통과한다
   - 기준: (앞 단계 QA) 화산 없는 섬 테스트가 조금 약하다 — test_bare_ground_and_an_island_without_a_volcano_are_left_alone 의 두 번째 절은 voxel_ground.records 0 만 본다(화산이 없으니 carved 신호도 못 단다). Vehicle._volcano() 가 null 을 내는지 단언을 한 줄 더해라 (예: assert_null(car._volcano()))
 
