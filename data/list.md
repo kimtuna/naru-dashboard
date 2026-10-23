@@ -5074,7 +5074,7 @@
   - 기준: 지은 것이 섬 저장 · 다시 세운 섬 · 참가자 화면에 그대로 · 굳은 판을 깨거나 판이 사라져도 받침 규칙대로 (테스트) · 찍는 자리 하나 — 유황 섬에 지은 토대와 벽
   - 기준: (앞 단계 QA) 짝 없는 .uid 쓰레기가 남았다 — game/tests/build/test_volcano_build_probe.gd.uid 와 test_volcano_build_probe_home.gd.uid 는 .gd 없이 남은 탐색용 찌꺼기다. rm 으로 지워라
   - 기준: (앞 단계 QA) 본섬 테스트 주석이 실제와 다르다 — test_build_on_volcano_island.gd:7 「거기선 모든 곳이 초록이다」와 green_everywhere 변수 설명 「어디서나 초록이어야 하나」가 틀렸다. 로그로 본섬 선착장 둘레는 30판 중 24판이 steep(기울기 15.2°)이다. 「본섬은 구역마다 초록 판이 있고 처음 나는 자리는 전부 초록」처럼 실제 단언에 맞게 고치고 변수 이름도 그 뜻(예: green_in_every_zone)으로 바꿔라
-- [ ] 3. (앞 단계 QA) 참가자의 시설 놓기가 복셀 땅에서 안 검사됐다
+- [x] 3. (앞 단계 QA) 참가자의 시설 놓기가 복셀 땅에서 안 검사됐다
   - 기준: 참가자의 시설 놓기가 복셀 땅에서 안 검사됐다 — test_build_on_voxel_server.gd 는 참가자가 토대 · 벽만 바라고, 제작대는 서버가 _place_item 으로 직접 놓는다. 참가자가 stations 의 ask(놓기)로 제작대를 바라 서버 복셀 땅에 서고 두 화면이 같은지, BLOCKED_SPOT 에 바라면 서버 Placer.place_for 가 null 을 돌려주는지(새로 넣은 _blocked_at 줄) 단언을 하나 더 넣어라
   - 기준: (앞 단계 QA) 밭이 막은 곳에서 안 갈리는지 안 검사됐다 — test_volcano_build_rules.gd 는 island.farmland.blocked.call(near) 의 값만 본다. farmland.can_till({position = 선착장 곁 땅, normal = Vector3.UP, collider = …}) 가 false 이고 처음 나는 자리에서는 true 인지 단언하라 (farmland.gd:317 의 새 줄을 지키게)
 

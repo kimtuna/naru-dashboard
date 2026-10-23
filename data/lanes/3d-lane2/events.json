@@ -1,68 +1,5 @@
 [
  {
-  "time": "2026-10-18 12:14:19",
-  "epoch": 1792293259,
-  "type": "fail",
-  "title": "QA 불합격 — G-238 단계 1 (시도 1)",
-  "group": "G-238",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "사료통(곡물 @grain · 한도 30) · 물통(물뿌리개로 붓는다 · 한도 20) 설치물과 rooms.json 의 우리(pen, 사료통 1 · 물통 1) — 동물이 없으면 「빈 우리」, 들면 「사슴 우리」(가장 많은 종)로 방 페이지 · 주민 거주지 목록에 보인다",
-   "approach": "사료통 · 물통은 축사의 herd 처럼 stations.json 의 trough={holds, max} 한 줄로 서게 했다 — 통의 상태는 Trough(life/ranching/trough.gd)가 쥐고 Stations.standing · restore 가 담는다(옛 저장본은 빈 통 · 한도를 넘으면 한도까지). 채우기는 Stations.fill_trough(가방의 @grain · 물뿌리개의 물, 컵은 붓지 않는다)이고 같이 하기 길(ACTS 의 TROUGH)과 창의 단추가 그것을 부른다. 우리는 rooms.json 한 줄(pen, animals=true) — 동물은 걸어 다녀 방 지문 캐시에 들지 않으므로 Buildings.rooms 가 그때그때 방 안의 산 짐승(Animal.ALL, 주검 제외)을 세어 animal 을 붙이고 RoomCatalog.label 이 「빈 우리」(ROOM_pen) / 「사슴 우리」(ROOM_pen_of % LIVESTOCK_deer)를 짓는다. 방 페이지 역할 칸은 동물이 없으면 예전처럼 키를, 있으면 옮긴 글을 쓴다. 바뀐 곳 그물(281개 파일, 2152개 테스트)에서 둘이 떨어졌다: (1) test_stations 「제 종류가 그대로 돌아온다」 — 처음 크기(높이 0.5 · 깊이 0.6)의 통은 땅을 짚어 놓은 뒤 조준점이 통 앞 땅을 짚어 부술 수 없었다 → 크기를 제작대만큼(1.4×0.9×0.8)으로 키웠다. (2) test_collapse_takes_everything_placed — 놓이는 것이 25개를 넘어 5×5 자리 표가 모자랐다 → 6×6(0.6m)으로 늘렸다. 고친 뒤에는 그 두 파일과 새 테스트 셋만 다시 돌렸다(43개 통과) — 바뀐 곳 그물 전체를 다시 돌리지는 않았다. 그림(harness/shot.sh --ui feed_trough water_trough rooms_pen, ko · en)을 열어 보았다: 「사료 15/30 사료 넣기」 · 「Water 10/20 Pour water」 · 방 페이지 셋째 줄 「사슴 우리」가 잘리지 않고 보인다.",
-   "why": "사료통 한도 30 · 물통 한도 20 (stations.json trough.max) — 사료는 축사 먹이 20 보다 넉넉히, 물은 물뿌리개 네 통(5×4); 사료통 재료 목재 6 · 물통 재료 목재 4 + 돌 2, 둘 다 제작대(workbench) 5초 — 우리에 둘이 있어야 한다는 것만 사람 결정; 통 크기 1.4×0.9×0.8m · 색 · 무게(사료통 8kg · 물통 12kg) — 낮은 통은 조준점이 못 짚어 제작대만큼 키웠다; 우리 오버레이 빛깔 #c8a070 — 눈으로 잡은 짚빛; 우리에 여러 종이 들면 가장 많은 종 · 같으면 이름 차례로 이름을 붙인다 (Buildings.most_animal)",
-   "files": [
-    "game/life/ranching/trough.gd",
-    "game/craft/stations/stations.json",
-    "game/craft/stations/station_catalog.gd",
-    "game/craft/stations/crafting_station.gd",
-    "game/craft/stations/stations.gd",
-    "game/craft/recipes/workbench.json",
-    "game/player/inventory_hotbar/weights.json",
-    "game/build/rooms.json",
-    "game/build/room_catalog.gd",
-    "game/build/buildings.gd",
-    "game/ui/hud/room_window.gd",
-    "game/ui/hud/villager_window.gd",
-    "game/ui/hud/station_window.gd",
-    "game/ui/hud/station_window.tscn",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/tests/build/test_room_kinds.gd",
-    "game/tests/build/test_collapse_takes_everything_placed.gd",
-    "game/tests/life/ranching/test_troughs.gd",
-    "game/tests/build/test_pen_room.gd",
-    "game/tests/ui/hud/test_trough_window.gd",
-    "spec/06_build/rooms.md",
-    "spec/04_life/ranching-breeding.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "설치물 **사료통**(곡물 `@grain` 을 넣는다 · 한도 **임시**) · **물통**(물뿌리개로 채운다 · 한도 **임시**). 만드는 곳 · 재료 **임시**",
-     "evidence": "tests/life/ranching/test_troughs.gd 8개 — 사료통은 돌을 거부하고 밀·쌀을 한도 30 까지만 담고 남은 곡물은 가방에 남는다, 물통은 물뿌리개 물만 붓고(컵 거부) 한도 20 에서 멈추며 남은 물은 물뿌리개에 남는다, 제작대 레시피 · 무게 · ITEM_ 키 ko/en, standing/restore 로 담긴 양이 저장되고 옛 저장본은 빈 통 · 넘친 값은 한도까지. stations.json _troughs · workbench.json _temporary · ranching-breeding.md 수치에 한도 · 재료 · 크기가 임시로 적혀 있다. test.log 바뀐 곳 281 파일 2152 개 통과 · guard 통과"
-    },
-    {
-     "ok": false,
-     "criterion": "rooms.json 에 **우리**(`pen`, needs 사료통 1 · 물통 1). 동물이 없으면 이름이 **「빈 우리」**, 동물이 들면 **「<그 동물> 우리」**(사슴 우리 — 여럿이면 가장 많은 종 · **임시**). 방 이름 표시(rooms_named 등)에 그대로 보인다 · 번역 키 ko · en (테스트)",
-     "evidence": "rooms.json · RoomCatalog.label · Buildings.most_animal 은 tests/build/test_pen_room.gd 가 잘 지킨다(사료통만·물통만·제작대 섞임은 잡실, 빈 우리 → 사슴 우리, 가장 많은 종 · 우리 밖 · 주검 제외 — Buildings.most_animal 에서 is_carcass 를 빼 보니 2개 단언이 떨어졌다(되돌렸다), 방 페이지 역할·이름 칸 ko/en, ko/en 키). 그러나 방 이름을 보이는 곳 가운데 automation/villagers/villagers.gd:693 _room_label 이 아직 RoomCatalog.name_key(kind) 만 써서, 사슴이 든 우리를 주민 거주지로 정하면 대화 줄(VILLAGER_HOME_SET) · 상자 가득 · 좁다 알림이 「빈 우리」라고 말한다 — 같은 조작에서 주민 창 거주지 목록(villager_window.gd _fill_homes)은 「사슴 우리」라고 보인다. 또 그 villager_window 변경을 확인하는 테스트가 없다"
-    }
-   ],
-   "issues": [
-    "주민 알림이 사슴 우리를 「빈 우리」라 부른다 — automation/villagers/villagers.gd:697 의 _room_label 이 `tr(RoomCatalog.name_key(kind))` 를 쓴다. `RoomCatalog.label(r)` 로 바꿔(villager_window.gd:519 와 같게) 거주지 정하기(SAY_HOME) · 상자 가득(SAY_CHESTS_FULL · ALERT_FULL) · 좁다(SAY_CRAMPED · ALERT_CRAMPED)가 「사슴 우리」를 말하게 하라. 테스트: 사료통 · 물통 · 사슴이 든 우리에 주민을 거주지로 정했을 때 대화 줄에 「사슴 우리」가 들어가는지 단언하라 (tests/build/test_pen_room.gd 의 _pen · _animal 을 빌리면 된다)",
-    "주민 창 거주지 목록의 우리 이름 테스트가 없다 — villager_window.gd _fill_homes 를 RoomCatalog.label 로 바꿨지만 이를 보는 테스트가 없다. 사슴이 든 우리가 거주지 목록(_home 의 항목 글)에 「사슴 우리」로, 사슴이 없으면 「빈 우리」로 뜨는지 단언하는 테스트를 더하라"
-   ],
-   "good": []
-  },
-  "test": "s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/automation/villagers/test_villager_skills.gd\nok      0s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      0s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           281\nTests            2152\nPassing Tests    2152\nFailing Tests       0\nRisky/Pending       0\nAsserts        124785\nTime           497s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-18 12:35:14",
   "epoch": 1792294514,
   "type": "pass",
@@ -9011,5 +8948,43 @@
   },
   "test": "/test_old_stove.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      3s  res://tests/ui/hud/test_compass.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/world/map/test_map_memory.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           601\nTests            4403\nPassing Tests    4403\nFailing Tests       0\nRisky/Pending       0\nAsserts        213760\nTime           864s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "cf7a464a"
+ },
+ {
+  "time": "2026-10-23 15:29:19",
+  "epoch": 1792736959,
+  "type": "pass",
+  "title": "통과 — G-293 단계 3 ((앞 단계 QA) 참가자의 시설 놓기가 복셀 땅에서 안 검사됐다)",
+  "group": "G-293",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "참가자가 ask(놓기)로 바란 제작대가 서버 복셀 땅에 서고 두 화면이 같은지 · 막은 곳은 서버 Placer.place_for 가 null 인지, 밭이 선착장 둘레에서 can_till false · 처음 나는 자리 true 인지 단언을 더했다 — 바뀐 곳만 2파일 7개 통과",
+   "approach": "참가자 가방에 제작대 둘을 더해 손에 들게 하고(Acts.SELECT) stations.ask(&\"set\") 로 바랐다 — 서버 복셀 땅에 서고 두 화면의 standing 이 같으며 땅 높이에 선다. 막은 곳(BLOCKED_SPOT)에서는 서버 stations._blocked_at 이 BLOCKED_DOCK 이고 place_for 가 null · 가방 수도 그대로다. 밭: 기준이 말한 선착장 곁(dock+3,3) 땅은 물에 잠겨(y −1.3) is_water 때문에 이미 false 라 blocked 줄을 지키지 못했다 — 그래서 선착장 고리(DOCK_GUARD) 안에서 물 · 설치물 · 겹침에 안 걸리는 마른 땅을 골라 can_till false 이고, 섬의 물음(blocked)을 빼면 true 가 됨을 같이 단언해 farmland.gd 의 blocked 줄이 막은 것임을 지켰다. 처음 나는 자리는 can_till true. 바뀐 곳 그물(2파일 7개) 통과.",
+   "why": "",
+   "files": [
+    "game/tests/multiplayer/test_build_on_voxel_server.gd",
+    "game/tests/build/test_volcano_build_rules.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "참가자의 시설 놓기가 복셀 땅에서 안 검사됐다 — test_build_on_voxel_server.gd 는 참가자가 토대 · 벽만 바라고, 제작대는 서버가 _place_item 으로 직접 놓는다. 참가자가 stations 의 ask(놓기)로 제작대를 바라 서버 복셀 땅에 서고 두 화면이 같은지, BLOCKED_SPOT 에 바라면 서버 Placer.place_for 가 null 을 돌려주는지(새로 넣은 _blocked_at 줄) 단언을 하나 더 넣어라",
+     "evidence": "test_a_guest_sets_a_station_on_voxel_ground_and_the_blocked_spot_is_refused — 참가자가 Acts.SELECT 로 제작대를 들고 gi.stations.ask(&\"set\") 로 바라 서버 stations.standing 1개 · _wait_same(건축물+시설 둘 다 비교)으로 두 화면 같음 · 높이 복셀 땅 ±0.3 을 단언. BLOCKED_SPOT 에서 서버 _blocked_at == BLOCKED_DOCK, place_for null, 가방 수 그대로. QA 가 placer.gd:133 의 _blocked_at 조건을 빼 보니 이 파일이 떨어졌다(되돌림). 전체 실행 test.log 에서 ok"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 밭이 막은 곳에서 안 갈리는지 안 검사됐다 — test_volcano_build_rules.gd 는 island.farmland.blocked.call(near) 의 값만 본다. farmland.can_till({position = 선착장 곁 땅, normal = Vector3.UP, collider = …}) 가 false 이고 처음 나는 자리에서는 true 인지 단언하라 (farmland.gd:317 의 새 줄을 지키게)",
+     "evidence": "test_the_dock_ring_is_blocked_for_everything_with_its_reason 에 can_till(near) false · 고리 안 마른 땅 can_till false · blocked 를 빼면 true(물 탓이 아님을 가림) · 처음 나는 자리 can_till true 를 더했다. QA 가 farmland.gd:317 을 'if false and …' 로 꺼 보니 이 파일이 떨어졌다(되돌림). 전체 실행 test.log 에서 ok"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "/tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      4s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      2s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           601\nTests            4404\nPassing Tests    4404\nFailing Tests       0\nRisky/Pending       0\nAsserts        213774\nTime           871s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "6f301ce8"
  }
 ]
