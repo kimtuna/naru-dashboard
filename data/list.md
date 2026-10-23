@@ -5133,7 +5133,7 @@
   - 기준: (앞 단계 QA) spec 「기본 이동이 달리기 속도다」 줄이 낡았다 — spec/02_player/hunger-thirst.md 규칙 첫 줄 「기본 이동이 달리기 속도다」와 movement-controls.md 17줄 「기본 이동이 달리기 속도고」가 바로 아래 125% 줄과 어긋난다. 2단계(spec)에서 「달리기 키는 없다 — 기본 이동은 달리기(move_speed)의 125%」처럼 고쳐라 (사람 결정 원문 줄은 지우지 말 것)
   - 기준: (앞 단계 QA) 테스트 이름이 낡았다 — game/tests/player/inventory_hotbar/test_items.gd test_speed_layers_are_only_thirst_crouch_slope_and_buffs, test_hunger_thirst.gd test_hunger_leaves_speed_alone_thirst_empty_is_thirty_percent_slower 는 이제 배고픔이 150%→125% 로 속도를 바꾸니 이름이 틀렸다. 이름을 고쳐라
 
-## [ ] G-934 루프가 찾은 것 — 스스로 갚는다
+## [x] G-934 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-start · 시작 2026-10-23 16:36
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
