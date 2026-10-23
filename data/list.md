@@ -5159,7 +5159,7 @@
   - 기준: 테스트 머리 주석에 「온천 욕탕」이 남았다 — game/tests/craft/stations/test_hot_spring_bath.gd 2줄, game/tests/world/terrain/test_hot_spring.gd 43줄 주석을 「온탕」으로 맞춰라. spec/01_settings/save.md 13줄 「온천 욕탕에 가는 길」도 「온탕에 가는 길」로 고치면 test_villager_bath.gd 318줄 assert_string_contains 도 같이 바꿔라
 
 ## [ ] G-298 나침반을 화면 맨 위로
-- 차선: 3d-start
+- 차선: 3d-start · 시작 2026-10-24 04:36
 - spec: G-287 이 적은 화면(HUD) spec 의 나침반 줄
 - **사람 요청 2026-10-24** (원문 그대로): 「1. 나침반을 아예 윗쪽으로 빼야돼」
 - [ ] 1. 맨 위에 붙인다
