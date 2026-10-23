@@ -5118,9 +5118,11 @@
 - [x] 2. 지열 자리에 온탕
   - 기준: 「온천 욕탕」(이름은 「온탕」으로 — 번역)은 **화산 섬의 지열 자리(붉고 김 나는 곳) 위에** 놓인다 · 밖이면 빨강과 까닭 · 서버도 같은 검사 · 자리 하나에 하나(지열 용광로 · 대장간과 자리를 나눠 쓴다) (테스트 + 찍는 자리 — 지열 자리 위 온탕)
   - 기준: 주민이 쓰는 규칙(스트레스가 높으면 쉬는 때에 들어가 내려간다)은 그대로 — 주민이 그 섬에 있을 때 (테스트)
-- [ ] 3. spec — facilities.md 온천 줄 고치기 (사람 원문)
+- [x] 3. spec — facilities.md 온천 줄 고치기 (사람 원문)
   - 기준: (앞 단계 QA) 테스트 머리 주석이 없는 검사를 가리킨다 — game/tests/craft/stations/test_hot_spring_bath.gd 5줄째 「진짜 화산 섬의 지열 자리 위에 놓이는 것은 tests/build/test_build_on_volcano_island.gd 가 본다」는 틀렸다. 그 파일에는 온탕이 없고, 실제로 보는 곳은 tests/craft/stations/test_geothermal_stations.gd test_the_volcano_island_hands_its_spots_to_the_stations 다. 그 이름으로 고쳐라
   - 기준: (앞 단계 QA) 낡은 이름 「온천 욕탕」이 남았다 — test_geothermal_stations.gd 58줄 단언 메시지 「… 차량 정비소 · 온천 욕탕」, test_hot_spring_bath.gd 의 단언 메시지 몇 곳(「온천 욕탕이 시설 목록에 있다」 · 「온천 욕탕이 가방으로 돌아왔다」), station_catalog.gd dev_only 주석의 「온탕, G-290.1」은 G-290.1 · G-296.2 로 적어야 맞다. 「온탕」으로 맞춰라
+- [ ] 4. (앞 단계 QA) 다른 파일에 낡은 이름 「온천 욕탕」이 남았다
+  - 기준: 다른 파일에 낡은 이름 「온천 욕탕」이 남았다 — 이번 기준(세 파일) 밖이다. game/world/frontier_islands/islands.json 7줄 _fields 의 hot_spring 설명 「온천 욕탕은 그 위에만 놓인다, G-290」은 이제 틀렸다(G-296.2 부터 온탕은 geothermal 위에만 놓인다) — 「온천 자리는 김 나는 물웅덩이 표시뿐, 온탕은 geothermal 위에 놓인다(G-296.2)」로 고쳐라. 같은 파일 6줄 _hot_spring, game/automation/villagers/villager.gd 27·135·893줄 주석, game/tests/automation/villagers/test_villager_bath.gd 72줄 주석의 「온천 욕탕」도 「온탕」으로 맞춰라. test_villager_bath.gd 318줄 assert_string_contains 는 저장 쪽 문장을 보므로 그 문장(spec 또는 코드)을 같이 바꿀 때만 고친다
 
 ## [x] G-297 이동 속도 — 기본 125% · 배고픔 · 목마름이 가득이면 150%
 - 차선: 3d-start · 시작 2026-10-23 15:28
