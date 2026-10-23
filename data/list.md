@@ -5063,7 +5063,7 @@
   - 기준: 흐르는 용암 위에서 안 깬다는 테스트가 없다 — spec/04_life/vehicles.md 는 「흐르는 용암 … 에서는 아무 일도 없다」고 적었고 Volcano.carve 의 flowing() 검사가 막지만, 차 드릴로 확인하는 테스트는 없다. 분출이 흐르는 때로 시계를 맞추고 드릴 차를 몰아 carves 0 을 보는 테스트를 test_car_drill.gd 에 더해라
 
 ## [ ] G-293 화산 섬에서 건물이 안 지어진다
-- 차선: 3d-lane2
+- 차선: 3d-lane2 · 시작 2026-10-23 13:47
 - spec: spec/03_world/frontier-islands.md 「개척 섬에도 마을 · 전초기지를 짓는다」(:97), spec/06_build/building.md
 - **사람 요청 2026-10-23** (원문 그대로): 「2. 화산섬 건물이 설치가 안되는데 ?」
 - 지휘 세션이 2026-10-23 봤다: 건축물 땅 높이는 위에서 쏘는 광선으로 잰다(build/buildings.gd _ground_height · _ground_span) — 복셀 땅도 몸통이 있으면 맞아야 한다. 왜 안 되는지는 아직 모른다
