@@ -5035,7 +5035,7 @@
   - 기준: (앞 단계 QA) 차량 드릴이 목차의 「시설」 갈래에 들었다 — game/ui/manual/manual_toc.json 에서 vehicle_drill 줄이 facilities(MANUAL_CAT_facilities) 아래 vehicle_garage 다음에 있다. 모듈이지 시설이 아니다. 모듈을 다루는 갈래(예: 장비 · 모듈 쪽)로 옮기거나, 다른 모듈(vehicle_module · scope_*)처럼 목차에 안 넣는 쪽으로 맞춰라. 옮기면 test_car_drill.gd 의 목차 단언은 그대로 통과한다
   - 기준: (앞 단계 QA) 화산 없는 섬 테스트가 조금 약하다 — test_bare_ground_and_an_island_without_a_volcano_are_left_alone 의 두 번째 절은 voxel_ground.records 0 만 본다(화산이 없으니 carved 신호도 못 단다). Vehicle._volcano() 가 null 을 내는지 단언을 한 줄 더해라 (예: assert_null(car._volcano()))
 - 결정 2026-10-23 (지휘 세션 — 사람 「웬만한 결정대기는 알아서 해서 넘어가줘」): 단계 2 제목의 「보이는 것」에 기준이 없었다 — 지휘 세션이 목록을 쓸 때 빠뜨렸다. 단계 3 으로 다시 올린다
-- [ ] 3. 걷는 동안 보이는 것
+- [x] 3. 걷는 동안 보이는 것
   - 기준: 차량 드릴을 끼운 차가 굳은 판을 걷는 동안 차 앞 드릴이 돌고(걷지 않을 때는 멈춘다) 부스러기(기본 입자 · 임시)가 튄다 · 참가자 화면에서도 돈다 (테스트: 걷는 동안 드릴 회전값이 바뀌고 멈추면 그대로)
   - 기준: 찍는 자리 하나 — 굳은 판 위에 걷어 낸 줄이 보이는 차 (harness/shot.sh, shots.gd 에 자리 이름을 더한다) · 찍은 그림을 열어 드릴 · 걷힌 줄이 보이는지 본다
 
