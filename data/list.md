@@ -5121,7 +5121,7 @@
 - [x] 3. spec — facilities.md 온천 줄 고치기 (사람 원문)
   - 기준: (앞 단계 QA) 테스트 머리 주석이 없는 검사를 가리킨다 — game/tests/craft/stations/test_hot_spring_bath.gd 5줄째 「진짜 화산 섬의 지열 자리 위에 놓이는 것은 tests/build/test_build_on_volcano_island.gd 가 본다」는 틀렸다. 그 파일에는 온탕이 없고, 실제로 보는 곳은 tests/craft/stations/test_geothermal_stations.gd test_the_volcano_island_hands_its_spots_to_the_stations 다. 그 이름으로 고쳐라
   - 기준: (앞 단계 QA) 낡은 이름 「온천 욕탕」이 남았다 — test_geothermal_stations.gd 58줄 단언 메시지 「… 차량 정비소 · 온천 욕탕」, test_hot_spring_bath.gd 의 단언 메시지 몇 곳(「온천 욕탕이 시설 목록에 있다」 · 「온천 욕탕이 가방으로 돌아왔다」), station_catalog.gd dev_only 주석의 「온탕, G-290.1」은 G-290.1 · G-296.2 로 적어야 맞다. 「온탕」으로 맞춰라
-- [ ] 4. (앞 단계 QA) 다른 파일에 낡은 이름 「온천 욕탕」이 남았다
+- [x] 4. (앞 단계 QA) 다른 파일에 낡은 이름 「온천 욕탕」이 남았다
   - 기준: 다른 파일에 낡은 이름 「온천 욕탕」이 남았다 — 이번 기준(세 파일) 밖이다. game/world/frontier_islands/islands.json 7줄 _fields 의 hot_spring 설명 「온천 욕탕은 그 위에만 놓인다, G-290」은 이제 틀렸다(G-296.2 부터 온탕은 geothermal 위에만 놓인다) — 「온천 자리는 김 나는 물웅덩이 표시뿐, 온탕은 geothermal 위에 놓인다(G-296.2)」로 고쳐라. 같은 파일 6줄 _hot_spring, game/automation/villagers/villager.gd 27·135·893줄 주석, game/tests/automation/villagers/test_villager_bath.gd 72줄 주석의 「온천 욕탕」도 「온탕」으로 맞춰라. test_villager_bath.gd 318줄 assert_string_contains 는 저장 쪽 문장을 보므로 그 문장(spec 또는 코드)을 같이 바꿀 때만 고친다
 
 ## [x] G-297 이동 속도 — 기본 125% · 배고픔 · 목마름이 가득이면 150%
@@ -5152,6 +5152,10 @@
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
 - [ ] 1. 읽을 때 빠지는 범위가 spec 보다 넓다 (G-296 단계 2)
   - 기준: 읽을 때 빠지는 범위가 spec 보다 넓다 — Stations.restore 가 이제 near=geothermal 인 것을 전부(지열 용광로 · 대장간까지) 지열 자리 밖이면 조용히 버린다. 그런데 spec/03_world/frontier-islands.md 에는 「지열 자리 밖에 놓였던 옛 욕탕은 읽을 때 사라진다」라고 욕탕만 적혀 있다. 「지열 시설 셋 다」로 spec 을 고치고, 지열 자리 밖의 geothermal_smelter 가 restore 에서 빠지고 자리 안의 것은 남는지 보는 테스트를 tests/craft/stations/test_geothermal_stations.gd 에 더하라 (geothermal_spot 을 넣은 Stations 에 restore([{kind=geothermal_smelter, at=밖}, {kind=geothermal_smelter, at=안}]) → 하나만 선다)
+- [ ] 2. villagers.gd 주석에 「온천 욕탕」이 남았다 (G-296 단계 4)
+  - 기준: villagers.gd 주석에 「온천 욕탕」이 남았다 — 기준 밖(지적). game/automation/villagers/villagers.gd 97 · 100 · 664줄 주석의 「온천 욕탕」을 「온탕」으로 맞추고, 100줄 「시설 종류」 설명에 G-296.2(지열 자리 위) 를 덧붙여라. test_hot_spring.gd 의 새 테스트에 villagers.gd 도 넣어 assert_false(contains("온천 욕탕")) 로 지켜라
+- [ ] 3. 테스트 머리 주석에 「온천 욕탕」이 남았다 (G-296 단계 4)
+  - 기준: 테스트 머리 주석에 「온천 욕탕」이 남았다 — game/tests/craft/stations/test_hot_spring_bath.gd 2줄, game/tests/world/terrain/test_hot_spring.gd 43줄 주석을 「온탕」으로 맞춰라. spec/01_settings/save.md 13줄 「온천 욕탕에 가는 길」도 「온탕에 가는 길」로 고치면 test_villager_bath.gd 318줄 assert_string_contains 도 같이 바꿔라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
