@@ -5152,7 +5152,7 @@
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
 - [x] 1. 읽을 때 빠지는 범위가 spec 보다 넓다 (G-296 단계 2)
   - 기준: 읽을 때 빠지는 범위가 spec 보다 넓다 — Stations.restore 가 이제 near=geothermal 인 것을 전부(지열 용광로 · 대장간까지) 지열 자리 밖이면 조용히 버린다. 그런데 spec/03_world/frontier-islands.md 에는 「지열 자리 밖에 놓였던 옛 욕탕은 읽을 때 사라진다」라고 욕탕만 적혀 있다. 「지열 시설 셋 다」로 spec 을 고치고, 지열 자리 밖의 geothermal_smelter 가 restore 에서 빠지고 자리 안의 것은 남는지 보는 테스트를 tests/craft/stations/test_geothermal_stations.gd 에 더하라 (geothermal_spot 을 넣은 Stations 에 restore([{kind=geothermal_smelter, at=밖}, {kind=geothermal_smelter, at=안}]) → 하나만 선다)
-- [ ] 2. villagers.gd 주석에 「온천 욕탕」이 남았다 (G-296 단계 4)
+- [x] 2. villagers.gd 주석에 「온천 욕탕」이 남았다 (G-296 단계 4)
   - 기준: villagers.gd 주석에 「온천 욕탕」이 남았다 — 기준 밖(지적). game/automation/villagers/villagers.gd 97 · 100 · 664줄 주석의 「온천 욕탕」을 「온탕」으로 맞추고, 100줄 「시설 종류」 설명에 G-296.2(지열 자리 위) 를 덧붙여라. test_hot_spring.gd 의 새 테스트에 villagers.gd 도 넣어 assert_false(contains("온천 욕탕")) 로 지켜라
   - 기준: (앞 단계 QA) restore 주석이 온탕만 말한다 — game/craft/stations/stations.gd 809줄 주석 「지열 자리 밖의 지열 시설 — 옛 저장본 본섬 온천 자리의 온탕 (G-296.1 · G-296.2)」은 이제 지열 시설 셋 다(온탕 · 지열 용광로 · 대장간)를 버린다. 「지열 자리 밖의 지열 시설(온탕 · 지열 용광로 · 대장간) — 조용히 사라진다 (G-296 · G-935.1)」처럼 셋 다로 고쳐라 (막는 것은 아니다)
 - [ ] 3. 테스트 머리 주석에 「온천 욕탕」이 남았다 (G-296 단계 4)
