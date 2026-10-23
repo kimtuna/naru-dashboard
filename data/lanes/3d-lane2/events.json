@@ -1,37 +1,5 @@
 [
  {
-  "time": "2026-10-18 11:09:33",
-  "epoch": 1792289373,
-  "type": "stop",
-  "title": "루프 끝 — 이 차선(3d-lane2) 몫을 다 했다. 다른 차선 몫으로 남은 것: G-233 · G-238 · G-915",
-  "group": "G-237",
-  "step": "6",
-  "attempt": "1",
-  "report": {
-   "problem": "일꾼 테스트 둘이 실제로 걸리는 게임 안 시간을 재어 주석에 적었다 — 길찾기 · 짐 나르기는 느려지지 않았고, 손 테스트가 넘친 까닭은 돌아온 씨앗(G-236)을 도로 심는 일이라 그 테스트는 씨앗이 안 돌아오게 하고 기다림을 4×→2×PATIENCE 로 되돌렸다. 바뀐 곳만: 2개 파일 17개 테스트 통과",
-   "approach": "잠깐 쓰고 지운 측정 테스트로 physics_frame 마다 물리 delta(time_scale 을 탄 게임 안 초 — GUT wait_until 이 세는 것과 같다)를 더해 쟀다. 기준점은 숙련도가 생기기 전 커밋(549d6fd8^)을 git archive 로 임시 폴더에 풀어 같은 측정을 돌렸다. 손 테스트(다 거두고 마지막 밀을 상자에): 그때 17.2초 · 지금 씨앗이 안 돌아오면 14~17초(들어올 때 굴린 숙련도가 빠르게 한다) · 씨앗이 늘 돌아오면 22.3~24.4초 · 50% 면 씨앗 수에 따라 14~22.5초 — 한도 20초(2×PATIENCE/FAST)를 넘긴 판은 모두 돌아온 씨앗을 농부가 빈 밭에 도로 심은 판이었다(planted 4~6). 그래서 느려진 것이 아니라 G-236 이 할 일을 늘린 것이다 — 이 테스트가 보는 것(마지막 칸 전에 상자에 두기)과 관계없으므로 그 테스트만 crops.seed_back_chance = 0 으로 두고 기다림을 2× 로 되돌렸다(test_bag_hand_craft 의 rare_chance = 0 과 같은 길). 두 일꾼 물주기: 그때 18.3~18.5초 · 지금 16.6~18.5초(숙련도 0 이면 17.5~18.5초) — 느려지지 않았지만 늘 PATIENCE(20초)의 92% 에 붙어 있어 2× 는 남기고 잰 값과 까닭을 주석에 적었다. 두 파일을 세 번 돌려 다 통과, 끝으로 changed_tests 그물(2개 파일 17개) 통과.",
-   "why": "",
-   "files": [
-    "game/tests/automation/villagers/test_villager_hands_room.gd",
-    "game/tests/automation/villagers/test_villager_watering.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "흔들리는 일꾼 테스트를 기다림만 늘려 덮었다 — test_villager_hands_room.gd _wait_for 를 2×→4×PATIENCE, test_villager_watering.gd 둘 일꾼 테스트를 PATIENCE→2×PATIENCE 로 늘렸다. … 일꾼이 마지막 짐을 상자로 나르는 데 실제로 얼마나 걸리는지(시뮬레이션 초)를 재어 테스트 주석에 적고, 늘어난 까닭이 일꾼 길찾기 · 짐 나르기의 느려짐이 아닌지 확인하라 — 느려진 것이면 그쪽을 고치고 기다림은 되돌린다",
-     "evidence": "잰 값을 주석에 적었다: hands_room _wait_for 위에 숙련도 전(G-232.2 앞) 17.2초 · 지금 씨앗 안 돌아오면 14~17초 · 씨앗 둘이면 22.5초. watering 둘 일꾼 테스트 주석에 그때 18.3~18.5초 · 지금 16.6~18.5초. 길찾기 · 짐 나르기는 느려지지 않았고, 넘긴 까닭은 G-236 에서 돌아온 씨앗을 도로 심는 일이라고 밝혔다. 그래서 hands_room 은 기다림을 4×→2×PATIENCE 로 되돌리고, 거두기 테스트(test_the_farmer_puts_things_away_before_the_harvest_takes_the_last_slot)에만 crops.seed_back_chance = 0.0 을 두었다. crops 는 before_each 에서 새로 만드니 다른 테스트로 새지 않고, _wait_for 를 쓰는 다른 테스트(물뿌리개)는 거두지 않아 씨앗과 상관없다. watering 은 잰 값이 PATIENCE(20초)의 92% 에 붙어 2× 를 남기고 까닭을 적었다 — 느려진 것이 아니므로 기준에 맞다. 바뀐 뒤(파일 10:54) 돈 전체 실행(test.log 11:08, godot 6 개 동시 부하)에서 3262/3262 통과, guard 통과 — 되돌린 2× 가 부하 아래서도 버텼다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "team_api.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      0s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      0s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      0s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/core/test_guard.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           441\nTests            3262\nPassing Tests    3262\nFailing Tests       0\nRisky/Pending       0\nAsserts        144321\nTime           663s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-18 11:42:28",
   "epoch": 1792291348,
   "type": "start",
@@ -8964,5 +8932,42 @@
   },
   "test": "--- 바뀐 곳만: 2 개 ---\ntest.sh: 파일 2 개를 6 개씩 한꺼번에 돌린다\nok      4s  res://tests/build/test_build_on_home_island.gd\nok      5s  res://tests/build/test_build_on_volcano_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             2\nTests               4\nPassing Tests       4\nFailing Tests       0\nRisky/Pending       0\nAsserts          1710\nTime           5s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "99f58398"
+ },
+ {
+  "time": "2026-10-23 14:38:37",
+  "epoch": 1792733917,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-293 단계 2 (시도 1)",
+  "group": "G-293",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "화산(유황) 섬에서 본섬과 같은 규칙으로 짓는다 — 토대 비탈 한도를 두 섬 같이 3m 로 넓히고, 선착장 둘레 · 흐르는 용암 위는 까닭과 함께 막고, 굳은 판 위 토대는 판 밑 땅까지 내려가게 했다 (바뀐 곳만: 249파일 1865테스트 중 1864 통과 · 떨어진 1개(plan_at 50줄 한도)는 고친 뒤 5파일 23테스트 다시 통과)",
+   "approach": "단계 1 에서 잰 까닭은 「섬이 가파르다」였다 — 옆 토대 없는 첫 장은 한 장(4m) 안 땅이 MAX_DROP(임시 1m, 약 14°) 안이어야 했는데 유황 섬은 스폰 둘레 60m 판의 7% 만 그 안이었다. 판은 가장 낮은 땅까지 내려가 메우므로 비탈에서도 윗면은 평평하다 — MAX_DROP 을 두 섬 같은 값 3m(약 37°)로 넓혔다(유황 섬 70% · 본섬 94%, 유황 섬 스폰 둘레 26판 전부 초록). 일부러 막는 곳은 섬이 물음 하나(TestIsland.build_block_at)로 넣는다: 화산섬의 선착장 둘레(파기를 막는 10m 와 같다) · 흐르는 용암 위(새 Volcano.lava_at — 앞머리가 닿은 칸). 토대 · 시설 다섯(Placer.blocked) · 밭이 같은 물음을 쓰고, 좌클릭이 막히면 까닭 한 줄이 뜬다(Buildings.say_blocked, 번역 키 BUILD_BLOCKED_DOCK · _LAVA). 서버의 place_for 도 같은 검사라 참가자도 같다. 굳은 판은 잠깐 있는 땅이라(6시간이면 사라진다) 토대는 판 윗면에 맞추되 판 밑 진짜 땅까지 내려간다(Buildings.passing_ground) — 판을 깨도 · 사라져도 땅에 닿은 토대(받침 0)로 선다. 판 위 맨땅에 놓은 시설은 판이 깨지거나 줄거나 걷히면(새 신호 Volcano.rock_moved) 밑 땅을 다시 재어 0.3m 넘게 꺼졌으면 무너짐 규칙 그대로 바닥에 떨어진다(Buildings.settle_ground, 서버만). 그 과정에서 판 몸통 칸을 queue_free 로만 지워 곧이어 재는 광선이 사라진 판을 짚던 흠도 고쳤다(몸에서 먼저 뗀다). 새 상태는 없다 — 막는 곳 · 잠깐 있는 땅은 섬 · 시계에서 나오고, 지은 것은 원래 저장되던 그대로다. 찍는 자리 volcano_build(harness/shot.sh <폴더> island=sulfur volcano_build) — 스폰 옆 비탈에 토대 두 장(깊이 2.7 · 4.1m) · 오르막 쪽 벽 셋, 그림으로 윗면 수평 · 판이 내리막 땅까지 메움 · 뜬 틈 없음을 봤다. 앞 단계 QA 둘: 짝 없는 .uid 둘을 지웠고, 본섬 테스트 주석을 실제 단언(구역마다 초록 판 · 처음 나는 자리 전부 초록 · 빨강은 비탈/물)으로 고쳤다. 변수 green_everywhere 는 이제 두 섬 다 같은 단언이라 뜻이 없어져 없애고, 남은 차이인 dock_guarded(선착장 둘레를 막나 — 유황 섬만)로 바꿨다.",
+   "why": "Buildings.MAX_DROP 3m (전 1m) — spec 에 수치 없음. 유황 섬 스폰 · 선착장 둘레에 놓일 판이 생기고 본섬과 초록 비율이 비슷해지는 값으로 잼; Buildings.SINK_GAP 0.3m — 맨땅에 놓은 것 밑 땅이 이만큼 넘게 꺼지면 받침을 잃는다. 판이 줄기 시작하자마자 떨어지지 않게 계단 한 단보다 조금 크게; 선착장 둘레를 막는 거리 = VolcanoDig.DOCK_GUARD(10m, 파기와 같은 값) — 화산섬(복셀 땅)만, 본섬은 안 막는다",
+   "files": [
+    "game/build/buildings.gd",
+    "game/build/placer.gd",
+    "game/life/farming/farmland.gd",
+    "game/world/terrain/test_island.gd",
+    "game/world/terrain/volcano.gd",
+    "game/core/debug/shots.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "spec/03_world/frontier-islands.md",
+    "spec/06_build/building.md",
+    "game/tests/build/test_build_on_volcano_island.gd",
+    "game/tests/build/test_build_on_home_island.gd",
+    "game/tests/build/test_building_preview.gd",
+    "game/tests/build/test_volcano_build_rules.gd",
+    "game/tests/build/test_build_blocked_click.gd",
+    "game/tests/multiplayer/test_build_on_voxel_server.gd",
+    "game/tests/multiplayer/voxel_build_island.gd",
+    "game/tests/build/test_volcano_build_probe.gd.uid (지움)",
+    "game/tests/build/test_volcano_build_probe_home.gd.uid (지움)"
+   ],
+   "decision": null
+  },
+  "test": "    1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\n\n================ 떨어진 파일: res://tests/automation/villagers/test_villager_watering.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/automation/villagers/test_villager_watering.gd\n* test_the_hand_over_path_is_gone\n* test_the_farmer_takes_the_can_from_the_room_chest_waters_only_inside_and_puts_it_back\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n* test_fertilizer_comes_from_the_chest_and_without_a_can_watering_is_skipped\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n* test_the_farmer_calls_the_same_crops_path_as_a_person\n* test_an_empty_can_is_filled_at_fresh_water_then_the_fields_get_it\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n* test_with_nothing_to_do_the_farmer_stands_still_empty_handed\n* test_without_a_chest_in_the_room_they_do_not_start_and_the_window_says_why\n    --- Awaiting 1.5 seconds  ---\n    --- Awaiting 3.5 seconds  ---\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n* test_when_the_room_chest_is_full_the_farmer_stops_holding_everything_and_says_so\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n* test_when_only_part_fits_at_the_chest_the_farmer_stops_there_and_drops_nothing\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n* test_two_farmers_in_one_room_never_hold_the_same_field_and_nothing_doubles_or_vanishes\n    --- Awaiting callable to return TRUE or 120.0s.   ---\n    [Failed]:  둘이 방 안의 밭에 물 · 비료를 다 주고 든 것을 내려놓았다\n      at line 399\n    [Failed]:  [0] expected to equal [1]:  물뿌리개 하나가 상자로 돌아왔다\n      at line 403\n    [Failed]:  [3] expected to equal [4]:  비료는 준 만큼만 줄었다\n      at line 404\n    [Failed]:  [0] expected to equal [2]:  물은 준 만큼만 줄었다\n      at line 405\n* test_what_the_farmer_holds_is_saved_and_the_work_goes_on_after_loading\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n* test_an_old_save_with_a_handed_can_keeps_the_can_in_hand\n* test_each_watering_gives_farming_experience_and_fetching_the_can_does_not\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n12/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/automation/villagers/test_villager_watering.gd\n- test_two_farmers_in_one_room_never_hold_the_same_field_and_nothing_doubles_or_vanishes\n    [Failed]:  둘이 방 안의 밭에 물 · 비료를 다 주고 든 것을 내려놓았다\n          at line 399\n    [Failed]:  [0] expected to equal [1]:  물뿌리개 하나가 상자로 돌아왔다\n          at line 403\n    [Failed]:  [3] expected to equal [4]:  비료는 준 만큼만 줄었다\n          at line 404\n    [Failed]:  [0] expected to equal [2]:  물은 준 만큼만 줄었다\n          at line 405\n\nTotals\n------\nScripts               1\nTests                13\nPassing Tests        12\nFailing Tests         1\nAsserts           462/466\nTime              65.327s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           601\nTests            4403\nPassing Tests    4402\nFailing Tests       1\nRisky/Pending       0\nAsserts        213737\nTime           864s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/automation/villagers/test_villager_watering.gd\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
