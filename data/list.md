@@ -5199,7 +5199,7 @@
 - [x] 3. (앞 단계 QA) 바닷가 땅이 여전히 풀빛이다
   - 기준: 바닷가 땅이 여전히 풀빛이다 — shots_g300/shore_limestone_g300_2.png 에서 물 바로 앞 석회석 자리까지 풀 · 흙 질감이고 모래 띠가 안 보인다. island_shape 의 beach_at 칸과 지형 셰이더(Terrain3D 텍스처 칠 · 해안 띠 폭)가 맞는지 보고, beach_at 이 참인 칸은 모래 질감으로 칠해지게 하라. 단언: beach_at 칸들의 지형 텍스처 id(control map)가 모래 슬롯인지 세는 테스트
 
-## [ ] G-301 차는 종류마다 일을 한다 · 모듈은 성능 — 블레이드 차를 따로
+## [x] G-301 차는 종류마다 일을 한다 · 모듈은 성능 — 블레이드 차를 따로
 - 차선: 3d-start · 시작 2026-10-24 06:51
 - 순서: G-299 뒤
 - spec: spec/04_life/vehicles.md, spec/02_player/equipment-modules.md
