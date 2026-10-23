@@ -5179,7 +5179,7 @@
   - 기준: 옛 저장본에 한 섬 정비소가 둘 이상이면 읽기가 터지지 않는다 (둘 다 남기되 더 놓지 못한다)
   - 기준: (앞 단계 QA) 짝 없는 쓰레기 .uid 가 남았다 — game/tests/life/vehicles/test_probe_g299.gd.uid 는 .gd 짝 없이 남은 탐침 흔적이다. rm 으로 지워라
   - 기준: (앞 단계 QA) 「공중에 뜨지 않는다」의 한도가 1m 다 — 테스트는 낮은 귀가 Garage.STEP(1.0m 임시)+0.05 안이면 뜨지 않은 것으로 친다. 차는 가장 높은 점에 서니 비탈에서 한 귀가 최대 1m 떠 보일 수 있다. 차 몸을 비탈에 맞춰 기울이거나 STEP 을 줄일 수 있는지 다음에 살펴 보면 좋다(spec 수치 줄에 임시로 적혀 있어 막는 것은 아니다)
-- [ ] 3. (앞 단계 QA) spec 수치 줄 STEP 설명 문장이 끊겼다
+- [x] 3. (앞 단계 QA) spec 수치 줄 STEP 설명 문장이 끊겼다
   - 기준: spec 수치 줄 STEP 설명 문장이 끊겼다 — spec/04_life/vehicles.md 수치 첫 줄들 중 Garage.STEP 뒤 「낮추려면 차 몸을 비탈에 맞춰 기울여야 하는데, 차는 y 축으로만 돈다(…)」가 결론 없이 「· 0.25m 안이면 고른 자리」로 이어진다. 「— 그래서 1m 로 둔다 (기울이기는 따로 할 일)」처럼 문장을 맺거나 괄호로 묶어 다음 수치와 갈라라
   - 기준: (앞 단계 QA) 번역 테스트가 로케일을 되돌리지 않는다 — game/tests/life/vehicles/test_garage_one_per_island.gd test_the_reason_is_translated 가 TranslationServer.set_locale("ko") 뒤 원래 로케일로 되돌리지 않는다. 앞 로케일을 받아 두고 끝에 set_locale 로 되돌려라
 
