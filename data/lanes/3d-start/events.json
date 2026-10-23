@@ -1,81 +1,5 @@
 [
  {
-  "time": "2026-10-17 21:30:29",
-  "epoch": 1792240229,
-  "type": "pass",
-  "title": "통과 — G-231 단계 3 (세트 모듈 — 같은 세트를 n 부위에 끼우면 효과)",
-  "group": "G-231",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "세트 모듈 — 입은 방어구 세트 칸의 같은 세트 모듈 수로 효과(사슴 2세트 체력 +10 · 3세트 이동속도 +20%), 가방 창 · 모듈 탭에 「사슴 2/3 — 체력 +10」 표시. 바뀐 곳 그물 323 파일 2530 테스트 전부 통과 (전체는 돌리지 않았다)",
-   "approach": "세트 규칙은 ArmorModules 한 곳에 더했다 — MODULES 에 세트 모듈(deer_set_module, kind=set, set=deer), SETS 에 {세트: {몇 부위: 효과}}. 입은 벌(그 칸에 맞는 것만, Armor.defense 와 같은 규칙)의 세트 칸 모듈을 세어(set_counts) 닿은 단계의 효과를 다 더한다 — 그래서 금속은 상관없고 2세트 효과가 3세트에서도 남는다. 세트 칸/일반 칸 구분은 G-231.2 의 fits(kind)가 이미 하고 있어 테스트로 묶었다. 체력은 max_health 에 세트 체력을 더해 기존 refresh_max_health(혼자 · 참가자 · 서버 몸 틱) 길을 그대로 탄다. 이동속도는 Player.speed_multiplier(버프 층)에 ArmorModules.speed_factor 를 곱했다 — 걸음 셈 줄의 층(base_speed · crouch · slope · speed_multiplier)은 그대로라 배고픔 · 목마름 · 비탈 배율에 곱해지고 test_weight 의 층 검사도 그대로 통과한다. 표시는 set_lines(「사슴 2/3 — 체력 +10」, 효과 없으면 「사슴 1/3」)를 가방 창 장비칸 오른쪽 줄과 모듈 탭(입은 것을 본다) 두 곳에 띄웠다. 찍어 보니 가방 창이 두 가지로 틀렸다 — 열 때 다시 그리지 않아 닫혀 있는 동안 바뀐 장비가 안 보였고, 말을 바꿔도 세트 줄이 한국어로 남았다 → 열 때(visibility_changed)와 NOTIFICATION_TRANSLATION_CHANGED 에 다시 그리게 했고, 긴 en 줄이 창을 넓히지 않게 장비 영역을 칸 줄 폭까지 펴고 세트 줄은 남은 폭에서 접게 했다. 1280×720 · 1920×1080 · ko · en 으로 bag · armor_bench · armor_bench_modules 를 찍어 열어 봤다(.loop/out/shots_g231_3_720 · _1080) — 넘치거나 겹치지 않는다. 세트 효과는 입은 것에서 그때그때 재는 값이라 새 저장 상태는 없다. 앞 단계 QA 둘: 늘 참이던 자리 따로 테스트는 Acts 를 이은 TwoPeople(who → Kit)로 한 문에 두 사람을 두고 do_mod_hold(2) · do_mod_return(2) 뒤 1 의 자리가 그대로인지 보게 바꿨다. 시설 부서짐은 자리에 강철 모자(모듈 안은 채)를 둔 채 hit_station 을 Placeable.HITS 번 — 창이 닫히고 모듈을 안은 채 가방으로 돌아오는지 본다. 죽음은 Death._drop_chest 가 가방(bag.clear())만 상자로 옮기므로 자리의 방어구는 데스 상자에 들지 않고 창이 닫힐 때 빈 가방으로 돌아온다 — 그 길을 bag.clear() 로 흉내 내 테스트했다(진짜 Death 노드로 죽이지는 않았다). 개발용 상자는 MODULES 를 도는 길이라 사슴 세트 모듈이 저절로 들어간다.",
-   "why": "사슴 세트 3세트 이동속도 +20% 의 「%」 — 사람은 「+20」만 적었다 (ArmorModules.SETS); 사슴 세트 모듈 무게 0.2kg — 체력 모듈과 같게 (weights.json)",
-   "files": [
-    "game/player/equipment/armor_modules.gd",
-    "game/player/movement_controls/player.gd",
-    "game/ui/hud/bag.gd",
-    "game/ui/hud/module_page.gd",
-    "game/core/debug/ui_shots.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/player/inventory_hotbar/weights.json",
-    "game/tests/player/equipment/test_armor_sets.gd",
-    "game/tests/player/equipment/test_armor_modules.gd",
-    "game/tests/ui/hud/test_module_page.gd",
-    "spec/02_player/equipment.md",
-    "spec/02_player/equipment-modules.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "세트 모듈은 세트 칸에만 들어가고 일반 칸에는 안 들어간다(거꾸로도) (테스트)",
-     "evidence": "test_armor_sets.gd::test_set_module_fits_the_set_slot_only_and_normal_the_other_way 가 fits 를 양방향으로 · test_putting_a_set_module_in_a_normal_slot_changes_nothing 이 Acts.MOD_PUT 으로 양방향 거부(자리 · 가방 그대로)와 세트 칸 허용을 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "입은 방어구의 세트 칸에 같은 세트 모듈이 몇 개냐로 효과가 붙는다 — 금속은 상관없다(철 상의 + 가죽 모자도 사슴 둘이면 2세트). 2세트 효과는 3세트에서도 남는다 (테스트)",
-     "evidence": "test_counts_set_modules_in_worn_set_slots_regardless_of_metal 가 철 상의+가죽 모자=2세트, 강철 하의 더해 3세트에서 체력 +10 이 남는지 본다 · test_only_worn_pieces_count 가 맞지 않는 칸 · 일반 칸 모듈은 안 센다. set_effects 의 n >= need 를 n == need 로 깨 보니 test_armor_sets.gd 3개가 떨어졌다(되돌림 확인)"
-    },
-    {
-     "ok": true,
-     "criterion": "「사슴 세트」 — 2세트 체력 +10 · 3세트 이동속도 +20% (사람 예시 2026-10-17 · %는 임시 — 사람은 「+20」만 적었다). 이동속도는 배고픔 · 목마름 · 비탈 배율(hunger-thirst.md · terrain.md)에 곱한다",
-     "evidence": "ArmorModules.SETS 에 deer {2: health 10, 3: speed 0.2}, 주석 · spec 에 「%는 임시」. Player.speed_multiplier 에 speed_factor 를 곱해 player.gd:247 걸음 셈 줄(base_speed × speed_multiplier × crouch × slope)에 실린다. test_set_effects_reach_the_real_player 가 진짜 Player 에서 최대 체력 · 1.2 배수 · 벗으면 빠짐을, test_weight 의 층 검사가 곱하는 자리를 지킨다"
-    },
-    {
-     "ok": true,
-     "criterion": "가방 창(입은 것)과 장비 제작대 「모듈」 탭에 지금 붙은 세트 효과가 보인다(「사슴 2/3 — 체력 +10」처럼) · 번역 키 ko · en",
-     "evidence": "test_the_bag_window_shows_worn_sets(가방 창 줄 · 보임 · 벗으면 1/3) · test_module_page.gd::test_the_tab_shows_worn_set_effects(탭 줄 · 벗으면 따라 바뀜 · 없으면 빈 줄) · test_set_lines_read_like_deer_2_of_3 이 ko · en 줄을 본다. ko.po · en.po 에 ITEM_deer_set_module · SET_deer · SET_EFFECT_HEALTH · SET_EFFECT_SPEED 넷이 다 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "spec/02_player/equipment.md 「세트 효과 — 부위를 모으면」 줄을 「세트 칸에 같은 세트 모듈을 n 부위」로 고치고 새 파일로 잇는다",
-     "evidence": "equipment.md:23 이 「세트 칸에 같은 세트 모듈을 n 부위」로 바뀌고 02_player/equipment-modules.md 를 가리킨다. equipment-modules.md 에 「세트 모듈」 절이 생겼다. 두 파일 53 · 42 줄"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 자리 따로 테스트가 늘 참이다 — …",
-     "evidence": "test_each_person_has_their_own_spot 이 Acts 를 이은 TwoPeople(who→Kit) 한 문에 두 사람을 두고 do_mod_hold(2) · do_mod_return(2) 뒤 kit 1 의 bench 가 그대로인지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 시설이 부서져 닫힐 때의 테스트가 없다 — …",
-     "evidence": "test_module_page.gd::test_breaking_the_bench_closes_the_window_and_brings_the_armor_back 이 자리에 모듈 안은 강철 모자를 둔 채 stations.hit_station 을 Placeable.HITS 번 — 창이 닫히고 자리가 비고 {steel_helmet, modules {\"1\": …}} 가 가방에 돌아오는지 본다. 죽음 쪽은 「같이 보면 좋다」였고 흉내로만 봤다(아래 지적)"
-    }
-   ],
-   "issues": [
-    "죽음 테스트가 진짜 죽음을 안 탄다 — test_module_page.gd::test_dying_with_the_window_open_keeps_the_armor_out_of_the_death_chest 는 game.inventory.clear() 로 Death._drop_chest 를 흉내 내고 stations.close() 를 직접 부른다. 진짜로 죽을 때 창이 닫히는지 · 닫히는 차례(가방 비우기 전/후)에 따라 자리의 방어구가 데스 상자로 가는지 가방으로 가는지는 확인되지 않는다. 창이 열린 채 player.health().take(큰 값) 으로 실제 Death 를 태워 (1) 창이 닫히고 (2) 데스 상자 안에 steel_helmet 이 있는지/없는지 · 다시 선 뒤 가방에 있는지를 단언하는 테스트로 바꿔라. 바라는 쪽(데스 상자로 가느냐 곁에 남느냐)이 spec 에 없으면 equipment-modules.md 에 지금 동작을 적어 둔다"
-   ],
-   "good": []
-  },
-  "test": "d\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/ui/menu/test_world_settings_screen.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      0s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      0s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      0s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           372\nTests            2797\nPassing Tests    2797\nFailing Tests       0\nRisky/Pending       0\nAsserts        123113\nTime           567s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "4e849232"
- },
- {
   "time": "2026-10-17 21:58:58",
   "epoch": 1792241938,
   "type": "pass",
@@ -8543,5 +8467,40 @@
   },
   "test": "  2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      2s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      1s  res://tests/craft/stations/test_geothermal_spec.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/hunting/test_nav_weld.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           596\nTests            4391\nPassing Tests    4391\nFailing Tests       0\nRisky/Pending       0\nAsserts        212035\nTime           845s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "2cffe6de"
+ },
+ {
+  "time": "2026-10-23 10:53:17",
+  "epoch": 1792720397,
+  "type": "pass",
+  "title": "통과 — G-932 단계 3 ((앞 단계 QA) 빈 드릴 모듈 칸 영어 이름표가 모호하다)",
+  "group": "G-932",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "en.po 의 STATION_MODULE_DRILL 을 \"Drill\" → \"Drill module\" 로 바꿔 빈 드릴 모듈 칸이 드릴 자체와 구별된다",
+   "approach": "en 번역에서 빈 드릴 모듈 칸(STATION_MODULE_DRILL)과 드릴 아이템(ITEM_drill)이 둘 다 \"Drill\" 이라 나란히 놓이면 구별이 안 됐다. msgstr 을 \"Drill module\" 로 바꾸고, 두 말이 같아지면 떨어지는 확인을 드릴 칸 테스트의 ko · en 순회에 넣었다. shot.sh --ui weapon_bench 로 weapon_bench_drill_en.png 를 찍어 보니 \"Drill module\" 이 두 줄로 칸 안에 잘리지 않고 들어간다. 바뀐 곳 그물(test_module_page.gd 1개 파일, 12개 테스트) 통과.",
+   "why": "",
+   "files": [
+    "game/i18n/en.po",
+    "game/tests/ui/hud/test_module_page.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "빈 드릴 모듈 칸 영어 이름표가 모호하다 — game/i18n/en.po 의 STATION_MODULE_DRILL 이 \"Drill\" 이라 드릴 칸 옆 빈 칸도 \"Drill\" 로 찍혀 드릴 자체와 구별이 안 된다 (weapon_bench_drill_en.png). ko 는 「드릴 모듈」. msgstr 을 \"Drill module\" 로 바꾸고 shot.sh --ui <폴더> weapon_bench 로 en 칸에 글자가 들어가는지 다시 본다",
+     "evidence": "en.po 1837줄 msgstr 이 \"Drill module\" 로 바뀌었다(ITEM_drill 은 \"Drill\" 그대로). test_module_page.gd::test_a_drill_on_the_weapon_bench_opens_one_empty_drill_slot 의 ko·en 순회에 assert_ne(tr(STATION_MODULE_DRILL), tr(ITEM_drill)) 가 더해졌다. QA 가 en.po 를 \"Drill\" 로 되돌려 그 파일만 돌리니 「en — 빈 칸 이름표가 드릴 자체와 구별된다」로 떨어졌다(12개 중 1개 실패) — 껍데기가 아니다. 본 뒤 되돌렸다. 바뀐 뒤(10:35) 찍은 /private/tmp/g932s3/weapon_bench_drill_en.png 에서 빈 칸에 \"Drill module\" 이 두 줄로 칸 안에 잘리거나 겹치지 않고 들어간다. 전체 테스트 596 파일 4391개 통과 · guard 통과."
+    }
+   ],
+   "issues": [
+    ".loop/out 그림이 낡은 채 남았다 — .loop/out/weapon_bench_drill_en.png 는 10:19 에 찍힌 바뀌기 전 그림(빈 칸이 \"Drill\")이다. 바뀐 뒤 그림은 /private/tmp/g932s3/ 에만 있다. 다음에 그림을 근거로 남길 때는 바뀐 뒤 찍은 것을 .loop/out 에 덮어 두어라 (기준과는 상관없다 — 확인은 tmp 그림으로 했다)"
+   ],
+   "good": []
+  },
+  "test": "haracter_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_drill_pitch.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/automation/villagers/test_villager_body.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      2s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/build/test_placeable_tidy.gd\nok      2s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/core/tools/test_no_move_to_trash.gd\nok      2s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/stations/test_geothermal_spec.gd\nok      2s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           596\nTests            4391\nPassing Tests    4391\nFailing Tests       0\nRisky/Pending       0\nAsserts        212054\nTime           845s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "bad8d00f"
  }
 ]

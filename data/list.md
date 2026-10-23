@@ -5049,8 +5049,10 @@
 - [x] 2. 드릴 칸 창 그림이 없다 (G-285 단계 2 물음)
   - 기준: game/core/debug/ui_shots_kit.gd 의 PLACES 에 무기 제작대 「모듈」 탭에 드릴을 올린 자리(예: weapon_bench_drill — weapon_bench_rod 와 같은 꼴)를 더하고 harness/shot.sh --ui 로 ko · en 두 장을 찍어 칸이 잘리거나 겹치지 않는지 본다
   - 결정 2026-10-23 (지휘 세션): 「shot.sh --ui 가 0 장」은 하네스 고장이 아니었다 — 같은 날 지휘 세션이 `harness/shot.sh --ui <폴더> workbench` 로 6 장을 찍었다. 「"": No such file or directory (os error 2)」는 셸이 명령마다 덧붙이는 줄이라 찍기와 상관없다. 드릴 칸 자리가 PLACES 에 없어 찍을 것이 없었던 것으로 본다
-- [ ] 3. (앞 단계 QA) 빈 드릴 모듈 칸 영어 이름표가 모호하다
+- [x] 3. (앞 단계 QA) 빈 드릴 모듈 칸 영어 이름표가 모호하다
   - 기준: 빈 드릴 모듈 칸 영어 이름표가 모호하다 — game/i18n/en.po 의 STATION_MODULE_DRILL 이 "Drill" 이라 드릴 칸 옆 빈 칸도 "Drill" 로 찍혀 드릴 자체와 구별이 안 된다 (weapon_bench_drill_en.png). ko 는 「드릴 모듈」. msgstr 을 "Drill module" 로 바꾸고 shot.sh --ui <폴더> weapon_bench 로 en 칸에 글자가 들어가는지 다시 본다
+- [ ] 1. .loop/out 그림이 낡은 채 남았다 (G-932 단계 3)
+  - 기준: .loop/out 그림이 낡은 채 남았다 — .loop/out/weapon_bench_drill_en.png 는 10:19 에 찍힌 바뀌기 전 그림(빈 칸이 "Drill")이다. 바뀐 뒤 그림은 /private/tmp/g932s3/ 에만 있다. 다음에 그림을 근거로 남길 때는 바뀐 뒤 찍은 것을 .loop/out 에 덮어 두어라 (기준과는 상관없다 — 확인은 tmp 그림으로 했다)
 
 ## [x] G-933 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-start · 시작 2026-10-23 08:18
