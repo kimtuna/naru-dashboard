@@ -5183,7 +5183,7 @@
   - 기준: spec 수치 줄 STEP 설명 문장이 끊겼다 — spec/04_life/vehicles.md 수치 첫 줄들 중 Garage.STEP 뒤 「낮추려면 차 몸을 비탈에 맞춰 기울여야 하는데, 차는 y 축으로만 돈다(…)」가 결론 없이 「· 0.25m 안이면 고른 자리」로 이어진다. 「— 그래서 1m 로 둔다 (기울이기는 따로 할 일)」처럼 문장을 맺거나 괄호로 묶어 다음 수치와 갈라라
   - 기준: (앞 단계 QA) 번역 테스트가 로케일을 되돌리지 않는다 — game/tests/life/vehicles/test_garage_one_per_island.gd test_the_reason_is_translated 가 TranslationServer.set_locale("ko") 뒤 원래 로케일로 되돌리지 않는다. 앞 로케일을 받아 두고 끝에 set_locale 로 되돌려라
 
-## [ ] G-300 석회석 · 시멘트
+## [x] G-300 석회석 · 시멘트
 - 차선: 3d-lane2 · 시작 2026-10-24 04:36
 - spec: spec/03_world/resources-regrowth.md, spec/04_life/mining.md, spec/05_craft/facilities.md
 - **사람 요청 2026-10-24** (원문 그대로): 「5. 땅을 메우는 것도 해야 할 것 같음. 메우는 부분은 시멘트로 하자. 시멘트는 석회석이랑 철광석을 섞어 만드는걸로 알고 있는데 맞으면 이렇게 하고 석회석은 조개껍데기 같은 해안가에 많으니 본섬에 해안가쪽에 석회석이 나오게 하면 될 것 같다. 그리고 철은 어차피 화산섬에서부터 철이 많이 나오게 할거라서. 철을 여기서 수급하면 되니까 괜찮을 것 같아. 이렇게 해서 시멘트를 만들어」
