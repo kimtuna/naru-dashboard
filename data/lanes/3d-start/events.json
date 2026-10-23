@@ -1,77 +1,5 @@
 [
  {
-  "time": "2026-10-17 21:58:58",
-  "epoch": 1792241938,
-  "type": "pass",
-  "title": "통과 — G-231 단계 4 (총에 칸 — 스코프 1 · 패시브 모듈 1 · 액티브 모듈 1(자리만))",
-  "group": "G-231",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "총 열여섯에 스코프 · 패시브 · 액티브(자리만) 칸 — 무기 제작대 「모듈」 탭에서 같은 끌어 놓기로 끼우고 빼며, 시험용 패시브 「반동 완화」(−20%)가 반동을 줄인다. 죽으면 시설 창이 닫힌다. 바뀐 곳 그물 308 파일 2401 테스트 전부 통과 (전체는 돌리지 않았다)",
-   "approach": "따로 짜지 않으려고 방어구 모듈 규칙(ArmorModules)에 총을 얹었다 — 총인지는 tools.json 의 shoots(Attack.gun_in_hand 와 같은 잣대, 정확히 열여섯 · 활 · 근접은 아님)로 보고, slot_names 가 총이면 scope · passive · active 를 준다. 칸마다 든 갈래를 slot_kind 로 두고 fits 는 「모듈 갈래 == 칸 갈래」 하나로 바꿨다 — 그래서 세트/일반 규칙은 그대로고, 액티브 칸에는 액티브 모듈이 하나도 없으니 아무것도 안 든다(패시브 · 스코프 거절을 테스트). 같은 modules 열쇠 · 같은 Acts.MOD_* 문 · 같은 Kit.bench 를 타므로 상자 · 데스 상자 · 저장 · 참가자 사본도 그대로 지난다(테스트로 묶음 — 진짜 ENet 판에서 참가자가 리볼버에 끼우고 서버 사본과 같은지, 저장 왕복에서 모듈 끼운 리볼버가 두 발 쏜 남은 탄 넷과 함께 돌아오는지). 남은 탄은 총 이름에 붙어(Attack.magazine_of) 모듈을 바꿔도 따라간다. 「모듈」 탭은 같은 ModulePage 에 what(armor/weapon)을 두어 창이 시설의 stations.json modules 를 넘기고, 자리는 for_bench 로 장비 제작대엔 방어구만 · 무기 제작대엔 총만 받는다. 빈 칸 이름표 스코프 · 패시브 · 액티브 · 안내 글은 번역 키 ko · en. 반동 완화는 Attack.shoot 에서 catalog.recoil × ArmorModules.recoil_factor(든 칸)로 곱한다. 앞 단계 QA: 진짜 Death 노드를 세우고 창이 열린 채 health().take 로 죽였더니 **창이 닫히지 않았다**(진짜 흠) — GameRoot._join_death 에서 Death.died(데스 상자가 놓인 뒤)에 Stations.close 를 걸어, 자리의 강철 모자는 데스 상자에 들지 않고 다시 선 빈 가방으로 모듈을 안은 채 돌아온다. 이 동작을 equipment-modules.md 에 적었다. weapon_bench_modules 사진을 리볼버 + 반동 완화로 찍어 ko · en 을 열어 봤다 — 칸 · 글자가 잘리거나 겹치지 않는다(/tmp/naru_shot_b).",
-   "why": "반동 완화 모듈 반동 −20% — 사람이 모듈 목록을 줄 때까지 시험용 (ArmorModules.MODULES); 반동 완화 모듈 무게 0.2kg (weights.json) — 다른 모듈과 같게",
-   "files": [
-    "game/player/equipment/armor_modules.gd",
-    "game/combat/tools_as_weapons/attack.gd",
-    "game/ui/hud/module_page.gd",
-    "game/ui/hud/station_window.gd",
-    "game/core/game_root.gd",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/dev_box.gd",
-    "game/player/inventory_hotbar/weights.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/player/equipment/test_gun_modules.gd",
-    "game/tests/combat/tools_as_weapons/test_gun_module_recoil.gd",
-    "game/tests/ui/hud/test_module_page.gd",
-    "game/tests/ui/hud/test_station_tabs.gd",
-    "game/tests/multiplayer/test_modules_on_server.gd",
-    "game/tests/settings/save/test_round_trip.gd",
-    "spec/02_player/equipment-modules.md",
-    "spec/08_combat/tools-as-weapons.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "모든 총(tools-as-weapons.md 표의 열여섯)에 **스코프 칸 1 · 패시브 모듈 칸 1 · 액티브 모듈 칸 1** — 2단계와 같은 끼우기 · 빼기 · 돌려받기 · 저장 · 멀티 · 상자 길을 쓴다(따로 짜지 않는다). 총에 든 남은 탄과 같이 따라간다 (테스트)",
-     "evidence": "test_gun_modules.gd::test_every_gun_in_the_table_has_scope_passive_and_active_slots 가 guns_of 로 열여섯을 세고 칸 셋을 단언 — QA 가 slot_names 를 [scope, passive] 로 깨 보니 열여섯 전부 떨어졌다. 끼우기·빼기·돌려받기는 같은 Acts.MOD_* 문으로(test_putting_and_taking_on_a_gun_goes_the_same_way_as_armor), 상자·참가자 사본(test_a_gun_with_modules_rides_into_chests_and_the_copy), 저장 왕복(test_round_trip.gd — 모듈 끼운 리볼버가 남은 탄 넷과 함께), 진짜 ENet 판(test_modules_on_server.gd::test_a_guest_puts_a_passive_module_on_a_gun_through_the_server), 남은 탄(test_gun_module_recoil.gd::test_the_rounds_left_follow_the_gun_through_the_spot — 한 발 쏜 뒤 자리를 거쳐도 left 그대로). 코드는 ArmorModules 에 총을 얹었을 뿐 따로 짠 길이 없다"
-    },
-    {
-     "ok": true,
-     "criterion": "**액티브 칸은 넣는 칸만 하나 있다** — 「액티브모듈은 넣는 칸만 하나 만들어놔」(사람 결정 2026-10-17). 끼울 액티브 모듈은 아직 없다. 패시브 · 스코프는 그 칸에 안 들어간다 (테스트)",
-     "evidence": "test_the_active_slot_takes_nothing_yet 가 MODULES 전부가 액티브 칸에 안 드는지 · 칸 갈래가 스코프/패시브가 아닌지 보고, test_putting_and_taking… 은 Acts 로 MOD_PUT active 거절, test_module_page.gd::test_dragging_a_gun_opens_scope_passive_and_active_slots 는 실제 끌어 놓기로 액티브 · 스코프 칸 거절을 단언. 스코프 모듈 아이템은 아직 없어 스코프 거절은 slot_kind 로만 본다 — 스코프 모듈이 생기는 다음 단계에서 fits 로 다시 볼 것"
-    },
-    {
-     "ok": true,
-     "criterion": "시험용 패시브 모듈 하나 — 「반동 완화」(반동 −20%, **임시** — 사람이 목록을 줄 때까지 시험용). 개발용 상자에 있다",
-     "evidence": "ArmorModules.MODULES recoil_module recoil −0.2 에 「임시」 주석 · spec 에도 임시. Attack.shoot 에서 곱한다. test_gun_module_recoil.gd::test_the_recoil_module_cuts_the_kick_by_a_fifth 가 진짜 캐릭터로 쏴 plain×0.8 을 단언 — QA 가 recoil 을 0.0 으로 바꾸니 3.2≠2.56 으로 떨어졌다. test_the_dev_box_has_the_recoil_module 가 DevBox.contents 를 본다. 이름 번역 키 ITEM_recoil_module ko · en, 무게 weights.json 0.2(임시로 report 에 적힘)"
-    },
-    {
-     "ok": true,
-     "criterion": "칸은 **무기 제작대의 「모듈」 탭**에서 바꾼다 — 2단계와 같은 탭 · 같은 끌어 놓기(따로 짜지 않는다). 근접 무기 · 활은 칸이 없어 자리에 안 놓인다",
-     "evidence": "같은 ModulePage 에 what 만 두어 StationWindow 가 stations.json modules 로 넘긴다. test_dragging_a_gun_opens_scope_passive_and_active_slots 가 무기 제작대를 열어 칼·활 끌어 놓기 거절, 총 → 칸 셋, 패시브 끼우기·총 돌려받기·모듈 빼기 돌려받기를 실제 _drag 로 단언. test_the_armor_bench_takes_no_gun_and_the_weapon_bench_no_armor 가 제작대끼리 섞이지 않음을, test_station_tabs.gd 가 창 크기 그대로를 본다. 빈 칸 이름표 STATION_MODULE_WEAPON/SCOPE/PASSIVE/ACTIVE · HINT_WEAPON ko · en 있음"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 죽음 테스트가 진짜 죽음을 안 탄다 — test_module_page.gd::test_dying_with_the_window_open_keeps_the_armor_out_of_the_death_chest 는 game.inventory.clear() 로 Death._drop_chest 를 흉내 내고 stations.close() 를 직접 부른다. … 바라는 쪽(데스 상자로 가느냐 곁에 남느냐)이 spec 에 없으면 equipment-modules.md 에 지금 동작을 적어 둔다",
-     "evidence": "테스트가 진짜 Death 노드를 세우고 창이 열린 채 player.health().take(100000) 으로 죽여 (1) 데스 상자 하나 (2) game.station_open() false (3) 상자에 iron_armor 는 있고 steel_helmet 은 없음 (4) 다시 선 가방 0번에 모듈을 안은 강철 모자를 단언. 이 테스트가 진짜 흠(죽어도 창이 안 닫힘)을 찾아 GameRoot._join_death 에 died→Stations.close 를 걸었다 — QA 가 그 connect 를 지우니 「죽으면 창이 닫힌다」 등 셋이 떨어졌다. 지금 동작을 equipment-modules.md 「모듈」 탭 절에 적었다"
-    }
-   ],
-   "issues": [
-    "서버 문이 시설 갈래를 안 본다 — core/net/acts.gd:398 의 MOD_HOLD 검사는 ArmorModules.has_slots 만 봐서, 참가자가 문으로 직접 바라면 장비 제작대 창에서도 총을(무기 제작대에서 방어구를) 자리에 올릴 수 있다. 막는 것은 UI(ModulePage.ArmorSpot._can_drop_data 의 for_bench)뿐이다. 칸 규칙(fits)은 그대로 지켜져 해는 작지만, Kit 에 지금 연 시설의 modules 갈래를 두고 MOD_HOLD 에서 ArmorModules.for_bench(item, what) 로 거절하게 하고, Acts 로 MOD_HOLD 를 장비 제작대 갈래에서 revolver 로 바라 false 인지 보는 테스트를 더하라",
-    "ArmorModules 이름이 낡았다 — 총의 칸도 이제 armor_modules.gd 의 ArmorModules 가 맡는데 이름 · fits(armor_item, …) 인자 이름이 방어구만 말한다. 이름을 EquipModules 등으로 바꾸거나 최소한 fits 의 armor_item 인자를 item 으로 고치고 클래스 머리 주석 첫 줄에 「방어구 · 총」을 적어라"
-   ],
-   "good": []
-  },
-  "test": "islands/test_fixed_dock.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      3s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      0s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/world/storage/test_chest.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           374\nTests            2811\nPassing Tests    2811\nFailing Tests       0\nRisky/Pending       0\nAsserts        123405\nTime           568s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "10e696e4"
- },
- {
   "time": "2026-10-17 22:28:29",
   "epoch": 1792243709,
   "type": "fail",
@@ -8502,5 +8430,25 @@
   },
   "test": "haracter_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_drill_pitch.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/automation/villagers/test_villager_body.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      2s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/build/test_placeable_tidy.gd\nok      2s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/core/tools/test_no_move_to_trash.gd\nok      2s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/stations/test_geothermal_spec.gd\nok      2s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           596\nTests            4391\nPassing Tests    4391\nFailing Tests       0\nRisky/Pending       0\nAsserts        212054\nTime           845s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "bad8d00f"
+ },
+ {
+  "time": "2026-10-23 11:08:13",
+  "epoch": 1792721293,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-932 단계 1 (시도 1)",
+  "group": "G-932",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": ".loop/out/weapon_bench_drill_{en,ko}.png 를 바뀐 뒤(Drill module) 새로 찍은 그림으로 덮었다",
+   "approach": ".loop/out 의 그림은 10:19 에 en.po 를 고치기 전에 찍힌 것(빈 칸이 \"Drill\")이었다. harness/shot.sh --ui /tmp/g932s1 weapon_bench 로 다시 찍어(weapon_bench_drill 만 따로 이름을 주면 0 장 — 묶음 이름 weapon_bench 로 불러야 한다) en 그림에서 빈 칸이 \"Drill module\" 두 줄로 칸 안에 들어간 것을 눈으로 확인하고 ko · en 두 장을 .loop/out 에 덮었다. 코드를 고치지 않았으므로 새 테스트는 없고 돌린 테스트도 없다",
+   "why": "",
+   "files": [
+    ".loop/out/weapon_bench_drill_en.png",
+    ".loop/out/weapon_bench_drill_ko.png"
+   ],
+   "decision": null
+  },
+  "test": "pat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:344)\n         [1] _ready (res://world/terrain/test_island.gd:132)\n         [2] _build_island (res://core/game_root.gd:312)\n         [3] _ready (res://core/game_root.gd:260)\n         [4] before_all (res://tests/core/debug/test_dev_animals.gd:36)\n         [5] _call_before_all (res://addons/gut/gut.gd:684)\n         [6] _test_the_scripts (res://addons/gut/gut.gd:813)\n         [7] test_scripts (res://addons/gut/gut.gd:1047)\n         [8] run_tests (res://addons/gut/gui/GutRunner.gd:198)\n         [9] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n         [10] main (res://addons/gut/cli/gut_cli.gd:297)\n         [11] _init (res://addons/gut/gut_cmdln.gd:39)\n* test_f5_is_bound_to_the_f5_key\n* test_f5_opens_a_list_of_every_wild_animal\n* test_picking_a_kind_summons_it_in_front_of_the_character_and_closes\n* test_every_kind_can_be_summoned_from_the_list\n* test_esc_closes_the_list\nWARNING: Navigation map synchronization had 737 edge error(s).\nMore than 2 edges tried to occupy the same map rasterization space.\nThis causes a logical error in the navigation mesh geometry and is commonly caused by overlap or too densely placed edges.\nConsider baking with a higher 'cell_size', greater geometry margin, and less detailed bake objects to cause fewer edges.\nConsider lowering the 'navigation/3d/merge_rasterizer_cell_scale' in the project settings.\nThis warning can be toggled under 'navigation/3d/warnings/navmesh_edge_merge_errors' in the project settings.\n     at: _build_step_find_edge_connection_pairs (modules/navigation_3d/3d/nav_map_builder_3d.cpp:149)\n    [Failed]:  Unexpected Errors:\n    [1] <engine-1>Navigation map synchronization had 737 edge error(s).\n    More than 2 edges tried to occupy the same map rasterization space.\n    This causes a logical error in the navigation mesh geometry and is commonly caused by overlap or too densely placed edges.\n    Consider baking with a higher 'cell_size', greater geometry margin, and less detailed bake objects to cause fewer edges.\n    Consider lowering the 'navigation/3d/merge_rasterizer_cell_scale' in the project settings.\n    This warning can be toggled under 'navigation/3d/warnings/navmesh_edge_merge_errors' in the project settings.\n      at line -1\n* test_the_list_text_is_translated_in_both_languages\n* test_nothing_outside_a_dev_world\n* test_the_window_leaves_with_the_island\n7/8 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/core/debug/test_dev_animals.gd\n- test_esc_closes_the_list\n    [Failed]:  Unexpected Errors:\n    [1] <engine-1>Navigation map synchronization had 737 edge error(s).\n    More than 2 edges tried to occupy the same map rasterization space.\n    This causes a logical error in the navigation mesh geometry and is commonly caused by overlap or too densely placed edges.\n    Consider baking with a higher 'cell_size', greater geometry margin, and less detailed bake objects to cause fewer edges.\n    Consider lowering the 'navigation/3d/merge_rasterizer_cell_scale' in the project settings.\n    This warning can be toggled under 'navigation/3d/warnings/navmesh_edge_merge_errors' in the project settings.\n          at line -1\n\nTotals\n------\nScripts               1\nTests                 8\nPassing Tests         7\nFailing Tests         1\nAsserts           80/81\nTime              2.047s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           596\nTests            4391\nPassing Tests    4390\nFailing Tests       1\nRisky/Pending       0\nAsserts        212080\nTime           848s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/core/debug/test_dev_animals.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
