@@ -1,38 +1,5 @@
 [
  {
-  "time": "2026-10-18 11:09:29",
-  "epoch": 1792289369,
-  "type": "pass",
-  "title": "통과 — G-237 단계 6 ((앞 단계 QA) 흔들리는 일꾼 테스트를 기다림만 늘려 덮었다)",
-  "group": "G-237",
-  "step": "6",
-  "attempt": "1",
-  "report": {
-   "problem": "일꾼 테스트 둘이 실제로 걸리는 게임 안 시간을 재어 주석에 적었다 — 길찾기 · 짐 나르기는 느려지지 않았고, 손 테스트가 넘친 까닭은 돌아온 씨앗(G-236)을 도로 심는 일이라 그 테스트는 씨앗이 안 돌아오게 하고 기다림을 4×→2×PATIENCE 로 되돌렸다. 바뀐 곳만: 2개 파일 17개 테스트 통과",
-   "approach": "잠깐 쓰고 지운 측정 테스트로 physics_frame 마다 물리 delta(time_scale 을 탄 게임 안 초 — GUT wait_until 이 세는 것과 같다)를 더해 쟀다. 기준점은 숙련도가 생기기 전 커밋(549d6fd8^)을 git archive 로 임시 폴더에 풀어 같은 측정을 돌렸다. 손 테스트(다 거두고 마지막 밀을 상자에): 그때 17.2초 · 지금 씨앗이 안 돌아오면 14~17초(들어올 때 굴린 숙련도가 빠르게 한다) · 씨앗이 늘 돌아오면 22.3~24.4초 · 50% 면 씨앗 수에 따라 14~22.5초 — 한도 20초(2×PATIENCE/FAST)를 넘긴 판은 모두 돌아온 씨앗을 농부가 빈 밭에 도로 심은 판이었다(planted 4~6). 그래서 느려진 것이 아니라 G-236 이 할 일을 늘린 것이다 — 이 테스트가 보는 것(마지막 칸 전에 상자에 두기)과 관계없으므로 그 테스트만 crops.seed_back_chance = 0 으로 두고 기다림을 2× 로 되돌렸다(test_bag_hand_craft 의 rare_chance = 0 과 같은 길). 두 일꾼 물주기: 그때 18.3~18.5초 · 지금 16.6~18.5초(숙련도 0 이면 17.5~18.5초) — 느려지지 않았지만 늘 PATIENCE(20초)의 92% 에 붙어 있어 2× 는 남기고 잰 값과 까닭을 주석에 적었다. 두 파일을 세 번 돌려 다 통과, 끝으로 changed_tests 그물(2개 파일 17개) 통과.",
-   "why": "",
-   "files": [
-    "game/tests/automation/villagers/test_villager_hands_room.gd",
-    "game/tests/automation/villagers/test_villager_watering.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "흔들리는 일꾼 테스트를 기다림만 늘려 덮었다 — test_villager_hands_room.gd _wait_for 를 2×→4×PATIENCE, test_villager_watering.gd 둘 일꾼 테스트를 PATIENCE→2×PATIENCE 로 늘렸다. … 일꾼이 마지막 짐을 상자로 나르는 데 실제로 얼마나 걸리는지(시뮬레이션 초)를 재어 테스트 주석에 적고, 늘어난 까닭이 일꾼 길찾기 · 짐 나르기의 느려짐이 아닌지 확인하라 — 느려진 것이면 그쪽을 고치고 기다림은 되돌린다",
-     "evidence": "잰 값을 주석에 적었다: hands_room _wait_for 위에 숙련도 전(G-232.2 앞) 17.2초 · 지금 씨앗 안 돌아오면 14~17초 · 씨앗 둘이면 22.5초. watering 둘 일꾼 테스트 주석에 그때 18.3~18.5초 · 지금 16.6~18.5초. 길찾기 · 짐 나르기는 느려지지 않았고, 넘긴 까닭은 G-236 에서 돌아온 씨앗을 도로 심는 일이라고 밝혔다. 그래서 hands_room 은 기다림을 4×→2×PATIENCE 로 되돌리고, 거두기 테스트(test_the_farmer_puts_things_away_before_the_harvest_takes_the_last_slot)에만 crops.seed_back_chance = 0.0 을 두었다. crops 는 before_each 에서 새로 만드니 다른 테스트로 새지 않고, _wait_for 를 쓰는 다른 테스트(물뿌리개)는 거두지 않아 씨앗과 상관없다. watering 은 잰 값이 PATIENCE(20초)의 92% 에 붙어 2× 를 남기고 까닭을 적었다 — 느려진 것이 아니므로 기준에 맞다. 바뀐 뒤(파일 10:54) 돈 전체 실행(test.log 11:08, godot 6 개 동시 부하)에서 3262/3262 통과, guard 통과 — 되돌린 2× 가 부하 아래서도 버텼다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "team_api.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      0s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      0s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      0s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/core/test_guard.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           441\nTests            3262\nPassing Tests    3262\nFailing Tests       0\nRisky/Pending       0\nAsserts        144321\nTime           663s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "ba43ba2b"
- },
- {
   "time": "2026-10-18 11:09:33",
   "epoch": 1792289373,
   "type": "stop",
@@ -8961,5 +8928,41 @@
    "decision": null
   },
   "commit": "5b727ef3"
+ },
+ {
+  "time": "2026-10-23 13:56:27",
+  "epoch": 1792731387,
+  "type": "pass",
+  "title": "통과 — G-293 단계 1 (재현 · 까닭)",
+  "group": "G-293",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "유황 섬에서 건물이 안 지어지는 까닭을 재현하는 테스트 — 땅은 찾지만 섬이 가팔라 토대가 거의 다 「비탈」로 빨강이다 (바뀐 곳만: 2파일 4테스트 통과)",
+   "approach": "진짜 유황 섬을 세우고 선착장 둘레 · 처음 나는 자리 · 평평한 곳 · 지열 자리 곁 · 굳은 판 위의 4m 판마다 Buildings.plan_at 을 쟀다. 결과 — 선착장 둘레 25판 · 스폰 둘레 26판 전부 \"steep\"(기울기 가운데값 29° · 20°), 평평한 곳 · 지열 자리 곁 14판은 전부 초록이고 거기선 토대 → 벽 → 바닥(윗층 지붕)이 다 선다. 굳은 판 위(첫 분출 식은 뒤) 642판 중 초록 48 · 나머지 steep(기울기 21.6°, 그중 1판은 ±6m 밖 낭떠러지라 땅을 못 찾음). 제작대 · 상자는 어느 자리든 놓인다(칸 규칙에 비탈 검사가 없다). 까닭: 땅 못 찾음이 아니다 — 복셀 땅도 칸마다 높이 맵 몸통이 있어 _ground_height 광선이 맞는다. 복셀 땅이 잘게 울퉁불퉁한 것도 아니다(기울기를 빼면 남는 턱 가운데값 2~4cm). 섬 자체가 가파르다: 옆 토대 없는 첫 토대는 한 장(4m) 안 땅 높낮이가 MAX_DROP 1m(약 14°) 안이어야 하는데, 유황 섬은 스폰 · 선착장 둘레 60m 판의 약 7% 만 그 안이다(본섬 63~71%, 둘레 기울기 가운데값 6~9°). 그래서 사람이 처음 닿는 선착장 · 스폰에서는 어디를 겨눠도 빨강이다. 휠로 올려도 steep 검사는 그대로라 풀리지 않는다. 본섬은 같은 테스트로 선착장 둘레(30판 중 6) · 스폰(32판 전부) · 평평한 곳이 초록.",
+   "why": "",
+   "files": [
+    "game/tests/build/test_build_on_volcano_island.gd",
+    "game/tests/build/test_build_on_home_island.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "유황 섬(VoxelLodTerrain)에서 도면으로 토대 · 벽 · 바닥을, 그리고 놓는 것(제작대 · 상자 같은 시설)을 선착장 둘레 · 평평한 곳 · 굳은 판 위 · 지열 자리 곁 몇 곳에 놓아 보는 테스트 — 지금 무엇이 왜 빨강인지(땅 못 찾음 · 비탈 · 금지 구역 · 섬 규칙 …) 이 단계 기록에 적는다. 본섬은 같은 테스트가 초록 (테스트)",
+     "evidence": "game/tests/build/test_build_on_volcano_island.gd 가 진짜 test_island(sulfur)를 세워 선착장 둘레 · 처음 나는 자리 · 평평한 곳 · 지열 자리 곁(test_foundations_walls_floors_and_stations_around_the_island)과 첫 분출 뒤 굳은 판 위(test_on_the_cooled_rock_sheet)의 4m 판마다 Buildings.plan_at 을 잰다. 땅 못 찾음이 아님을 _span missing=false 로, 빨강이 전부 \"steep\" 임을 assert_eq 로, 선착장 · 스폰 둘레 기울기 가운데값이 MAX_DROP/side(≈14°)보다 큼을 assert_gt 로 단언한다. 초록 판에서는 place_at 으로 토대를 실제로 세우고 plan_for 로 벽 · 지붕(윗층 바닥)이 ok 인지 보고 놓는다. 제작대 · 상자는 Placeable.plan_cell + Placer._why_not_at(실제 규칙 길)로 빈 까닭을 단언한다. 로그 숫자: sulfur 선착장 25판 전부 steep(29.2°) · 스폰 26판 전부 steep(19.6°) · 지열 곁 14판 초록 · 굳은 판 642 중 초록 48. 까닭은 테스트 머리 주석과 report.json how(대시보드 approach 로 남는다)에 적혔다. test_build_on_home_island.gd 가 같은 몸통을 본섬으로 돌려 초록(스폰 32판 전부 초록, 각 구역 초록 판 있음 단언). test.log 바뀐 곳만 4테스트 1710 단언 통과 · guard 통과."
+    }
+   ],
+   "issues": [
+    "짝 없는 .uid 쓰레기가 남았다 — game/tests/build/test_volcano_build_probe.gd.uid 와 test_volcano_build_probe_home.gd.uid 는 .gd 없이 남은 탐색용 찌꺼기다. rm 으로 지워라",
+    "본섬 테스트 주석이 실제와 다르다 — test_build_on_volcano_island.gd:7 「거기선 모든 곳이 초록이다」와 green_everywhere 변수 설명 「어디서나 초록이어야 하나」가 틀렸다. 로그로 본섬 선착장 둘레는 30판 중 24판이 steep(기울기 15.2°)이다. 「본섬은 구역마다 초록 판이 있고 처음 나는 자리는 전부 초록」처럼 실제 단언에 맞게 고치고 변수 이름도 그 뜻(예: green_in_every_zone)으로 바꿔라"
+   ],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 2 개 ---\ntest.sh: 파일 2 개를 6 개씩 한꺼번에 돌린다\nok      4s  res://tests/build/test_build_on_home_island.gd\nok      5s  res://tests/build/test_build_on_volcano_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             2\nTests               4\nPassing Tests       4\nFailing Tests       0\nRisky/Pending       0\nAsserts          1710\nTime           5s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "99f58398"
  }
 ]
