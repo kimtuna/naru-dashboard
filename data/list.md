@@ -5121,7 +5121,7 @@
 - [ ] 3. spec — facilities.md 온천 줄 고치기 (사람 원문)
 
 ## [ ] G-297 이동 속도 — 기본 125% · 배고픔 · 목마름이 가득이면 150%
-- 차선: 3d-start
+- 차선: 3d-start · 시작 2026-10-23 15:28
 - spec: spec/02_player/hunger-thirst.md, spec/02_player/movement-controls.md
 - **사람 요청 2026-10-23** (원문 그대로): 「6. 이동속도 100%는 너무 느린거 같음 125를 기본으로 하고 150을 배고픔 목마름 풀일때로 하자」
 - 지휘 세션이 2026-10-23 봤다: 지금 기본 이동이 달리기 속도(배율 1) · 목마름이 바닥이면 ×0.7(player/hunger_thirst/hunger_thirst.gd THIRSTY_FACTOR) · 버프 음식 · 사슴 세트는 그 위에 곱한다
