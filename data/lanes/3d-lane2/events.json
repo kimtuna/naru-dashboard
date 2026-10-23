@@ -1,68 +1,5 @@
 [
  {
-  "time": "2026-10-18 14:15:26",
-  "epoch": 1792300526,
-  "type": "pass",
-  "title": "통과 — G-238 단계 3 (도망 — 1분 · 말뚝과 목줄)",
-  "group": "G-238",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "야생이 잡실 · 방 밖에서 1분 뒤 사라짐(머리 위 초읽기 · 한 줄 알림, 우리 안 · 온순함 100 · 묶임은 안 감) + 설치물 말뚝 · 아이템 목줄(짐승→말뚝 우클릭으로 묶기, 다시 누르면 풀기, 저장 · 멀티)",
-   "approach": "Ranch 가 방을 Buildings.measure_rooms 로 재어 종류(pen · misc)까지 알게 하고, tick_escape 가 놓아 기르는 개체마다 safe(온순함 100 · 묶임 · 우리 안)가 아니면 60초를 깎아 0 이 되면 run_off(무리에서 곧바로 빼고 지움 + Notice RANCH_ESCAPED). 안전한 곳에 들면 -1 로 지우고 나오면 60초부터(임시). 남은 초는 Animal.escape_left 로 저장본 · 짐승 모습(snapshot 의 esc, 초 단위 정수)에 실리고 Animal._show_escape 가 머리 위 Label3D 로 띄운다(서버 · 참가자 그림 같이). 참가자 화면은 남은 초가 1 이하이던 개체가 사라지면 같은 한 줄을 띄운다. 말뚝은 stations.json 한 줄(tether.radius 4)이라 놓기 · 부수기 · 저장은 설치물 길을 그대로 탄다 — 창은 열지 않는다(Stations.interact). 묶기는 새 Tether(life/ranching/tether.gd): 우클릭을 _input 에서 받아(제작대 창보다 먼저) 목줄을 든 채 짐승 → 말뚝이면 묶고 목줄 하나를 뺀다, 묶인 짐승을 누르면 풀고 목줄을 돌려준다(가방이 차면 안 푼다). 묶인 개체의 걸을 자리는 말뚝 둘레 반경 — 그 밖에서 묶였으면 말뚝에 다가가는 걸음만 허락한다. 말뚝은 판 번호가 없어 자리로 찾는다(Tether.stake_at, 섬 아래로 범위를 가른다 — 멀티 시험은 기계 여럿이 한 트리). 참가자는 _tie_animal rpc 로 서버에 바라고 서버가 사본 가방에서 목줄을 뺀다 · 넣는다. 말뚝 둘레 막기를 일부러 `return true` 로 깨 보니 둘레 테스트가 182m 로 떨어졌다(되돌렸다). 바뀐 곳 그물(changed_tests.py: 276 파일 · 2214 개)을 돌려 test_stations.gd 「제 종류가 그대로 돌아온다」 하나가 떨어졌다 — 가는 말뚝(0.5×1.1×0.5, 0.6 깊이도)은 놓은 뒤 조준점이 말뚝 앞 땅을 짚어 부술 수 없었다. 사료통처럼 0.8×1.2×0.8 로 키워 그 파일 25/25, 목장 41/41, test_hunt_on_server 12/12 를 다시 돌려 통과했다(그물 전체는 크기 바꾼 뒤 다시 돌리지 않았다). harness/shot.sh --ui 의 새 자리 ranch_escape 로 찍어 보니 초 글자가 작아 pixel_size 를 0.01 로 키웠고, 묶인 사슴에는 초가 없는 것을 그림으로 봤다.",
-   "why": "말뚝 둘레 반경 4 m (stations.json 의 stake.tether.radius) — 눈으로 잡았다; 말뚝 재료 목재 3 · 목줄 재료 밧줄 2 · 말뚝 크기 0.8×1.2×0.8 · 색 · 무게(말뚝 3 · 목줄 0.5) — Claude 가 정했다; 우리에 들어가면 초읽기를 지우고 다시 나오면 60초부터 센다 — 사람이 정하지 않았다; 우리 · 잡실이 아닌 막힌 방(제작소 · 침실 등)에서는 세지 않는다 — 사람 결정이 「잡실이거나 외부」만 말했다; 말뚝을 부수면 묶인 짐승이 풀리고 목줄은 돌아오지 않는다; 머리 위 초읽기 글자 크기(font 48 · pixel_size 0.01) · 빛깔",
-   "files": [
-    "game/life/ranching/ranch.gd",
-    "game/life/ranching/tether.gd",
-    "game/life/hunting/animal.gd",
-    "game/core/net/net_world.gd",
-    "game/craft/stations/stations.json",
-    "game/craft/stations/station_catalog.gd",
-    "game/craft/stations/crafting_station.gd",
-    "game/craft/stations/stations.gd",
-    "game/craft/recipes/workbench.json",
-    "game/player/inventory_hotbar/weights.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/world/terrain/test_island.gd",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/tests/life/ranching/test_ranch_escape.gd",
-    "game/tests/life/ranching/test_tether.gd",
-    "game/tests/multiplayer/hunt_island.gd",
-    "game/tests/multiplayer/test_hunt_on_server.gd",
-    "spec/04_life/ranching-breeding.md",
-    "spec/01_settings/save.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "야생이 잡실(misc)이나 방 밖에 있으면 1분 뒤 사라진다 — 다시 잡을 수 없다(사람 결정). 머리 위에 남은 초가 보인다 · 사라질 때 한 줄 알림. 제 우리(pen) 안이면 안 간다(사람 답 2026-10-18) · 온순함 100 은 어디서도 안 간다 (테스트)",
-     "evidence": "test_ranch_escape.gd — 방 밖 59.5초엔 남고 60초에 사라지며 Animal.ALL · CAPTIVES · kept · standing 에서 빠짐(다시 못 잡음) · Notice 「사슴이(가) 달아났다」 · 머리 위 Label3D 의 글자가 ceili(escape_left)이고 HEIGHT 위 · 진짜 토대+네 벽+지붕+사료통·물통으로 지은 pen 안에서 5분 남고 밖으로 옮기면 60초부터 세어 사라짐 · 사료통 없는 misc 방에서 사라짐 · 온순함 100 은 10분 남고 99 는 다시 셈 · _physics_process 로 저절로 셈 · 저장본 · 참가자 그림의 초. SAFE_ROOM 을 \"xxpen\" 으로 깨 보니 test_ranch_escape.gd 가 떨어졌다(되돌렸다). 멀티 test_a_wild_one_running_off_vanishes_for_the_guest_too 로 참가자 화면 초읽기 · 사라짐도 본다. test.log 바뀐 곳 397 파일 3006 개 통과 · guard 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "설치물 말뚝(땅에 박는다) · 아이템 목줄 — 목줄을 든 채 짐승과 말뚝을 차례로 누르면 묶인다. 묶인 짐승은 말뚝 둘레(반지름 임시)만 걷고 도망 초읽기가 없다 · 풀 수 있다 · 저장 · 멀티. 재료 임시 (테스트)",
-     "evidence": "test_tether.gd — 말뚝이 설치물이고 제작대 레시피(말뚝 · 목줄)가 있다 · press(짐승)→press(말뚝)로 묶이고 목줄 하나가 빠진다 · 빈손이거나 짐승을 먼저 안 누르면 아무것도 안 됨 · 놀라게 하며 40초 걸려도 말뚝 반경+0.3 밖으로 안 나감(구현 세션이 둘레 막기를 깨 182m 로 떨어짐을 봤다고 적음) · 멀리서 묶으면 다가와 둘레에 듦 · 묶인 야생은 5분 지나도 남고 escape_left<0 · 다시 누르면 풀리고 목줄이 돌아옴 · 가방 가득이면 안 풀림 · 진짜 우클릭(push_input)으로 걸고 묶음 · 저장 후 묶인 것만 그 말뚝에 묶여 돌아옴 · 말뚝을 부수면 풀림 · 그림에 묶임이 실림. 멀티 test_the_guest_ties_a_kept_one_to_a_stake_and_unties_it — 참가자가 바라고 서버가 사본 가방에서 목줄을 빼고 넣음. 반경 4 · 재료 · 크기는 stations.json _stake 와 spec 수치에 임시로 적혔다"
-    }
-   ],
-   "issues": [
-    "참가자 화면의 달아남 알림을 안 본다 — test_hunt_on_server.gd 의 test_a_wild_one_running_off_vanishes_for_the_guest_too 는 그림이 사라지는 것만 보고 net_world._animals_seen 이 띄우는 Notice(RANCH_ESCAPED)는 단언하지 않는다. 미르 섬의 Notice 가 「사슴이(가) 달아났다」인지 단언을 하나 더하라. 또 이 판정은 남은 초 ≤ ESCAPE_GONE(1초)에 기대어 다른 까닭으로 1초 남짓에 사라진 개체에도 뜰 수 있다 (혼자 판 기준은 통과했다)",
-    "남의 파일 비공개 함수를 부른다 — net_world.gd 가 Tether._name(beast) 를 부른다. 밑줄 함수는 그 파일 안에서만 쓰는 약속이니 Tether 에 공개 함수(예: species_name)로 바꾸거나 Ranch 쪽 이름 함수를 써라"
-   ],
-   "good": [
-    "ui_shots.gd 에 찍는 자리 ranch_escape 를 더했다 — 눈으로 보려고 만든 것이라 해롭지 않다",
-    "우리 · 잡실이 아닌 막힌 방(제작소 · 침실)에서는 세지 않게 했다 — 기준 밖의 판단이지만 spec 에 「사람 결정은 잡실이거나 외부만 말했다」로 적어 두었다"
-   ]
-  },
-  "test": "orld/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      1s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      0s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_job_work_shared.gd\nok      1s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      1s  res://tests/automation/villagers/test_villager_body.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/build/test_build_piece_shared_shapes.gd\nok      2s  res://tests/build/test_build_piece_tidy.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      0s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           397\nTests            3006\nPassing Tests    3006\nFailing Tests       0\nRisky/Pending       0\nAsserts        145554\nTime           642s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "4d74ac82"
- },
- {
   "time": "2026-10-18 14:43:34",
   "epoch": 1792302214,
   "type": "pass",
@@ -8909,5 +8846,63 @@
   },
   "test": "ands/test_island_design_notes.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      4s  res://tests/world/lighting/test_torch.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/automation/villagers/test_crafter_spec.gd\nok      3s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      2s  res://tests/automation/villagers/test_villager_skills.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\nok      3s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/build/test_take_spec_lines.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/test_docs_match_code_g275.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      2s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      3s  res://tests/craft/stations/test_apothecary_bench.gd\nok      3s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_geothermal_spec.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/stations/test_hot_spring_bath.gd\nok      2s  res://tests/craft/stations/test_loom.gd\nok      3s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      3s  res://tests/craft/stations/test_smoker.gd\nok      3s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/hunting/test_cage_reuse.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_bird_cage_five.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      3s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      3s  res://tests/multiplayer/test_lava_on_server.gd\nok      3s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_vehicle_drill.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\nok    440s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           221\nTests            1702\nPassing Tests    1702\nFailing Tests       0\nRisky/Pending       0\nAsserts         73049\nTime           440s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "da9dc2eb"
+ },
+ {
+  "time": "2026-10-23 16:57:00",
+  "epoch": 1792742220,
+  "type": "pass",
+  "title": "통과 — G-296 단계 2 (지열 자리에 온탕)",
+  "group": "G-296",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "온탕(온천 욕탕 — 번역 이름 「온탕」)을 화산 섬의 지열 자리(붉고 김 나는 곳) 위에만 놓이게 했다 — 지열 용광로 · 대장간과 자리 하나를 나눠 쓴다. 바뀐 곳 그물 284개 파일 · 2269개 테스트 모두 통과",
+   "approach": "온탕은 온천 자리(near=hot_spring)에만 놓이게 되어 있어서 화산 섬의 붉고 김 나는 지열 자리에서는 거절됐다. stations.json 에서 온탕을 near=geothermal 로 바꿔 지열 용광로 · 대장간과 같은 자리 규칙(Stations._why_not_at — 서버 place_for 도 같은 물음)을 타게 했다. 그래서 자리 하나에 하나를 셋이 나눠 쓴다. 자리 밖이면 온탕만 제 까닭(WHY_HOT_SPRING → 「온탕은 화산 섬의 지열 자리(김이 오르는 붉은 땅) 위에만…」)을 띄운다. 이제 아무도 쓰지 않는 온천 자리 물음(hot_spring_spot)은 시설 규칙에서 걷었고, 온천 자리(물웅덩이)는 풍경으로만 남겼다. 옛 저장본은 지열 자리 밖의 지열 시설을 읽을 때 건너뛴다. 그래서 본섬 옛 온천 자리의 욕탕은 G-296.1 처럼 조용히 사라진다. 번역 이름은 「온탕」 / Hot Bath 로 바꾸고, 주민 까닭 줄과 자리 찬 까닭 줄도 맞췄다. 주민 규칙은 손대지 않았다 — 한 번에 한 섬만 서므로 그 섬의 온탕을 그 섬 주민이 그대로 쓴다. 이것은 지열 자리 규칙으로 놓은 온탕에 스트레스 80 주민이 들어가 스트레스가 내려가는 테스트로 본다. 찍는 자리 geothermal_bath(island=sulfur)를 더해 붉은 바닥 위의 온탕을 그림으로 확인했다.",
+   "why": "",
+   "files": [
+    "game/craft/stations/stations.json",
+    "game/craft/stations/stations.gd",
+    "game/craft/stations/station_catalog.gd",
+    "game/world/terrain/test_island.gd",
+    "game/world/terrain/hot_spring.gd",
+    "game/core/debug/shots.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "spec/03_world/frontier-islands.md",
+    "spec/05_craft/facilities.md",
+    "spec/07_automation/villager-persona.md",
+    "game/tests/craft/stations/test_hot_spring_bath.gd",
+    "game/tests/craft/stations/test_geothermal_stations.gd",
+    "game/tests/automation/villagers/test_villager_bath.gd",
+    "game/tests/craft/stations/test_stations.gd",
+    "game/tests/build/test_placeable_previews.gd",
+    "game/tests/craft/stations/test_geothermal_spec.gd",
+    "game/tests/core/test_docs_match_code_g275.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "「온천 욕탕」(이름은 「온탕」으로 — 번역)은 **화산 섬의 지열 자리(붉고 김 나는 곳) 위에** 놓인다 · 밖이면 빨강과 까닭 · 서버도 같은 검사 · 자리 하나에 하나(지열 용광로 · 대장간과 자리를 나눠 쓴다) (테스트 + 찍는 자리 — 지열 자리 위 온탕)",
+     "evidence": "stations.json 에서 hot_spring_bath 를 near=geothermal 로 바꿨고, 자리 밖이면 Stations._why_not_at 가 WHY_HOT_SPRING 을 돌려준다. 이름은 ko 「온탕」 · en 「Hot Bath」 (test_hot_spring_bath test_name_and_reason_are_in_korean_and_english 가 tr 로 확인). 자리 안/밖은 test_only_on_a_geothermal_spot, 진짜 화산 섬의 자리마다 놓이고 먼 곳은 거절되는 것은 test_geothermal_stations test_the_volcano_island_hands_its_spots_to_the_stations 가 본다. 미리보기 빨강 · 좌클릭 거절 · 까닭 한 줄은 test_off_the_spring_the_preview_is_red_and_the_reason_shows, 서버 place_for 의 자리 밖 거절 · 이미 찬 자리 거절 · 가방 수 유지는 test_the_server_checks_the_same_rule 이 본다. 자리 하나에 하나는 test_one_per_spot_shared_with_the_smelter_and_forge 가 양쪽으로 확인한다(온탕 → 용광로 · 대장간 · 온탕 거절, 대장간 → 온탕 거절, 다른 자리는 빔). 찍는 자리 geothermal_bath 는 QA 가 harness/shot.sh island=sulfur 로 직접 찍었다 — 붉고 김 나는 바닥 한가운데에 온탕 상자가 선 것을 눈으로 확인했다. test.log 의 바뀐 곳 295 파일 · 2317 테스트가 모두 통과했고 guard 도 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "주민이 쓰는 규칙(스트레스가 높으면 쉬는 때에 들어가 내려간다)은 그대로 — 주민이 그 섬에 있을 때 (테스트)",
+     "evidence": "test_villager_bath test_on_the_volcano_island_a_bath_on_the_geothermal_spot_is_used_the_same_way 가 지열 자리 규칙으로 _why_not_at 밖=WHY_HOT_SPRING · 안=\"\" 를 확인한다. 이어서 Stations._place_item 으로 온탕을 놓고, 스트레스 80 주민에게 folk.free_bath 가 그 온탕을 돌려주는지 · bathing() 이 되는지 · 30 물리 프레임 뒤 stress 가 내려가는지 단언한다. 기존 주민 욕탕 테스트(낮은 스트레스면 안 간다 등)도 그대로 통과. 주민 코드는 바뀌지 않았다"
+    }
+   ],
+   "issues": [
+    "테스트 머리 주석이 없는 검사를 가리킨다 — game/tests/craft/stations/test_hot_spring_bath.gd 5줄째 「진짜 화산 섬의 지열 자리 위에 놓이는 것은 tests/build/test_build_on_volcano_island.gd 가 본다」는 틀렸다. 그 파일에는 온탕이 없고, 실제로 보는 곳은 tests/craft/stations/test_geothermal_stations.gd test_the_volcano_island_hands_its_spots_to_the_stations 다. 그 이름으로 고쳐라",
+    "낡은 이름 「온천 욕탕」이 남았다 — test_geothermal_stations.gd 58줄 단언 메시지 「… 차량 정비소 · 온천 욕탕」, test_hot_spring_bath.gd 의 단언 메시지 몇 곳(「온천 욕탕이 시설 목록에 있다」 · 「온천 욕탕이 가방으로 돌아왔다」), station_catalog.gd dev_only 주석의 「온탕, G-290.1」은 G-290.1 · G-296.2 로 적어야 맞다. 「온탕」으로 맞춰라",
+    "읽을 때 빠지는 범위가 spec 보다 넓다 — Stations.restore 가 이제 near=geothermal 인 것을 전부(지열 용광로 · 대장간까지) 지열 자리 밖이면 조용히 버린다. 그런데 spec/03_world/frontier-islands.md 에는 「지열 자리 밖에 놓였던 옛 욕탕은 읽을 때 사라진다」라고 욕탕만 적혀 있다. 「지열 시설 셋 다」로 spec 을 고치고, 지열 자리 밖의 geothermal_smelter 가 restore 에서 빠지고 자리 안의 것은 남는지 보는 테스트를 tests/craft/stations/test_geothermal_stations.gd 에 더하라 (geothermal_spot 을 넣은 Stations 에 restore([{kind=geothermal_smelter, at=밖}, {kind=geothermal_smelter, at=안}]) → 하나만 선다)"
+   ],
+   "good": []
+  },
+  "test": "_drill.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      3s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      3s  res://tests/ui/hud/test_hive_window.gd\nok      3s  res://tests/ui/hud/test_no_output_slots.gd\nok      3s  res://tests/ui/hud/test_station_doing_line.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      2s  res://tests/automation/villagers/test_villager_skills.gd\nok      2s  res://tests/build/test_placer.gd\nok      2s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/build/test_take_spec_lines.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/multiplayer/test_islands_afar.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           295\nTests            2317\nPassing Tests    2317\nFailing Tests       0\nRisky/Pending       0\nAsserts         89829\nTime           476s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "fd11e1e2"
  }
 ]

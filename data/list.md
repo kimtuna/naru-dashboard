@@ -5115,10 +5115,12 @@
 - 아래 「어떻게」는 Claude 가 정함 2026-10-23
 - [x] 1. 본섬 온천을 다 뺀다
   - 기준: 본섬의 온천 자리 · 김 · 물웅덩이 · 표가 없어진다 · 옛 저장본에 본섬에 놓인 욕탕은 가방(서버장)으로 돌아오거나 조용히 사라진다 — 읽기가 터지지 않는다 (테스트)
-- [ ] 2. 지열 자리에 온탕
+- [x] 2. 지열 자리에 온탕
   - 기준: 「온천 욕탕」(이름은 「온탕」으로 — 번역)은 **화산 섬의 지열 자리(붉고 김 나는 곳) 위에** 놓인다 · 밖이면 빨강과 까닭 · 서버도 같은 검사 · 자리 하나에 하나(지열 용광로 · 대장간과 자리를 나눠 쓴다) (테스트 + 찍는 자리 — 지열 자리 위 온탕)
   - 기준: 주민이 쓰는 규칙(스트레스가 높으면 쉬는 때에 들어가 내려간다)은 그대로 — 주민이 그 섬에 있을 때 (테스트)
 - [ ] 3. spec — facilities.md 온천 줄 고치기 (사람 원문)
+  - 기준: (앞 단계 QA) 테스트 머리 주석이 없는 검사를 가리킨다 — game/tests/craft/stations/test_hot_spring_bath.gd 5줄째 「진짜 화산 섬의 지열 자리 위에 놓이는 것은 tests/build/test_build_on_volcano_island.gd 가 본다」는 틀렸다. 그 파일에는 온탕이 없고, 실제로 보는 곳은 tests/craft/stations/test_geothermal_stations.gd test_the_volcano_island_hands_its_spots_to_the_stations 다. 그 이름으로 고쳐라
+  - 기준: (앞 단계 QA) 낡은 이름 「온천 욕탕」이 남았다 — test_geothermal_stations.gd 58줄 단언 메시지 「… 차량 정비소 · 온천 욕탕」, test_hot_spring_bath.gd 의 단언 메시지 몇 곳(「온천 욕탕이 시설 목록에 있다」 · 「온천 욕탕이 가방으로 돌아왔다」), station_catalog.gd dev_only 주석의 「온탕, G-290.1」은 G-290.1 · G-296.2 로 적어야 맞다. 「온탕」으로 맞춰라
 
 ## [x] G-297 이동 속도 — 기본 125% · 배고픔 · 목마름이 가득이면 150%
 - 차선: 3d-start · 시작 2026-10-23 15:28
@@ -5140,6 +5142,14 @@
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
 - [x] 1. armor_modules.gd 칸 주석이 「차 모듈」이라 한다 (G-294 단계 3)
   - 기준: armor_modules.gd 칸 주석이 「차 모듈」이라 한다 — game/player/equipment/armor_modules.gd:78 「차의 칸 이름 — 차 모듈 하나 (G-291.4)」. 차 모듈 아이템은 G-294.1 에 뺐으니 「차의 칸 이름 — 블레이드 칸 하나 (G-291.4 · G-294)」처럼 고쳐라. spec/04_life/vehicles.md:58 「차 모듈 칸 1」도 「차 칸 1」로 바꿔 두면 헷갈림이 없다
+
+## [ ] G-935 루프가 찾은 것 — 스스로 갚는다
+- 차선: 3d-lane2
+- QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
+  루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
+- 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
+- [ ] 1. 읽을 때 빠지는 범위가 spec 보다 넓다 (G-296 단계 2)
+  - 기준: 읽을 때 빠지는 범위가 spec 보다 넓다 — Stations.restore 가 이제 near=geothermal 인 것을 전부(지열 용광로 · 대장간까지) 지열 자리 밖이면 조용히 버린다. 그런데 spec/03_world/frontier-islands.md 에는 「지열 자리 밖에 놓였던 옛 욕탕은 읽을 때 사라진다」라고 욕탕만 적혀 있다. 「지열 시설 셋 다」로 spec 을 고치고, 지열 자리 밖의 geothermal_smelter 가 restore 에서 빠지고 자리 안의 것은 남는지 보는 테스트를 tests/craft/stations/test_geothermal_stations.gd 에 더하라 (geothermal_spot 을 넣은 Stations 에 restore([{kind=geothermal_smelter, at=밖}, {kind=geothermal_smelter, at=안}]) → 하나만 선다)
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
