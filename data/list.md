@@ -5090,7 +5090,7 @@
   - 기준: 정비소 모듈 안내문이 「차 모듈」이라 한다 — game/i18n/ko.po GARAGE_MODULES_HINT 「가방의 차 모듈을 차 칸에 끌어 끼운다」 · en 「Drag a vehicle module…」. 「차 모듈」이라는 아이템을 G-294.1 에 뺐으니 사람이 또 헷갈릴 수 있다(사람 「차 모듈은 뭐고…」). 「가방의 블레이드를 차 칸에 끌어 끼운다」 / 「Drag a blade from your bag into the vehicle slot」 처럼 바꾸고, 문구를 단언하는 테스트가 있으면 같이 고쳐라 (막는 것은 아니다 — 이번 기준 밖)
 
 ## [ ] G-295 마실 수 없는 술은 다 뺀다
-- 차선: 3d-start
+- 차선: 3d-start · 시작 2026-10-23 14:34
 - spec: spec/05_craft/facilities.md 「양조통 · 증류기」, spec/02_player/hunger-thirst.md
 - **사람 요청 2026-10-23** (원문 그대로): 「3. 그냥 포도주 맥주 이런 마실 수 없는 것들이 있는데 이런것들도 다 빼」
 - 지휘 세션이 2026-10-23 봤다: 술 열하나(life/food/drinks.json — 맥주 · 포도주 · 럼 · 청주 · 보드카 · 사이다 · 벌꿀주 · 약주 · 위스키 · 브랜디 · 숙성 럼)는 주민 스트레스만 내리고 사람은 못 마신다. 양조통(brewing_barrel.json)은 술 여덟만, 증류기(still.json)는 독주 셋 + 알코올(`@liquor` 2 → 1)을 만든다. 알코올은 약 재료다
