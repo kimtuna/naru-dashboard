@@ -5107,7 +5107,7 @@
   - 기준: (앞 단계 QA) 술을 예로 든 낡은 주석이 남았다 — game/craft/stations/crafting_station.gd:626 「맥주 N개 유지」, game/craft/stations/stations.gd:1540 「맥주는 맥주가 든 컵으로 센다」, game/player/inventory_hotbar/inventory.gd:241 「「맥주」는 맥주가 가득 든 컵」을 과일 주스 · 데운 우유 예로 바꿔라
   - 기준: (앞 단계 QA) workbench.json 임시 설명에 양조통이 남았다 — game/craft/recipes/workbench.json _temporary 의 「시설 열하나(제재소 · 맷돌 · 방직기 · 염전 · 양조통 · 증류기 · 축사 …)」에서 양조통을 빼고 걷었다(G-295.1)고 적어라 (축사도 이미 G-238.5 에 걷혔다)
 
-## [ ] G-296 온천 — 본섬은 빼고, 화산 섬의 붉고 김 나는 자리에 온탕
+## [x] G-296 온천 — 본섬은 빼고, 화산 섬의 붉고 김 나는 자리에 온탕
 - 차선: 3d-lane2 · 시작 2026-10-23 16:04
 - spec: spec/05_craft/facilities.md, spec/07_automation/villager-persona.md
 - **사람 요청 2026-10-23** (원문 그대로): 「4. 본섬에도 온천이 짓는 곳이 있는데 본섬은 다 빼」 · 「5. 빨갛고 김이 나는 곳에 온탕 지으려고 하니 안되는데 ?」
