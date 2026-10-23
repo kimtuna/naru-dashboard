@@ -5075,7 +5075,7 @@
   - 기준: (앞 단계 QA) 짝 없는 .uid 쓰레기가 남았다 — game/tests/build/test_volcano_build_probe.gd.uid 와 test_volcano_build_probe_home.gd.uid 는 .gd 없이 남은 탐색용 찌꺼기다. rm 으로 지워라
   - 기준: (앞 단계 QA) 본섬 테스트 주석이 실제와 다르다 — test_build_on_volcano_island.gd:7 「거기선 모든 곳이 초록이다」와 green_everywhere 변수 설명 「어디서나 초록이어야 하나」가 틀렸다. 로그로 본섬 선착장 둘레는 30판 중 24판이 steep(기울기 15.2°)이다. 「본섬은 구역마다 초록 판이 있고 처음 나는 자리는 전부 초록」처럼 실제 단언에 맞게 고치고 변수 이름도 그 뜻(예: green_in_every_zone)으로 바꿔라
 
-## [ ] G-294 차 모듈은 뺀다 · 「차량 드릴」은 「블레이드」
+## [x] G-294 차 모듈은 뺀다 · 「차량 드릴」은 「블레이드」
 - 차선: 3d-start · 시작 2026-10-23 13:47
 - spec: spec/04_life/vehicles.md, spec/02_player/equipment-modules.md
 - **사람 요청 2026-10-23** (원문 그대로): 「1. 차 모듈은 빼」 · 「7. 드릴 모듈이라 하지말고 그 블레이드라고 하네 ? 큰판같은걸 이거라고 말하자.」
