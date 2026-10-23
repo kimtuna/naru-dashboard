@@ -1,29 +1,5 @@
 [
  {
-  "time": "2026-10-17 23:05:25",
-  "epoch": 1792245925,
-  "type": "fail",
-  "title": "기계 검사 실패 — G-231 단계 6 (시도 1)",
-  "group": "G-231",
-  "step": "6",
-  "attempt": "1",
-  "report": {
-   "problem": "시설 창을 닫거나 모듈 탭 없는 시설로 바뀌면 문(Kit.bench_what)이 갈래를 잊는다 · Aiming 에 공개 finish_now() · advance() — 바뀐 곳만 97개 파일 804개 통과",
-   "approach": "StationWindow.show_station 은 모듈 탭이 보일 때만 ModulePage.set_what 을 불렀고, ModulePage._tell_gate 는 kind 가 \"\" 이면 문에 알리지 않았다 — 그래서 창을 닫아도 Kit.bench_what 이 armor/weapon 그대로라 닫힌 채 MOD_HOLD 가 자리에 놓였다. 이제 show_station 이 탭이 없으면(닫힘 포함) set_what(\"\") 을 부르고, _tell_gate 는 \"\" 도 Acts.MOD_BENCH 로 보낸다(do_mod_bench 는 \"\" 를 이미 받는다). 테스트는 진짜 GameRoot 에서 장비 · 무기 제작대를 열고 닫은 뒤 bench_what 이 \"\" 이고 방어구 · 총 MOD_HOLD 가 false 인지, 모듈 탭 없는 작업대를 열어도 \"\" 인지 본다. 조준은 Aiming 에 finish_now()(조준 시간을 다 흘린다)와 advance(delta)(_process 가 부르는 몸통)를 두고, ui_shots.gd · test_scope.gd 가 밑줄 붙은 _process 대신 이것을 부르게 했다. 확인: 바뀐 곳만(changed_tests.py) 97개 파일 · 804개 테스트 통과.",
-   "why": "",
-   "files": [
-    "game/ui/hud/module_page.gd",
-    "game/ui/hud/station_window.gd",
-    "game/combat/tools_as_weapons/aiming.gd",
-    "game/core/debug/ui_shots.gd",
-    "game/tests/combat/tools_as_weapons/test_scope.gd",
-    "game/tests/ui/hud/test_station_tabs.gd"
-   ],
-   "decision": null
-  },
-  "test": " 바퀴 8. R 로 재장전 (316초)\n    한 바퀴 9. 탄이 없으면 R 을 눌러도 채워지지 않는다 (327초)\n    --- Awaiting 1.0 seconds  ---\n    한 바퀴 10. 빈 땅으로 걸어가 밭을 놓는다 (328초)\n    한 바퀴 11. 씨앗을 들고 우클릭으로 심는다 (332초)\n    한 바퀴 12. 빈 물뿌리개 → 밭 옆 연못에서 채운다 (332초)\n    한 바퀴 12-1. 비료를 들고 밭에 우클릭 (332초)\n    한 바퀴 12-2. 물뿌리개를 들고 날마다 물을 주며 날을 보낸다 (332초)\n    한 바퀴 13. 씨앗도 물뿌리개도 아닌 것을 들고 우클릭으로 거둔다 (332초)\n    한 바퀴 14-1. 맷돌을 놓고 밀을 밀가루로 간다 (332초)\n    한 바퀴 14-2. 요리대를 놓고 밀가루로 빵을 굽는다 (332초)\n    한 바퀴 15. 빵을 들고 우클릭으로 먹는다 (333초)\n    한 바퀴 16. 밭 옆 풀밭에 난 벨라도나를 캔다 (333초)\n    한 바퀴 17. 제작대로 돌아와 용광로에서 철괴 셋 · 유황 셋을 더 뽑고 (336초)\n    한 바퀴 18. 사슴을 찾아가 **다리만** 쏴 잡는다 (343초)\n    [Failed]:  [6] expected to equal [7]:  쏜 것은 다 다리에 맞았다\n      at line 1346\n    [Failed]:  [1] expected to equal [0]:  머리 · 몸통에는 한 발도 가지 않았다\n      at line 1347\n    [Failed]:  [7] expected to equal [8]:  다리 한 발만큼씩 깎여 쓰러졌다\n      at line 1351\n    한 바퀴 19. 주검에 다가가 우클릭으로 도축한다 (367초)\n    [Failed]:  DICTIONARY({ \"antler\": 2, \"beast_head\": 1, \"raw_meat\": 3, \"hide\": 1, \"bone\": 1, \"offal\": 1...fal\": 1 }) != DICTIONARY({ \"antler\": 2, \"beast_head\": 1, \"raw_meat\": 4, \"hide\": 2, \"bone\": 2, \"offal\": 1...fal\": 1 }).\n    { \"antler\": 2, \"beast_head\": 1, \"raw_mea...ffal\": 1 } != { \"antler\": 2, \"beast_head\": 1, \"raw_mea...ffal\": 1 }  3 of 6 keys do not match.  다리만 맞혀 잡으니 산출이 하나도 깎이지 않았다\n      at line 1366\n    [Failed]:  [3] expected to equal [4]:  도축한 raw_meat 4개가 가방에 들어왔다\n      at line 1368\n    [Failed]:  [1] expected to equal [2]:  도축한 hide 2개가 가방에 들어왔다\n      at line 1368\n    [Failed]:  [1] expected to equal [2]:  도축한 bone 2개가 가방에 들어왔다\n      at line 1368\n    [Failed]:  [6] expected to equal [7]:  점수표에 다리 7발이 적혔다\n      at line 1371\n    한 바퀴 20. 다른 사슴을 찾아 다리로 체력 10% 아래까지 몰고 (368초)\n    한 바퀴 21. 제작대로 돌아와 석재 블록을 굽고 제재소에서 판자를 켠다 (385초)\n    한 바퀴 22. 빈 땅으로 걸어가 토대를 놓는다 (412초)\n    한 바퀴 23. 토대 위로 걸어 올라가 한가운데에 서서 (413초)\n    한 바퀴 24. 머리 위에 지붕을 얹는다 (418초)\n    한 바퀴 25. 방 안에 선 채 저장한다 (419초)\n    한 바퀴 26. 집을 손으로 철거한다 (420초)\n    한 바퀴 27. 돌아온 재료로 다시 짓는다 (424초)\n    한 바퀴 22. 빈 땅으로 걸어가 토대를 놓는다 (424초)\n    한 바퀴 23. 토대 위로 걸어 올라가 한가운데에 서서 (425초)\n    한 바퀴 24. 머리 위에 지붕을 얹는다 (430초)\n1/2 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/craft/test_from_empty_hands.gd\n- test_from_empty_hands_to_a_fired_gun_without_being_handed_anything\n    [Failed]:  [6] expected to equal [7]:  쏜 것은 다 다리에 맞았다\n          at line 1346\n    [Failed]:  [1] expected to equal [0]:  머리 · 몸통에는 한 발도 가지 않았다\n          at line 1347\n    [Failed]:  [7] expected to equal [8]:  다리 한 발만큼씩 깎여 쓰러졌다\n          at line 1351\n    [Failed]:  DICTIONARY({ \"antler\": 2, \"beast_head\": 1, \"raw_meat\": 3, \"hide\": 1, \"bone\": 1, \"offal\": 1...fal\": 1 }) != DICTIONARY({ \"antler\": 2, \"beast_head\": 1, \"raw_meat\": 4, \"hide\": 2, \"bone\": 2, \"offal\": 1...fal\": 1 }).\n    { \"antler\": 2, \"beast_head\": 1, \"raw_mea...ffal\": 1 } != { \"antler\": 2, \"beast_head\": 1, \"raw_mea...ffal\": 1 }  3 of 6 keys do not match.  다리만 맞혀 잡으니 산출이 하나도 깎이지 않았다\n          at line 1366\n    [Failed]:  [3] expected to equal [4]:  도축한 raw_meat 4개가 가방에 들어왔다\n          at line 1368\n    [Failed]:  [1] expected to equal [2]:  도축한 hide 2개가 가방에 들어왔다\n          at line 1368\n    [Failed]:  [1] expected to equal [2]:  도축한 bone 2개가 가방에 들어왔다\n          at line 1368\n    [Failed]:  [6] expected to equal [7]:  점수표에 다리 7발이 적혔다\n          at line 1371\n\nTotals\n------\nScripts               1\nTests                 2\nPassing Tests         1\nFailing Tests         1\nAsserts           1898/1906\nTime              430.776s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           425\nTests            3108\nPassing Tests    3107\nFailing Tests       1\nRisky/Pending       0\nAsserts        132787\nTime           629s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/craft/test_from_empty_hands.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
- },
- {
   "time": "2026-10-17 23:27:13",
   "epoch": 1792247233,
   "type": "pass",
@@ -8379,6 +8355,43 @@
   "group": "G-932",
   "step": "1",
   "attempt": "2",
+  "report": {
+   "problem": "바뀐 뒤 무기 작업대 그림을 .loop/out 에 덮고, 전체 검사를 떨어뜨린 F5 소환의 「edge error」(같은 자리 짐승의 땅이 소환마다 겹침)를 고쳤다 — 바뀐 곳만: 41 파일 382 테스트 통과",
+   "approach": "기준: harness/shot.sh --ui 로 weapon_bench 를 새로 찍어(빈 칸이 'Drill module' 로 칸 안에 들어간 것을 그림으로 확인) .loop/out/weapon_bench*.png 8 장을 덮었다. 기계 검사: test_dev_animals 의 test_esc_closes_the_list 가 「Navigation map synchronization had 737 edge error(s)」로 떨어졌다. 혼자 돌리면 통과했지만 로그를 보니 경고는 매번 났고, 앞 테스트(test_every_kind_can_be_summoned)에서 난 것이 지도 동기화 때를 타 어느 테스트에 떨어지느냐만 달랐다. 까닭은 IslandAnimals.summon · spawn_family 가 부를 때마다 같은 자리 · 같은 크기의 짐승의 땅(AnimalNav.wild)을 한 겹씩 더 깐 것 — 셋째 겹부터 한 변을 셋이 나눠 써 지도가 edge error 를 낸다. _lay_wild 로 같은 네모가 이미 있으면 깔지 않게 했다. 고친 뒤 test_dev_animals 로그에 edge error 가 0 번, 바뀐 곳 그물(41 파일) 로그 어디에도 없다. 전체는 돌리지 않았다.",
+   "why": "",
+   "files": [
+    "game/life/hunting/island_animals.gd",
+    "game/tests/core/debug/test_dev_animals.gd",
+    ".loop/out/weapon_bench_drill_en.png (외 weapon_bench*.png 8 장)"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": ".loop/out 그림이 낡은 채 남았다 — .loop/out/weapon_bench_drill_en.png 는 10:19 에 찍힌 바뀌기 전 그림(빈 칸이 \"Drill\")이다. 바뀐 뒤 그림은 /private/tmp/g932s3/ 에만 있다. 다음에 그림을 근거로 남길 때는 바뀐 뒤 찍은 것을 .loop/out 에 덮어 두어라 (기준과는 상관없다 — 확인은 tmp 그림으로 했다)",
+     "evidence": ".loop/out/weapon_bench*.png 8 장이 모두 11:11 에 새로 찍혔다. weapon_bench_drill_en.png 를 열어 보니 드릴 옆 빈 칸이 'Drill module' 두 줄로 칸 안에 들어가 있다(en.po:1837 msgstr \"Drill module\"). 그림 덮기라 테스트 대상이 아니다"
+    },
+    {
+     "ok": true,
+     "criterion": "기계 검사가 떨어졌다 — test_dev_animals.gd 의 Navigation map edge error(737)",
+     "evidence": "IslandAnimals._lay_wild 가 같은 중심·같은 크기 AnimalNav 가 있으면 다시 깔지 않는다. 새 테스트 test_summoning_at_one_spot_lays_one_ground 가 F5 목록으로 사슴을 같은 자리에 세 번 불러 그 자리 AnimalNav 가 1 겹인지 본다. TEST_DIR=res://tests/core/debug 로 6 파일 48 테스트 통과. 일부러 _lay_wild 의 return 을 pass 로 바꿔 돌리니 '16 겹' 으로 떨어지고 edge error 737 경고도 다시 났다 — 껍데기가 아니다. 되돌린 뒤 diff 가 원래와 같은 것을 확인했다"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "F5 소환 짐승의 땅 겹침 수정(island_animals.gd _lay_wild)은 기준 문장 밖이지만, 전체 기계 검사를 떨어뜨린 것을 고친 것이라 이 단계가 통과하려면 필요했다"
+   ]
+  },
+  "test": "  2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/automation/villagers/test_job_work_shared.gd\nok      1s  res://tests/automation/villagers/test_villager_gear.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_take_spec_lines.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           596\nTests            4392\nPassing Tests    4392\nFailing Tests       0\nRisky/Pending       0\nAsserts        212078\nTime           847s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-23 13:47:12",
+  "epoch": 1792730832,
+  "type": "start",
+  "title": "루프 시작",
   "report": {
    "problem": "바뀐 뒤 무기 작업대 그림을 .loop/out 에 덮고, 전체 검사를 떨어뜨린 F5 소환의 「edge error」(같은 자리 짐승의 땅이 소환마다 겹침)를 고쳤다 — 바뀐 곳만: 41 파일 382 테스트 통과",
    "approach": "기준: harness/shot.sh --ui 로 weapon_bench 를 새로 찍어(빈 칸이 'Drill module' 로 칸 안에 들어간 것을 그림으로 확인) .loop/out/weapon_bench*.png 8 장을 덮었다. 기계 검사: test_dev_animals 의 test_esc_closes_the_list 가 「Navigation map synchronization had 737 edge error(s)」로 떨어졌다. 혼자 돌리면 통과했지만 로그를 보니 경고는 매번 났고, 앞 테스트(test_every_kind_can_be_summoned)에서 난 것이 지도 동기화 때를 타 어느 테스트에 떨어지느냐만 달랐다. 까닭은 IslandAnimals.summon · spawn_family 가 부를 때마다 같은 자리 · 같은 크기의 짐승의 땅(AnimalNav.wild)을 한 겹씩 더 깐 것 — 셋째 겹부터 한 변을 셋이 나눠 써 지도가 edge error 를 낸다. _lay_wild 로 같은 네모가 이미 있으면 깔지 않게 했다. 고친 뒤 test_dev_animals 로그에 edge error 가 0 번, 바뀐 곳 그물(41 파일) 로그 어디에도 없다. 전체는 돌리지 않았다.",
