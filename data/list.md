@@ -5020,7 +5020,7 @@
 - [x] 5. spec — 새 vehicles.md (사람 원문 · Claude 가 정한 것 · 임시 · 미정)
   - 기준: (앞 단계 QA) equipment-modules.md 드릴 줄이 차 칸 아래로 갔다 — spec/02_player/equipment-modules.md 에서 새 「## 차의 칸 (G-291.4)」 절이 「## 드릴의 칸」 절 한가운데에 끼어, 드릴 이야기인 「Claude 가 정함 2026-10-22: 칸 수 1 은 임시 · 빈 칸 이름표 「드릴 모듈」…」 · 「미정 (사람이 정한다): … 드릴 등급은 나중 …」 두 줄이 차의 칸 절 밑에 놓였다. 그 두 줄을 드릴의 칸 절 끝(「액티브 칸처럼 넣는 칸만…」 줄 다음)으로 옮기고, 차의 칸 절은 그 뒤에 두어라
 
-## [x] G-292 차량 드릴 모듈 — 위에 덮인 것을 걷어 낸다
+## [ ] G-292 차량 드릴 모듈 — 위에 덮인 것을 걷어 낸다
 - 차선: 3d-start · 시작 2026-10-23 07:37
 - 순서: G-291 뒤
 - spec: vehicles.md, spec/03_world/frontier-islands.md 「분출과 용암」
@@ -5034,6 +5034,10 @@
 - [x] 2. 보이는 것 · spec — 걷는 동안 드릴이 돌고 부스러기 (찍는 자리) · vehicles.md 에 차량 드릴 절
   - 기준: (앞 단계 QA) 차량 드릴이 목차의 「시설」 갈래에 들었다 — game/ui/manual/manual_toc.json 에서 vehicle_drill 줄이 facilities(MANUAL_CAT_facilities) 아래 vehicle_garage 다음에 있다. 모듈이지 시설이 아니다. 모듈을 다루는 갈래(예: 장비 · 모듈 쪽)로 옮기거나, 다른 모듈(vehicle_module · scope_*)처럼 목차에 안 넣는 쪽으로 맞춰라. 옮기면 test_car_drill.gd 의 목차 단언은 그대로 통과한다
   - 기준: (앞 단계 QA) 화산 없는 섬 테스트가 조금 약하다 — test_bare_ground_and_an_island_without_a_volcano_are_left_alone 의 두 번째 절은 voxel_ground.records 0 만 본다(화산이 없으니 carved 신호도 못 단다). Vehicle._volcano() 가 null 을 내는지 단언을 한 줄 더해라 (예: assert_null(car._volcano()))
+- 결정 2026-10-23 (지휘 세션 — 사람 「웬만한 결정대기는 알아서 해서 넘어가줘」): 단계 2 제목의 「보이는 것」에 기준이 없었다 — 지휘 세션이 목록을 쓸 때 빠뜨렸다. 단계 3 으로 다시 올린다
+- [ ] 3. 걷는 동안 보이는 것
+  - 기준: 차량 드릴을 끼운 차가 굳은 판을 걷는 동안 차 앞 드릴이 돌고(걷지 않을 때는 멈춘다) 부스러기(기본 입자 · 임시)가 튄다 · 참가자 화면에서도 돈다 (테스트: 걷는 동안 드릴 회전값이 바뀌고 멈추면 그대로)
+  - 기준: 찍는 자리 하나 — 굳은 판 위에 걷어 낸 줄이 보이는 차 (harness/shot.sh, shots.gd 에 자리 이름을 더한다) · 찍은 그림을 열어 드릴 · 걷힌 줄이 보이는지 본다
 
 ## [ ] G-932 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-lane2 (3d-start 몫이었는데 시작 전이라 가져왔다) · 시작 2026-10-23 06:12
@@ -5042,6 +5046,9 @@
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
 - [ ] 1. 테스트에 뜻 없는 식이 남았다 (G-291 단계 2)
   - 기준: 테스트에 뜻 없는 식이 남았다 — game/tests/life/vehicles/test_driving_slopes.gd 의 정비소 자리 `... * 8.0 + Vector3.UP * 0.0` 의 `+ Vector3.UP * 0.0` 을 지워라
+- [ ] 2. 드릴 칸 창 그림이 없다 (G-285 단계 2 물음)
+  - 기준: game/core/debug/ui_shots_kit.gd 의 PLACES 에 무기 제작대 「모듈」 탭에 드릴을 올린 자리(예: weapon_bench_drill — weapon_bench_rod 와 같은 꼴)를 더하고 harness/shot.sh --ui 로 ko · en 두 장을 찍어 칸이 잘리거나 겹치지 않는지 본다
+  - 결정 2026-10-23 (지휘 세션): 「shot.sh --ui 가 0 장」은 하네스 고장이 아니었다 — 같은 날 지휘 세션이 `harness/shot.sh --ui <폴더> workbench` 로 6 장을 찍었다. 「"": No such file or directory (os error 2)」는 셸이 명령마다 덧붙이는 줄이라 찍기와 상관없다. 드릴 칸 자리가 PLACES 에 없어 찍을 것이 없었던 것으로 본다
 
 ## [x] G-933 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-start · 시작 2026-10-23 08:18
