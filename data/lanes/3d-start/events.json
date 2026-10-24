@@ -1,63 +1,5 @@
 [
  {
-  "time": "2026-10-18 22:13:31",
-  "epoch": 1792329211,
-  "type": "pass",
-  "title": "통과 — G-240 단계 1 (가위로 깎는다)",
-  "group": "G-240",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "가위(작업대)로 온순한 · 묶인 앙고라 토끼 · 호저를 깎아 앙고라 털 · 호저 가시를 얻는다 — 다시 자라기 · 겨눈 줄 · 몸 굵기 · 저장 · 같이 하는 판. 바뀐 곳에 걸리는 265개 파일 2157개 테스트 통과",
-   "approach": "목줄 · 먹이(Tether · Taming)와 같은 꼴로 Shearing 노드를 새로 두었다 — 가위를 들고 우클릭하면 깎는다. 짐승마다 털 · 가시 자람(Animal.coat 0~1)을 두고, 깎으면 0, Ranch.tick_coat 가 livestock.json 의 shear.seconds 동안 1 까지 다시 키운다. 깎는 종 · 나오는 것 · 개수 · 주기는 livestock.json 의 shear 한 줄(앙고라 토끼 · 호저 — 우리 산출과 똥은 없다)이라 코드를 고치지 않고 늘릴 수 있다. 다 자라지 않았으면 「아직 덜 자랐다 n%」, 들판 짐승이나 온순함 100 아래이면서 묶이지 않은 짐승은 「가만히 있지 않는다」. 자란 정도는 겨눈 줄 끝(「털 n%」 · 「가시 n%」)과 그림 몸 굵기(다 깎이면 0.7 배, 10% 마디로 다시 그린다 — 충돌체는 그대로)로 보인다. 가방이 차면 남는 것은 발밑 바닥(Ranch.drop)에. 저장본에 coat 를 담고 옛 저장본은 다 자란 채로 선다. 같이 하는 판은 참가자가 서버에 바라고(_shear_animal), 서버가 사본 가방에 넣고 한 줄을 돌려보낸다. coat 는 짐승 모습(snapshot)으로 가 참가자 화면의 몸도 가늘어진다. 묶인 짐승을 가위를 든 채 누르면 목줄이 풀리던 길은 Tether 가 가위에도 비켜서게 막았다. 덤: test_hunt_on_server 의 목줄 묶기 · 풀기 시험이 한 번 떨어졌다(짐승이 걸어 다니다 손이 닿는 곳 밖으로 나갔다 — 같은 파일을 두 번 더 돌리니 통과). 그 시험의 사슴을 세워 두어 흔들리지 않게 했다.",
-   "why": "가위 재료 철괴 1 — 칼(손잡이 + 철괴)에서 손잡이만 뺐다 (workbench.json); 앙고라 털 3개 · 호저 가시 4개 한 번에 — 개수는 사람이 정하지 않았다 (livestock.json shear.count); 다시 다 자라기까지 1200초(게임 반나절) — 주기 임시 (livestock.json shear.seconds); 다 깎인 몸 굵기 0.7 배 (Animal.SHORN_GIRTH) — 털이 줄어든 것이 보일 만큼만; 무게 가위 0.3 · 앙고라 털 0.1 · 호저 가시 0.05 kg — 칼 · 양털에 견주었다 (weights.json)",
-   "files": [
-    "game/life/ranching/shearing.gd",
-    "game/life/ranching/ranch.gd",
-    "game/life/ranching/tether.gd",
-    "game/life/ranching/livestock.json",
-    "game/life/hunting/animal.gd",
-    "game/life/hunting/animal_kinds.gd",
-    "game/core/net/net_world.gd",
-    "game/world/terrain/test_island.gd",
-    "game/craft/recipes/workbench.json",
-    "game/player/inventory_hotbar/weights.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "spec/04_life/ranching-breeding.md",
-    "game/tests/life/ranching/test_shearing.gd",
-    "game/tests/multiplayer/hunt_island.gd",
-    "game/tests/multiplayer/test_hunt_on_server.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "아이템 **가위**(작업대 · 재료 **임시**). 들고 앙고라토끼 · 호저를 누르면 털(**앙고라 털**) · 가시(**호저 가시**)가 나온다 — 개수 **임시**. 깎고 나면 다시 자랄 때까지(주기 **임시**) 못 깎고, 자라는 정도가 겨누면 보인다 · 모양도 바뀐다(털이 줄어든다)",
-     "evidence": "test_shearing.gd — test_scissors_are_made_at_the_workbench_and_the_items_exist(작업대 레시피 · 무게 · ko/en 키 · 이름 '가위/앙고라 털/호저 가시'), test_shearing_a_tame_rabbit_gives_wool_then_it_must_regrow(털 n개 · coat 0 · 0%/50% 덜 자랐다 · 주기 끝나면 다시 깎임), test_a_porcupine_gives_quills, test_the_regrowth_shows_when_aimed_and_in_the_body(Ranch.line 끝 '털 0%/50%/100%' · '가시 100%' · CapsuleMesh 반지름이 SHORN_GIRTH 배로 줄었다 자람), test_it_regrows_on_the_island_clock, test_a_full_bag_drops_the_rest_at_its_feet. 임시 표시: workbench.json · livestock.json _shear · weights.json · Animal.SHORN_GIRTH 주석 · spec 수치 줄에 '임시'."
-    },
-    {
-     "ok": true,
-     "criterion": "**온순함 100 이거나 묶인 짐승만** 깎인다 — 야생은 「가만히 있지 않는다」 한 줄 · 저장 · 멀티 (테스트)",
-     "evidence": "test_a_wild_one_will_not_hold_still(온순함 99 놓아 기르는 토끼 · 들판 호저 → 안 깎이고 '가만히 있지 않는다'), test_a_tied_wild_one_is_sheared_and_the_leash_stays(묶인 야생은 깎이고 목줄 그대로), test_the_regrowth_is_saved(standing→restore 로 coat 0.3 · 굵기 유지 · 다시 못 깎음 · 옛 저장본은 1.0), test_hunt_on_server.gd test_the_guest_shears_a_kept_rabbit(참가자: 야생 거절 줄 → 온순해지면 서버가 깎고 사본 가방 · 참가자 가방에 털 · 한 줄 · 참가자 화면 girth<1 · 다시 누르면 덜 자랐다). 일부러 깨 봄: shear_for 의 조건을 'not a.kept' 만으로 바꾸자 test_a_wild_one_will_not_hold_still 가 떨어졌다(되돌림 확인). 전체 3464개 통과 · guard 통과."
-    }
-   ],
-   "issues": [
-    "weights.json _temporary 문장이 꼬였다 — game/player/inventory_hotbar/weights.json 의 _temporary 에서 「곰발바닥 찜(G-239.3)도 임시다.」 뒤에 가위 문장을 끼워 넣어, 원래 곰발바닥 쪽 설명이던 「— 가죽 · 깃털 · 기름에 견주어 잡았다」가 가위 문장 꼬리에 붙었다. 「…곰발바닥 찜(G-239.3)도 임시다 — 가죽 · 깃털 · 기름에 견주어 잡았다. 가위 · 앙고라 털 · 호저 가시(G-240.1)는 칼 · 양털에 견주어 잡은 임시 값이다.」 순으로 고쳐라",
-    "서버가 가위를 '들었나' 대신 '가방에 있나'로 본다 — net_world.gd _shear_animal 은 kit.inventory.count_of(Shearing.ITEM) > 0 만 본다. 손에 다른 것을 들고 가방 어딘가에 가위만 있어도 서버는 깎아 준다(참가자 쪽 Shearing.press 가 holds 로 막으니 정상 길에선 안 난다). 사본 가방의 고른 칸(held_item 에 해당하는 것)으로 보거나, Taming 의 서버 검사와 같은 꼴인지 맞춰 주석으로 까닭을 적어라"
-   ],
-   "good": [
-    "test_hunt_on_server.gd 의 목줄 묶기·풀기 시험에서 사슴의 physics_process 를 껐다 — 흔들리던 시험을 붙잡은 것으로 기준 밖이지만 해롭지 않다",
-    "Tether 가 가위를 든 손에 비켜선다 — 기준 '묶인 짐승을 깎는다'를 이루려면 필요한 것이라 덤이라기보다 곁따름이다"
-   ]
-  },
-  "test": "rs_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_back.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/world/map/test_map_memory.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           464\nTests            3464\nPassing Tests    3464\nFailing Tests       0\nRisky/Pending       0\nAsserts        153466\nTime           694s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "c7fc800e"
- },
- {
   "time": "2026-10-18 22:42:43",
   "epoch": 1792330963,
   "type": "fail",
@@ -8396,5 +8338,55 @@
    "decision": null
   },
   "test": "translation.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\n\n================ 떨어진 파일: res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n* test_1_an_old_save_loads_and_the_villagers_walk_soon\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:400)\n         [1] _ready (res://world/terrain/test_island.gd:135)\n         [2] _build_island (res://core/game_root.gd:312)\n         [3] _ready (res://core/game_root.gd:260)\n         [4] _enter (res://ui/menu/menu_root.gd:291)\n         [5] _on_world_chosen (res://ui/menu/menu_root.gd:185)\n         [6] _enter (res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd:51)\n         [7] test_1_an_old_save_loads_and_the_villagers_walk_soon (res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd:78)\n         [8] _run_test (res://addons/gut/gut.gd:622)\n         [9] _test_the_scripts (res://addons/gut/gut.gd:835)\n         [10] test_scripts (res://addons/gut/gut.gd:1047)\n         [11] run_tests (res://addons/gut/gui/GutRunner.gd:198)\n         [12] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n         [13] main (res://addons/gut/cli/gut_cli.gd:297)\n         [14] _init (res://addons/gut/gut_cmdln.gd:39)\n    --- Awaiting callable to return TRUE or 10.0s.   ---\n    불러온 뒤 거주지 둘레가 다 들기까지 497ms · 구운 조각 61 · 가장 느린 조각 9.2ms · 한 프레임 가장 길게 13.4ms\n    --- Awaiting callable to return TRUE or 15.0s.   ---\n* test_2_placing_rebakes_within_a_frame_instead_of_the_whole_square\n    놓을 때 굽기 — 앞(네모 반 폭 65m 통째) 84.7ms · 뒤(다시 구운 조각 2 · 섬 조각 894) 놓은 프레임 12.9ms · 가장 느린 조각 11.7ms\n* test_3_no_single_tile_takes_longer_than_a_frame\n    --- Awaiting callable to return TRUE or 90.0s.   ---\n    섬을 다 덮었다 — 구운 조각 7402 · 걸을 땅 조각 2947 · 가장 느린 조각 18.0ms · 한 프레임 가장 길게 23.8ms\n    [Failed]:  [18.025] expected to be < than [16.6666666666667]:  가장 느린 한 조각이 한 프레임(16.7ms) 안이다\n      at line 144\n2/3 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n- test_3_no_single_tile_takes_longer_than_a_frame\n    [Failed]:  [18.025] expected to be < than [16.6666666666667]:  가장 느린 한 조각이 한 프레임(16.7ms) 안이다\n          at line 144\n\nTotals\n------\nScripts               1\nTests                 3\nPassing Tests         2\nFailing Tests         1\nAsserts            9/10\nTime              42.935s\n\n\n---- 1 failing tests ----\n\nWARNING: 10 ObjectDB instances were leaked at exit (run with `--verbose` for details).\n   at: cleanup (core/object/object.cpp:2536)\nERROR: 5 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:822)\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           616\nTests            4486\nPassing Tests    4485\nFailing Tests       1\nRisky/Pending       0\nAsserts        218873\nTime           951s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-25 05:17:30",
+  "epoch": 1792873050,
+  "type": "pass",
+  "title": "통과 — G-304 단계 1 (시점)",
+  "group": "G-304",
+  "step": "1",
+  "attempt": "3",
+  "report": {
+   "problem": "시멘트 캐리어에 타면 1인칭(운전석 눈 · 차 앞 붓는 자리를 내려다봄)으로 시작 · 드릴의 시점 키(Tab, 키 설정 공유)로 1인칭↔3인칭 · 내리면 사람 시점 · 탄 동안 붓는 자리 바닥에 노란 둥근 고리 · 불도저는 그대로 3인칭",
+   "approach": "Driving 이 탄 차가 바뀌는 순간(_follow_view)을 보고, 시멘트 캐리어(CarKinds.fills)면 Player.set_first_person + 붓는 자리를 내려다보는 각으로 시작, 내리면 든 것이 드릴이면 1인칭 · 아니면 3인칭으로 돌린다. Tab 은 지금 든 것의 키 묶음과 상관없이 drill 묶음의 DRILL_VIEW 키(KeyBinds.code)를 보아 키 설정 한 줄을 드릴과 같이 쓴다. Shovel 의 드릴 시점 따라가기는 캐리어에 탄 동안 비켜선다(칸을 넘겨도 차 시점 유지). 붓는 자리 표는 TorusMesh 고리(반지름 = FILL_RADIUS · no_depth_test)를 fill_ground 땅 위에 둔다. 찍는 자리 car_cement_fp 추가 — 그림에서 고리 · 조준점 · 메운 회색 땅과 남은 도랑이 한 화면에 보인다. 바뀐 곳 그물(85 파일 · 647 테스트) 중 646 통과 · 1 실패: test_villager_g218_folk_ground_saved 의 「가장 느린 길찾기 조각 < 16.7ms」(18.2ms) — godot 6 개가 함께 돌 때만 떨어지고 혼자 돌리면 통과(앞 회차 전체 검사에서도 같은 테스트 · 같은 villager 시간 테스트가 떨어졌다). 길찾기 조각 굽기는 이 단계가 건드린 Driving · 차와 무관한 부하 탓 시간 재기라 손대지 않았다 — 이 테스트가 부하에 흔들려 묶음 채점을 막는다면 따로 다듬을 몫(G-9xx)이다.",
+   "why": "붓는 자리 고리 굵기 0.15m · 노랑 · 땅 위 0.05m (Driving.MARK_WIDTH · MARK_COLOR · MARK_LIFT) — 사람이 값을 안 정했다",
+   "files": [
+    "game/life/vehicles/driving.gd",
+    "game/world/terrain/shovel.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/life/vehicles/test_carrier_view.gd",
+    "spec/04_life/vehicles.md",
+    "spec/02_player/movement-controls.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "시멘트 캐리어에 타면 **1인칭**(운전석 눈 자리 · 차 앞 붓는 자리가 보인다)에서 시작하고 Tab 으로 3인칭 ↔ 1인칭 · 내리면 사람 시점으로 돌아온다 · 불도저는 지금 그대로(3인칭 · Tab 없음 — 사람이 말한 것은 시멘트 캐리어다) (테스트)",
+     "evidence": "test_carrier_view.gd — test_boarding_the_carrier_starts_in_first_person_seeing_the_pour_spot_and_tab_switches 가 탄 직후 1인칭 · 카메라가 seat()+camera_height 0.05 안 · 붓는 땅이 차 앞 3m 이며 unproject 로 화면 안 · Tab 두 번(InputEventKey 를 parse_input_event 로) 3↔1인칭 · 내리면 3인칭 · 다시 타면 1인칭부터를 단언. test_leaving_while_holding_the_drill_returns_to_the_drill_view 가 드릴 든 채 내리면 1인칭. test_the_bulldozer_stays_third_person_without_tab_or_mark 가 불도저 3인칭 · Tab 무시 · 표 없음. 전체 검사(616 파일) 마지막 회 0 실패, 이 파일 ok"
+    },
+    {
+     "ok": true,
+     "criterion": "1인칭에서 붓는 자리가 화면에 보이게 표시(바닥에 둥근 표 · 임시) · 키 설정 창의 시점 바꾸기(Tab)를 드릴과 같이 쓴다 (테스트 + 찍는 자리 — 1인칭 캐리어로 도랑을 메우는 중)",
+     "evidence": "test_a_round_mark_lies_on_the_pour_spot_while_riding_the_carrier — TorusMesh 반지름 = FILL_RADIUS · 붓는 땅 위 MARK_LIFT · 화면 안 · 몰면 차 앞 3m 를 따라감 · 내리면 숨음. test_the_view_key_is_the_drills_and_follows_rebinding — 도면을 든 채에도 Tab 이 차 시점, drill 묶음 DRILL_VIEW 를 Y 로 바꾸면 Tab 무시 · Y 로 바뀜. 일부러 깨 봄: _is_view_key 를 `c == KEY_TAB` 고정으로 바꾸자 이 테스트가 떨어졌다(되돌림 확인). 임시 수치(MARK_WIDTH · MARK_COLOR · MARK_LIFT)에 「임시」 표시 · spec 임시 수치 줄에도 적힘. 찍는 자리 car_cement_fp 추가 — .loop/out/g304_shot/car_cement_fp.png 에서 노란 고리 · 조준점 · 메운 회색 땅 · 남은 도랑이 한 화면에 보인다"
+    },
+    {
+     "ok": true,
+     "criterion": "spec vehicles.md 시멘트 캐리어 절에 시점 줄",
+     "evidence": "spec/04_life/vehicles.md 시멘트 캐리어 절에 「시점 (G-304.1, 사람 요청 2026-10-25 …)」 줄과 찍는 자리 car_cement_fp 줄 추가. movement-controls.md 에도 한 줄, save.md 「안 담는다」에 캐리어 시점(_rode · 표)을 까닭과 함께 적음. md 모두 150줄 아래(101 · 70 · 105), 지워진 사람 결정 줄 없음(바뀐 두 줄은 덧붙임)"
+    }
+   ],
+   "issues": [
+    "길찾기 조각 시간 테스트가 부하에 흔들린다 — tests/automation/villagers/test_villager_g218_folk_ground_saved.gd 의 test_3_no_single_tile_takes_longer_than_a_frame(가장 느린 조각 < 16.7ms)이 godot 6 개 동시 실행 때 18.0~18.2ms 로 떨어졌다가 다음 전체 검사에선 통과했다 (test_villager_gather_close 의 벌목 시간 비교도 한 번 떨어짐). 이 묶음과 무관하다. 동시 실행 부하에서 흔들리지 않게 — 여러 번 재서 중간값을 보거나, 테스트 도구에서 시간 테스트만 혼자 돌리게 하거나, 여유를 두되 그 값을 테스트 머리에 까닭과 함께 적어라"
+   ],
+   "good": []
+  },
+  "test": " res://tests/player/equipment/test_armor_modules.gd\nok      3s  res://tests/multiplayer/test_wild_kinds_on_server.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      3s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      3s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      3s  res://tests/player/hunger_thirst/test_starving.gd\nok      3s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      3s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      3s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      3s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      3s  res://tests/player/inventory_hotbar/test_no_item_load.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      3s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      3s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      3s  res://tests/settings/test_translation.gd\nok      3s  res://tests/settings/save/test_old_vehicle_module.gd\nok      3s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      4s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      3s  res://tests/ui/hud/test_hud_label_readable.gd\nok      4s  res://tests/ui/hud/test_guild_window.gd\nok      3s  res://tests/ui/hud/test_hive_window.gd\nok      3s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/menu/test_character_preview.gd\nok      3s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      3s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/terrain/test_dig_save.gd\nok      3s  res://tests/multiplayer/test_islands_afar.gd\nok      3s  res://tests/multiplayer/test_join_spot.gd\nok      4s  res://tests/multiplayer/test_lava_rock_on_server.gd\nok      3s  res://tests/multiplayer/test_looks_seen.gd\nok      3s  res://tests/multiplayer/test_server_from_game.gd\nok      3s  res://tests/multiplayer/test_visitor_interp.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           616\nTests            4486\nPassing Tests    4486\nFailing Tests       0\nRisky/Pending       0\nAsserts        218886\nTime           972s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "c37175ad"
  }
 ]
