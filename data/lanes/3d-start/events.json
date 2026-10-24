@@ -1,57 +1,5 @@
 [
  {
-  "time": "2026-10-18 23:51:44",
-  "epoch": 1792335104,
-  "type": "pass",
-  "title": "통과 — G-241 단계 1 (야생 벌집 — 꿀 · 밀랍 · 여왕벌)",
-  "group": "G-241",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "야생 벌집 — 내 섬 나무 줄기에 매달려 나고, 좌클릭 3대로 털면 꿀 2 · 밀랍 1 · 5% 여왕벌, 칠 때마다 쏘임(2), 5일 뒤 재생 · 저장 · 멀티(서버가 치고 쏘임은 서버의 그 사람 체력). 바뀐 곳만: 297개 파일 2356개 테스트 통과",
-   "approach": "꿀이 나는 곳이 없었다. 약초(herbs.gd)와 같은 꼴로 WildHives 를 새로 만들었다 — 섬을 굽는 코드는 건드리지 않고(섬 캐시를 다시 굽지 않게) 이미 있는 나무 자리(ResourceView) 가운데 월드 시드 + 그루 번호 해시가 1% 밑인 나무(최대 24)의 줄기 바로 바깥 1.8m 에 매단다 — 같은 월드는 늘 같은 자리. 벌집은 약초 층의 StaticBody 라 조준 광선에 맞고 캐릭터는 안 걸린다. 좌클릭(무엇을 들었든, 총은 빼고)마다 한 대 · 쏘임 2, 3대째에 떨어져 꿀 2 · 밀랍 1 · 5% 여왕벌(새 아이템 queen_bee — 무게 · ko/en 이름 · 개발 상자)을 나무 밑에 떨군다. 턴 자리는 턴 날과 함께 섬 저장(hives_picked_days)에 담기고 섬의 시계로 5일 뒤 다시 난다(선 칸 · 베인 나무면 미룬다). 나무가 베이면 그 벌집은 안 보이고 나무가 다시 서면 같이 선다(허공에 뜨지 않게). 멀티: 참가자는 「이 벌집을 친다」만 보내고(WildHives.ask → NetWorld._strike_hive, 권한은 채집 STRIKE · 거리) 서버가 쳐서 쏘임은 NetVitals.hit 로 그 사람 사본 체력에서 깎고, 턴 자리 · 다시 난 자리를 RPC 로, 꿀 · 밀랍은 바닥의 것 길로 맞춘다. 반쯤 친 대 수는 몇 초짜리라 담지 않는다(save.md 「안 담는다」에 적음). 처음 테스트에서 조준점이 벌집에 다 좁혀지기 전에 휘둘러 줄기를 맞혔다 — 조준을 짚을 때까지 되풀이하게 고쳤다.",
-   "why": "벌집이 매달릴 몫 1% · 섬 하나 최대 24개 (WildHives.SHARE · MAX) — 사람이 자리 · 수를 보고 정한다; 매다는 높이 1.8m · 몸 반지름 0.3 · 높이 0.7m · 색 — 손이 닿게 잡은 값, 아트는 나중; 3대에 떨어진다 · 한 대마다 쏘임 2 (가득 100) (WildHives.HITS · STING); 떨어지는 것 꿀 2 · 밀랍 1 · 여왕벌 5% (WildHives.DROPS · QUEEN_CHANCE); 다시 나는 날 5일 — 약초와 같게 (WildHives.REGROW_DAYS); 여왕벌 무게 0.01kg (weights.json)",
-   "files": [
-    "game/life/gathering/wild_hives.gd",
-    "game/world/terrain/resource_view.gd",
-    "game/world/terrain/test_island.gd",
-    "game/world/frontier_islands/island_state.gd",
-    "game/settings/save/world_data.gd",
-    "game/core/net/net_world.gd",
-    "game/core/game_root.gd",
-    "game/core/debug/dev_box.gd",
-    "game/player/inventory_hotbar/weights.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/multiplayer/field_island.gd",
-    "game/tests/multiplayer/test_harvest_on_server.gd",
-    "game/tests/life/gathering/test_wild_hives.gd",
-    "game/tests/life/gathering/test_wild_hives_island.gd",
-    "spec/01_settings/save.md",
-    "spec/11_multiplayer/netcode.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "내 섬 나무에 **야생 벌집**이 난다(자리 · 수 **임시** · 재생은 resources-regrowth 길). 털면(때려 부수면) 꿀 · 밀랍(수 **임시**)과 **낮은 확률로 여왕벌**(아이템 · 5% **임시**). 털 때 벌에 쏘인다(작은 피해 **임시**) · 저장 · 멀티 (테스트)",
-     "evidence": "난다: test_wild_hives_island.test_hives_hang_on_trees_of_my_island(진짜 TestIsland 나무 줄기 곁 · MAX 안) · test_the_same_world_grows_the_same_hives. 털기: test_any_hand_knocks_it_down_with_honey_and_wax_and_every_hit_stings — 맨손 · 도끼 · 목재를 들고 조준 광선으로 swing, HITS 대째에 떨어지고 바닥에 꿀 2 · 밀랍 1, 대마다 체력이 STING 씩 준다 · test_a_gun_in_hand_does_not_knock. 여왕벌: test_sometimes_a_queen_bee_falls_too(아이템 · 번역 키) · test_the_queen_falls_about_five_percent_of_the_time(20000번 ±0.6%). 재생: test_a_knocked_hive_comes_back_after_some_days_and_not_before · test_it_does_not_grow_back_under_the_feet · 베인 나무 테스트, 섬 시계로 5일(test_a_knocked_hive_is_saved_and_comes_back_on_the_island_clock). 저장: IslandState hives_picked_days 왕복(JSON 글자 키) — island_state.gd 의 set_picked 를 지워 보니 test_wild_hives_island 2개가 떨어졌다(되돌림). 반쯤 친 대 수는 save.md 「안 담는다」에 까닭과 함께 적혔다. 멀티: test_harvest_on_server — 참가자 ask → 서버 _strike_hive, 서버가 쥔 참가자 체력에서 쏘임 · 서버장은 그대로 · 턴 자리/다시 난 자리 RPC · 꿀 · 밀랍 바닥 동기화 · 둘이 쳐도 한 번만 떨어진다. 임시 값은 코드 주석 · report temporary 에 「임시」로 적혔다. ko/en 번역 키(ITEM_queen_bee · HIVE_STUNG) 둘 다 있다. test.log 바뀐 곳만 297개 2356 통과 · guard 통과"
-    }
-   ],
-   "issues": [
-    "재생 표에 야생 벌집 줄이 없다 — spec/03_world/resources-regrowth.md 의 재생 표(약초 줄 아래)에 「야생 벌집 | O — 게임 시간 며칠 (임시 5일, game/life/gathering/wild_hives.gd REGROW_DAYS) | 턴 자리에 다시 매달린다 · 베인 나무에는 안 난다」 한 줄을 더해라. 이 묶음 4단계(spec)의 기준에 같이 넣으면 된다",
-    "참가자가 쏘여도 「벌에 쏘였다!」 알림이 안 뜬다 — 서버가 대신 칠 때(net_world.gd _strike_hive) 체력은 깎이지만 HIVE_STUNG 한 줄은 혼자 판(_sting_player)에서만 낸다. 참가자 기계에서 ask 를 보낼 때(WildHives.swing 의 ask 길) 또는 서버가 쏘임을 알릴 때 그 사람 화면에 Notice 를 띄우고, test_harvest_on_server 에 참가자 알림을 보는 단언을 더해라",
-    "벌집 치기에 휘두르기 간격이 없다 — WildHives.swing 은 좌클릭마다 곧바로 한 대라 연타로 순식간에 턴다(평타 · 캐기는 도구 휘두르기 빠르기를 따른다, tests/combat/tools_as_weapons/test_fire_rate.gd). 같은 간격을 걸지 사람이 볼 일이 아니면 Attack 의 휘두르기 간격을 재사용해 막고 테스트로 확인해라"
-   ],
-   "good": []
-  },
-  "test": "ayer/test_traces_on_server.gd\nok      2s  res://tests/multiplayer/test_wild_kinds_on_server.gd\nok      2s  res://tests/player/equipment/test_armor_health.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_barn.gd\nok      3s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_bag_move_slots.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      3s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_search_field_shared.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/test_grid.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           297\nTests            2356\nPassing Tests    2356\nFailing Tests       0\nRisky/Pending       0\nAsserts         76759\nTime           579s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "4e795737"
- },
- {
   "time": "2026-10-19 00:18:55",
   "epoch": 1792336735,
   "type": "pass",
@@ -8363,5 +8311,50 @@
   },
   "test": "on/villagers/test_job_work_shared.gd\nok      3s  res://tests/automation/villagers/test_villager_body.gd\nok      2s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/automation/villagers/test_villager_gear.gd\nok      2s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/build/test_build_piece_shared_shapes.gd\nok      2s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/build/test_placer.gd\nok      3s  res://tests/build/test_placers_comment.gd\nok      3s  res://tests/build/test_room_chests.gd\nok      3s  res://tests/build/test_room_kinds.gd\nok      3s  res://tests/build/test_size_4x4.gd\nok      3s  res://tests/build/test_take_spec_lines.gd\nok      3s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      3s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/core/debug/test_perf_probe.gd\nok      3s  res://tests/core/input/test_debug_keys.gd\nok      3s  res://tests/core/input/test_input_spec_table.gd\nok      3s  res://tests/core/net/test_guild.gd\nok      3s  res://tests/core/net/test_acts_alone.gd\nok      3s  res://tests/core/net/test_steam_api.gd\nok      3s  res://tests/core/tools/test_test_totals_awk.gd\nok      3s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      3s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      3s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      3s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      3s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/life/hunting/test_captive_names.gd\nok      3s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      3s  res://tests/life/hunting/test_summon.gd\nok      3s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      3s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_hive_raid.gd\nok      3s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      3s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/player/equipment/test_future_wear.gd\nok      3s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      3s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      3s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/settings/save/test_old_liquor.gd\nok      4s  res://tests/settings/save/test_world_data_keys_note.gd\nok      4s  res://tests/settings/save/test_old_stove.gd\nok      3s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/map/test_map_memory.gd\nok      3s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     37s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           618\nTests            4489\nPassing Tests    4489\nFailing Tests       0\nRisky/Pending       0\nAsserts        219209\nTime           1060s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "deda0850"
+ },
+ {
+  "time": "2026-10-25 07:20:14",
+  "epoch": 1792880414,
+  "type": "pass",
+  "title": "통과 — G-310 단계 1 (커피 · 찻잎을 뺀다)",
+  "group": "G-310",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "찻잎 · 원두와 두 씨앗을 아이템 · 번역 · 씨앗 레시피 · 작물 표 · 태그 설명 · spec 에서 뺐다 — 옛 저장본의 가방 · 상자 · 밭에 심긴 것은 조용히 사라진다 (바뀐 곳 그물 226개 파일 1823개 가운데 1개가 떨어져 고친 뒤, 고친 것에 걸리는 5개 파일 31개 다시 통과)",
+   "approach": "네 이름(tea_leaf · tea_leaf_seed · coffee_bean · coffee_bean_seed)을 items.json · ko/en.po · 제작대 씨앗 레시피 둘 · crops.json 에서 지우고, OldItems.DROPPED 에 더해 옛 가방 · 상자 · 시설 버퍼의 것은 빈 칸이 되게 했다. 밭에 심긴 것은 Crops.restore 가 작물 표에 없는 이름을 이미 건너뛰므로 빈 밭이 남는다 — 테스트가 디스크에 쓰고 다시 읽는 길(SaveStore → IslandState.apply)로 이를 확인한다. 나무에서 떨어지는 씨앗은 작물 표에서 뽑으므로 저절로 빠진다. 설명서는 목차(manual_toc.json)에 작물 이름이 없어 고칠 것이 없었다. 원두를 예로 쓰던 테스트 셋(작물 종류 · 나무 희귀 씨앗 · 태그)은 카카오 · 향신료 열매로 바꿨다. spec 의 작물 목록을 열넷으로 고치고 사람 결정을 적었다. 바뀐 곳 그물에서 test_no_item_load(짐 수치 낱말 검사)가 새 테스트의 RareDrops 비중 함수 이름에 걸려 떨어졌다 — 그 단언은 작물 표 단언과 겹쳐 지웠고 다시 돌려 통과했다.",
+   "why": "",
+   "files": [
+    "game/player/inventory_hotbar/items.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/craft/recipes/workbench.json",
+    "game/craft/recipes/tags.json",
+    "game/life/farming/crops.json",
+    "game/settings/save/old_items.gd",
+    "game/tests/settings/save/test_old_tea_coffee.gd",
+    "game/tests/life/farming/test_crop_kinds.gd",
+    "game/tests/life/harvest/test_tree_rare_drops.gd",
+    "game/tests/craft/recipes/test_tag_new_materials.gd",
+    "spec/04_life/farming.md",
+    "spec/05_craft/facilities.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "원두 · 찻잎과 두 씨앗의 아이템 · 번역 · 씨앗 레시피 · 작물 표 · 설명서에서 뺀다 · 옛 저장본(가방 · 상자 · 밭에 심긴 것)은 조용히 사라지고 읽기가 터지지 않는다 (테스트)",
+     "evidence": "items.json · ko/en.po(ITEM_ 네 키) · workbench.json 씨앗 레시피 둘 · crops.json 두 줄을 지웠고 game/ · spec/ 에 남은 언급은 「뺐다」는 설명뿐이다. tests/settings/save/test_old_tea_coffee.gd 가 확인한다: test_no_tea_or_coffee_in_the_data(아이템 목록 · OldItems · 작물 표 · 씨앗→작물 · 두 po · 모든 레시피 입출력 · 갈래 · 설명서 목차), test_an_old_bag_loses_tea_and_coffee(SaveStore 로 디스크에 쓰고 읽어 네 칸이 빈 칸 · 밀 씨앗 자리 그대로), test_an_old_island_loses_the_planted_tea_and_coffee_and_the_chest_ones(옛 섬을 디스크 왕복 → IslandState.apply: 밭 셋 그대로 · 찻잎 · 원두 자리 빈 밭 · 밀 단계 유지 · 빈 밭에 다시 심기 · 상자의 두 칸 빈 칸). 일부러 깨 봤다 — OldItems.DROPPED 에서 tea_leaf · coffee_bean 을 빼자 세 테스트가 다 떨어졌다(되돌림 확인). test.log 바뀐 곳 226개 파일 1823개 통과 · guard 통과."
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "d\nok      4s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      4s  res://tests/ui/hud/test_station_window_scroll.gd\nok      4s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      3s  res://tests/automation/villagers/test_villager_skills.gd\nok      3s  res://tests/build/test_room_chests.gd\nok      3s  res://tests/build/test_take_spec_lines.gd\nok      3s  res://tests/build/test_room_kinds.gd\nok      4s  res://tests/build/test_room_overlay.gd\nok    392s  res://tests/craft/test_from_empty_hands.gd\nok      3s  res://tests/combat/damage_death/test_death_chest.gd\nok      3s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      3s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      3s  res://tests/craft/recipes/test_recipe_tags.gd\nok      4s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      3s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      3s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      3s  res://tests/craft/stations/test_apothecary_bench.gd\nok      3s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      3s  res://tests/life/farming/test_seed_back.gd\nok      3s  res://tests/life/harvest/test_rare_drops.gd\nok      3s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      4s  res://tests/life/hunting/test_captive_age.gd\nok      3s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      3s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/player/equipment/test_future_wear.gd\nok      3s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      3s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      3s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      3s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/save/test_broken_stays_broken.gd\nok      3s  res://tests/settings/save/test_old_tea_coffee.gd\nok      3s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      3s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      3s  res://tests/settings/save/test_old_vehicle_module.gd\nok      3s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      3s  res://tests/craft/stations/test_buffer_five_slots.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     35s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           226\nTests            1823\nPassing Tests    1823\nFailing Tests       0\nRisky/Pending       0\nAsserts         77414\nTime           446s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "afa575d9"
  }
 ]
