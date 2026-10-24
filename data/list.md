@@ -5261,7 +5261,7 @@
 - [x] 2. (앞 단계 QA) 길찾기 조각 시간 테스트가 부하에 흔들린다
   - 기준: 길찾기 조각 시간 테스트가 부하에 흔들린다 — tests/automation/villagers/test_villager_g218_folk_ground_saved.gd 의 test_3_no_single_tile_takes_longer_than_a_frame(가장 느린 조각 < 16.7ms)이 godot 6 개 동시 실행 때 18.0~18.2ms 로 떨어졌다가 다음 전체 검사에선 통과했다 (test_villager_gather_close 의 벌목 시간 비교도 한 번 떨어짐). 이 묶음과 무관하다. 동시 실행 부하에서 흔들리지 않게 — 여러 번 재서 중간값을 보거나, 테스트 도구에서 시간 테스트만 혼자 돌리게 하거나, 여유를 두되 그 값을 테스트 머리에 까닭과 함께 적어라
 
-## [ ] G-305 분출 뒤 굳은 땅에 건축이 안 된다
+## [x] G-305 분출 뒤 굳은 땅에 건축이 안 된다
 - 차선: 3d-start · 시작 2026-10-25 06:04
 - spec: spec/03_world/frontier-islands.md 「분출과 용암」, spec/06_build/building.md
 - **사람 요청 2026-10-25** (원문 그대로): 「2. 분출이 되고 굳은 다음 땅에 건축이 안됨」
