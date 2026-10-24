@@ -5216,7 +5216,7 @@
 - [x] 3. spec — vehicles.md 를 「차는 종류마다 일 · 모듈은 성능」으로 고친다 (사람 원문)
   - 기준: (앞 단계 QA) test_villager_watering 이 부하에 흔들린다 — 앞 시도의 기계 검사에서 tests/automation/villagers/test_villager_watering.gd 의 두 농부 테스트가 6개 동시 실행 중 떨어졌고(물뿌리개 0/1 · 비료 3/4 · 물 0/2), 이번 회차엔 통과했다. 이 묶음과 무관한 마을사람 일이다. 게임 120초 기한 안에 일이 끝나는지 보는 곳을 찾아, 기한을 프레임 수가 아닌 게임 시간으로 재거나 여유를 두어 동시 실행에서도 늘 통과하게 하라
 
-## [ ] G-302 시멘트 캐리어 — 땅을 메운다
+## [x] G-302 시멘트 캐리어 — 땅을 메운다
 - 차선: 3d-start (3d-lane2 몫이었는데 시작 전이라 가져왔다) · 시작 2026-10-24 08:25
 - 순서: G-300 뒤 · G-301 뒤
 - spec: spec/04_life/vehicles.md, spec/03_world/frontier-islands.md 「삽」 · 「드릴」
