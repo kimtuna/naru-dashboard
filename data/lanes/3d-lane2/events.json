@@ -1,51 +1,5 @@
 [
  {
-  "time": "2026-10-18 23:38:36",
-  "epoch": 1792334316,
-  "type": "fail",
-  "title": "QA 불합격 — G-243 단계 3 (시도 1)",
-  "group": "G-243",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "새가 사냥한다 — 날아간 매 · 올빼미가 짐승을 덮치고(덤비는 짐승은 맞받아 물어 새도 죽는다 · 호저 가시 · 고슴도치 몸 말기 · 덮칠 때마다 피로), 잡으면 주검 곁에 앉아 지킨다(머리 위 표시 · 한 줄 · 도축하면 · 300초 뒤 돌아감 · 멀티). 바뀐 곳에 걸린 202개 파일 1654개 테스트 통과",
-   "approach": "BirdCage 에 덮치기(STRIKE_REACH 안 · STRIKE_EVERY 마다 strike — 피로 +STRIKE_TIRE)와 다섯째 상태 GUARD(guard · guard_left · guard_kind)를 더하고 새 체력(hp · hurt — 0 이면 새장이 빈다)을 셈하게 했다. 짐승을 보는 일은 Stations._strike 가 한다: 고슴도치는 피해의 ¼, 맞은 짐승은 새 쪽 소리를 듣고(달아나기 · 덤비기), 호저는 가시로 새를 다치게 하고, 먼저 덤비는(hostile) · 맞으면 덤비는(RETALIATE) 짐승은 살아 있으면 맞받아 문다. 잡으면 주검 곁에 내려앉아 지키고 한 줄, 주검이 주검 무리에서 빠지면(도축) · 시간이 다하면 · 부르면 돌아간다. 머리 위 표시는 CageBird 의 Label3D 로, 참가자는 받은 새장 모습(mode)으로 같이 본다 · 한 줄은 Stations.sync 가 지키기가 처음 보일 때 띄운다. 지키던 새는 담기고 불러오면(주검은 담지 않는다) 돌아온다. 두 기계 테스트에서 서버 매가 참가자 기계의 꿩 그림(remote)을 덮쳐 피해가 0 이던 것을 찾아 — 같은 트리를 쓰는 테스트에서 드러났다 — Stations.prey_near 가 남의 그림 · 다른 세계의 몸을 고르지 않게 고쳤다. 실제 게임의 매먹이 사슬(매는 중 · 소형)에는 덤비는 짐승이 없어 싸움 테스트는 hostile=true 오소리로 했다.",
-   "why": "덮치는 거리 1 m · 사이 1.5초 (BirdCage.STRIKE_REACH · STRIKE_EVERY) — 사람이 보고 정할 수치; 피해 매 12 · 올빼미 8 (BirdCage.STRIKE_DAMAGE) — 매가 중형까지 잡으므로 더 세게; 덮칠 때 피로 +3% (BirdCage.STRIKE_TIRE) — 「사냥할 때마다 피로도가 오른다」의 양; 체력을 모르는 새 40 (BirdCage.BIRD_HP) — 옛 칸 health -1 대비; 주검 지키기 300초 (BirdCage.GUARD_SECONDS) — 「시간이 지나면(임시)」; 호저 가시 8 (Stations.QUILL_DAMAGE) · 고슴도치에 들어가는 몫 ¼ (Stations.CURL_SHARE) · 앉는 높이 0.4 m (Stations.GUARD_HEIGHT); 맞받아 무는 피해 10 = Animal.BITE_DAMAGE (사람을 무는 것과 같게); 머리 위 표시 높이 0.6 m (CageBird.MARK_HEIGHT)",
-   "files": [
-    "game/life/ranching/bird_cage.gd",
-    "game/life/ranching/cage_bird.gd",
-    "game/craft/stations/stations.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/life/hunting/test_bird_hunt.gd",
-    "game/tests/multiplayer/test_bird_cage_on_server.gd",
-    "spec/04_life/ranching-breeding.md",
-    "spec/01_settings/save.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": false,
-     "criterion": "날아간 새가 짐승을 공격한다 — 선제 공격 · 맞으면 덤비는 짐승은 새와 싸우고(새도 다치고 죽을 수 있다), 아니면 일방적으로. **호저는 공격한 새를 다치게 한다** · **고슴도치는 몸을 말아 피해가 준다**(수 **임시**). 사냥할 때마다 피로도가 오른다 (테스트)",
-     "evidence": "일방적 공격(꿩) · 먼저 덤비는(hostile=true) 오소리와 싸워 새가 죽는 것 · 호저 가시(정확히 QUILL_DAMAGE씩) · 고슴도치 몸 말기(CURL_SHARE 몫) · 덮칠 때마다 STRIKE_TIRE 는 test_bird_hunt.gd 가 제대로 본다. 그러나 기준이 이름으로 짚은 「맞으면 덤비는 짐승」(AnimalKinds.RETALIATE — 멧돼지) 길은 테스트가 없다: stations.gd _strike 의 `(prey.hostile or AnimalKinds.retaliates(prey.kind))` 를 `prey.hostile` 로 깎아도 tests/life/hunting 193개가 다 통과했다(본 뒤 되돌렸다)"
-    },
-    {
-     "ok": true,
-     "criterion": "잡으면 새가 **주검 곁에 앉아 지킨다** — 머리 위 표시 · 한 줄 알림. 사람이 가서 도축(지금의 도축 길)하면 새는 새장으로 돌아간다 · 시간이 지나면(**임시**) 그냥 돌아간다 · 멀티 (테스트)",
-     "evidence": "test_a_bird_that_catches_sits_by_the_carcass_with_a_mark_and_a_line(guarding · 주검 1 m 안 · Label3D 표시 · 번역된 한 줄) · test_butchering_the_carcass_sends_the_bird_home(Butchery.butcher_for 뒤 HOME → perched · 표시 꺼짐) · test_the_bird_goes_home_by_itself_after_guarding_a_while(GUARD_SECONDS-1 엔 지키고 그 뒤 HOME) · 담기 테스트 · 참가자 sync 한 줄(두 번 안 말함) · test_bird_cage_on_server.gd 두 기계 테스트(서버 매가 잡고 참가자가 지키기 · 표시를 보고 도축 뒤 돌아감). GUARD_SECONDS · GUARD_HEIGHT · MARK_HEIGHT 임시 표시 있음. 전체 3505개 통과 · guard 통과"
-    }
-   ],
-   "issues": [
-    "맞으면 덤비는 짐승과 싸우는 테스트가 없다 — game/craft/stations/stations.gd _strike 의 `(prey.hostile or AnimalKinds.retaliates(prey.kind))` 에서 retaliates 를 지워도 tests/life/hunting 이 다 통과한다. 지금 싸움 테스트는 hostile=true 로 만든 오소리(선제 공격)뿐이다. test_bird_hunt.gd 에 hostile=false 인 AnimalKinds.BOAR(RETALIATE) 를 세우고 — 매의 can_hunt 가 멧돼지를 막으면 s.cage.hunt(...) 로 사냥 상태를 만든 뒤 stations._strike(s, boar) 를 곧바로 부르거나, 새를 짐승 곁에 두고 tick_cages 를 돌려 — 덮친 뒤 s.cage.hp()==40-Stations.FIGHT_BACK 인지, 같은 자리의 덤비지 않는 짐승(hostile=false 꿩)은 hp 가 그대로인지 단언하라. retaliates 를 지우고 돌려 그 테스트가 떨어지는지 확인한 뒤 되돌려라"
-   ],
-   "good": []
-  },
-  "test": "     2s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/build/test_placer.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/build/test_rooms.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      0s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_back.gd\nok      1s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           469\nTests            3505\nPassing Tests    3505\nFailing Tests       0\nRisky/Pending       0\nAsserts        155502\nTime           700s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-19 00:01:10",
   "epoch": 1792335670,
   "type": "pass",
@@ -8744,6 +8698,38 @@
   "group": "G-936",
   "step": "1",
   "attempt": "1",
+  "report": {
+   "problem": "모래 빛(SAND_TINT · WET_SAND_TINT)과 모래 uv 0.25 줄에 「임시 — 그림을 보고 맞춘 값」 표시를 붙이고, 표시가 빠지면 잡는 테스트를 더했다",
+   "approach": "G-300.3 이 report 의 temporary 에만 적고 코드에는 표시를 남기지 않았다. island_shape.gd 의 두 상수 줄 끝과 test_island.gd 의 _texture_asset(\"Sand\", …, 0.25) 윗줄 주석에 표시를 붙였다. 소스를 읽어 그 줄에 표시가 있는지 보는 테스트로 지킨다. 바뀐 곳에 걸리는 테스트(changed_tests.py, 1014개) 모두 통과 — 전체는 돌리지 않았다.",
+   "why": "",
+   "files": [
+    "game/world/terrain/island_shape.gd",
+    "game/world/terrain/test_island.gd",
+    "game/tests/world/terrain/test_sand_values_marked_temporary.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "모래 빛 · uv 값에 「임시」 표시가 없다 — report 의 temporary 에는 적었지만 코드에는 없다. game/world/terrain/island_shape.gd 의 SAND_TINT · WET_SAND_TINT 주석과 game/world/terrain/test_island.gd 의 _texture_asset(\"Sand\", …, 0.25) 줄 주석에 「임시 — 그림을 보고 맞춘 값」을 붙여라",
+     "evidence": "diff 로 island_shape.gd 의 SAND_TINT · WET_SAND_TINT 두 줄 끝에 '# 임시 — 그림을 보고 맞춘 값', test_island.gd 의 _texture_asset(\"Sand\", …, 0.25) 바로 윗줄에 '# uv 0.25 는 임시 — 그림을 보고 맞춘 값.' 이 붙은 것을 확인했다. test_sand_values_marked_temporary.gd 가 소스를 읽어 두 상수 줄과 모래 텍스처 줄(또는 윗줄)에 표시 문구가 contains 되는지 단언한다 — 표시를 지우면 contains 가 거짓이 되어 깨지는 구조다(줄 자체가 없어도 assert_ne/assert_gt 로 잡는다). 전체 테스트 4452개 통과, 이 파일 2/2 통과, guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "표시가 빠지면 잡는 소스 검사 테스트(test_sand_values_marked_temporary.gd)를 더했다 — 기준을 지키는 테스트라 덤으로 보기 어렵다"
+   ]
+  },
+  "test": "   1s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      3s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_compass.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      2s  res://tests/build/test_placer.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           611\nTests            4452\nPassing Tests    4452\nFailing Tests       0\nRisky/Pending       0\nAsserts        217343\nTime           848s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-25 03:31:34",
+  "epoch": 1792866694,
+  "type": "start",
+  "title": "루프 시작",
   "report": {
    "problem": "모래 빛(SAND_TINT · WET_SAND_TINT)과 모래 uv 0.25 줄에 「임시 — 그림을 보고 맞춘 값」 표시를 붙이고, 표시가 빠지면 잡는 테스트를 더했다",
    "approach": "G-300.3 이 report 의 temporary 에만 적고 코드에는 표시를 남기지 않았다. island_shape.gd 의 두 상수 줄 끝과 test_island.gd 의 _texture_asset(\"Sand\", …, 0.25) 윗줄 주석에 표시를 붙였다. 소스를 읽어 그 줄에 표시가 있는지 보는 테스트로 지킨다. 바뀐 곳에 걸리는 테스트(changed_tests.py, 1014개) 모두 통과 — 전체는 돌리지 않았다.",
