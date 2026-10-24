@@ -5345,7 +5345,7 @@
 - [x] 2. 낡은 spec 줄
   - 기준: recipes.md 「맨손은 셋」→ 다섯(도면 · 망치 포함) · building.md:96 망치 줄 · 「탈것 = 트랙터」(pets-mounts.md · farming.md) 지운다 · history.md 「축사」→「우리」 · netcode.md 를 가리키는 접속 줄을 connect.md 로 · hud.md 지도 절 둘을 하나로 · spec/README.md 목차에 빠진 vehicles · kept-animals · facilities · villager-persona · villager-gear · glossary.md 에 모듈 · 드릴 · 차 · 복셀 화산 섬 · tools-as-weapons.md:134 「3단 금속이 없다」 · 마취탄 「제작대」→ 약제대 · jungle-ruins.md:7 해독제 줄 · mob-ai.md 「몹 목록 미정」에 곰 · 멧돼지 · 오소리 규칙이 있다는 줄 · inventory-hotbar.md:37 속도 층에 배부름 150% · 사슴 세트 · hunger-thirst.md:81 웅크림 미정 줄 지우기 · roadmap.md:49 「빼는 것」의 탈것 (spec 만 · 코드 안 건드림)
   - 기준: **철 · 유황 · 석탄 줄을 사람 결정으로 맞춘다** — mining.md:22 · frontier-islands.md:120 등 (아래 G-316 의 사람 원문을 옮긴다)
-- [ ] 3. (앞 단계 QA) roadmap 자원 표가 「광물 2종」이라 한다
+- [x] 3. (앞 단계 QA) roadmap 자원 표가 「광물 2종」이라 한다
   - 기준: roadmap 자원 표가 「광물 2종」이라 한다 — spec/00_core/roadmap.md:39 는 이제 석탄까지 말하는데 머리는 「광물 2종(철 · 유황)」 그대로다. 광석은 아홉(mining.md)이니 「광물(철 · 유황 · … 04_life/mining.md 「광석 아홉」)」처럼 고쳐 써라. 막는 것은 아니다
 
 ## [ ] G-311 같이 하는 판에서 개발용 키도 똑같이 — F6 분출 · F4 · F5
