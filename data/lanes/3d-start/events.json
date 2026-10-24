@@ -1,60 +1,5 @@
 [
  {
-  "time": "2026-10-18 20:30:09",
-  "epoch": 1792323009,
-  "type": "pass",
-  "title": "통과 — G-239 단계 4 (곰은 기를 수 없다)",
-  "group": "G-239",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "곰은 기를 수 없다 — 놓기를 누르면 「곰은(는) 기를 수 없다」 한 줄 · 온순함이 오르지 않음 · 옛 저장본의 놓인 곰은 들판 야생 곰. 바뀐 곳만 골라 돌린 176개 파일 · 1396개 테스트 통과",
-   "approach": "AnimalKinds.WILD_ONLY = [bear] · keepable() 를 두고 세 곳에서 막았다 — Captives.place_slot(단추 · 우클릭)은 곰이면 칸을 그대로 두고 RANCH_CANT_KEEP 한 줄, place_for(서버 길) · Ranch.place 는 null, Ranch.tame_up 은 곰이면 아무것도 안 한다(사료 · 손길 · 조련사 모두 이 길). 저장 검사: Ranch.restore 가 곰 줄을 만나면 _to_field 로 섬(scope) 아래에 들판 야생 곰(kept 아님 · 적대 · 자리 · 체력만 이음)을 세운다 — 들판 짐승처럼 몸은 담기지 않아 다음 저장에는 사슴만 실린다. G-238 의 곰 길들이기 테스트(덤비는 야생 곰 · 묶인 곰 · 온순한 곰 다섯)는 「놓이지 않고 온순함이 오르지 않는다 · 들판 곰에 손길을 내밀어도 아무 일 없다」 하나로 바꿨고, 저장 테스트는 사슴으로, pen_yields 의 곰 놓기는 뺐다. 마취 칸 비교는 가방 안에서 게이지가 떨어져 sedation 만 빼고 견줬다. 앞 단계 QA: hunting.md 산출표 머리줄을 「개수는 아래 사람 결정 줄 밖의 것만 임시」로 고쳤다. ranching-breeding.md 에 사람 결정(곰 기를 수 없음 — ③ 을 바꿨다) 한 줄을 더하고 곰 기르기 서술을 고쳤다(사람 결정 줄은 지우지 않았다). 알림 문구는 이 코드베이스의 꼴(%s은(는))을 따라 「곰은(는) 기를 수 없다」다.",
-   "why": "",
-   "files": [
-    "game/life/hunting/animal_kinds.gd",
-    "game/life/hunting/captives.gd",
-    "game/life/ranching/ranch.gd",
-    "game/life/ranching/taming.gd",
-    "game/automation/villagers/tending_work.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/life/ranching/test_ranch_place.gd",
-    "game/tests/life/ranching/test_taming.gd",
-    "game/tests/life/ranching/test_pen_yields.gd",
-    "spec/04_life/hunting.md",
-    "spec/04_life/ranching-breeding.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "잡은 곰은 땅에 놓을 수 없다(놓기를 누르면 「곰은 기를 수 없다」 한 줄) — 마취 · 케이지 · 도축은 그대로. 곰은 온순함이 오르지 않는다. G-238 의 곰 길들이기 테스트는 이 규칙으로 고친다 (테스트)",
-     "evidence": "test_ranch_place.gd test_a_caught_bear_cannot_be_put_down_and_says_so — 단추 · 우클릭 · place_for(서버 길) 세 길 모두 kept 0 · 칸 그대로(케이지째) · notice.text 「곰은(는) 기를 수 없다」 · ko/en 키 확인. test_taming.gd test_a_bear_is_not_placed_and_its_tameness_never_rises — Ranch.place null · tame_up(TAME_MAX) · eat 뒤에도 온순함 0 · 적대 그대로. G-238 의 곰 길들이기 테스트 다섯은 이 규칙으로 바뀌었다. 일부러 깨 봄: AnimalKinds.keepable 을 늘 true 로 바꾸자 test_taming · test_ranch_place 가 3개 실패 — 테스트가 규칙을 지킨다(되돌림 확인). 마취 · 케이지 · 도축은 test_tranq_ammo · test_carry_cage · test_butchery 가 test.log 에서 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "옛 저장본에 놓여 있던 곰은 들판의 야생 곰이 된다(저장 검사) (테스트)",
-     "evidence": "test_ranch_place.gd test_a_bear_kept_in_an_old_save_comes_back_as_a_wild_field_bear — G-238 꼴 저장본(곰 tame 100 + 사슴)을 var_to_bytes 왕복해 IslandState.apply → kept 는 사슴 하나(온순함 37 그대로), 섬 아래 곰 하나 · kept false · Ranch 밖 · 적대 · 온순함 0 · 자리 · 체력 40 이음 · 다음 저장본엔 사슴만. 깨 보기에서 이 테스트도 실패했다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) spec 산출표 머리줄이 「개수 전부 임시」로 낡았다 — spec/04_life/hunting.md 의 「도축 산출표 (G-204.3 …) — 개수 전부 임시」 줄은 이제 고기 수 · 녹용 2 · 담비 가죽 1 · 거위 깃털 5 가 사람 결정이다. 「개수는 아래 사람 결정 줄 밖의 것만 임시」로 고쳐라 (표 아래 사람 결정 줄이 있어 막는 것은 아니다)",
-     "evidence": "spec/04_life/hunting.md:85 가 「개수는 아래 사람 결정 줄 밖의 것만 임시」로 고쳐졌다. 사람 결정 줄(ranching-breeding.md ③ 포함)은 지워지지 않았고 새 사람 결정 줄이 더해졌다. md 141 · 75 줄로 150 안쪽"
-    }
-   ],
-   "issues": [
-    "들판으로 옮긴 곰이 restore 두 번에 겹친다 — game/life/ranching/ranch.gd restore 는 「두 번 불러도 겹치지 않게」 Ranch 자식만 치우는데, _to_field 는 곰을 scope()(섬) 아래에 세우므로 같은 저장본으로 restore 를 두 번 부르면 들판 곰이 둘 선다. 지금 게임 길에서 두 번 부르는지는 확인 못 했다(옛 저장본에서 한 번뿐이라 막는 것은 아니다). _to_field 로 세운 곰에 표(meta 나 그룹)를 달아 restore 머리에서 함께 치우고, test_ranch_place.gd 에 restore 를 두 번 불러도 곰이 하나인지 보는 단언을 더하라"
-   ],
-   "good": []
-  },
-  "test": "\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_search_field_shared.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/automation/villagers/test_villager_body.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/automation/villagers/test_villager_skills.gd\nok      1s  res://tests/automation/villagers/test_villager_stress_warn.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      1s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           283\nTests            2237\nPassing Tests    2237\nFailing Tests       0\nRisky/Pending       0\nAsserts        133346\nTime           570s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "60de7640"
- },
- {
   "time": "2026-10-18 20:44:19",
   "epoch": 1792323859,
   "type": "fail",
@@ -8425,5 +8370,37 @@
   },
   "test": "://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      1s  res://tests/automation/villagers/test_villager_body.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      2s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/build/test_placer.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           613\nTests            4473\nPassing Tests    4473\nFailing Tests       0\nRisky/Pending       0\nAsserts        218447\nTime           855s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "2bf4aa3a"
+ },
+ {
+  "time": "2026-10-24 10:11:04",
+  "epoch": 1792804264,
+  "type": "stop",
+  "title": "루프 끝 — 이 차선(3d-start) 몫을 다 했다. 다른 차선 몫으로 남은 것: G-936",
+  "group": "G-302",
+  "step": "2",
+  "attempt": "2",
+  "report": {
+   "problem": "vehicles.md 시멘트 캐리어 절의 「제련로」를 「용광로」로 고쳐 옛 이름 검사를 통과시켰다",
+   "approach": "전체 검사에서 test_no_old_smelter_name 하나가 떨어졌다 — vehicles.md:69 에 시멘트 얻는 길을 적으며 smelter 를 옛 이름 「제련로」로 불렀다. game/craft/recipes/smelter.json 에 cement 레시피가 있는 것을 확인하고 「용광로」로 바꿨다. tests/craft/stations 31 파일 234개 통과, 바뀐 곳 그물(changed_tests.py) 17 파일 94개 통과. car_kinds.gd 는 앞 손질의 주석 한 줄(공 → 기둥 가로 반지름)이 남아 있다.",
+   "why": "",
+   "files": [
+    "spec/04_life/vehicles.md",
+    "game/life/vehicles/car_kinds.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "(없음) — 이번 단계는 수용 기준이 없고, 전체 기계 검사에서 떨어진 test_no_old_smelter_name 하나를 살리는 것이 몫이다",
+     "evidence": "spec/04_life/vehicles.md:69 의 옛 이름 「제련로」를 「용광로」로 바꿨다 (diff 한 줄). spec 전체에 「제련로」가 더 없다(grep). TEST_DIR=res://tests/craft/stations 로 다시 돌려 31 파일 234개 모두 통과 — test_no_spec_doc_calls_the_smelter_by_its_old_name 포함. 적은 레시피(석회석 3 · 철광석 1 · 연료 1 → 시멘트 2)는 game/craft/recipes/smelter.json 의 cement 레시피와 맞다. 사람 원문 줄은 그대로이고 vehicles.md 는 93줄. car_kinds.gd 의 바뀜은 주석 한 줄(공 → 기둥 가로 반지름)로 G-302.1 에서 공을 기둥으로 바꾼 지금 코드와 맞는다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      1s  res://tests/automation/villagers/test_villager_body.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      2s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/build/test_placer.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           613\nTests            4473\nPassing Tests    4473\nFailing Tests       0\nRisky/Pending       0\nAsserts        218447\nTime           855s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
