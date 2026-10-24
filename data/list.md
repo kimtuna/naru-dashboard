@@ -5238,7 +5238,7 @@
   - 기준: 모래 빛 · uv 값에 「임시」 표시가 없다 — report 의 temporary 에는 적었지만 코드에는 없다. game/world/terrain/island_shape.gd 의 SAND_TINT · WET_SAND_TINT 주석과 game/world/terrain/test_island.gd 의 _texture_asset("Sand", …, 0.25) 줄 주석에 「**임시** — 그림을 보고 맞춘 값」을 붙여라
 
 ## [ ] G-303 나가 있는 차를 정비소로 들인다
-- 차선: 3d-start
+- 차선: 3d-start · 시작 2026-10-25 03:31
 - spec: spec/04_life/vehicles.md
 - **사람 요청 2026-10-25** (원문 그대로): 「1. 출고된 차량은 범위내에 있으면 다시 차량 정비소로 들어올 수 있게」
 - 아래 「어떻게」는 Claude 가 정함 2026-10-25 (값 임시)
