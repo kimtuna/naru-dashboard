@@ -1,63 +1,5 @@
 [
  {
-  "time": "2026-10-18 21:16:08",
-  "epoch": 1792325768,
-  "type": "pass",
-  "title": "통과 — G-243 단계 1 (새장 — 매 · 올빼미를 기른다)",
-  "group": "G-243",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "새장 설치물 — 매 · 올빼미를 넣어 기르고(날기 · 돌아와 쉬기/자기/먹기 · 부르기 1분 · 50% 쉬기 · 사흘 굶기), 새가 든 새장을 캐면 새장째 가방에 든다. 새장 창 · 저장 · 멀티. 바뀐 곳 그물 269파일 2207개 통과",
-   "approach": "매 · 올빼미는 게임에 없어서 AnimalKinds 에 hawk · owl(덩치 매 중형 — 사람 결정, 올빼미 소형 임시)을 더했다. 새장은 새 설치물(stations.json bird_cage)이고 CraftingStation.cage(BirdCage)가 새 한 마리 · 먹이(@meat) · 물 칸(사료통과 같은 Trough)을 든다. 새는 난다/돌아온다/새장에 있다 셋으로 돌고 자리는 새장에서 잰 거리라 새장을 옮겨도 따라간다. 피로도 80% · 잘 때(매 밤 · 올빼미 낮) · 먹을 때 돌아오고, 부르면(새장 우클릭 = 창이 열리며 부르기, 창의 「부르기」 단추도) 돌아와 1분 머물고 그때 50% 이상이면 쉬었다 나간다. 배고픔은 우리 짐승(Ranch)의 사흘 · 한 끼 값을 그대로 쓴다. 땅에 떨어진 덩어리(DroppedItem)는 아이템 이름과 개수만 들어 새를 실을 수 없으므로, 든 것이 있는 새장의 마지막 한 대는 땅이 아니라 친 사람 가방 한 칸에 {item: bird_cage, cage: 상태}로 넣고(빈 칸이 없으면 안 부서지고 한 줄), 그 칸을 들고 놓으면 새가 든 채로 선다. 멀티는 서버가 참가자 대신 칠 때 그 사람 사본 가방을 넘기도록 net_world 의 hit 에 hit_thing_for 를 이었고, 놓기는 Stations.place_for 가 손에 든 칸의 상태를 넘긴다. 시설 저장본(standing)에 새장 상태를 실어 저장 · 같이 하는 판 동기화가 같은 길로 간다. 창은 시설 창에 CagePanel 을 붙였고 shot.sh --ui bird_cage 로 찍어 보고 잘림 없음을 확인했다.",
-   "why": "새장 재료 목재 8 · 밧줄 2, 크기 1.0×1.4×1.0, 무게 6 — 사람이 재료를 정하지 않았다; 나는 반경 15 m · 높이 5~8 m · 빠르기 6 m/s (BirdCage.RANGE · HEIGHT · SPEED) — current.md 「반경 임시」; 피로도: 날면 8분에 80% · 새장에서 3분에 100% 회복 · 쉬면 20% 까지 내려야 나간다 (TIRE_PER_SECOND · REST_PER_SECOND · RESTED) — 사람은 80% · 50% 만 정했다; 먹으러 오는 사이 120초 · 한 끼는 먹이 1 + 물 1 · 칸 한도 각 20 (EAT_EVERY · FOOD_MAX · WATER_MAX); 올빼미 덩치 소형(1) · 잡은 매 무게 1.5 · 잡은 올빼미 1.0 (AnimalKinds.SIZE · weights.json); 가방 · 상자 속 새장은 시간이 흐르지 않는다(새가 굶지 않는다) — 사람은 「새가 든 채로 나온다」만 정했다",
-   "files": [
-    "game/life/ranching/bird_cage.gd",
-    "game/life/ranching/cage_bird.gd",
-    "game/ui/hud/cage_panel.gd",
-    "game/ui/hud/station_window.gd",
-    "game/craft/stations/stations.gd",
-    "game/craft/stations/crafting_station.gd",
-    "game/craft/stations/station_catalog.gd",
-    "game/craft/stations/stations.json",
-    "game/craft/recipes/workbench.json",
-    "game/life/hunting/animal_kinds.gd",
-    "game/player/inventory_hotbar/weights.json",
-    "game/core/net/net_world.gd",
-    "game/world/terrain/test_island.gd",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "설치물 **새장**(작업대 · 재료 **임시**) — 잡은 매 · 올빼미(가방의 captive)를 넣는다 · 한 마리 · 먹이 · 물 칸. 새는 새장 둘레(반경 **임시**)를 날아다니고, 먹을 때 · 잘 때(올빼미는 낮 · 매는 밤) · **피로도 80% 이상**이면 새장으로 돌아와 쉰다(사람 결정)",
-     "evidence": "test_bird_cage.gd: test_the_cage_is_a_workbench_station_with_food_and_water(목록 · 작업대 레시피 · @meat 먹이 칸 · 물 칸), test_only_a_hawk_or_an_owl_goes_in_and_only_one(사슴 거부 · 두 마리 거부), test_put_bird_takes_the_captive_from_the_bag...(가방 captive 에서 빠지고 케이지 돌아옴), test_the_bird_flies_around_the_cage_within_range(최대 거리 >1 · <=RANGE), test_at_eighty_percent_fatigue...(TIRED 넘자 HOME→PERCH · RESTED 까지 안 나감), test_a_hawk_sleeps_at_night_and_an_owl_by_day(밤/낮 반대로 귀가 · sleep · 날 밝으면 다시 FLY), test_it_comes_back_to_eat_food_and_water(먹이 · 물 하나씩 줄고 fed 상승). 재료 목재8·밧줄2 는 stations.json _bird_cage 와 report temporary 에 임시로 적혔고 RANGE 등은 코드에 **임시** 주석"
-    },
-    {
-     "ok": true,
-     "criterion": "**부르기**(새장을 누르면) — 새장으로 돌아와 1분 뒤 다시 날아간다 · 그때 **피로도 50% 이상이면 쉬었다가 나간다**(사람 결정) · **새가 든 새장을 캐면 새가 든 채로 아이템이 된다** · 먹이 · 물이 비면 G-238 처럼 굶는다(사흘) · 새장 창(피로도 · 배고픔) · 저장 · 멀티 (테스트)",
-     "evidence": "부르기: test_called_it_comes_back_stays_a_minute_then_flies_again(CALL_STAY-2 초엔 PERCH, +3 초엔 FLY), test_called_at_fifty_percent_fatigue_it_rests_before_leaving(90% → 1분 뒤에도 PERCH·resting), test_called_below_fifty_percent_it_does_not_rest(1분 뒤 49% → FLY) — 막을 경우와 아닌 경우 둘 다 있다. 새장을 누르기: test_bird_cage_window.gd test_right_clicking_the_cage_calls_the_bird_back(진짜 우클릭 입력 → called · HOME). 캐기: test_breaking_a_cage_with_a_bird...(땅에 안 떨어지고 가방 칸에 cage 딕셔너리 · 다시 세우면 올빼미 · 먹이 5 · 피로도 33), 가방이 차면 안 부서짐, 빈 새장은 보통대로 떨어짐. 비-plain 칸은 pickup.throw_from 이 버리지 않아 땅에서 새를 잃는 길도 없다. 굶기: test_with_no_food_or_water_it_starves_over_three_days(DAY*Ranch.STARVE_DAYS ±10초에 죽음 · 경고 한 번 · 죽음 한 번). 창: test_put_bird_feed_water_and_see_fatigue_and_hunger(피로도 37 · 배고픔 64 줄 · 넣기/먹이/물/부르기 단추). 저장: test_the_cage_is_saved_and_restored(standing→restore 로 종 · 먹이 · 물 · 피로도 · fed · called · mode · at). 멀티: test_bird_cage_on_server.gd(참가자 넣기 · 먹이 · 부르기 · 캐서 새장째 받기 · place_for 로 다시 놓으면 매 · 먹이 3 그대로). test.log 바뀐 곳 269파일 2207개 전부 통과 · guard 통과"
-    }
-   ],
-   "issues": [
-    "spec 에 새장이 한 줄도 없다 — spec/04_life/ranching-breeding.md(또는 hunting.md)에 current.md 의 사람 결정 2026-10-18 원문(새장 · 80% 귀가 · 부르기 1분 · 50% 쉬기 · 새가 든 채 캐기)과 임시 값(반경 15 m · 피로 8분/3분 · RESTED 20% · 먹으러 120초 · 칸 20 · 재료 목재8+밧줄2), 그리고 「가방 · 상자 속 새장은 시간이 흐르지 않는다」를 적어라. grep -rn 새장 spec 이 지금 비어 있다",
-    "혼자 하는 판의 손에 든 새장 놓기 테스트가 없다 — Stations.place_held 의 _unpack_cage 는 멀티(place_for)로만 확인됐고 test_bird_cage.gd 는 _unpack_cage 를 곧바로 부른다. 가방 칸에 {item=bird_cage, cage=...} 를 넣고 손에 든 채 place_held() 로 놓아 새가 든 채 서는지 보는 테스트를 더하라"
-   ],
-   "good": [
-    "AnimalKinds 에 hawk · owl 덩치(매 2 · 올빼미 1 임시)와 잡은 매 · 올빼미 무게를 더했다 — 들판에 나는 자리는 아직 없다(다음 단계 몫과 겹치지 않는다)"
-   ]
-  },
-  "test": "bers.gd\nok      1s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/multiplayer/test_bird_cage_on_server.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      3s  res://tests/multiplayer/test_traces_on_server.gd\nok      2s  res://tests/player/equipment/test_armor.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_bird_cage_window.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      3s  res://tests/ui/hud/test_search_field_shared.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/automation/villagers/test_villager_gear.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/build/test_placer.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      0s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    436s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           269\nTests            2207\nPassing Tests    2207\nFailing Tests       0\nRisky/Pending       0\nAsserts         76167\nTime           436s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "8c08c33b"
- },
- {
   "time": "2026-10-18 21:55:37",
   "epoch": 1792328137,
   "type": "start",
@@ -8845,5 +8787,11 @@
   },
   "test": "equipment/test_equipment.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      3s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_vehicle_drill.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      3s  res://tests/settings/test_item_key_groups.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           606\nTests            4430\nPassing Tests    4430\nFailing Tests       0\nRisky/Pending       0\nAsserts        216595\nTime           868s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "ea6031e5"
+ },
+ {
+  "time": "2026-10-24 14:10:06",
+  "epoch": 1792818606,
+  "type": "start",
+  "title": "루프 시작"
  }
 ]
