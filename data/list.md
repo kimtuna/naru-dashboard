@@ -5434,7 +5434,7 @@
   - 기준: (앞 단계 QA) geothermal_smelter.json 주석이 없는 테스트를 가리킨다 — game/craft/recipes/geothermal_smelter.json 의 _temporary 끝 「tests/craft/recipes/test_geothermal_smelter_recipes.gd 가 본다」의 파일이 없다. 실제로 보는 tests/craft/recipes/test_dev_only_recipes_g315.gd 로 고쳐라
 
 ## [ ] G-316 광물 — 내 섬엔 조금, 화산 섬엔 많이 · 석탄은 화산 섬에서만
-- 차선: 3d-lane2
+- 차선: 3d-lane2 · 시작 2026-10-25 15:02
 - 순서: G-315 뒤
 - spec: spec/04_life/mining.md, spec/03_world/frontier-islands.md, resources-regrowth.md
 - **사람 결정 2026-10-25** (원문 그대로): 「방향을 조금 나오는건 다음 섬에 많이 나온다 이런식으로 만들거야. 약간 높은 테크의 문명을 맛보기로 보여줘서 목표를 생기게 하려는 방식이야. 철이랑 유황을 조금만 나오게 해서 화산섬에서 나오게 할거고 석탄은 화산섬에서만 나오게 만들거야.」
