@@ -5424,10 +5424,14 @@
 - 순서: G-309 뒤
 - spec: spec/05_craft/crafting-stations.md, facilities.md
 - **사람 결정 2026-10-25** (원문 그대로): 「레시피는 대충 아무거나 해서 제작대에 넣어줘. 어차피 재료들은 다시 다 밸런싱 해야돼.」
-- [ ] 1. 레시피
+- [x] 1. 레시피
   - 기준: 드릴 · 차량 정비소 · 지열 용광로 · 대장간 · 온탕 · (G-306~309 의) 화력 발전기 · 태양 발전기 · 모니터 · 스패너 · 전원 스위치 · 센서 셋 · AND · OR 게이트에 **제작대 레시피**(재료 · 개수 아무거나 · **임시** 표시) · 개발용 상자에서도 그대로 (테스트: 맨 월드에서 재료를 넣으면 만들어진다)
   - 기준: **지열 용광로 만드는 목록** = 용광로 목록과 같고 **연료가 안 든다**(지열이니까 · 임시) — Claude 가 정함 · 대장간 목록은 사람이 정할 때까지 비워 둔다
   - 기준: 미래 옷 · 모듈은 넣지 않는다 (사람 「3번째 섬 만들때 나올거고」)
+- [ ] 2. (앞 단계 QA) frontier-islands.md 에 낡은 「욕탕 레시피」 미정
+  - 기준: frontier-islands.md 에 낡은 「욕탕 레시피」 미정 — spec/03_world/frontier-islands.md:96 의 미정 줄에 「욕탕 레시피」가 남았는데 G-315 로 온탕에 임시 제작대 레시피가 생겼다. 「욕탕의 진짜 재료(지금 제작대 레시피는 임시, G-315)」처럼 고치고, 이 문자열을 단언하는 game/tests/automation/villagers/test_villager_bath.gd:311 의 "욕탕 레시피" 도 함께 맞춰라
+  - 기준: (앞 단계 QA) test_villager_bath 가 걷은 `dev_only` 를 spec 에 붙잡아 둔다 — test_villager_bath.gd:310 이 frontier-islands.md 에 "`dev_only`" 가 있어야 한다고 단언해서 spec 94줄에 「예전 `dev_only` 는 걷었다」가 남았다. 단언을 "제작대 레시피(G-315" 로 바꾸고 spec 의 dev_only 꼬리말을 지워라
+  - 기준: (앞 단계 QA) geothermal_smelter.json 주석이 없는 테스트를 가리킨다 — game/craft/recipes/geothermal_smelter.json 의 _temporary 끝 「tests/craft/recipes/test_geothermal_smelter_recipes.gd 가 본다」의 파일이 없다. 실제로 보는 tests/craft/recipes/test_dev_only_recipes_g315.gd 로 고쳐라
 
 ## [ ] G-316 광물 — 내 섬엔 조금, 화산 섬엔 많이 · 석탄은 화산 섬에서만
 - 차선: 3d-lane2
