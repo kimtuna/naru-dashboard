@@ -5428,7 +5428,7 @@
   - 기준: 드릴 · 차량 정비소 · 지열 용광로 · 대장간 · 온탕 · (G-306~309 의) 화력 발전기 · 태양 발전기 · 모니터 · 스패너 · 전원 스위치 · 센서 셋 · AND · OR 게이트에 **제작대 레시피**(재료 · 개수 아무거나 · **임시** 표시) · 개발용 상자에서도 그대로 (테스트: 맨 월드에서 재료를 넣으면 만들어진다)
   - 기준: **지열 용광로 만드는 목록** = 용광로 목록과 같고 **연료가 안 든다**(지열이니까 · 임시) — Claude 가 정함 · 대장간 목록은 사람이 정할 때까지 비워 둔다
   - 기준: 미래 옷 · 모듈은 넣지 않는다 (사람 「3번째 섬 만들때 나올거고」)
-- [ ] 2. (앞 단계 QA) frontier-islands.md 에 낡은 「욕탕 레시피」 미정
+- [x] 2. (앞 단계 QA) frontier-islands.md 에 낡은 「욕탕 레시피」 미정
   - 기준: frontier-islands.md 에 낡은 「욕탕 레시피」 미정 — spec/03_world/frontier-islands.md:96 의 미정 줄에 「욕탕 레시피」가 남았는데 G-315 로 온탕에 임시 제작대 레시피가 생겼다. 「욕탕의 진짜 재료(지금 제작대 레시피는 임시, G-315)」처럼 고치고, 이 문자열을 단언하는 game/tests/automation/villagers/test_villager_bath.gd:311 의 "욕탕 레시피" 도 함께 맞춰라
   - 기준: (앞 단계 QA) test_villager_bath 가 걷은 `dev_only` 를 spec 에 붙잡아 둔다 — test_villager_bath.gd:310 이 frontier-islands.md 에 "`dev_only`" 가 있어야 한다고 단언해서 spec 94줄에 「예전 `dev_only` 는 걷었다」가 남았다. 단언을 "제작대 레시피(G-315" 로 바꾸고 spec 의 dev_only 꼬리말을 지워라
   - 기준: (앞 단계 QA) geothermal_smelter.json 주석이 없는 테스트를 가리킨다 — game/craft/recipes/geothermal_smelter.json 의 _temporary 끝 「tests/craft/recipes/test_geothermal_smelter_recipes.gd 가 본다」의 파일이 없다. 실제로 보는 tests/craft/recipes/test_dev_only_recipes_g315.gd 로 고쳐라
@@ -5516,6 +5516,14 @@
   - 기준: 키 이름 DEV_ERUPT_HOST_ONLY 가 뜻과 어긋난다 — 문구는 「서버에 잇지 않았다」로 고쳤지만 키 이름은 아직 「서버장만」이다. debug_tools.gd:128 · ko.po · en.po 의 키를 DEV_ERUPT_NOT_CONNECTED 같은 이름으로 함께 바꾸고 이 키를 찾는 테스트가 있으면 같이 고쳐라 (막는 것은 아니다)
 - [ ] 3. test_retreat.gd 가 아직 _stop() 을 직접 부른다 (G-313 단계 4)
   - 기준: test_retreat.gd 가 아직 _stop() 을 직접 부른다 — game/tests/life/hunting/test_retreat.gd:102 의 a._stop() 과 :147 의 hawk._stop() 이 사적 함수로 돌진·급강하 단계를 끊는다. 이번 기준(_panic_left) 밖이지만 같은 까닭으로 이름이 바뀌면 조용히 깨진다. Animal 에 공개 stop()(또는 기존 공개 함수)을 두고 테스트가 그것을 부르게 하라
+
+## [ ] G-938 루프가 찾은 것 — 스스로 갚는다
+- 차선: 3d-lane2
+- QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
+  루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
+- 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
+- [ ] 1. test_geothermal_stations.gd 주석도 없는 테스트를 가리킨다 (G-315 단계 2)
+  - 기준: test_geothermal_stations.gd 주석도 없는 테스트를 가리킨다 — game/tests/craft/stations/test_geothermal_stations.gd:52 의 주석 「tests/craft/recipes/test_geothermal_smelter_recipes.gd」 파일이 없다. 이번 기준의 json 과 같은 낡은 경로다. tests/craft/recipes/test_dev_only_recipes_g315.gd 로 고쳐라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
