@@ -20,9 +20,3 @@
 - 어디서: 차선 합치기 (3d-lane2)
 - 무엇: 깨끗이 합쳐지지만 전체 테스트가 떨어진다: 떨어진 파일 1 개:   res://tests/life/hunting/test_animal_sound.gd  파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/  — 서로 모르고 만든 것이 만났다. 기록은 이 차선의 .loop/out/sync_test.log. 손으로 합쳐 고쳐 달라
 - **사람이 답할 것**: 
-
-## 물음 — 차선 3d-lane3(b2f46c34) 을 3d-start 에 합치지 못했다
-- 물은 때: 2026-10-25 17:12:39
-- 어디서: 차선 합치기 (3d-start)
-- 무엇: 부딪힌다: — 루프의 푸는 세션도 못 풀었다. 이 줄기(3d-start)에서 `git merge 3d-lane3` 을 손으로 풀어 커밋해 달라. 풀릴 때까지 이 차선은 3d-lane3 없이 돈다
-- **사람이 답할 것**: 
