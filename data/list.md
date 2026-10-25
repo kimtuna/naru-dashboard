@@ -5613,7 +5613,7 @@
   - 기준: 센서 처음 값이 두 곳에 따로 적혔다 — game/craft/stations/crafting_station.gd 의 sensor_low := 2.0 · sensor_high := 6.0 · sensor_range := 5.0 이 Stations.SENSOR_POWER_LOW · SENSOR_POWER_HIGH · SENSOR_PRESENCE_RANGE 를 쓰지 않고 숫자를 다시 적었다. 한쪽만 바꾸면 어긋난다 — Stations 상수를 쓰거나(순환 참조가 걸리면) 상수 쪽 주석에 「crafting_station.gd 와 같이 바꾼다」를 적어라
   - 기준: (앞 단계 QA) 센서 창 그림이 없다 — report 에 「ui_shots 자리에 센서가 없어 창 그림은 찍지 못했다」. 센서 값 줄(−/+ · 낮밤 토글)이 사람 눈에 어떻게 보이는지 확인할 길이 없다 — ui_shots 에 전력 · 사람 감지 · 낮밤 센서 창 장면을 더해 찍어라
 
-## [ ] G-326 모니터 — 무엇을 띄울지 고른다 · 고정 / n초마다 돌기 · 발전 점수 화면
+## [x] G-326 모니터 — 무엇을 띄울지 고른다 · 고정 / n초마다 돌기 · 발전 점수 화면
 - 차선: 3d-lane2 · 시작 2026-10-26 03:18
 - 순서: G-325 뒤
 - spec: spec/07_automation/power.md, spec/07_automation/npc-villagers.md (침략)
