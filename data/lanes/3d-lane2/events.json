@@ -1,66 +1,5 @@
 [
  {
-  "time": "2026-10-19 05:00:48",
-  "epoch": 1792353648,
-  "type": "pass",
-  "title": "통과 — G-245 단계 4 (디스폰 — 모든 동물이 똑같이)",
-  "group": "G-245",
-  "step": "4",
-  "attempt": "2",
-  "report": {
-   "problem": "G-245.4 디스폰 — 내 것이 아닌 짐승은 나온 지 게임 하루가 지났고 모든 플레이어가 60 m 밖이면 조용히 없어진다 · 마취/가방/케이지/목줄/우리/온순함/새가 지키는 주검은 남는다 · 빈 집은 next_day 로 차고 올빼미는 남은 집 나무로 들어간다. 바뀐 곳 그물 168개 파일 · 1417개 테스트 통과",
-   "approach": "앞 시도는 기능이 다 됐는데 test_day_length 가 떨어졌다 — test_despawn.gd 에 `clock.minutes_per_day = 0.0  # 주석` 처럼 줄 끝에 주석을 달아, 「0 은 시계를 멈춘다」 예외 정규식(`0(\\.0*)?\\s*$`)이 비켜 가지 못하고 하루 길이를 또 적은 것으로 걸렸다. 주석을 윗줄로 옮겼다. 디스폰은 IslandAnimals.tick_despawn(서버만 · 나온 지 Animal.out_for ≥ 게임 하루 · 모든 Player 가 DESPAWN_FAR 밖) · despawns() 가 남길 것을 가르고 · Stations.guarded 가 새가 지키는 주검을 본다. 옛 저장본 집 번호 당김은 hunting.md 에 한 줄 적었다(하루 뒤 저절로 맞는다).",
-   "why": "DESPAWN_FAR 60 m — 총소리가 들리는 반경과 같게 둔 임시값",
-   "files": [
-    "game/life/hunting/island_animals.gd",
-    "game/life/hunting/animal.gd",
-    "game/craft/stations/stations.gd",
-    "game/tests/life/hunting/test_owl_trees.gd",
-    "game/tests/life/hunting/test_despawn.gd",
-    "game/tests/multiplayer/test_despawn_on_server.gd",
-    "spec/04_life/hunting.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "내 것이 아닌 짐승은 나온 지 게임 하루가 지났고 모든 플레이어에게서 멀 때(거리로만 본다 — 60 m 임시 · 멀티에서 카메라 방향을 서버로 모으지 않으려고) 조용히 없어진다 — 모든 종이 같다(사람 결정). 눈앞에서는 없어지지 않는다 (테스트)",
-     "evidence": "test_despawn.gd — test_a_wild_beast_goes_quietly_after_a_day_when_every_player_is_far(하루 전 · 40 m 안이면 남고, 하루 뒤 140 m 면 없어짐 · 무리/소리 그룹에서 빠짐), test_every_kind_goes_the_same_way(AnimalKinds.WILD 전 종), test_a_far_player_anywhere_keeps_them_only_if_near_any_player, test_age_counts_up_by_game_time_on_the_server. tick_despawn 의 _player_near 조건을 지우자 2개 테스트가 떨어졌다(되돌림). DESPAWN_FAR 60 m 는 코드 · hunting.md 에 「임시」로 적혔다. DESPAWN_AFTER = GameClock.MINUTES_PER_DAY*60 이라 하루 길이를 따로 적지 않았다(test_day_length 다시 돌려 통과)"
-    },
-    {
-     "ok": true,
-     "criterion": "안 없어지는 것 — 마취된 것 · 가방 · 케이지 · 목줄 · 우리 · 온순함이 0 보다 큰 것 · 사냥새가 지키는 주검 (테스트)",
-     "evidence": "test_sedated_tame_tied_penned_ones_stay(잡힌 것 · sedation>0 · tameness 1 · tie · bounds 우리, 들판 것만 없어짐), test_beasts_in_a_bag_or_a_cage_stay_in_the_bag(케이지째 · 맨 가방), test_a_carcass_a_bird_guards_stays_and_an_unguarded_one_goes(Stations.guarded). despawns 에서 kept/tameness 조건을 빼자 test_sedated… 가, guarded 조건을 빼자 주검 테스트가 떨어졌다(되돌림)"
-    },
-    {
-     "ok": true,
-     "criterion": "들판 짐승이 없어진 집 자리는 지금의 재생(next_day)으로 다시 찬다 · 올빼미는 집 나무가 남았으면 그 나무에 다시 난다 · 저장 · 멀티 (테스트)",
-     "evidence": "test_an_emptied_den_fills_again_the_next_day_and_is_saved_empty_today(standing 에 {den 0, emptied 3} · restore 해도 그날 비고 next_day 에 다시 참), test_an_owl_goes_back_into_its_standing_tree(away · 비운 집 아님 · 밤에 다시 나옴), test_an_owl_whose_tree_is_gone_wanders_then_goes_for_good, test_the_guest_machine_never_despawns, multiplayer/test_despawn_on_server.gd(진짜 ENet — 모두에게 먼 짐승은 서버에서 없어지고 참가자 화면에서도 사라짐, 참가자 곁 57 m 짐승은 남음). _let_go 의 _away[i]=true 를 빼자 올빼미 테스트가 떨어졌다(되돌림). out_for 는 「몸이라 담지 않는다」로 animal.gd 에 까닭이 적혔다 — spec 의 「짐승 몸은 담지 않는다」와 맞는다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 옛 저장본의 집 번호가 하나 당겨진다 — island_blueprint.gd wild_dens 에서 owl 을 지워 뒤의 hedgehog 집 번호가 하나 앞으로 왔다. 옛 저장본의 「오늘 비운 집」 번호가 하루 동안 다른 집을 가리킬 수 있다(하루 뒤 저절로 맞아 막는 것은 아니다). spec/01_settings/save.md 의 옛 저장본 줄이나 hunting.md 에 한 줄 적어 두거나, 집 번호 대신 종+자리로 담도록 바꿔라",
-     "evidence": "spec/04_life/hunting.md 저장 줄에 「빈 집은 집 번호로 담는다 — G-245.3 이 올빼미 집을 지워 고슴도치 집 번호가 하나 당겨졌다 … 하루 뒤 저절로 맞는다 · 막지 않는다」가 적혔다 (기준이 허락한 길)"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 밤에 나와 있는 올빼미를 치는 길에 테스트가 없다 — island_animals.gd _on_struck 의 `elif _lives_at(i): flee_from(...)` 가지를 꺼도 test_owl_trees.gd 가 지키지 않는다. 22시에 나온 올빼미 곁에서 harvest.strike 한 뒤 mode()==Animal.FLEE 를 단언하는 테스트를 더해라",
-     "evidence": "test_owl_trees.gd::test_hitting_the_tree_at_night_scares_the_owl_that_is_out — 22시 tick_night 뒤 치기 전 FLEE 아님 → harvest.strike → FLEE · 같은 올빼미. `elif _lives_at(i)` 를 `elif false` 로 바꾸자 이 테스트가 wander≠flee 로 떨어졌다(되돌림)"
-    }
-   ],
-   "issues": [
-    "hunting.md 가 딱 150줄이다 — 이번에 디스폰 · 집 번호 설명을 기존 줄 끝에 길게 이어 붙여 줄 수를 맞췄다(:42 · :45 가 한 줄에 여러 문장). 다음에 한 줄만 더해도 넘는다. 디스폰 · 재생 단락을 spec/04_life/ 아래 따로 파일(예: animal-spawn.md)로 떼고 hunting.md 에서 가리키게 해 줄을 비워 두어라",
-    "Stations.guarded 가 남의 _prey 를 들여다본다 — game/craft/stations/stations.gd guarded() 가 다른 Stations 노드의 비공개 사전 here._prey 를 읽는다. Stations 에 prey_of(s) 같은 공개 함수를 두고 그것을 쓰게 바꿔라 (동작은 같다)"
-   ],
-   "good": []
-  },
-  "test": "tings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_bird_cage_window.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      3s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/build/test_placer.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      0s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           320\nTests            2548\nPassing Tests    2548\nFailing Tests       0\nRisky/Pending       0\nAsserts         90729\nTime           564s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "d91fa68c"
- },
- {
   "time": "2026-10-19 05:24:52",
   "epoch": 1792355092,
   "type": "pass",
@@ -8715,5 +8654,52 @@
   },
   "test": "est_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/world/day_night/test_day_length.gd\nok      4s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/world/day_night/test_game_clock.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_islands.gd\nok      4s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      3s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/terrain/test_dig_save.gd\nok      5s  res://tests/world/terrain/test_beach_sand_texture.gd\nok      3s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      4s  res://tests/world/terrain/test_drill_look.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      3s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\nok      3s  res://tests/automation/power/test_island_power.gd\nok      3s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      3s  res://tests/automation/power/test_power_monitor.gd\nok      3s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      3s  res://tests/build/test_placers_comment.gd\nok      3s  res://tests/combat/damage_death/test_death_chest.gd\nok      3s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      3s  res://tests/core/debug/test_perf_probe.gd\nok      3s  res://tests/core/net/test_net_link_one_place.gd\nok      3s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      4s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      3s  res://tests/life/hunting/test_food_chain.gd\nok      3s  res://tests/life/hunting/test_same_animal.gd\nok      3s  res://tests/life/hunting/test_summon.gd\nok      3s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      3s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      3s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      3s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      3s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/settings/save/test_world_data_keys_note.gd\nok      3s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/map/test_map_memory.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     35s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           625\nTests            4538\nPassing Tests    4538\nFailing Tests       0\nRisky/Pending       0\nAsserts        222944\nTime           992s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "4277e191"
+ },
+ {
+  "time": "2026-10-25 11:12:57",
+  "epoch": 1792894377,
+  "type": "pass",
+  "title": "통과 — G-308 단계 1 (센서는 스스로 켜고 끄는 스위치다)",
+  "group": "G-308",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "센서 = 스스로 켜고 끄는 전원 스위치 (stations.json 의 sensor 갈래 · 서버가 매 프레임 재는 Stations.tick_sensors · 손으로 못 켬) + 발전기도 스위치 · 센서에 이어 꺼지면 연료를 안 태우고 0kW. 바뀐 곳에 걸리는 262 파일 2057 개 통과",
+   "approach": "센서를 따로 만들지 않고 G-307 의 전원 스위치에 「갈래(sensor)」만 얹었다 — stations.json 에 sensor 가 있으면 StationCatalog.is_switch 가 참이라 잇기 · 끊기 · 선 · 불빛 · 저장(on · links) · 이은 시설 멈추기(cut_off)를 그대로 쓴다. 다른 것은 둘: (1) Stations.flip 이 센서를 거절하고 flip_asked(우클릭)는 까닭 한 줄(SENSOR_NO_HAND)만 띄우고 서버에 바라지 않는다 (2) Stations.tick_sensors 가 서버 · 혼자의 _process 에서 발전기 · 시설보다 먼저 갈래 → 잴 것(sensor_reads)을 불러 켜고 끈다 — 참가자는 _process 가 remote 에서 돌아가 재지 않고 시설 목록의 on 을 받는다. 갈래마다 무엇을 재나(전력 · 사람 · 낮밤 · 게이트)는 다음 단계의 몫이라 표는 비어 있고, 테스트는 시험 센서(갈래 test)를 카탈로그에 넣어 잰 값을 바꿔 본다. 발전기 — why_not_wire 가 IslandPower.MAKES 의 발전기도 받고, tick_generators 가 꺼진 스위치에 이은 발전기를 흘리지 않으며(타던 남은 초 · 연료 그대로), IslandPower.measure · made_by 가 off 를 받아 0kW 로 센다(발전기 수에는 들어 전기 규칙은 그대로). 발전기 창의 kW 도 cut_off 를 본다. 깨 보기 — flip 의 센서 거절 · tick_generators 의 cut_off 를 빼면 test_sensor 의 3 개가 떨어진다. 놓을 수 있는 센서가 아직 카탈로그에 없어 ESC 목차 줄은 다음 단계(실제 센서)로 미뤘다. WIRE_NOT_POWERED 글을 「전기를 쓰는 시설 · 발전기에만 잇는다」로 고쳤다.",
+   "why": "꺼진 발전기도 섬의 발전기 수에 든다 — 다 꺼지면 「발전기 없는 섬(규칙 없음)」이 아니라 전기가 모자란 섬으로 친다 (Claude 가 정함, 꺼서 연구대가 공짜로 도는 구멍을 막으려고)",
+   "files": [
+    "game/automation/power/island_power.gd",
+    "game/craft/stations/station_catalog.gd",
+    "game/craft/stations/crafting_station.gd",
+    "game/craft/stations/stations.gd",
+    "game/ui/hud/generator_panel.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "spec/07_automation/power.md",
+    "spec/01_settings/save.md",
+    "game/tests/automation/power/test_sensor.gd",
+    "game/tests/multiplayer/test_sensor_on_server.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "센서는 G-307 의 전원 스위치와 같은 길로 잇는다(스패너 좌클릭 → 시설 우클릭 · 꾹 눌러 끊기) · 이어진 시설을 센서의 켜짐 · 꺼짐대로 돌리고 멈춘다 · 손으로는 못 켠다 · 켜짐 불빛 · 저장 · 같이 하는 판은 서버가 잰다 (테스트)",
+     "evidence": "test_sensor.gd 가 기준을 하나씩 본다. test_wiring_a_sensor_is_the_same_as_a_switch 는 Wiring.use_on → touch_on 두 번 → 꾹 누르기(HOLD)로 다 끊기. test_linked_facilities_follow_the_sensor · test_an_off_sensor_keeps_the_queue_from_starting 는 잰 값을 바꾸면 _process 가 스스로 끄고 켜는지, 연구대 남은 초가 멈췄다가 다시 도는지, 대기열이 안 서는지, 불빛이 LAMP_OFF/ON 인지 본다. test_a_sensor_cannot_be_flipped_by_hand 는 flip · act(SWITCH_FLIP) · flip_asked 를 다 막고 SENSOR_NO_HAND 한 줄과 ko/en 번역을 본다. test_sensor_state_and_links_are_saved 는 standing 의 on=false · links 를 확인하고 restore 해도 꺼진 채 서며 다시 재면 켜지는지 본다. test_sensor_on_server.gd 는 참가자의 잴 것을 늘 켜짐으로 심어 두고, 서버가 꺼짐을 재면 참가자 화면도 꺼진 채 0.3초 그대로 있는지(참가자는 재지 않는다), 불빛 · cut_off · 서버 저장본, 참가자는 손으로 못 켜고 서버장도 act 가 거절되는지 본다. 깨 보기: Stations.flip 의 센서 거절을 빼니 test_a_sensor_cannot_be_flipped_by_hand 가 떨어졌다(되돌렸다). test.log 에서 두 파일 다 ok · 전체 2057 통과 · guard 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "발전기도 이을 수 있다 — 꺼진 발전기는 연료를 안 태우고 0kW (전력 센서와 짝 — 연료를 아낀다) (테스트)",
+     "evidence": "test_generators_can_be_wired: why_not_wire(화력 발전기)=\"\" · 모니터는 SAY_NOT_POWERED · 스패너로 발전기를 잇는다. test_an_off_generator_burns_nothing_and_makes_nothing: 끈 뒤 tick_generators(40) 를 돌려도 left · fuel 이 그대로, island_power().made=0, 발전기 창의 made_by=0, 발전기 수는 1 이라 연구대가 안 서고, 켜면 남은 초부터 다시 탄다. test_a_sensor_turns_a_generator_off: 센서가 끄면 _process(5) 동안 연료가 안 탄다. 같이 하는 판은 참가자가 받은 섬 전기도 0kW. 깨 보기: tick_generators 의 `and not cut_off(s)` 를 빼니 세 단언(left 19≠29, fuel, 84≠89)이 떨어졌다(되돌렸다)"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "alth_bar.gd\nok      4s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/automation/power/test_power_monitor.gd\nok      4s  res://tests/ui/hud/test_villager_hands_window.gd\nok      3s  res://tests/automation/villagers/test_crafter_spec.gd\nok      3s  res://tests/automation/power/test_sensor.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      3s  res://tests/automation/villagers/test_villager_skills.gd\nok      2s  res://tests/build/test_placer.gd\nok      2s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/build/test_placers_file_end.gd\nok      3s  res://tests/build/test_room_overlay.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/build/test_take_spec_lines.gd\nok      3s  res://tests/core/test_docs_match_code_g275.gd\nok      3s  res://tests/core/test_spec_small_drifts.gd\nok      3s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      3s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      3s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_geothermal_spec.gd\nok      3s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      3s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      3s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      4s  res://tests/life/fishing/test_fish_kinds.gd\nok      3s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/player/equipment/test_armor_modules.gd\nok      3s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      3s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      3s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      3s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      3s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok    392s  res://tests/craft/test_from_empty_hands.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     38s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           262\nTests            2057\nPassing Tests    2057\nFailing Tests       0\nRisky/Pending       0\nAsserts         77724\nTime           430s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "0bb92737"
  }
 ]
