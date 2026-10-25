@@ -5492,7 +5492,7 @@
   - 기준: 배관 끝이 **온탕** · 「식수대」(새 시설 — 여기서 컵 · 물뿌리개를 민물처럼 채운다) 에 닿으면 이어진다 · 펌프가 안 이어진 식수대는 물이 없다 · 화산 섬에서 컵 · 물뿌리개 · 농사가 된다 (테스트)
   - 기준: 펌프가 전기를 먹는지는 사람이 안 정했다 — 안 먹는다 (임시)
   - 기준: spec (사람 원문 · 임시 값)
-- [ ] 4. (앞 단계 QA) 주민이 식수대 물을 쓰는 테스트가 없다
+- [x] 4. (앞 단계 QA) 주민이 식수대 물을 쓰는 테스트가 없다
   - 기준: 주민이 식수대 물을 쓰는 테스트가 없다 — spec/07_automation/water-pipes.md 는 「주민의 민물 물음(TestIsland.drink_water_level)」에 식수대가 더해진다고 적었고 코드(villagers.fresh_water_level = crops.fresh_water_level)도 그렇지만, 주민이 화산 섬 식수대에서 물뿌리개를 채워 밭에 물 주는지 보는 테스트는 없다. tests/automation/water/ 에 sulfur 섬 · 펌프 · 배관 · 식수대 · 밭 · 물 주는 주민 하나로 is_watered 가 참이 되는지 단언하는 테스트를 더하라
   - 기준: (앞 단계 QA) 펌프가 전기를 안 먹는다는 단언이 없다 — 지금은 IslandPower.USES 에 water_pump 가 없을 뿐이라 누가 넣어도 아무 테스트도 안 떨어진다. test_pipe_inlets.gd 에 assert_false(IslandPower.USES.has("water_pump")) 와, 전기 0 인 섬에서도 토막이 wet 인지 보는 단언을 더하라
 
