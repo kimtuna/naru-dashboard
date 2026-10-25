@@ -1,53 +1,5 @@
 [
  {
-  "time": "2026-10-20 01:19:44",
-  "epoch": 1792426784,
-  "type": "fail",
-  "title": "QA 불합격 — G-256 단계 1 (시도 1)",
-  "group": "G-256",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "마취가 걸리는 체력을 10% → 30%(Animal.SEDATE_HEALTH 0.3, 공황 도주 PANIC_HEALTH 와 같다) — 바뀐 곳만 고른 테스트 129개 파일 1063개 통과",
-   "approach": "공황 도주는 체력 30% 아래에서 시작하는데(9 m/s, 사람 6 m/s 보다 빠르다) 마취 게이지는 10% 아래에서만 차서, 30% → 10% 를 깎는 사이 동물이 달아났다. SEDATE_HEALTH 를 0.3 으로 올려 도주가 시작되는 순간부터 마취탄이 게이지를 채운다. 체력바 색 바뀜(target_bars)과 기절은 그대로 SEDATE_HEALTH · stunned() 를 따른다. 30% 이상에서 맞은 마취탄은 여전히 느려지게만 한다. 「10% 위는 안 찬다」 테스트는 PANIC_HEALTH-1(이제 마취 구간 안)을 빼고 30%+1 · 30% 를 본다. spec 의 사람 결정 줄은 남기고 「2026-10-20 30% 로 올렸다」를 붙였다. tools/test.sh 는 changed_tests.py 로 고른 129개 파일만 돌렸다 — 전체는 돌리지 않았다.",
-   "why": "",
-   "files": [
-    "game/life/hunting/animal.gd",
-    "game/life/hunting/tranq.gd",
-    "game/ui/hud/target_bars.gd",
-    "spec/04_life/hunting.md",
-    "game/tests/life/hunting/test_sedation_capture.gd",
-    "game/tests/ui/hud/test_target_bars.gd",
-    "game/tests/life/hunting/test_carry_cage.gd",
-    "game/tests/life/hunting/test_wild_kinds.gd",
-    "game/tests/craft/test_from_empty_hands.gd",
-    "game/tests/multiplayer/test_hunt_on_server.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "Animal.SEDATE_HEALTH 0.1 → **0.3** — 공황 도주가 시작되는 체력과 같다. 체력바 색 바뀜(target_bars) · 기절(stunned)은 그대로. 30% 위에서 맞은 마취탄은 지금처럼 느려지기만 한다 (테스트: 체력 29% 에서 마취탄이 게이지를 채운다 · 31% 에서는 안 채운다)",
-     "evidence": "animal.gd SEDATE_HEALTH := 0.3, sedatable() 는 stunned() or _health_below(SEDATE_HEALTH) 그대로. test_sedation_capture.gd::test_twenty_nine_percent_fills_and_thirty_one_does_not 가 상수 0.3 · PANIC_HEALTH 와 같음을 단언하고, 사슴 체력 29% 에서 하급탄 한 발이 게이지를 Tranq.dose 만큼 채우고 31% 에서는 sedation 0 · tranq_slow_left>0(느려지기만)을 진짜 take_tranq 로 본다. test_above_thirty_percent… 는 30%+1 · 30% 에서 세 단 모두 안 찬다. test_target_bars 는 30 에서 색 그대로 · 29 에서 SEDATE_ZONE_COLOR. test.log 바뀐 곳만 129 파일 1063 통과 · guard 통과"
-    },
-    {
-     "ok": false,
-     "criterion": "spec hunting.md · tranq.gd · animal.gd 주석의 「10%」를 다 「30%」로 · 사람 결정 줄은 지우지 말고 「2026-10-20 30% 로 올렸다」를 덧붙인다",
-     "evidence": "hunting.md 세 곳 · tranq.gd · animal.gd 머리말 · 상수 · sedation · take_tranq 문서 주석은 바뀌었고 사람 결정 줄도 남기고 덧붙였다. 그러나 game/life/hunting/animal.gd:421 take_tranq 안의 줄끝 주석 `return true  # 10% 위 — 느려지기만 한다` 가 그대로 「10%」다 — 기준이 「다」라고 했다"
-    }
-   ],
-   "issues": [
-    "animal.gd 421줄 주석이 아직 10% — game/life/hunting/animal.gd:421 `return true  # 10% 위 — 느려지기만 한다` 를 `# 30% 위 — 느려지기만 한다` 로 바꿔라. 102줄의 「10% 였을 때는…」은 내력 설명이라 그대로 둔다",
-    "hud.md 18줄도 체력 10% 라고 한다 — spec/12_ui/hud.md:18 「(04_life/hunting.md — 체력 10% 아래)」를 「체력 30% 아래」로 바꿔라 (기준이 이름 댄 파일 밖이지만 같은 수치의 낡은 줄이다)"
-   ],
-   "good": []
-  },
-  "test": "s://tests/player/equipment/test_armor.gd\nok      2s  res://tests/multiplayer/test_traces_on_server.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      3s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      3s  res://tests/ui/hud/test_chest_window_search.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      3s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_kept_window.gd\nok      3s  res://tests/ui/hud/test_hotbar_wheel.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_search_field_shared.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_station_doing_line.gd\nok      3s  res://tests/ui/hud/test_station_queue_window.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      3s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      3s  res://tests/ui/hud/test_villager_gear_window.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/automation/villagers/test_villager_pen_room.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/hunting/test_summon.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/life/ranching/test_taming.gd\nok      3s  res://tests/multiplayer/test_wild_kinds_on_server.gd\nok      3s  res://tests/multiplayer/test_martens_on_server.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      0s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      3s  res://tests/ui/hud/test_villager_hands_window.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok    435s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           129\nTests            1063\nPassing Tests    1063\nFailing Tests       0\nRisky/Pending       0\nAsserts         23652\nTime           435s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-20 01:36:13",
   "epoch": 1792427773,
   "type": "pass",
@@ -8635,5 +8587,32 @@
    "good": []
   },
   "test": "settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      3s  res://tests/settings/test_item_key_groups.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      3s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_guard_pen_window.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/theme/test_korean_font.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/automation/villagers/test_villager_body.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           678\nTests            4819\nPassing Tests    4819\nFailing Tests       0\nRisky/Pending       0\nAsserts        238516\nTime           986s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-26 07:41:35",
+  "epoch": 1792968095,
+  "type": "pass",
+  "title": "차선 합치기 — 3d-start(99d6fb3b) → 3d-lane2",
+  "group": "G-939",
+  "step": "2",
+  "attempt": "3",
+  "report": {
+   "problem": "en.po ITEM_ 이름을 단어마다 대문자 꼴로 맞추고 훑는 테스트를 두었다 · 센서 값 단언을 낱말 단위로 · menu.md 미정에 기본 글꼴 줄 — 윈도 Malgun Gothic 사진만 루프가 못 찍는다 (바뀐 곳만: 14 파일 144 테스트 통과)",
+   "approach": "앞 시도의 전체 실패(Leather hat ↔ Leather Hat)는 test_top_bottoms_names 의 모자 단언이 옛 소문자 꼴을 기대해서였다 — 작업 트리에서 이미 「%s Hat」으로 고쳐져 있었고, 옛 이름(164개)이 다른 .gd 에 남지 않았는지 훑어 확인했다. QA 지적대로 훑는 테스트 머리에 「하이픈 뒤는 소문자 그대로」를 적었다. 바뀐 곳 그물 14 파일 144 테스트 통과. 기준 3의 「windows 브랜치를 Malgun Gothic 으로 찍어 보라」는 맥에서 도는 루프가 채울 수 없다 — 몇 번 다시 해도 같다.",
+   "why": "기본 글꼴: 한글 SystemFont(임시) — spec/12_ui/menu.md 미정",
+   "files": [
+    "game/i18n/en.po",
+    "game/tests/items/test_item_names_title_case.gd",
+    "game/tests/player/equipment/test_top_bottoms_names.gd",
+    "game/tests/build/test_building_preview.gd",
+    "game/tests/ui/hud/test_item_slot_names_apart.gd",
+    "game/tests/core/debug/test_ui_shots.gd",
+    "spec/12_ui/menu.md"
+   ],
+   "decision": {
+    "question": "윈도 글꼴 확인: 테마 기본 글꼴이 한글 SystemFont 라 윈도에선 영어 · 숫자도 Malgun Gothic 으로 그려진다. 루프는 맥에서만 돌아 Windows 판을 찍을 수 없다 — 사람이 Windows 에서 영어 가방 · 단축바를 한 번 보고 잘림 · 줄 높이가 괜찮은지 알려 주거나, 이 기준에서 「윈도에서 찍어 보라」를 빼고 menu.md 미정 줄만 남겨도 되는지 정해 달라 (나머지 기준은 다 됐다)"
+   }
+  },
+  "commit": "d26511d3"
  }
 ]
