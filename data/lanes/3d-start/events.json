@@ -1,42 +1,5 @@
 [
  {
-  "time": "2026-10-19 03:00:54",
-  "epoch": 1792346454,
-  "type": "pass",
-  "title": "통과 — G-916 단계 4 ((앞 단계 QA) 벌집 간격이 주민 상수를 빌린다)",
-  "group": "G-916",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "사람 휘두르기 간격을 Attack.SWING_EVERY 한 곳으로 옮기고 벌집(WildHives.SWING_EVERY) · 주민(HarvestWork.HIT_EVERY)이 그것을 읽게 했다 — 바뀐 곳만 113개 파일 882개 테스트 통과",
-   "approach": "WildHives.SWING_EVERY 가 HarvestWork.HIT_EVERY 를 가리키는 바람에 생활 쪽이 주민 자동화 코드에 기대고 있었다. 사람 휘두르기 간격(0.6초, 임시)을 Attack.SWING_EVERY 로 옮겨 하나만 두었고, HarvestWork.HIT_EVERY 와 WildHives.SWING_EVERY 는 그것을 읽기만 한다. 값은 그대로라 동작은 바뀌지 않는다. 평타 · 캐기에는 여전히 간격을 걸지 않았다 — 이번 기준에 없는 일이다. 테스트에는 두 간격이 Attack 값과 같은지, wild_hives.gd 에 HarvestWork 가 안 나오는지를 덧붙였다.",
-   "why": "Attack.SWING_EVERY = 0.6초 — 사람이 좌클릭을 누르는 빠르기쯤으로 잡은 값이다(HarvestWork.HIT_EVERY 에 있던 값을 옮겼다). 아무도 손으로 쳐 보고 정하지 않았다",
-   "files": [
-    "game/combat/tools_as_weapons/attack.gd",
-    "game/automation/villagers/harvest_work.gd",
-    "game/life/gathering/wild_hives.gd",
-    "game/tests/life/gathering/test_wild_hives.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "벌집 간격이 주민 상수를 빌린다 — life/gathering/wild_hives.gd 의 SWING_EVERY 가 automation/villagers/harvest_work.gd 의 HIT_EVERY 를 가리켜 생활 쪽이 주민 자동화에 기댄다. 사람 휘두르기 간격이 정해지면 Attack(또는 도구 데이터) 쪽 한 곳에 두고 벌집 · 주민이 그것을 읽게 옮겨라",
-     "evidence": "값 0.6 은 combat/tools_as_weapons/attack.gd:69 Attack.SWING_EVERY 한 곳에만 있고(임시 표시) WildHives.SWING_EVERY · HarvestWork.HIT_EVERY 는 둘 다 Attack.SWING_EVERY 를 읽는다(grep 으로 다른 0.6 정의 없음 확인). test_wild_hives.gd test_mashing_the_left_click_never_beats_the_swing_interval 이 두 상수가 Attack.SWING_EVERY 와 같은지, wild_hives.gd 원문에 HarvestWork 가 안 나오는지 단언한다 — 벌집을 HarvestWork.HIT_EVERY 로 되돌리면 contains 단언이 깨지므로 껍데기가 아니다. 연타 간격 자체도 같은 테스트가 실제 좌클릭으로 확인한다. 묶음 끝이라 전체 472파일 3525테스트 통과 · guard 통과(test.log)"
-    }
-   ],
-   "issues": [
-    "주민 테스트 주석이 HIT_EVERY 를 사람 빠르기라 부른다 — tests/automation/villagers/test_villager_gather_close.gd:158 · 168 · 181 이 사람 쪽 셈에 HarvestWork.HIT_EVERY 를 쓴다(값은 같아 막지 않음). 사람 몫(person 계산 · 158줄 주석)은 Attack.SWING_EVERY 로 바꾸고 주민 몫(181줄)만 HarvestWork.HIT_EVERY 로 두어라"
-   ],
-   "good": []
-  },
-  "test": "/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      0s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/harvest/test_rock_cracks.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           472\nTests            3525\nPassing Tests    3525\nFailing Tests       0\nRisky/Pending       0\nAsserts        155539\nTime           705s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "ecb66508"
- },
- {
   "time": "2026-10-19 03:25:19",
   "epoch": 1792347919,
   "type": "pass",
@@ -8454,5 +8417,49 @@
   },
   "test": "rld/day_night/test_day_length.gd\nok      4s  res://tests/ui/theme/test_ui_theme.gd\nok      4s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      3s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      4s  res://tests/world/terrain/test_shovel_home.gd\nok      3s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      3s  res://tests/automation/villagers/test_job_work_shared.gd\nok      3s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      3s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      3s  res://tests/build/test_room_chests.gd\nok      3s  res://tests/build/test_room_kinds.gd\nok      3s  res://tests/combat/damage_death/test_death_chest.gd\nok      3s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      3s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      3s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      4s  res://tests/core/net/test_net_interp.gd\nok      3s  res://tests/core/net/test_room_code.gd\nok      3s  res://tests/core/net/test_steam_api.gd\nok      3s  res://tests/core/test_spec_stale_lines_g310.gd\nok      3s  res://tests/craft/recipes/test_handle_name.gd\nok      4s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      4s  res://tests/craft/recipes/test_recipes_by_station.gd\nok      4s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      4s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      5s  res://tests/craft/recipes/test_workbench_gear.gd\nok      3s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      4s  res://tests/craft/stations/test_apothecary_bench.gd\nok      3s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      3s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      3s  res://tests/life/gathering/test_herb_kinds.gd\nok      3s  res://tests/life/hunting/test_captive_names.gd\nok      4s  res://tests/life/hunting/test_burrows.gd\nok      4s  res://tests/life/hunting/test_food_chain.gd\nok      3s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      4s  res://tests/life/ranching/test_animal_stats.gd\nok      3s  res://tests/life/ranching/test_shear_goods.gd\nok      4s  res://tests/life/ranching/test_troughs.gd\nok      3s  res://tests/player/equipment/test_future_wear.gd\nok      4s  res://tests/life/vehicles/test_garage_one_per_island.gd\nok      4s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/player/hunger_thirst/test_starving.gd\nok      3s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/settings/save/test_old_barn.gd\nok      3s  res://tests/settings/save/test_old_cups.gd\nok      4s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      3s  res://tests/settings/save/test_old_liquor.gd\nok      3s  res://tests/settings/save/test_old_tea_coffee.gd\nok      3s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      3s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/world/storage/test_chest.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     42s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           628\nTests            4555\nPassing Tests    4555\nFailing Tests       0\nRisky/Pending       0\nAsserts        223890\nTime           1045s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "9d4b9164"
+ },
+ {
+  "time": "2026-10-25 12:39:40",
+  "epoch": 1792899580,
+  "type": "pass",
+  "title": "통과 — G-313 단계 1 (멧돼지 · 곰 — 돌진)",
+  "group": "G-313",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "G-313.1 멧돼지를 적대로 · 곰 · 멧돼지는 보면 곧장 돌진(가속 · 늦게 틀기 · 비키면 지나쳐 미끄러져 서고 돌아서 다시 달린다 · 부딪히면 공격력만큼 피해) — 바뀐 곳 그물 95파일 중 94 통과, 떨어진 1(hunting.md 줄 수)은 고쳐 따로 다시 돌려 통과",
+   "approach": "AnimalKinds.HOSTILE 에 멧돼지를 더하고 돌진하는 종 표 CHARGERS(곰 · 멧돼지)를 새로 뒀다. Animal 에 돌진 차례 RUSH → SKID → TURN 을 넣었다: 눈(_look)이 사람을 보면 길찾기를 접고 곧장 달린다 — 빠르기는 CHARGE_ACCEL 로 CHARGE_TOP 까지 붙고, 방향은 초당 CHARGE_TURN 까지만 튼다. 곁(무는 거리)을 지나면 한 번만 공격력(스탯 attack)만큼 Health.deal. 사람이 등 뒤로 가면(비켰다 · 받고 지나쳤다) 미끄러져 서고, CHARGE_PAUSE 동안 돌아선 뒤 보이면 다시 달리고 안 보이면 여느 쫓기로 돌아간다. 우리 걸을 자리 밖 · 걸을 땅에서 벗어나는 앞(물가 · 절벽)이면 선다. 다치면(30%) _panic 이 돌진을 끊는다. 참가자 그림(remote)은 원래대로 서버 자리만 따른다. 옛 테스트 둘을 새 결정에 맞췄다 — 「멧돼지는 먼저 안 덤빈다」 단언 · 경비 거위 테스트가 3초 뒤 곰 자리로 재던 것(곰이 이제 돌진해 지나친다)을 울 때의 곰 자리로. hunting.md 는 146줄 아래여야 해(test_animal_spawn_spec) 돌진 설명을 원래 한 줄 자리에 합쳤다. 돌진 상태는 몇 초짜리 몸놀림이라 save.md 「안 담는다」에 적었다.",
+   "why": "Animal.CHARGE_TOP 8 m/s — 사람 달리기(6)보다 빨라 비켜야 한다; Animal.CHARGE_ACCEL 5 m/s² — 다 붙기까지 1.6초; Animal.CHARGE_TURN 45°/초 — 늦게 튼다; Animal.CHARGE_BRAKE 12 m/s² — 지나쳐 3 m 쯤 미끄러진다; Animal.CHARGE_PAUSE 0.8초 — 돌아서는 틈; Animal.CHARGE_EDGE 1.5 m — 걸을 땅에서 이만큼 벗어나면 선다; 돌진 피해 = 스탯 표 attack (곰 20 · 멧돼지 8, 표 값 자체가 임시)",
+   "files": [
+    "game/life/hunting/animal_kinds.gd",
+    "game/life/hunting/animal.gd",
+    "game/tests/life/hunting/test_charge.gd",
+    "game/tests/life/hunting/test_wild_kinds.gd",
+    "game/tests/life/ranching/test_guard_watch.gd",
+    "spec/04_life/hunting.md",
+    "spec/08_combat/mob-ai.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "멧돼지를 적대로(지금 곰만 HOSTILE) — 곰 · 멧돼지는 사람을 보면 **곧장 돌진**(가속 · 방향을 늦게 튼다 · 비키면 지나쳐 멈췄다 돌아선다) · 부딪히면 피해 · 같이 하는 판은 서버가 움직인다 (테스트: 옆으로 비키면 지나친다)",
+     "evidence": "AnimalKinds.HOSTILE=[BEAR,BOAR] · CHARGERS 표 · Animal._charge(RUSH→SKID→TURN). test_charge.gd 7개: test_boar_and_bear_are_hostile_chargers(적대 · 들판 멧돼지 hostile), test_a_seen_boar_rushes_straight_and_speeds_up(빠르기가 오른다 · x<0.2 로 곧장 · CHARGE_TOP 넘지 않음), test_sidestepping_makes_it_overshoot_stop_and_turn_back(코앞에서 4m 비키면 z 가 사람을 지나치고 SKID · TURN 을 거쳐 다시 RUSH · 비킨 사람은 안 맞음), test_standing_still_takes_the_charge_once_per_pass(곰 공격력만큼 체력이 깎이고 한 번만), test_a_remote_picture_does_not_charge_on_its_own(참가자 그림은 스스로 안 달림 · 제자리 — _physics_process 의 remote 조기 반환). 일부러 깨 봄: CHARGE_TURN 45→3600 으로 놓자 test_charge 1개가 떨어졌다(되돌림 확인). test.log 바뀐 곳 104파일 실패 0 · guard 통과"
+    }
+   ],
+   "issues": [
+    "ranching-breeding.md 의 「기르는 적대 종 없다」가 낡았다 — spec/04_life/ranching-breeding.md 57줄 「(지금 기르는 적대 종은 없다 — 곰은 기를 수 없다, G-239.4)」는 멧돼지가 적대 · 기를 수 있는 종이 된 G-313.1 뒤로 틀린 말이다. Ranch.fierce(hostile 종 and not tame) 때문에 우리 안의 길들지 않은 멧돼지 · 옛 저장본의 놓인 멧돼지도 이제 사람에게 덤벼 돌진한다(test_a_penned_boar_stops_at_the_pen_edge 가 그것을 전제로 쓴다). 그 줄을 「기르는 적대 종은 멧돼지 — 온순함이 다 찰 때까지 덤빈다(G-313.1)」 꼴로 고치고, 옛 저장본의 놓인 멧돼지가 restore 뒤 hostile 로 서는지 보는 단언(Ranch.restore → a.hostile == true, tameness 다 찬 것은 false)을 test_ranch 쪽에 하나 더하라"
+   ],
+   "good": [
+    "우리 걸을 자리(bounds) · 물가 · 절벽 앞에서 돌진이 서는 길(_blocked_ahead)과 그 테스트 — 기준에 없지만 돌진이 우리 벽 · 물을 뚫지 않게 하는 데 필요한 받침이다",
+    "다치면(30%) 돌진을 끊고 도망가는 테스트 — 사람 결정 원문(피가 없으면 도망)에 있는 것이라 다음 단계 몫과 겹칠 수 있다"
+   ]
+  },
+  "test": "://tests/build/test_pen_room.gd\nok      4s  res://tests/core/debug/test_dev_animals.gd\nok      3s  res://tests/life/hunting/test_animal_traces.gd\nok      3s  res://tests/life/hunting/test_bird_hunt.gd\nok      3s  res://tests/life/ranching/test_bird_cage_five.gd\nok      4s  res://tests/life/hunting/test_wild_kinds.gd\nok      3s  res://tests/life/ranching/test_pen_yields.gd\nok      3s  res://tests/multiplayer/test_despawn_on_server.gd\nok      4s  res://tests/multiplayer/test_burrows_on_server.gd\nok      4s  res://tests/ui/hud/test_room_names.gd\nok      4s  res://tests/combat/tools_as_weapons/test_tranq_arrows.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      3s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      3s  res://tests/life/hunting/test_summon.gd\nok      3s  res://tests/life/hunting/test_captive_age.gd\nok      4s  res://tests/life/hunting/test_body_parts.gd\nok      3s  res://tests/life/hunting/test_despawn.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      3s  res://tests/life/hunting/test_summon_weak.gd\nok      3s  res://tests/life/ranching/test_ranch_escape.gd\nok      3s  res://tests/life/ranching/test_taming.gd\nok      5s  res://tests/multiplayer/test_bow_on_server.gd\nok      3s  res://tests/multiplayer/test_guard_pen_on_server.gd\nok      3s  res://tests/multiplayer/test_kept_names_on_server.gd\nok      3s  res://tests/multiplayer/test_owl_trees_on_server.gd\nok      3s  res://tests/multiplayer/test_martens_on_server.gd\nok      2s  res://tests/multiplayer/test_wild_kinds_on_server.gd\nok      2s  res://tests/multiplayer/test_traces_on_server.gd\nok      3s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/settings/test_item_key_groups.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      2s  res://tests/automation/villagers/test_villager_pen_room.gd\nok      1s  res://tests/core/test_spec_stale_lines_g310.gd\nok      3s  res://tests/life/hunting/test_captive_fed.gd\nok      2s  res://tests/life/hunting/test_captive_names.gd\nok      3s  res://tests/life/hunting/test_cage_reuse.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      3s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_nav_weld.gd\nok      2s  res://tests/life/hunting/test_same_animal.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_bond.gd\nok      3s  res://tests/life/ranching/test_food_shown.gd\nok      3s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/life/ranching/test_shearing.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok    391s  res://tests/craft/test_from_empty_hands.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           104\nTests             895\nPassing Tests     895\nFailing Tests       0\nRisky/Pending       0\nAsserts         32219\nTime           423s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "3d6c952d"
  }
 ]
