@@ -5399,7 +5399,7 @@
   - 기준: spec mob-ai.md 에 셋의 싸우는 꼴 (사람 원문 · 임시 값)
   - 기준: (앞 단계 QA) 사슴 빠르기 단언이 빠졌다 — test_wild_kinds.gd test_the_hawk_hears_from_farther_and_flees_faster_than_a_deer 를 고치며 「사슴 빠르기는 그대로다」(deer.move_speed ≈ FLEE_SPEED) 단언을 지웠다. 매만 빨라야 한다는 것을 지키려면 다친 사슴의 빠르기가 Animal.FLEE_SPEED(다쳐 느려지는 몫이 있으면 그것까지)와 같은지 보는 단언을 되살려라
   - 기준: (앞 단계 QA) 들판에 난 매가 적대로 서는지 안 본다 — test_the_bear_boar_and_hawk_are_hostile_and_the_rest_flee 는 매에 대해 AnimalKinds.hostile(HAWK) 표만 본다. populate 의 목록에 HAWK 를 더해 beasts[2].hostile == true 를 단언하라(곰 · 멧돼지와 같은 꼴)
-- [ ] 4. (앞 단계 QA) 테스트가 사적 필드를 직접 만진다
+- [x] 4. (앞 단계 QA) 테스트가 사적 필드를 직접 만진다
   - 기준: 테스트가 사적 필드를 직접 만진다 — test_retreat.gd 의 _wound 가 a._panic_left = 0.0 으로 공황 진정을 흉내 낸다. 막는 것은 아니지만 CALM_AFTER 이름이 바뀌면 조용히 깨질 수 있다. Animal 에 calm() 같은 공개 함수를 두거나 시계를 CALM_AFTER 만큼 돌려 진정시키는 쪽으로 바꿔라
   - 기준: (앞 단계 QA) 구현 세션이 git stash 를 썼다 — report.json 「how」에 규칙상 쓰면 안 되는 git 쓰기(stash/pop)를 한 번 했다고 적혀 있다. 이번엔 되돌려 졌지만 루프 도는 중 저장소 상태를 흔든다. 다음 세션은 비교가 필요하면 git show HEAD:파일 > /tmp 로 읽어라
 
@@ -5510,6 +5510,8 @@
   - 기준: 주민 걷기 시작이 실제 시간을 탄다 — test_villager_gather_close.gd 의 WALK_SLACK 1.5초(임시)는 길 묻기가 실제 시간에 묶여 time_scale 1 에서도 첫 대까지 걷는 시간이 11.8~13.7초로 퍼지는 것을 덮는다. 그 뿌리(주민 길 묻기 · 일 시작이 실제 시간 예산을 쓰는 곳)를 찾아 게임 안 시간으로 세게 고치고 WALK_SLACK 을 0 으로 줄여라. 막는 것은 아니다
 - [ ] 2. 키 이름 DEV_ERUPT_HOST_ONLY 가 뜻과 어긋난다 (G-311 단계 2)
   - 기준: 키 이름 DEV_ERUPT_HOST_ONLY 가 뜻과 어긋난다 — 문구는 「서버에 잇지 않았다」로 고쳤지만 키 이름은 아직 「서버장만」이다. debug_tools.gd:128 · ko.po · en.po 의 키를 DEV_ERUPT_NOT_CONNECTED 같은 이름으로 함께 바꾸고 이 키를 찾는 테스트가 있으면 같이 고쳐라 (막는 것은 아니다)
+- [ ] 3. test_retreat.gd 가 아직 _stop() 을 직접 부른다 (G-313 단계 4)
+  - 기준: test_retreat.gd 가 아직 _stop() 을 직접 부른다 — game/tests/life/hunting/test_retreat.gd:102 의 a._stop() 과 :147 의 hawk._stop() 이 사적 함수로 돌진·급강하 단계를 끊는다. 이번 기준(_panic_left) 밖이지만 같은 까닭으로 이름이 바뀌면 조용히 깨진다. Animal 에 공개 stop()(또는 기존 공개 함수)을 두고 테스트가 그것을 부르게 하라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
