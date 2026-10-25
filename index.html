@@ -183,7 +183,7 @@ function renderStatus(s) {
     <dl class="kv">
       <dt>마지막 갱신</dt><dd>${esc(s.updated)} <span class="sub">(${ago(s.updated_epoch)})</span></dd>
       <dt>지금 작업</dt><dd>${cur}</dd>
-      ${s.model ? `<dt>AI</dt><dd><b>${esc(aiLabel(s))}</b>${s.lane ? ` <span class="sub">(줄기 ${esc(s.lane)})</span>` : ""}</dd>` : ""}
+      ${s.model ? `<dt>AI</dt><dd><b>${esc(modelName(s.model))}${s.effort ? ` · 추론 ${esc(s.effort)}` : ""}</b>${s.lane ? ` · 차선 ${esc(s.lane)}` : ""}</dd>` : ""}
       ${state === "running" && s.phase ? `<dt>단계</dt><dd>${esc(s.phase)} — ${esc(s.phase_since)} 부터</dd>` : ""}
       ${s.resume_at ? `<dt>재개 예정</dt><dd>${esc(s.resume_at)}</dd>` : ""}
       <dt>이번 실행</dt><dd>${esc(s.started)} 시작${s.ended && state !== "running" ? ` · ${esc(s.ended)} 종료` : ""}</dd>
@@ -237,17 +237,17 @@ function renderList(text, status) {
   const groups = parseList(text);
   if (!groups.length) { $("list").innerHTML = '<div class="empty">목록이 비어 있다</div>'; return; }
   const TAG = { "x": ["t-ok", "완료"], ">": ["t-bad", "결정 대기"], " ": ["t-info", "할 일"] };
-  // 「진행 중」은 **AI 가 지금 하고 있는 묶음**이다 — AI 가 둘이면 둘. 도는 AI 가 없으면 첫 할 일은
+  // 「진행 중」은 **차선이 지금 하고 있는 묶음**이다 — 차선이 둘이면 둘. 도는 차선이 없으면 첫 할 일은
   // 「다음 할 일」이다 — 「진행 중」이라고 보이면 아무도 안 도는데 도는 줄 안다 (2026-09-26 사람이 헷갈렸다)
   const working = new Set(RUNNING.map((x) => x.group).filter(Boolean));
   const who = {};
-  for (const x of RUNNING) if (x.group) who[x.group] = aiLabel(x);
+  for (const x of RUNNING) if (x.group) who[x.group] = `${modelName(x.model)} · ${x.lane || ""}`;
   const firstTodo = working.size ? null : groups.find((g) => g.state === " ");
   $("list").innerHTML = groups.map((g) => {
     const done = g.steps.filter((s) => s.done).length;
     const isCur = working.has(g.id) || (firstTodo && g.id === firstTodo.id);
     const [cls, label] = working.has(g.id) ? ["t-fail", who[g.id] ? `진행 중 — ${who[g.id]}` : "진행 중"]
-      : isCur ? ["t-info", "다음 할 일 — 도는 AI 가 없다"] : TAG[g.state];
+      : isCur ? ["t-info", "다음 할 일 — 도는 차선이 없다"] : TAG[g.state];
     return `<details ${isCur ? "open" : ""}><summary><span class="tag ${cls}">${label}</span>
       <span class="title">${esc(g.id)} ${esc(g.title)}</span><span class="count">${g.steps.length ? `${done}/${g.steps.length}` : (g.state === "x" ? "끝남" : "—")}</span></summary>
       <div class="body">${g.steps.length ? "" : `<div class="empty">${esc(g.note || "단계 기록이 archive 로 옮겨졌다")}</div>`}<ul class="steps">${g.steps.map((s) => `<li><span>${s.done ? "✅" : "⬜"}</span><span>${esc(s.title)}
@@ -328,26 +328,15 @@ function renderRuns(events) {
     <div class="body"><ul class="steps" style="display:block">${rows}</ul></div></details>`;
 }
 
-// 루프(AI)를 둘 이상 띄우면 합칠 줄기마다 제 칸에 올린다 — data/lanes/<줄기>/ (harness/dashboard.py).
-// 위에 AI 를 나란히 보여 주고, 고른 AI 의 자세한 기록을 아래에 그린다.
-// 보이는 이름은 「naru-ai1 · opus5.5 mid」 — 줄기 이름(3d-start …) 대신 (사람 2026-10-25)
+// 루프를 둘 이상 띄우면 차선(합칠 줄기)마다 제 칸에 올린다 — data/lanes/<줄기>/ (harness/dashboard.py).
+// 위에 차선을 나란히 보여 주고, 고른 차선의 자세한 기록을 아래에 그린다.
 let lane = null;
 try { lane = localStorage.getItem("naru-lane"); } catch (e) {}
-// 모델 별칭(opus …)은 session.sh 가 그대로 넘겨 그 때의 최신 판이 돈다 — 보이는 판 번호는 여기서 붙인다.
-// 새 판이 나오면 이 표만 고친다. 전체 id(claude-opus-5-5)면 거기서 판을 읽는다.
-const MODEL_VER = { opus: "5.5", sonnet: "5.5", haiku: "5.5", fable: "5.1" };
-const EFFORT_SHORT = { low: "low", medium: "mid", high: "high", xhigh: "xhigh", max: "max" };
-function modelShort(m) {
-  const k = String(m || "opus").toLowerCase();
-  const full = k.match(/(opus|sonnet|haiku|fable)-(\d+)-(\d+)/);
-  if (full) return `${full[1]}${full[2]}.${full[3]}`;
-  for (const [key, ver] of Object.entries(MODEL_VER)) if (k.includes(key)) return key + ver;
-  return k;
-}
-function aiLabel(s) {
-  if (!s) return "?";
-  const e = EFFORT_SHORT[s.effort] || s.effort || "";
-  return `${s.name || s.lane || "?"} · ${modelShort(s.model)}${e ? " " + e : ""}`;
+function modelName(m) {
+  const k = String(m || "").toLowerCase();
+  const NAMES = { opus: "Opus", fable: "Fable", sonnet: "Sonnet", haiku: "Haiku" };
+  for (const [key, name] of Object.entries(NAMES)) if (k.includes(key)) return name;
+  return m || "?";
 }
 function laneWhat(s) {
   if (!s) return "기록 없음";
@@ -361,7 +350,7 @@ function renderLanes(names, statuses) {
     const state = s.state || "stopped";
     const stale = state === "running" && (Date.now() / 1000 - (s.updated_epoch || 0)) / 60 > 120;
     return `<button class="lane ${n === lane ? "on" : ""}" data-lane="${esc(n)}">
-      <span class="name">${esc(aiLabel(Object.assign({ lane: n }, s)))} <span class="badge b-${stale ? "stale" : esc(state)}">${stale ? STATE.stale : (STATE[state] || esc(state))}</span></span>
+      <span class="name">${esc(n)} <span class="tag t-info">${esc(modelName(s.model))}</span> <span class="badge b-${stale ? "stale" : esc(state)}">${stale ? STATE.stale : (STATE[state] || esc(state))}</span></span>
       <span class="what">${esc(laneWhat(s))} <span class="sub">· ${ago(s.updated_epoch)}</span></span></button>`;
   }).join("");
   $("lanes").querySelectorAll(".lane").forEach((b) => (b.onclick = () => {
@@ -380,11 +369,9 @@ async function load() {
     base = `data/lanes/${lane}/`;
     const statuses = await Promise.all(names.map((n) => get(`data/lanes/${n}/status.json`, true)));
     RUNNING = statuses.filter((x) => x && x.state === "running");
-    const order = names.map((n, i) => i).sort((a, b) =>
-      String((statuses[a] || {}).name || names[a]).localeCompare(String((statuses[b] || {}).name || names[b]), "en", { numeric: true }));
-    renderLanes(order.map((i) => names[i]), order.map((i) => statuses[i]));
+    renderLanes(names, statuses);
   }
-  // 상태 · 기록은 고른 AI 의 것, **목록 · 결정은 하나**다 (harness/plan.py) — AI 를 바꿔도 같다
+  // 상태 · 기록은 고른 차선의 것, **목록 · 결정은 하나**다 (harness/plan.py) — 차선을 바꿔도 같다
   const [s, ev, li, de] = await Promise.all([
     get(base + "status.json", true), get(base + "events.json", true), get("data/list.md"), get("data/decisions.md"),
   ]);
