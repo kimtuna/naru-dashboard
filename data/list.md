@@ -5529,7 +5529,7 @@
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
-- [ ] 1. test_geothermal_stations.gd 주석도 없는 테스트를 가리킨다 (G-315 단계 2)
+- [x] 1. test_geothermal_stations.gd 주석도 없는 테스트를 가리킨다 (G-315 단계 2)
   - 기준: test_geothermal_stations.gd 주석도 없는 테스트를 가리킨다 — game/tests/craft/stations/test_geothermal_stations.gd:52 의 주석 「tests/craft/recipes/test_geothermal_smelter_recipes.gd」 파일이 없다. 이번 기준의 json 과 같은 낡은 경로다. tests/craft/recipes/test_dev_only_recipes_g315.gd 로 고쳐라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
