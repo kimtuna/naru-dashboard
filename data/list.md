@@ -5403,7 +5403,7 @@
   - 기준: 테스트가 사적 필드를 직접 만진다 — test_retreat.gd 의 _wound 가 a._panic_left = 0.0 으로 공황 진정을 흉내 낸다. 막는 것은 아니지만 CALM_AFTER 이름이 바뀌면 조용히 깨질 수 있다. Animal 에 calm() 같은 공개 함수를 두거나 시계를 CALM_AFTER 만큼 돌려 진정시키는 쪽으로 바꿔라
   - 기준: (앞 단계 QA) 구현 세션이 git stash 를 썼다 — report.json 「how」에 규칙상 쓰면 안 되는 git 쓰기(stash/pop)를 한 번 했다고 적혀 있다. 이번엔 되돌려 졌지만 루프 도는 중 저장소 상태를 흔든다. 다음 세션은 비교가 필요하면 git show HEAD:파일 > /tmp 로 읽어라
 
-## [ ] G-314 쓸 데 없던 것 잇기 — 뼈 · 고슴도치 가죽 · 기름 · 약초
+## [x] G-314 쓸 데 없던 것 잇기 — 뼈 · 고슴도치 가죽 · 기름 · 약초
 - 차선: 3d-start · 시작 2026-10-25 14:20
 - 순서: G-313 뒤
 - spec: spec/05_craft/facilities.md, spec/04_life/gathering.md, life/medicine
