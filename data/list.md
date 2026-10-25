@@ -5682,7 +5682,18 @@
   - 기준: 센서 그림 테스트가 소스 글자만 본다 — test_ui_shots.gd::test_plan_has_the_three_sensor_windows 는 plan 이름과 ui_shots.gd 글자(Stations.SENSOR_LOW 등)만 확인해, 센서 자리 꾸미기가 실제로 창을 열고 값 줄 · 이은 것 줄을 채우는지는 보지 않는다. 다른 자리(test_butcher_shot_… 처럼) 장면을 세워 Tune 의 값 글자에 3 · 12 kW / 8 m 이 있고 이은 것 줄이 2개인지 단언하는 테스트로 바꿔라
   - 기준: (앞 단계 QA) 끊기 글자가 누름 · 올림에 색이 안 바뀐다 — switch_panel.gd _row 의 cut_text Label 은 Button 의 font_hover_color · font_pressed_color 를 따르지 않는다. 지금 테마가 그 색을 달리 두는지 보고, 달리 둔다면 Button 의 mouse_entered/exited · button_down/up 에 맞춰 Label 의 font_color override 를 바꾸거나 테마 색이 같음을 테스트로 못박아라
   - 기준: (앞 단계 QA) 다른 한국어 Button 도 글자가 뜰 수 있다 — 구현 세션은 어긋남이 Button 이 한글 대체 글꼴을 그리는 방식에서 난다고 했다. 그렇다면 센서 창 −/+ · 낮에 켜짐/밤에 켜짐 같은 다른 Button 도 같은 줄의 Label 과 어긋날 수 있다. ui 그림 전체에서 Button 글자 + 옆 Label 이 한 줄에 선 곳을 찾아 보고, 같으면 공용 테마 · 글꼴(대체 글꼴을 기본 글꼴에 묶기) 쪽에서 한 번에 고쳐라 — 버튼마다 Label 을 넣는 땜질을 늘리지 말고
-- [ ] 2. 영어 아이템 이름 대소문자도 갈린다 (G-939 단계 2)
+- [>] 2. 영어 아이템 이름 대소문자도 갈린다 (G-939 단계 2) → G-939-2 로 떼었다
+  - 기준: 영어 아이템 이름 대소문자도 갈린다 — 시설은 맞췄지만 단축바 en 그림의 Iron ore · Iron ingot 은 소문자 꼴이다(시설 아닌 아이템). 아이템 이름 꼴(문장 꼴/단어마다 대문자)을 한 쪽으로 맞출지 en.po ITEM_ 전체를 훑어 한 꼴로 맞추고 test_station_names_title_case 와 같은 훑는 테스트를 아이템에도 둬라
+  - 기준: (앞 단계 QA) 센서 kW 단언이 13 kW 도 통과시킨다 — test_ui_shots.gd::test_plan_has_the_three_sensor_windows 의 assert_string_contains(low.text, "3 kW") 는 「13 kW」 같은 값에도 참이다. 값 글자 앞이 공백 · 줄 처음인지까지 보거나(예: low.text.ends_with(" 3 kW") 또는 정규식 (^|\s)3 kW) 같은 꼴로 바꿔라
+  - 기준: (앞 단계 QA) 라틴 글자도 한글 글꼴 꼴로 바뀌었다 — 테마 기본 글꼴을 한글 SystemFont 로 두어 영어 화면 · 숫자도 Apple SD Gothic Neo / Malgun Gothic 꼴로 그려진다. 윈도 빌드(windows 브랜치)에서 Malgun Gothic 으로 잘림 · 줄 높이가 달라지지 않는지 한 번 찍어 보고, spec/12_ui/menu.md 미정 쪽에 「기본 글꼴: 한글 SystemFont(임시)」 한 줄을 적어 두어라
+
+## [>] G-939-2 영어 아이템 이름 대소문자도 갈린다 (G-939 단계 2) (G-939 단계 2 에서 떼었다 — 결정을 기다린다)
+- 차선: 3d-lane2
+- 떼어 온 곳: G-939 단계 2 — 나머지 단계는 G-939 가 이어 한다. 하다 만 것은 브랜치 g/G-939-2
+- QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
+  루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
+- 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
+- [ ] 1. 영어 아이템 이름 대소문자도 갈린다 (G-939 단계 2)
   - 기준: 영어 아이템 이름 대소문자도 갈린다 — 시설은 맞췄지만 단축바 en 그림의 Iron ore · Iron ingot 은 소문자 꼴이다(시설 아닌 아이템). 아이템 이름 꼴(문장 꼴/단어마다 대문자)을 한 쪽으로 맞출지 en.po ITEM_ 전체를 훑어 한 꼴로 맞추고 test_station_names_title_case 와 같은 훑는 테스트를 아이템에도 둬라
   - 기준: (앞 단계 QA) 센서 kW 단언이 13 kW 도 통과시킨다 — test_ui_shots.gd::test_plan_has_the_three_sensor_windows 의 assert_string_contains(low.text, "3 kW") 는 「13 kW」 같은 값에도 참이다. 값 글자 앞이 공백 · 줄 처음인지까지 보거나(예: low.text.ends_with(" 3 kW") 또는 정규식 (^|\s)3 kW) 같은 꼴로 바꿔라
   - 기준: (앞 단계 QA) 라틴 글자도 한글 글꼴 꼴로 바뀌었다 — 테마 기본 글꼴을 한글 SystemFont 로 두어 영어 화면 · 숫자도 Apple SD Gothic Neo / Malgun Gothic 꼴로 그려진다. 윈도 빌드(windows 브랜치)에서 Malgun Gothic 으로 잘림 · 줄 높이가 달라지지 않는지 한 번 찍어 보고, spec/12_ui/menu.md 미정 쪽에 「기본 글꼴: 한글 SystemFont(임시)」 한 줄을 적어 두어라
