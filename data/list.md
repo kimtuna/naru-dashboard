@@ -5619,10 +5619,13 @@
 - spec: spec/07_automation/power.md, spec/07_automation/npc-villagers.md (침략)
 - **사람 요청 2026-10-26** (원문 그대로): 「침략이벤트 마을의 점수가 몇점인지 보이는 현황판 하나 있으면 좋겠어. 이건 게임에 넣을지 말지 고민을 해야 되는데 일단 모니터로 빼서 하나 만들어줘. 저번에 말 했듯이 모니터는 ui 하나를 넣고 보이게 하려고 하는거야. 우클릭 상호작용하면 화면에 보일게 어떤게 보일지 정하는거랑 고정으로 할지 자동으로 n초마다 돌아가게 할지 정할 수 있게. n초도 임의로 너가 정해주고 사용자가 설정할 수 있게 맞쳐줘」
 - G-325 의 우클릭 창과 같은 틀을 쓴다 (따로 만들지 않는다)
-- [ ] 1. 화면 고르기
+- [x] 1. 화면 고르기
   - 기준: 모니터를 우클릭하면 설정 창 — 띄울 화면을 고른다(여럿): **전기**(지금 것) · **발전 점수**(G-320 점수 · 다음 침략까지 남은 날 · 침략 세기) (테스트)
   - 기준: 「고정」(고른 하나) / 「돌기」(고른 것들을 n초마다) · n 은 기본 **임시 10초**, 사람이 조절(임시 3~60초) (테스트)
   - 기준: 모니터마다 따로 · 저장 · 같이 하는 판 · 찍는 자리(발전 점수 화면) · spec 줄 (사람 원문 · 임시 값 · 「게임에 넣을지는 사람이 고민 중」)
+- [ ] 2. (앞 단계 QA) 테스트 머리말이 없는 파일을 가리킨다
+  - 기준: 테스트 머리말이 없는 파일을 가리킨다 — game/tests/automation/power/test_monitor_screens.gd 7줄의 「같이 하는 판은 tests/multiplayer/test_monitor_on_server.gd」는 없는 파일이다. 실제로는 test_power_on_server.gd 의 test_a_guest_sets_a_monitor_through_the_server 와 test_invasion_on_server.gd 의 test_the_guest_gets_the_next_invasion_day_for_the_monitor 다. 그 두 이름으로 고쳐 적어라
+  - 기준: (앞 단계 QA) 침략 세기 표시가 임시 목록에 없다 — report 의 temporary 에는 「침략 세기 = WAVES 의 몇째 줄 · 무리 수」가 있는데, spec/07_automation/power.md 의 「수치 — 전부 임시」 G-326.1 줄에는 빠졌다. 그 줄에 「발전 점수 화면의 침략 세기 = WAVES 몇째 줄 · 무리 수 · 글자 크기 SCREEN_PIXEL_SCORE」를 더하고, crafting_station.gd 의 SCREEN_PIXEL 주석에도 G-326.1 출처를 남겨라
 
 ## [x] G-327 온탕 — 아무 데나 놓는다
 - 차선: 3d-lane3 · 시작 2026-10-26 00:22
