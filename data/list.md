@@ -5525,8 +5525,10 @@
   - 기준: 키 이름 DEV_ERUPT_HOST_ONLY 가 뜻과 어긋난다 — 문구는 「서버에 잇지 않았다」로 고쳤지만 키 이름은 아직 「서버장만」이다. debug_tools.gd:128 · ko.po · en.po 의 키를 DEV_ERUPT_NOT_CONNECTED 같은 이름으로 함께 바꾸고 이 키를 찾는 테스트가 있으면 같이 고쳐라 (막는 것은 아니다)
   - 기준: (앞 단계 QA) 벌목 시간 한도의 여유가 0.3초뿐이다 — test_villager_gather_close.gd 의 주민 13.9초 · 한도 14.2초(사람 8.9 × 1.6). 이제 굴림이 없어 결정적이라 흔들리지는 않지만, 걸음 · 휘두르기 간격(임시 수치)이 조금만 바뀌어도 떨어진다. 막는 것은 아니다 — 1.6 배가 어디서 왔는지 주석에 적어 두거나, 숙련도 0 의 가장 느린 사람 기준임을 assert 메시지에 남겨라
   - 기준: (앞 단계 QA) 낡은 숫자가 주석에 남았다 — test_villager_gather_close.gd:183~185 주석의 「14.7초(> 사람의 1.6배 14.3초)」는 지금 사람 8.9초 · 한도 14.2초와 맞지 않는다. 그때의 숫자임을 밝히거나(G-304.2 당시) 지금 숫자로 고쳐라
-- [ ] 3. test_retreat.gd 가 아직 _stop() 을 직접 부른다 (G-313 단계 4)
+- [x] 3. test_retreat.gd 가 아직 _stop() 을 직접 부른다 (G-313 단계 4)
   - 기준: test_retreat.gd 가 아직 _stop() 을 직접 부른다 — game/tests/life/hunting/test_retreat.gd:102 의 a._stop() 과 :147 의 hawk._stop() 이 사적 함수로 돌진·급강하 단계를 끊는다. 이번 기준(_panic_left) 밖이지만 같은 까닭으로 이름이 바뀌면 조용히 깨진다. Animal 에 공개 stop()(또는 기존 공개 함수)을 두고 테스트가 그것을 부르게 하라
+- [ ] 4. (앞 단계 QA) 다른 테스트도 사적 _stop() 을 부른다
+  - 기준: 다른 테스트도 사적 _stop() 을 부른다 — game/tests/life/ranching/test_hive_raid.gd:169 의 badger._stop() 과 game/tests/life/hunting/test_wild_kinds.gd:308 의 goose._stop() 이 같은 까닭으로 이름이 바뀌면 조용히 깨진다. 이번에 생긴 공개 Animal.stop() 으로 바꿔라 (badger 가 Animal 이 아니면 그 클래스에 맞는 공개 함수를 써라)
 
 ## [x] G-938 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-lane2 · 시작 2026-10-25 18:56
