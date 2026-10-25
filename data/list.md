@@ -5312,7 +5312,7 @@
   - 기준: 권한 거절 단언이 옛 동작을 못 잡는다 — test_switch_notice_only_when_the_server_flipped 의 권한 갈래는 마지막 한 줄만 본다. 옛 동작(먼저 「껐다」를 띄움)이어도 서버의 「권한이 없다」가 뒤에 덮어써 assert_ne(said_off) 가 통과한다(깨 봤을 때 떨어진 것은 거리 갈래뿐이었다). Notice 가 띄운 줄을 모아 두는 기록(또는 Notice.say 횟수)을 보고 flip_asked 뒤에 SWITCH_OFF 가 한 번도 안 떴는지 단언하게 고쳐라
   - 기준: (앞 단계 QA) _flip_wait 이 「안 담는다」 목록에 없다 — Stations._flip_wait(참가자가 바란 켜고 끄기, G-307.2 앞 단계 QA)은 담지 않는데 spec/01_settings/save.md 의 「안 담는다」 목록(65줄 섬 전기 줄 곁)에 까닭이 없다. 「참가자가 바란 켜고 끄기(Stations._flip_wait)도 담지 않는다 — 몇 초짜리 바람이라 껐다 켜면 서버 목록을 다시 받는다」 한 줄을 더하라
 
-## [ ] G-308 센서 — 전력 · 사람 감지 · 낮밤
+## [x] G-308 센서 — 전력 · 사람 감지 · 낮밤
 - 차선: 3d-lane2 · 시작 2026-10-25 10:52
 - 순서: G-307 뒤
 - spec: spec/07_automation/power.md
