@@ -5497,7 +5497,7 @@
   - 기준: (앞 단계 QA) 펌프가 전기를 안 먹는다는 단언이 없다 — 지금은 IslandPower.USES 에 water_pump 가 없을 뿐이라 누가 넣어도 아무 테스트도 안 떨어진다. test_pipe_inlets.gd 에 assert_false(IslandPower.USES.has("water_pump")) 와, 전기 0 인 섬에서도 토막이 wet 인지 보는 단언을 더하라
 
 ## [ ] G-320 침략 이벤트 — 짐승 · 주민이 몰려온다 · 재워서 우리 편으로
-- 차선: 3d-start
+- 차선: 3d-start · 시작 2026-10-25 18:39
 - 순서: G-314 뒤
 - spec: spec/07_automation/npc-villagers.md (들어오는 길 · 이벤트), spec/08_combat/mob-ai.md
 - **사람 결정 2026-10-25** (원문 그대로): 「이제 이벤트를 만들거야. 각 섬에 침략하는 동물이나 주민을 풀거야. 발전하는 점수에 따라 침략하는 난이도가 조정이 돼. 여기서 주민을 동물처럼 마취해서 우리 팀으로 만들게 하는거야. 물론 침략한 동물도 키울 수 있어.」
