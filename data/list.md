@@ -5542,7 +5542,7 @@
   - 기준: test_geothermal_stations.gd 주석도 없는 테스트를 가리킨다 — game/tests/craft/stations/test_geothermal_stations.gd:52 의 주석 「tests/craft/recipes/test_geothermal_smelter_recipes.gd」 파일이 없다. 이번 기준의 json 과 같은 낡은 경로다. tests/craft/recipes/test_dev_only_recipes_g315.gd 로 고쳐라
 
 ## [ ] G-321 화산 섬 땅에 도면 건축이 안 된다
-- 차선: 3d-start
+- 차선: 3d-start · 시작 2026-10-26 00:22
 - spec: spec/06_build/ (건축 · 도면), spec/03_world/frontier-islands.md
 - **사람 요청 2026-10-26** (원문 그대로): 「굳은땅에 건축이 흑요석 위에 건축이 안된다는게 아니라 화산 땅위에 건축이 안된다는 소리였어. 아직도 안된더라고. 건축은 도면을 사용한 건축이야.」
 - G-305 는 「굳은 판 위」로 잘못 읽었다. 문제는 **화산 섬(복셀 땅) 어디서든** 도면으로 짓는 것이다. 테스트 · 찍는 자리(volcano_build)는 통과했는데 사람이 실제로 해 보면 안 된다 — **실제 판과 테스트가 어디서 다른지**부터 찾는다
