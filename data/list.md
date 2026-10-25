@@ -5604,11 +5604,14 @@
 - 아래 범위는 Claude 가 정함 2026-10-26 (임시)
 - [x] 1. 창 · 이은 것
   - 기준: 센서 · 게이트 · 스위치를 우클릭(스패너를 안 들었을 때)하면 창이 뜬다 — **이어진 시설 목록**(이름 · 거리)과 줄마다 「끊기」 (테스트)
-- [ ] 2. 센서 값
+- [x] 2. 센서 값
   - 기준: 전력 센서 — 켜짐(아래) · 꺼짐(위) kW 를 각각 조절(임시 0~50kW · 1 단위 · 켜짐 < 꺼짐을 지킨다). 사람 감지 — 반경 조절(임시 1~15m). 낮밤 — 「낮에 켜짐 / 밤에 켜짐」 고르기 (테스트)
   - 기준: 값은 센서마다 따로 · 저장 · 같이 하는 판(서버가 바꾼다) · spec 줄 (사람 원문 · 임시 범위)
   - 기준: (앞 단계 QA) wire_for 머리 주석이 낡았다 — game/craft/stations/stations.gd 의 wire_for 위 「args 는 wire · unwire 가 보낸 것 그대로」에 unwire_one(WIRE_UNLINK — [시설 자리, 스위치 자리], 첫 자리가 스위치가 아니다)도 적어라 (막는 것은 아니다)
   - 기준: (앞 단계 QA) 목록 · 끊기 테스트가 전원 스위치만 본다 — test_switch_window.gd 는 센서 창은 보이는지만, 게이트 창은 열리는지만 본다. power_sensor 와 and_gate 에 시설을 이어 창의 link_rows() 줄 수 · Name · Distance 와 Cut 으로 그 연결만 떨어지는지 단언을 더하라 (같은 코드 길이라 막는 것은 아니다)
+- [ ] 3. (앞 단계 QA) 센서 처음 값이 두 곳에 따로 적혔다
+  - 기준: 센서 처음 값이 두 곳에 따로 적혔다 — game/craft/stations/crafting_station.gd 의 sensor_low := 2.0 · sensor_high := 6.0 · sensor_range := 5.0 이 Stations.SENSOR_POWER_LOW · SENSOR_POWER_HIGH · SENSOR_PRESENCE_RANGE 를 쓰지 않고 숫자를 다시 적었다. 한쪽만 바꾸면 어긋난다 — Stations 상수를 쓰거나(순환 참조가 걸리면) 상수 쪽 주석에 「crafting_station.gd 와 같이 바꾼다」를 적어라
+  - 기준: (앞 단계 QA) 센서 창 그림이 없다 — report 에 「ui_shots 자리에 센서가 없어 창 그림은 찍지 못했다」. 센서 값 줄(−/+ · 낮밤 토글)이 사람 눈에 어떻게 보이는지 확인할 길이 없다 — ui_shots 에 전력 · 사람 감지 · 낮밤 센서 창 장면을 더해 찍어라
 
 ## [ ] G-326 모니터 — 무엇을 띄울지 고른다 · 고정 / n초마다 돌기 · 발전 점수 화면
 - 차선: 3d-lane2
