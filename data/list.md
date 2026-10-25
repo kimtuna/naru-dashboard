@@ -5623,7 +5623,7 @@
   - 기준: 모니터를 우클릭하면 설정 창 — 띄울 화면을 고른다(여럿): **전기**(지금 것) · **발전 점수**(G-320 점수 · 다음 침략까지 남은 날 · 침략 세기) (테스트)
   - 기준: 「고정」(고른 하나) / 「돌기」(고른 것들을 n초마다) · n 은 기본 **임시 10초**, 사람이 조절(임시 3~60초) (테스트)
   - 기준: 모니터마다 따로 · 저장 · 같이 하는 판 · 찍는 자리(발전 점수 화면) · spec 줄 (사람 원문 · 임시 값 · 「게임에 넣을지는 사람이 고민 중」)
-- [ ] 2. (앞 단계 QA) 테스트 머리말이 없는 파일을 가리킨다
+- [x] 2. (앞 단계 QA) 테스트 머리말이 없는 파일을 가리킨다
   - 기준: 테스트 머리말이 없는 파일을 가리킨다 — game/tests/automation/power/test_monitor_screens.gd 7줄의 「같이 하는 판은 tests/multiplayer/test_monitor_on_server.gd」는 없는 파일이다. 실제로는 test_power_on_server.gd 의 test_a_guest_sets_a_monitor_through_the_server 와 test_invasion_on_server.gd 의 test_the_guest_gets_the_next_invasion_day_for_the_monitor 다. 그 두 이름으로 고쳐 적어라
   - 기준: (앞 단계 QA) 침략 세기 표시가 임시 목록에 없다 — report 의 temporary 에는 「침략 세기 = WAVES 의 몇째 줄 · 무리 수」가 있는데, spec/07_automation/power.md 의 「수치 — 전부 임시」 G-326.1 줄에는 빠졌다. 그 줄에 「발전 점수 화면의 침략 세기 = WAVES 몇째 줄 · 무리 수 · 글자 크기 SCREEN_PIXEL_SCORE」를 더하고, crafting_station.gd 의 SCREEN_PIXEL 주석에도 G-326.1 출처를 남겨라
 
