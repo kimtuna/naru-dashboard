@@ -1,37 +1,5 @@
 [
  {
-  "time": "2026-10-19 12:32:22",
-  "epoch": 1792380742,
-  "type": "stop",
-  "title": "루프 끝 — 목록을 모두 처리했다",
-  "group": "G-918",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "주민 HarvestWork.tool 을 왕복 검사의 DONT_SAVE 와 save.md 「안 담는다」 목록에 올렸다 — 판에서 도끼를 쥐여 저장해 정말 갈리는 것으로 검사한다 (바뀐 곳만: 8개 파일 · 70개 통과)",
-   "approach": "DONT_SAVE 는 「적힌 것이 더는 달라지지 않으면 낡았다」고 걸리는데, 왕복 판에 주민이 없고 tool 은 늘 \"\" 이라 그냥 적으면 곧바로 낡은 줄로 떨어진다. 그래서 _play 끝에 나무꾼 한 명을 세우고 도끼(\"axe\")를 쥐여 저장했다 — 다시 들어오면 맨손이라 그 한 줄만 갈린다. 처음엔 일 통째(_works.woodcutter)가 걸렸다: 주민의 일은 첫 틱에 게으르게 생기는데 돌아온 판은 한 프레임도 안 흐른 순간에 찍는다. 그래서 _on_game_entered 에서 찍기 전에 주민마다 work() 를 불러 두어 일의 속(tool)까지 견주게 했다. save.md 40줄 목록에도 같은 까닭을 더했다.",
-   "why": "",
-   "files": [
-    "game/tests/settings/save/test_round_trip.gd",
-    "spec/01_settings/save.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "주민 tool 이 저장 안 담는다 목록에 없다 — harvest_work.gd 의 var tool 은 게임 안에서 아무도 바꾸지 않아 늘 \"\" 이라 저장하지 않는다고 주석에만 적혔다(지금은 실제 상태가 아니라 테스트 이음새라 막는 것은 아니다). spec/01_settings/save.md 원칙대로 game/tests/settings/save/test_round_trip.gd 의 DONT_SAVE 와 save.md 38~40줄 「안 담는다」 목록에 「주민 HarvestWork.tool — 건네는 길이 없어 늘 맨손, 길이 생기면 그 길이 담는다」를 더하라",
-     "evidence": "test_round_trip.gd DONT_SAVE 에 \"Island/Villagers/Villager:_works.woodcutter.tool\": \"주민 HarvestWork.tool — 건네는 길이 없어 늘 맨손, 길이 생기면 그 길이 담는다\" 가 문장 그대로 들어갔고, save.md 40줄 목록 끝에 같은 까닭이 붙었다(92줄). 그냥 적으면 낡은 줄로 걸리므로 _play 에서 나무꾼을 세워 tool=\"axe\" 로 저장하고, 들어올 때 work() 를 불러 일 속까지 견준다. 일부러 깨 봤다 — DONT_SAVE 의 그 줄을 지우고 TEST_DIR=res://tests/settings/save 로 돌리니 test_nothing_leaks… 가 'Island/Villagers/Villager:_works.woodcutter.tool: axe → ' 로 실패했다(되돌림 확인). 전체 3684개 통과 · guard 통과(test.log)."
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "debug/test_dev_box_everything.gd\nok      2s  res://tests/build/test_room_overlay.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           494\nTests            3684\nPassing Tests    3684\nFailing Tests       0\nRisky/Pending       0\nAsserts        165801\nTime           717s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-19 14:26:59",
   "epoch": 1792387619,
   "type": "start",
@@ -8507,5 +8475,46 @@
    "decision": null
   },
   "test": " <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1427] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1428] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1429] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1430] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1431] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1432] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1433] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1434] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1435] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1436] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1437] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1438] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1439] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1440] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1441] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1442] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1443] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1444] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1445] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1446] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1447] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1448] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1449] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1450] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1451] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1452] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1453] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1454] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1455] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1456] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1457] <engine-2>Invalid access to property or key 'stations' on a base object of type 'Nil'.\n    [1458] <engine-2>Invalid access to property or key 'global_basis' on a base object of type 'Nil'.\n          at line 184\n\nTotals\n------\nScripts               1\nTests                 2\nPassing Tests         1\nFailing Tests         1\nAsserts           30/34\nTime              51.484s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           640\nTests            4634\nPassing Tests    4632\nFailing Tests       2\nRisky/Pending       0\nAsserts        228692\nTime           972s  (godot 6 개)\n\n떨어진 파일 2 개:\n  res://tests/life/hunting/test_animal_sound.gd\n  res://tests/multiplayer/test_cement_on_server.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\ntest.sh: 스크립트 오류가 있다\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-25 16:34:57",
+  "epoch": 1792913697,
+  "type": "pass",
+  "title": "통과 — G-314 단계 3 (튀김)",
+  "group": "G-314",
+  "step": "3",
+  "attempt": "2",
+  "report": {
+   "problem": "조리대에 튀김 둘(감자튀김 = 감자 2 + @oil 1 · 생선튀김 = @fish 1 + 밀가루 1 + @oil 1)을 더했다 — 기름 갈래에 훈연기 기름과 오소리 기름이 함께 든다",
+   "approach": "튀김 레시피 · 음식 · 아이템 · 번역은 앞 시도에 이미 들어가 있었다. 앞 시도의 전체 실행에서 떨어진 두 파일(test_animal_sound — 발소리 반경 9.85 > 9.5, test_cement_on_server — 손님 미르가 제때 안 들어옴)은 튀김과 닿는 곳이 없고, 따로 돌리니 둘 다 통과했다 — godot 6 개를 한꺼번에 돌릴 때 시간이 밀려 떨어지는 것으로 본다. 이번 회차는 바뀐 곳에 걸리는 그물(changed_tests.py, 바뀐 곳만 112 파일 960 테스트)을 돌려 전부 통과를 확인했다. 전체는 돌리지 않았다.",
+   "why": "감자튀김 재료(감자 2 + 기름 1) · 배고픔 0.4 · 스트레스 4 — 임시, 사람이 나중에 맞춘다; 생선튀김 재료(물고기 1 + 밀가루 1 + 기름 1) · 배고픔 0.5 · 스트레스 5 — 임시; 튀김 둘의 제작 시간 5초 — 조리대 전체와 같은 임시 값",
+   "files": [
+    "game/craft/recipes/cook_table.json",
+    "game/craft/recipes/tags.json",
+    "game/life/food/foods.json",
+    "game/player/inventory_hotbar/items.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "spec/05_craft/facilities.md",
+    "game/tests/craft/stations/test_fried_food.gd",
+    "game/tests/craft/stations/test_cook_table.gd",
+    "game/tests/life/fishing/test_fish_kinds.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "조리대에 튀김 둘 — 「감자튀김」(감자 2 + 기름 1) · 「생선튀김」(물고기 1 + 밀가루 1 + 기름 1) (임시 · 배고픔 값 임시) · 「기름」 태그에 오소리 기름도 든다 (테스트)",
+     "evidence": "test_fried_food.gd — test_the_two_fries_are_on_the_cook_table_with_their_inputs 가 조리대 레시피 재료를 {potato:2, @oil:1} · {@fish:1, flour:1, @oil:1} 와 통째로 맞춘다. test_the_oil_tag_holds_smoker_oil_and_badger_fat 가 @oil 에 oil · badger_fat 가 들고 vegetable_oil 은 없음을 본다. test_smoker_oil_and_badger_fat_both_fry 가 두 기름 각각으로 두 튀김을 실제로 조리대에서 만들어 1개 나오고 기름이 드는지 본다. test_fries_are_food_that_fills_hunger 가 음식 · 배고픔 · 번역 글자를 본다. 일부러 깨 봄: tags.json 의 oil 갈래에서 badger_fat 를 빼자 테스트가 떨어졌다(되돌림 확인 cmp). 임시 표시는 cook_table.json · foods.json · tags.json _temporary 와 spec/05_craft/facilities.md 에 적혔다. ko/en.po 둘 다 ITEM_french_fries · ITEM_fried_fish 가 있다. 이번 회차 test.log 는 전체 실행 4634 개 전부 통과 · guard 통과. facilities.md 144줄."
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "enty.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      3s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      3s  res://tests/settings/test_world_settings_in_game.gd\nok      3s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      3s  res://tests/ui/hud/test_compass.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      3s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           640\nTests            4634\nPassing Tests    4634\nFailing Tests       0\nRisky/Pending       0\nAsserts        228689\nTime           964s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "f2e8fa7f"
  }
 ]
