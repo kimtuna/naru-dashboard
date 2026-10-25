@@ -5331,7 +5331,7 @@
   - 기준: (앞 단계 QA) 지열 테스트의 단언 글이 낡았다 — game/tests/craft/stations/test_geothermal_stations.gd 의 dev_only_keys 단언 메시지가 아직 「지열 둘 · 차량 정비소 · 온탕 · 발전기 둘 · 모니터」다. 스위치 · 센서 셋까지 적도록 고쳐라 (위 주석 줄에도 스위치 · 센서를 더한다)
   - 기준: (앞 단계 QA) 사람 감지의 막는 경우가 테스트에 없다 — reads_presence 는 쓰러진 사람 · 다른 세계(멀리 선 섬)의 몸을 안 세지만 test_sensors.gd 에 그 경우가 없다 (기준 밖 덤). 쓰러진 player 가 2m 안에 있어도 꺼짐인지 단언하는 테스트를 더해라
 
-## [ ] G-309 AND · OR 게이트
+## [x] G-309 AND · OR 게이트
 - 차선: 3d-lane2 · 시작 2026-10-25 12:31
 - 순서: G-308 뒤
 - spec: spec/07_automation/power.md
