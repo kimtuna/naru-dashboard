@@ -1,44 +1,5 @@
 [
  {
-  "time": "2026-10-20 04:36:37",
-  "epoch": 1792438597,
-  "type": "pass",
-  "title": "통과 — G-258 단계 2 (다트를 맞으면 느리게 도망)",
-  "group": "G-258",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "마취 다트를 맞은 짐승이 피해 0 이어도 쏜 쪽에서 반 속도로 도망친다 · 맞을 때마다 다시 (G-258.2). 바뀐 곳 그물 90 파일 768 개 가운데 767 통과 → 떨어진 test_guard_pen 한 개를 고쳐 그 파일만 다시 돌려 14/14 통과",
-   "approach": "다트는 피해 0 이라 맞은 소리 · _on_hurt 가 안 불려 짐승이 쏜 쪽을 몰랐다. Projectile 이 쏜 쪽 자리를 Tranq.hit(body, tier, from) → Animal.take_tranq(tier, from) 으로 넘기고, 잡히거나 죽지 않았으면 _scare 가 여느 도망(flee_from, 다쳐 있으면 공황 도주)을 쏜 쪽에서 다시 잡는다 — 걸음은 move_speed 가 Tranq.SLOW 를 곱해 반이 된다. 테스트를 짜다 걸을 자리(bounds) 안의 걸음 _step_bounded 가 방향을 정규화하지 않아 남은 거리만큼 빨라지던 흠(사슴이 첫 틱 39 m/s)을 찾아 to.normalized() 로 고쳤다. 그 바람에 경비 거위가 풀린 틱과 잴 때 사이 걸어가 test_guard_pen 의 「선 자리」 비교가 어긋나 — 거위의 물리를 멈춰 두고 잰다. 첫 테스트는 진짜 총 · 진짜 마취탄으로 쏘고, 맞지 않은 사슴의 여느 도망과 1 초 동안 간 거리를 견줘 반(±0.1)인지 본다. 기존 test_a_tranq_round_does_no_damage_but_slows 는 내비메시 없는 자리라 도망이 곧 멈춰 그대로 통과한다.",
-   "why": "",
-   "files": [
-    "game/life/hunting/animal.gd",
-    "game/life/hunting/tranq.gd",
-    "game/combat/tools_as_weapons/projectile.gd",
-    "game/tests/combat/tools_as_weapons/test_tranq_ammo.gd",
-    "game/tests/life/ranching/test_guard_pen.gd",
-    "spec/04_life/hunting.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "마취 다트를 맞은 짐승은 **쏜 쪽에서 도망**친다(겁먹기 — 피해 0 이어도). 느려짐(0.5배 · 8 초) 동안 그 반 속도로 · 맞을 때마다 다시 도망 (테스트: 다트 맞은 사슴이 1 초 뒤 쏜 쪽에서 멀어지고 있고 속도가 여느 도망의 반)",
-     "evidence": "test_tranq_ammo.gd::test_a_darted_deer_runs_from_the_shooter_at_half_the_flee_speed — 진짜 총·진짜 마취탄으로 쏴 피해 0 · 곧 FLEE · 1 초 뒤 쏜 쪽과의 거리가 1m 넘게 늘었고 · move_speed 가 FLEE_SPEED×fleet×Tranq.SLOW · 맞지 않은 사슴의 여느 도망과 같은 1 초 간 거리 비가 0.5±0.1 인지 본다. test_every_dart_scares_it_again — 거닐게 돌려 놓은 뒤 반대쪽에서 둘째 발을 쏘면 다시 FLEE · 느려짐이 SLOW_SECONDS 로 다시 차고 · 둘째 쏜 쪽(-z)에서 멀어진다. QA 가 animal.gd 의 _scare(from) 호출을 pass 로 바꿔 돌리니 두 테스트가 모두 떨어졌다(되돌렸다). test.log 바뀐 곳 101 파일 855/855 통과 · guard 통과"
-    }
-   ],
-   "issues": [],
-   "good": [
-    "animal.gd _step_bounded 가 방향을 정규화하지 않아 남은 거리만큼 빨라지던 흠을 to.normalized() 로 고쳤다 — 테스트를 짜다 찾은 실제 버그라 받아들일 만하다. 그 여파로 test_guard_pen 의 한 테스트에서 거위 물리를 멈춰 두고 잰다"
-   ]
-  },
-  "test": "      5s  res://tests/combat/tools_as_weapons/test_gun_ladder.gd\nok      5s  res://tests/life/hunting/test_burrow_beasts.gd\nok      5s  res://tests/life/hunting/test_butcher_yields.gd\nok      5s  res://tests/life/hunting/test_martens.gd\nok      5s  res://tests/life/hunting/test_telescope.gd\nok      5s  res://tests/life/ranching/test_guard_watch.gd\nok      4s  res://tests/life/ranching/test_hive_raid_walk.gd\nok      5s  res://tests/multiplayer/test_islands_split.gd\nok      3s  res://tests/core/debug/test_dev_animals.gd\nok      4s  res://tests/combat/tools_as_weapons/test_breath.gd\nok      4s  res://tests/life/hunting/test_body_parts.gd\nok      5s  res://tests/ui/hud/test_target_bars.gd\nok      4s  res://tests/multiplayer/test_bird_cage_on_server.gd\nok      2s  res://tests/automation/villagers/test_villager_pen_room.gd\nok      3s  res://tests/combat/tools_as_weapons/test_iron_sight.gd\nok      3s  res://tests/combat/tools_as_weapons/test_scope.gd\nok      3s  res://tests/build/test_pen_room.gd\nok      3s  res://tests/life/hunting/test_captive_age.gd\nok      3s  res://tests/life/hunting/test_animal_traces.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/life/hunting/test_despawn.gd\nok      3s  res://tests/life/hunting/test_wild_kinds.gd\nok      2s  res://tests/life/ranching/test_bird_cage_five.gd\nok      3s  res://tests/life/ranching/test_bird_cage.gd\nok      3s  res://tests/life/ranching/test_bee_colony.gd\nok      3s  res://tests/life/ranching/test_pen_yields.gd\nok      2s  res://tests/life/ranching/test_taming.gd\nok      3s  res://tests/multiplayer/test_guard_pen_on_server.gd\nok      3s  res://tests/multiplayer/test_despawn_on_server.gd\nok      3s  res://tests/multiplayer/test_burrows_on_server.gd\nok      3s  res://tests/multiplayer/test_kept_names_on_server.gd\nok      3s  res://tests/multiplayer/test_martens_on_server.gd\nok      2s  res://tests/multiplayer/test_owl_trees_on_server.gd\nok      2s  res://tests/multiplayer/test_traces_on_server.gd\nok      3s  res://tests/multiplayer/test_wild_kinds_on_server.gd\nok      2s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/ui/hud/test_guard_pen_window.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      3s  res://tests/ui/hud/test_kept_window.gd\nok      1s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      1s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      2s  res://tests/life/hunting/test_bird_hunt.gd\nok      2s  res://tests/life/hunting/test_summon.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      3s  res://tests/life/hunting/test_summon_weak.gd\nok      2s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      1s  res://tests/life/ranching/test_hive_raid.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/life/ranching/test_ranch_escape.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_shearing.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      1s  res://tests/life/ranching/test_troughs.gd\nok    435s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           101\nTests             855\nPassing Tests     855\nFailing Tests       0\nRisky/Pending       0\nAsserts         20095\nTime           435s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "800afd3a"
- },
- {
   "time": "2026-10-20 05:13:13",
   "epoch": 1792440793,
   "type": "pass",
@@ -8618,5 +8579,40 @@
   },
   "test": "inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/settings/save/test_broken_stays_broken.gd\nok      3s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      3s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/save/test_old_liquor.gd\nok      3s  res://tests/settings/save/test_old_stove.gd\nok      3s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      3s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      4s  res://tests/settings/save/test_spot_per_island.gd\nok      3s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      4s  res://tests/ui/hud/test_hive_window.gd\nok      3s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      3s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/hud/test_trough_window.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      3s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/world/day_night/test_game_clock.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_drill_pitch.gd\nok      1s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      3s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           676\nTests            4823\nPassing Tests    4823\nFailing Tests       0\nRisky/Pending       0\nAsserts        237970\nTime           1033s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "99d6fb3b"
+ },
+ {
+  "time": "2026-10-26 07:36:01",
+  "epoch": 1792967761,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-323 단계 1 (시도 1)",
+  "group": "G-323",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "활은 좌클릭을 누르는 동안 시위를 당기고(0.8초에 가득) 떼면 나간다 — 30% 아래는 안 나가고 화살도 그대로, 당긴 몫에 비례해 속력·피해가 줄고, 당기는 동안 조준점 아래 당김 막대·걸음 60%. 바뀐 곳 그물(바뀐 곳만: 471개 파일 · 3625개) 중 3624 통과, 떨어진 1개(test_speed_levels 의 소스 글자 검사)는 고친 뒤 그 파일만 다시 돌려 6/6 통과",
+   "approach": "활이 총처럼 누르는 순간 나갔다. tools.json 에 draws(가득 당기는 초)를 두고, 그것이 있는 도구를 들면 좌클릭 누름은 begin_draw · 뗌은 loose 로 갈랐다. 당김은 화살이 걸려 있을 때만 흐르고(장전 중엔 안 당겨진다 — 저절로 장전은 그대로), 떼면 당긴 몫이 DRAW_MIN(0.3) 이상일 때만 shoot(power) — 알의 속력·피해에 power 를 곱한다(낙차 중력은 그대로라 느린 화살이 같은 거리에서 더 떨어진다). 당기는 동안 Player.draw_speed_factor=0.6 을 걸음 곱셈에 넣고, HUD 에 DrawBar(조준점 아래 막대, 30% 금)를 붙였다. 창이 뜨거나 활을 놓으면 쏘지 않고 푼다. 같이 하는 판은 SHOOT 에 다섯째 값으로 당긴 몫을 보내고 서버가 DRAW_MIN~1 로 잘라 그 힘으로 날린다(남에게 보이는 그림 화살도 같은 힘). swing()/shoot() 를 곧장 부르면 가득 당긴 한 발이라 기존 테스트 길은 그대로다. 바뀐 규칙에 맞게 fire_rate(활은 누르는 동안 0발 · 떼면 1발) · breath(SHOOT 인자 5개) · test_bow(누르고 떼기) · speed_levels(걸음 곱셈 글자)를 고쳤다. bow_draw 사진(harness/shot.sh --ui)을 찍어 막대가 조준점 바로 아래에 반쯤 찬 것을 확인했다. 당김은 저장하지 않는다 — save.md 「안 담는다」에 적었다.",
+   "why": "가득 당기는 시간 0.8초 (tools.json bow 의 draws) — 사람이 쏴 보고 정한다; 안 나가는 당김 30% (Attack.DRAW_MIN); 당기는 동안 걸음 60% (Attack.DRAW_WALK); 속력·피해가 당긴 몫에 곧게 비례 (Attack.pellet_for 의 power); 당김 막대 크기 48×4px · 조준점 아래 14px · 빛깔 (ui/hud/draw_bar.gd)",
+   "files": [
+    "game/combat/tools_as_weapons/tools.json",
+    "game/combat/tools_as_weapons/tool_catalog.gd",
+    "game/combat/tools_as_weapons/attack.gd",
+    "game/player/movement_controls/player.gd",
+    "game/core/net/net_vitals.gd",
+    "game/ui/hud/draw_bar.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "game/tests/combat/tools_as_weapons/test_bow_draw.gd",
+    "game/tests/combat/tools_as_weapons/test_bow.gd",
+    "game/tests/combat/tools_as_weapons/click_helper.gd",
+    "game/tests/combat/tools_as_weapons/test_fire_rate.gd",
+    "game/tests/combat/tools_as_weapons/test_breath.gd",
+    "game/tests/multiplayer/test_bow_on_server.gd",
+    "game/tests/player/hunger_thirst/test_speed_levels.gd",
+    "spec/08_combat/tools-as-weapons.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "test": "t_guard.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      3s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      3s  res://tests/world/map/test_map_memory.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n================ 떨어진 파일: res://tests/ui/theme/test_ui_theme.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/ui/theme/test_ui_theme.gd\n* test_the_theme_is_the_project_theme\n* test_colors_gaps_slot_size_and_font_live_in_the_theme\n* test_no_ui_scene_writes_its_own_color_gap_or_font\n* test_no_hud_script_writes_a_color_value\n    [Failed]:  res://ui/hud/draw_bar.gd 가 색 값을 적는다: const FILL := Color(1.0, 0.92, 0.6, 0.95)\n      at line 98\n    [Failed]:  res://ui/hud/draw_bar.gd 가 색 값을 적는다: const WEAK := Color(0.75, 0.75, 0.75, 0.6)\n      at line 98\n    [Failed]:  res://ui/hud/draw_bar.gd 가 색 값을 적는다: const BACK := Color(0.0, 0.0, 0.0, 0.45)\n      at line 98\n* test_window_scenes_do_not_write_sizes_the_theme_holds\n* test_the_stamina_bar_width_is_written_once\n* test_the_stamina_bar_follows_its_own_width\n* test_every_window_uses_the_theme_slot_size\n* test_every_window_title_uses_the_theme_font_size\n* test_every_window_box_uses_the_theme_gap\n* test_slot_colors_come_from_the_theme\n10/11 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/ui/theme/test_ui_theme.gd\n- test_no_hud_script_writes_a_color_value\n    [Failed]:  res://ui/hud/draw_bar.gd 가 색 값을 적는다: const FILL := Color(1.0, 0.92, 0.6, 0.95)\n          at line 98\n    [Failed]:  res://ui/hud/draw_bar.gd 가 색 값을 적는다: const WEAK := Color(0.75, 0.75, 0.75, 0.6)\n          at line 98\n    [Failed]:  res://ui/hud/draw_bar.gd 가 색 값을 적는다: const BACK := Color(0.0, 0.0, 0.0, 0.45)\n          at line 98\n\nTotals\n------\nScripts               1\nTests                11\nPassing Tests        10\nFailing Tests         1\nAsserts           11456/11459\nTime              0.913s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           677\nTests            4834\nPassing Tests    4833\nFailing Tests       1\nRisky/Pending       0\nAsserts        238242\nTime           976s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/ui/theme/test_ui_theme.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
