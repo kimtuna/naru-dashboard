@@ -5554,7 +5554,7 @@
   - 기준: 혼자 판 테스트가 복셀 땅인지 직접 안 본다 — test_build_on_volcano_real.gd 는 island_id==sulfur 만 단언한다. 참가자 테스트처럼 assert_not_null(game.island().get(&"voxel_ground")) 한 줄을 sail 직후에 더해, 유황 섬이 복셀 땅이 아니게 바뀌면 이 테스트가 바로 잡게 하라 (막는 것은 아니다 — 지금은 같은 섬이다)
   - 기준: (앞 단계 QA) 재료 모자람 알림이 첫 재료 하나만 본다 — Buildings.plan_held_at 의 lack 이 cost.keys()[0] 만 담는다. 지금 Blueprint.cost_of 는 재료 하나뿐이라 맞지만, 재료가 둘인 건축물이 생기면 모자라지 않은 쪽을 말할 수 있다. 모자란 재료(count_of < 드는 개수)를 골라 담게 고쳐 두라
 
-## [ ] G-330 개발용 침략 창 — 섬 점수 올리기 · 지금 침략 · 침략자 없애기
+## [x] G-330 개발용 침략 창 — 섬 점수 올리기 · 지금 침략 · 침략자 없애기
 - 차선: 3d-start · 시작 2026-10-26 02:12
 - spec: spec/07_automation/invasion.md, game/core/debug/debug_tools.gd 머리 주석(개발용 키)
 - **사람 요청 2026-10-26** (원문 그대로): 「섬 점수에 따른 난이도는 어떻게 되어 있으며, 개발자 모드 하면 ui를 키면 어떤 섬의 점수를 내가 임의로 높일 수 있게 만들고. 침략자들을 없애는 것도 만들어줘.」
