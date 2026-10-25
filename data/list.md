@@ -5394,11 +5394,14 @@
 - [x] 2. 매 — 치고 빠지기
   - 기준: 매는 **날아서** 높은 데서 내리꽂아 한 번 치고(임시 피해) 다시 높이 올라 돌다가 또 내리꽂는다 · 날 때는 근접이 안 닿고(총 · 활은 닿는다) · 내리꽂는 순간만 근접이 닿는다 (테스트)
   - 기준: (앞 단계 QA) ranching-breeding.md 의 「기르는 적대 종 없다」가 낡았다 — spec/04_life/ranching-breeding.md 57줄 「(지금 기르는 적대 종은 없다 — 곰은 기를 수 없다, G-239.4)」는 멧돼지가 적대 · 기를 수 있는 종이 된 G-313.1 뒤로 틀린 말이다. Ranch.fierce(hostile 종 and not tame) 때문에 우리 안의 길들지 않은 멧돼지 · 옛 저장본의 놓인 멧돼지도 이제 사람에게 덤벼 돌진한다(test_a_penned_boar_stops_at_the_pen_edge 가 그것을 전제로 쓴다). 그 줄을 「기르는 적대 종은 멧돼지 — 온순함이 다 찰 때까지 덤빈다(G-313.1)」 꼴로 고치고, 옛 저장본의 놓인 멧돼지가 restore 뒤 hostile 로 서는지 보는 단언(Ranch.restore → a.hostile == true, tameness 다 찬 것은 false)을 test_ranch 쪽에 하나 더하라
-- [ ] 3. 다치면 도망
+- [x] 3. 다치면 도망
   - 기준: 싸우는 짐승 셋은 체력이 **임시 25% 아래**면 싸움을 그만두고 사람에게서 멀어진다(매는 높이 날아 떠난다) · 체력이 다시 차면 평소대로 (테스트)
   - 기준: spec mob-ai.md 에 셋의 싸우는 꼴 (사람 원문 · 임시 값)
   - 기준: (앞 단계 QA) 사슴 빠르기 단언이 빠졌다 — test_wild_kinds.gd test_the_hawk_hears_from_farther_and_flees_faster_than_a_deer 를 고치며 「사슴 빠르기는 그대로다」(deer.move_speed ≈ FLEE_SPEED) 단언을 지웠다. 매만 빨라야 한다는 것을 지키려면 다친 사슴의 빠르기가 Animal.FLEE_SPEED(다쳐 느려지는 몫이 있으면 그것까지)와 같은지 보는 단언을 되살려라
   - 기준: (앞 단계 QA) 들판에 난 매가 적대로 서는지 안 본다 — test_the_bear_boar_and_hawk_are_hostile_and_the_rest_flee 는 매에 대해 AnimalKinds.hostile(HAWK) 표만 본다. populate 의 목록에 HAWK 를 더해 beasts[2].hostile == true 를 단언하라(곰 · 멧돼지와 같은 꼴)
+- [ ] 4. (앞 단계 QA) 테스트가 사적 필드를 직접 만진다
+  - 기준: 테스트가 사적 필드를 직접 만진다 — test_retreat.gd 의 _wound 가 a._panic_left = 0.0 으로 공황 진정을 흉내 낸다. 막는 것은 아니지만 CALM_AFTER 이름이 바뀌면 조용히 깨질 수 있다. Animal 에 calm() 같은 공개 함수를 두거나 시계를 CALM_AFTER 만큼 돌려 진정시키는 쪽으로 바꿔라
+  - 기준: (앞 단계 QA) 구현 세션이 git stash 를 썼다 — report.json 「how」에 규칙상 쓰면 안 되는 git 쓰기(stash/pop)를 한 번 했다고 적혀 있다. 이번엔 되돌려 졌지만 루프 도는 중 저장소 상태를 흔든다. 다음 세션은 비교가 필요하면 git show HEAD:파일 > /tmp 로 읽어라
 
 ## [ ] G-314 쓸 데 없던 것 잇기 — 뼈 · 고슴도치 가죽 · 기름 · 약초
 - 차선: 3d-start
