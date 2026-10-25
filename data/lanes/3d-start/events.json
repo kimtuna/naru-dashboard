@@ -1,42 +1,5 @@
 [
  {
-  "time": "2026-10-19 18:03:58",
-  "epoch": 1792400638,
-  "type": "pass",
-  "title": "통과 — G-250 단계 1 (같은 주민 같은 문턱은 한 줄)",
-  "group": "G-250",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "스트레스 경고를 주민마다 한 줄로 — 줄 이름을 인스턴스 대신 주민 이름(name_key)에 묶고, 50 · 80 을 다 넘으면 그 한 줄이 「스트레스 80」으로 바뀐다 (바뀐 곳만: 83개 파일 · 594개 통과)",
-   "approach": "사람 저장본(1790014507_e428c509) 사본으로 진짜 GameRoot + 섬을 headless 로 띄워 알림 목록을 찍어 보니 「하람 50 · 하람 80 · 가온 50 · 가온 80」 — 짐작했던 인스턴스 겹침이 아니라 문턱(50 · 80)마다 줄을 따로 달아 주민마다 2줄이 된 것이었다(스트레스 100이라 둘 다 넘음). Villager._watch_stress 가 새로 넘은 문턱이 있을 때만 그 주민의 한 줄을 걷고 지금 넘어 있는 가장 높은 문턱으로 다시 올리게 했다. 줄 이름은 stress:<name_key> 로 바꿔, 같은 주민이 새 인스턴스로 다시 서도(두 번 불러오기 · 섬 다녀옴) 옛 줄 곁에 새 줄이 붙지 않는다. 새 판(하루 동안 50 → 80) · 불러오기(Villagers.restore, 스트레스 100) · 다시 세움(restore 두 번) 세 차례를 테스트로 다시 만들었다.",
-   "why": "",
-   "files": [
-    "game/automation/villagers/villager.gd",
-    "game/tests/automation/villagers/test_villager_stress_warn.gd",
-    "game/tests/automation/villagers/test_villager_stress_one_line.gd",
-    "spec/07_automation/villager-persona.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "같은 줄이 둘 붙는 원인을 찾아 고친다 — 줄 이름이 인스턴스가 아니라 주민(name_key)에 묶인다. 사람이 본 차례(새 판 · 불러오기 · 하루 지남 중 무엇)를 테스트로 다시 만들어 줄이 주민마다 하나다",
-     "evidence": "villager.gd stress_alert_id() 가 \"stress:%s\" % name_key 로 바뀌고, _watch_stress 가 문턱마다 따로 줄을 달지 않고 주민 한 줄에 넘은 가장 높은 문턱을 적는다. 원인 두 갈래(문턱마다 줄 · 인스턴스 id)를 다 막는다. test_villager_stress_one_line.gd 세 테스트가 새 판(160s→50 둘, 100s 더→80 둘, 4줄 아님) · 불러오기(Villagers.restore 스트레스 100 → 주민마다 80 한 줄) · 다시 세움(restore 두 번, 새 인스턴스 확인 뒤 줄 2개)을 실제 AlertLog 줄 글자로 확인한다. 깨 보기: stress_alert_id 를 인스턴스 id 로 되돌리자 test_rebuilt_villagers_reuse_their_line 이 [하람80, 가온80, 하람80, 가온80] 로 떨어졌다(되돌림 확인). 옛 코드(문턱마다 줄)라면 새 판 · 불러오기 테스트도 4줄이 되어 떨어진다. test.log 바뀐 곳만 83개 파일 594 통과 · guard 통과. spec villager-persona.md 에 한 줄 더함(92줄), 사람 결정 줄 그대로"
-    }
-   ],
-   "issues": [
-    "이름이 다 쓰이면 주민 둘이 경고 줄 하나를 나눠 쓴다 — Villagers._free_name 은 NAMES 가 다 쓰이면 이름을 겹쳐 고른다(villagers.gd:257 주석 「다 쓰였을 때만 겹친다」). 줄 이름이 stress:<name_key> 라 같은 이름 두 주민은 한 줄을 서로 덮어쓴다. 막는 것은 아니다(주민 수가 이름 수보다 많을 때만). 고치려면 저장되는 주민 고유 표지(없으면 하나 만들어 to_dict/from_dict 에 담기)로 묶거나, 겹친 이름일 때 접미사를 붙이고, 같은 name_key 두 주민이 스트레스 50 을 넘으면 줄이 둘인지 보는 테스트를 더하라"
-   ],
-   "good": []
-  },
-  "test": "ger_room_doors.gd\nok     15s  res://tests/automation/villagers/test_villager_fight.gd\nok     11s  res://tests/automation/villagers/test_villager_hands_room.gd\nok     10s  res://tests/life/ranching/test_guard_pen.gd\nok     13s  res://tests/automation/villagers/test_villager_body_slope.gd\nok     13s  res://tests/automation/villagers/test_villager_sleep.gd\nok     13s  res://tests/perf/test_net_measure.gd\nok     16s  res://tests/automation/villagers/test_villager_jobs_detour.gd\nok     10s  res://tests/automation/villagers/test_villager_door_close.gd\nok     10s  res://tests/automation/villagers/test_villager_home.gd\nok      9s  res://tests/automation/villagers/test_villager_cleaning.gd\nok      9s  res://tests/settings/save/test_round_trip.gd\nok      9s  res://tests/automation/villagers/test_villager_gather_close.gd\nok     15s  res://tests/automation/villagers/test_villager_answers_cry.gd\nok      8s  res://tests/automation/villagers/test_villager_smooth_motion.gd\nok      7s  res://tests/automation/villagers/test_villager_g218_human_save.gd\nok      8s  res://tests/automation/villagers/test_villager_torch_detour.gd\nok      9s  res://tests/automation/villagers/test_villager_g218_folk_ground.gd\nok      9s  res://tests/core/test_unseen_work_goes_on.gd\nok      6s  res://tests/core/debug/test_ui_shots.gd\nok      4s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      4s  res://tests/multiplayer/test_folk_on_server.gd\nok      6s  res://tests/automation/villagers/test_villager.gd\nok      6s  res://tests/core/test_path_walk_replan.gd\nok      6s  res://tests/automation/villagers/test_villager_g218_floor_stuck.gd\nok      4s  res://tests/build/test_bed.gd\nok      2s  res://tests/automation/villagers/test_villager_pen_room.gd\nok      3s  res://tests/core/test_far_cull.gd\nok      3s  res://tests/craft/stations/test_cook_table.gd\nok      4s  res://tests/ui/hud/test_villager_gear_window.gd\nok      2s  res://tests/life/medicine/test_medicine.gd\nok      4s  res://tests/automation/villagers/test_villager_chest_detour.gd\nok      1s  res://tests/automation/villagers/test_villager_body.gd\nok      2s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      2s  res://tests/automation/villagers/test_villager_door.gd\nok      1s  res://tests/automation/villagers/test_villager_gear.gd\nok      4s  res://tests/ui/hud/test_villager_window.gd\nok      4s  res://tests/ui/hud/test_villager_window_release.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      2s  res://tests/automation/villagers/test_villager_skills.gd\nok      1s  res://tests/automation/villagers/test_villager_stress_one_line.gd\nok      1s  res://tests/automation/villagers/test_villager_stress_warn.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      1s  res://tests/automation/villagers/test_job_work_shared.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            83\nTests             594\nPassing Tests     594\nFailing Tests       0\nRisky/Pending       0\nAsserts         13514\nTime           239s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "6db6190b"
- },
- {
   "time": "2026-10-19 18:41:43",
   "epoch": 1792402903,
   "type": "fail",
@@ -8458,5 +8421,54 @@
    ]
   },
   "test": "ngs/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/build/test_placeable_tidy.gd\nok      2s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           651\nTests            4690\nPassing Tests    4690\nFailing Tests       0\nRisky/Pending       0\nAsserts        232459\nTime           985s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-25 21:24:59",
+  "epoch": 1792931099,
+  "type": "pass",
+  "title": "통과 — G-320 단계 1 (발전 점수)",
+  "group": "G-320",
+  "step": "1",
+  "attempt": "4",
+  "report": {
+   "problem": "섬마다 발전 점수(건축물 · 시설 · 주민 · 기르는 짐승 수 × 값, 임시)를 서버가 1초마다 세고 참가자에게 보내며 개발용 F3 안내 줄에 「발전 %d」로 띄운다 — 바뀐 곳 그물 453 파일 3286 테스트 중 test_round_trip 하나가 떨어졌고, DONT_SAVE 에 까닭을 적은 뒤 그 파일만 다시 돌려 통과",
+   "approach": "앞 세 시도가 막힌 자리를 피했다: (1) 「w…ght」 낱말 검사(test_no_item_load)에 걸려 값 표 이름을 WORTH 로 · 코드 · spec 어디에도 그 낱말을 안 썼다 (2) npc-villagers.md 는 125줄 턱이라 손대지 않고 새 spec/07_automation/invasion.md 에 적었다 (3) QA 지적대로 진짜 섬 테스트를 더했다 — 개발용 월드로 GameRoot 에 들어가 건축물(place_at) · 시설(workbench) · 주민(settle) · 기르는 짐승(ranch.place)을 하나씩 두고 recount 가 WORTH 합만큼 오르는지 · DebugTools.hint_text 에 「발전 N」이 있는지 본다. test_island.gd 의 tools.progress · progress.ranch 줄을 지워 보니 떨어졌다(확인 뒤 되돌림). 서버: NetWorld.attach_progress 가 서버 섬 점수가 바뀌면 그 섬 참가자에게 보내고 참가자 섬은 remote 로 세지 않으며 들어올 때 지금 점수를 받는다 — 보내는 줄을 빼 보니 서버 테스트가 떨어졌다(되돌림). (4) 설명서 목차는 개발용 값이라 이번에 넣지 않고, 침략 단계에서 넣는다고 invasion.md 에 적었다. 점수는 다시 셀 수 있어 저장하지 않는다 — save.md 「안 담는다」와 test_round_trip DONT_SAVE 에 까닭을 적었다(그물에서 이것이 떨어졌다). 앞 기록의 test_animal_sound 실패는 이번 그물에서 통과했다.",
+   "why": "IslandProgress.WORTH — 건축물 1 · 시설 5 · 주민 20 · 기르는 짐승 10 (Claude 가 정함 2026-10-25 — 주민 · 짐승은 들이기 어려워 크게, 건축물은 칸 수가 많아 1); IslandProgress.PERIOD 1초 — 서버가 다시 세는 간격 (개발용 줄에 1초 안에 보이면 된다); 상자 · 횃불 · 침대 · 가구 · 밭은 세지 않는다 — 기준의 「건축물 · 시설」만",
+   "files": [
+    "game/world/invasion/island_progress.gd",
+    "game/world/terrain/test_island.gd",
+    "game/core/debug/debug_tools.gd",
+    "game/core/net/net_world.gd",
+    "game/core/game_root.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/multiplayer/dev_island.gd",
+    "game/tests/settings/save/test_round_trip.gd",
+    "game/tests/world/invasion/test_island_progress.gd",
+    "game/tests/world/invasion/test_island_progress_real.gd",
+    "game/tests/multiplayer/test_progress_on_server.gd",
+    "spec/07_automation/invasion.md",
+    "spec/README.md",
+    "spec/01_settings/save.md",
+    "spec/11_multiplayer/netcode.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "섬마다 「발전 점수」 = 놓인 건축물 · 시설 · 주민 · 기르는 짐승 수에 무게를 곱한 합(임시) · 서버가 센다 · 개발용 화면(F 키 안내 줄)에 보인다 (테스트)",
+     "evidence": "game/world/invasion/island_progress.gd 가 Buildings(BuildPiece) · Stations(CraftingStation) · Villagers.all · Ranch.kept 를 세어 WORTH(임시 표시, invasion.md 표 한 곳)를 곱해 더한다. tests/world/invasion/test_island_progress_real.gd 가 개발용 월드로 진짜 GameRoot·TestIsland 를 세우고 건축물(place_at) · 작업대 · 주민(settle) · 기르는 사슴(ranch.place)을 하나씩 둔 뒤 종류마다 +1 · recount 가 WORTH 합만큼 오름 · DebugTools.hint_text 에 「발전 N」을 단언한다 — QA 가 test_island.gd 의 tools.progress = progress 와 progress.ranch = ranch 줄을 빼고 그 폴더를 돌리니 kept 하나를 센다 · WORTH 합 · 안내 줄 단언이 떨어졌다(되돌림 확인, cmp 같음). 서버가 센다: tests/multiplayer/test_progress_on_server.gd 가 진짜 ENet 두 기계로 서버장 섬은 remote=false · 참가자 섬은 remote=true, 서버장이 주민을 세우면 참가자 점수와 참가자 안내 줄에 같은 점수가 오고, 늦게 들어온 참가자도 곧바로 받는지 본다. test_island_progress.gd 가 셈식 · remote 가 스스로 세지 않음을 본다. 번역 키 DEBUG_PROGRESS 가 ko「발전 %d」· en「Progress %d」로 있고 테스트가 둘 다 확인한다. 저장 안 함은 save.md 「안 담는다」와 test_round_trip DONT_SAVE 에 까닭이 적혔다. test.log 전체 652 파일 4688 테스트 모두 통과 · guard 통과."
+    }
+   ],
+   "issues": [
+    "_fresh_water_spots 의 주석이 _build_progress 에 붙었다 — game/world/terrain/test_island.gd 664쪽 근처에서 _build_progress 를 _fresh_water_spots 의 ## 설명 줄(「민물이 있는 곳들 …」 세 줄)과 그 함수 사이에 끼워 넣어, 그 세 줄이 이제 _build_progress 의 문서 주석이 됐다. _build_progress 함수와 그 두 줄 주석을 그 세 줄 위로 옮겨 _fresh_water_spots 바로 위에 제 설명이 다시 붙게 하라"
+   ],
+   "good": []
+  },
+  "test": "st_player_notes.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      1s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      3s  res://tests/settings/test_item_key_groups.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      3s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      3s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           652\nTests            4688\nPassing Tests    4688\nFailing Tests       0\nRisky/Pending       0\nAsserts        232485\nTime           934s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "0daea390"
  }
 ]
