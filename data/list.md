@@ -5669,10 +5669,11 @@
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
-- [ ] 1. 스위치 창 그림이 없다 (G-325 단계 1)
+- [x] 1. 스위치 창 그림이 없다 (G-325 단계 1)
   - 기준: 스위치 창 그림이 없다 — report 에 ui_shots 자리에 스위치가 없어 못 찍었다고 했다. ui_shots 에 스위치(이은 시설 둘)를 연 자리를 더해 창 꼴을 찍어 두어라
 - [ ] 2. 센서 창 「끊기」 글자가 위로 붙는다 (G-325 단계 3)
   - 기준: 센서 창 「끊기」 글자가 위로 붙는다 — 한국어 그림(power_sensor_ko · day_night_sensor_ko)에서 이은 것 줄의 「끊기」 버튼 글자가 같은 줄의 이름 · 거리(3m · 7m) 글자보다 몇 px 위에 앉는다(영어 Cut 은 맞다). 센서 창의 이은 것 줄 HBox 에서 끊기 Button 의 size_flags_vertical 을 SIZE_SHRINK_CENTER 로 두거나 Label 과 같은 높이로 맞춰라. harness/shot.sh --ui <폴더> power_sensor day_night_sensor 로 다시 찍어 확인
+  - 기준: (앞 단계 QA) 영어 시설 이름 대소문자가 갈린다 — game/i18n/en.po:795 의 연구대 msgstr 가 "Research bench" 인데 옆의 "Thermal Generator" · "Power Switch" 는 단어마다 대문자다. 스위치 창 en 그림에서 두 줄이 나란히 보여 눈에 띈다. en.po 의 시설 이름 대소문자를 한 꼴로 맞추고(예: "Research Bench"), 그 문자열을 그대로 단언하는 테스트가 있으면 같이 고쳐라
 - [ ] 3. 센서 그림 테스트가 소스 글자만 본다 (G-325 단계 3)
   - 기준: 센서 그림 테스트가 소스 글자만 본다 — test_ui_shots.gd::test_plan_has_the_three_sensor_windows 는 plan 이름과 ui_shots.gd 글자(Stations.SENSOR_LOW 등)만 확인해, 센서 자리 꾸미기가 실제로 창을 열고 값 줄 · 이은 것 줄을 채우는지는 보지 않는다. 다른 자리(test_butcher_shot_… 처럼) 장면을 세워 Tune 의 값 글자에 3 · 12 kW / 8 m 이 있고 이은 것 줄이 2개인지 단언하는 테스트로 바꿔라
 
