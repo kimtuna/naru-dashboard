@@ -1,65 +1,5 @@
 [
  {
-  "time": "2026-10-19 14:56:46",
-  "epoch": 1792389406,
-  "type": "pass",
-  "title": "통과 — G-251 단계 1 (다섯 칸)",
-  "group": "G-251",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "새장 하나에 새 다섯 칸 — 새마다 피로도 · 배고픔 · 하는 일이 따로 돌고 먹이 · 물 칸은 같이 쓴다 · 캐면 다섯이 든 채 가방에 · 옛 한 마리 저장본은 첫 칸으로 · 나가기 · 돌아오기 · 사냥 · 내려앉기가 다 날아서, 횃대 다섯 · 제 몫의 둘레 · 짐승 곁 제 자리로 겹치지 않는다",
-   "approach": "새장(BirdCage)이 새 한 마리의 상태를 직접 쥐고 있었다. 새마다의 상태(피로도 · 배고픔 · 하는 일 · 자리 · 사냥)를 새 클래스 CagedBird(life/ranching/caged_bird.gd)로 떼고, BirdCage 는 칸 다섯(slots — 빈 칸도 CagedBird) + 먹이 · 물 Trough 를 쥔다. 칸마다 새장의 Trough 를 같은 것으로 쥐어 끼니가 한 칸에서 빠진다. 저장은 {food, water, birds:[칸 다섯]} — birds 가 없는 옛 저장본은 겉의 bird · fatigue … 를 첫 칸으로 읽는다. 겹치지 않게: 칸마다 횃대(PERCHES, 둘레 0.3 m)로 날아 돌아오고(옛 코드의 도착 때 ZERO 로 순간이동하던 것도 없앴다), 나는 곳은 칸 몫의 부채꼴(TAU/5)에서 고르고, 짐승 곁 · 주검 곁은 칸마다 0.6 m 비켜(SPREAD) 앉는다. Stations 는 새마다 짐승을 쥐고(_prey 열쇠 「시설id/칸」), CAGE_HUNT · CAGE_CALL 은 칸을 받을 수 있다(없으면 다). 망원경은 새마다 세고 보내고 부른다 · 서버의 망원경 거리 검사는 새 하나라도 반경 안이면. 새 그림(CageBird)은 칸마다 하나(Bird0~Bird4, 공 반지름 0.2→0.15). 창은 새마다 한 줄 · 피로도 · 배고픔을 「 · 」로 잇고 「새 넣기」는 다 찰 때까지 보인다 — 상자처럼 넣는 창은 다음 단계 몫으로 남겼다. 기존 테스트는 cage.X → cage.bird_at(0).X 로 옮겼다.",
-   "why": "BirdCage.FOOD_MAX · WATER_MAX 20 → 100 — 「한도는 임시로 늘린다」, 한 마리 몫 20 의 다섯 배; BirdCage.PERCHES — 횃대 한가운데 둘레 0.3 m 에 다섯(이웃끼리 0.35 m) — 새 그림 공 반지름을 0.15 로 줄여 겹치지 않게; BirdCage.SPREAD 0.6 m — 한 짐승 · 주검 곁에서 칸마다 비켜 앉는 거리(덮치는 거리 1 m 안); 나는 곳을 칸마다 둘레의 1/5 부채꼴에서 고른다 — 같은 곳을 노리지 않게",
-   "files": [
-    "game/life/ranching/caged_bird.gd",
-    "game/life/ranching/bird_cage.gd",
-    "game/life/ranching/cage_bird.gd",
-    "game/craft/stations/crafting_station.gd",
-    "game/craft/stations/stations.gd",
-    "game/craft/stations/stations.json",
-    "game/life/hunting/telescope.gd",
-    "game/core/net/net_world.gd",
-    "game/ui/hud/cage_panel.gd",
-    "game/core/debug/ui_shots.gd",
-    "spec/04_life/ranching-breeding.md",
-    "spec/04_life/hunting.md",
-    "spec/01_settings/save.md",
-    "game/tests/life/ranching/test_bird_cage_five.gd",
-    "game/tests/life/ranching/test_bird_cage.gd",
-    "game/tests/life/ranching/test_bird_cage_place_held.gd",
-    "game/tests/life/hunting/test_bird_hunt.gd",
-    "game/tests/life/hunting/test_telescope.gd",
-    "game/tests/life/hunting/test_despawn.gd",
-    "game/tests/ui/hud/test_bird_cage_window.gd",
-    "game/tests/multiplayer/test_bird_cage_on_server.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "새장 하나에 새 **다섯**까지. 새마다 피로도 · 배고픔 · 하는 일이 따로 돌고, 먹이 · 물 칸은 새장 하나를 같이 쓴다(한도는 임시로 늘린다). 캐면 다섯이 든 채 가방에 · 옛 저장본(한 마리)은 첫 칸으로",
-     "evidence": "BirdCage 가 칸 다섯(CagedBird)을 쥐고 칸마다 새장의 Trough 를 같은 것으로 쥔다. test_bird_cage_five.gd: test_five_birds_each_keep_their_own_fatigue_hunger_and_state(둘째만 쉬고 첫째는 날며 피로도 · fed 가 칸마다 다르다 · 죽으면 그 칸만 빈다) · test_five_birds_eat_from_one_shared_food_and_water(assert_same 로 같은 Trough · 다섯이 먹어 FOOD_MAX-5) · test_one_bird_left_in_the_food_starves_only_the_late_ones · test_starving_notices_come_per_bird · test_breaking_a_cage_of_five_puts_all_five_in_the_bag_and_placing_brings_them_back(hit_station 으로 캐서 가방 칸의 CAGE_KEY → _unpack_cage 로 다섯의 종 · 체력 · 피로도가 칸마다 돌아온다) · test_five_birds_are_saved_and_restored_slot_by_slot · test_an_old_one_bird_save_comes_back_in_the_first_slot(겉에 bird · fatigue 가 있는 옛 꼴이 첫 칸으로). FOOD_MAX · WATER_MAX 100 은 코드 · spec 수치에 「임시」로 적혔다. test_bird_cage 의 「다섯까지」로 바뀐 테스트도 있다. test.log 바뀐 곳만 237 파일 1939 통과 0 실패 · guard 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "날기 · 돌아오기 · 사냥 · 새장에 내려앉기가 다 **날아서** — 여럿이 같은 자리에 겹치지 않는다(횃대 자리 다섯)",
-     "evidence": "test_going_out_and_coming_home_is_all_flying_and_they_land_on_their_own_perch(틱마다 건너뛴 거리 ≤ SPEED*STEP · 제 횃대에 ARRIVE 안 · 나는 동안 · 앉아서 가장 가까운 거리 > 0.3) · test_five_perches_do_not_overlap(PERCHES 다섯) · test_five_birds_fly_around_their_own_share_of_the_cage · test_five_birds_sent_at_one_beast_fly_there_and_spread_around_it(사냥 · 주검 곁도 날아서 · 겹치지 않게) · test_the_station_draws_five_birds_and_sends_each_to_hunt(그림 Bird0~4 · 빈 칸 숨김 · 그림끼리 0.3 넘게). 일부러 깨 봤다 — SPREAD 0.6→0, 부채꼴 share TAU/5→0 으로 놓자 test_bird_cage_five.gd 에서 2개가 실패했다(되돌림 확인). 옛 코드의 도착 때 ZERO 순간이동도 없앴다"
-    }
-   ],
-   "issues": [
-    "ranching-breeding.md 가 150줄 턱밑이다 — 147줄이다. 다음 단계(상자처럼 넣는 창 · 안팎 확인 · 부르기)에서 새장 줄을 더 적으면 넘는다. 새장 대목을 spec/04_life/ 아래 따로 떼거나(예: bird-cage.md) 줄을 줄여 두어라",
-    "CagedBird 머리 주석의 「넷째 · 다섯째의 짐승」이 헷갈린다 — caged_bird.gd · bird_cage.gd 머리 주석에서 「넷째 · 다섯째」는 하는 일(HUNT · GUARD)을 가리키는데 칸 다섯과 섞여 넷째 · 다섯째 칸으로 읽힌다. 「사냥 · 지키기의 짐승은 Stations 가 새마다 쥔다」로 고쳐라"
-   ],
-   "good": []
-  },
-  "test": " 2s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_cook_table.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_loom.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      3s  res://tests/life/hunting/test_bird_hunt.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_captive_age.gd\nok      1s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      2s  res://tests/life/ranching/test_bird_cage_five.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/ranching/test_ranch_escape.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/life/ranching/test_taming.gd\nok      2s  res://tests/multiplayer/test_traces_on_server.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      3s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok    436s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           237\nTests            1939\nPassing Tests    1939\nFailing Tests       0\nRisky/Pending       0\nAsserts         64347\nTime           436s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "36ce1f45"
- },
- {
   "time": "2026-10-19 15:37:23",
   "epoch": 1792391843,
   "type": "fail",
@@ -8790,5 +8730,37 @@
    "good": []
   },
   "test": "lding_kinds.gd\nok      3s  res://tests/build/test_take_not_hit_wording.gd\nok      3s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      3s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      3s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      3s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      3s  res://tests/life/harvest/test_rare_drops.gd\nok      3s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/hunting/test_captive_names.gd\nok      3s  res://tests/life/hunting/test_food_chain.gd\nok      3s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      3s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      3s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      3s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      3s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      3s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_bond.gd\nok      4s  res://tests/life/ranching/test_food_shown.gd\nok      3s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      3s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/player/equipment/test_armor_modules.gd\nok      4s  res://tests/life/vehicles/test_car_modules.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      4s  res://tests/player/equipment/test_future_wear_modules.gd\nok      3s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      3s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/save/test_old_stove.gd\nok      3s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      3s  res://tests/settings/test_world_settings.gd\nok      3s  res://tests/test_temp_dir.gd\nok      3s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      3s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      4s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      3s  res://tests/world/map/test_map_memory.gd\nok      3s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     35s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           637\nTests            4612\nPassing Tests    4612\nFailing Tests       0\nRisky/Pending       0\nAsserts        228980\nTime           1001s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-25 16:20:45",
+  "epoch": 1792912845,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-316 단계 1 (시도 1)",
+  "group": "G-316",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "광물 섬 배치 — 내 섬은 철 · 유황 조금(합쳐 예전 철의 30% 쯤) · 석탄 없음, 화산 섬은 철 · 유황 많이 · 석탄은 여기서만. 바뀐 곳 그물(changed_tests 149개 파일) 1105개 테스트 통과",
+   "approach": "섬 설계 값에 둘을 더했다: ore_share(광물 칸 가운데 정말 광물이 되는 몫 — 나머지는 돌, 나무 칸은 안 흔든다)와 ore_bias(광물마다 비중). 내 섬은 ores 철 · 유황 + ore_share 0.3, 화산 섬은 ores 에 철을 더하고 ore_bias 철 6 · 유황 6 · 석탄 3 · resource_mix (3,2,10). 시드 4242: 내 섬 철 203 · 유황 214 · 석탄 0 / 화산 섬 철 245 · 유황 227 · 석탄 110 (바꾸기 전 내 섬 철 약 1430). 처음엔 화산 섬 resource_fill 을 0.4 로 올렸는데 삽 · 드릴 테스트가 팔 빈 땅을 못 찾아 떨어졌다 — 짙기는 그대로 두고 광물 비만 올렸고, 그래서 화산 섬 나무 · 돌이 반쯤 줄었다. 석탄이 곧바로 드는 레시피는 강철괴 둘(용광로 · 지열 용광로)뿐이고, 본섬만으로 못 만드는 것은 강철괴와 강철 검 · 창 · 단검 · 전투 도끼 · 방패 · 모자 · 상의 · 하의 — mining.md 「섬마다 얼마나」에 적고 테스트가 문서와 맞춘다. 연료 칸(@fuel)은 숯으로 그대로 돈다. 내 섬엔 석탄이 깔린 적이 없어 옛 저장본의 coal 표시는 남겨 둬도 새로 안 나고 걸리지 않는다(테스트). 남은 것: 희귀 표의 「돌 → 석탄 50」은 사람이 든 예라 그대로 — 내 섬 돌을 깨면 아주 드물게 석탄이 붙는다(mining.md 에 적음). 'weight' 낱말은 아이템 무게 금지 검사에 걸려 ore_bias 로 지었다. 같은 시드 해시(test_same_seed_same_island)의 자원 값만 일부러 바꿨다 — 높이 · 장식은 그대로",
+   "why": "내 섬 ore_share 0.3 — 사람 「조금」을 「지금의 30% 쯤」으로 (철 · 유황 반반); 화산 섬 ore_bias 철 6 · 유황 6 · 석탄 3 · resource_mix (3,2,10) — 섬이 작아 수로도 내 섬보다 많게. resource_fill 은 삽으로 팔 땅 때문에 그대로 0.22",
+   "files": [
+    "game/world/terrain/island_blueprint.gd",
+    "game/world/terrain/island_resources.gd",
+    "game/world/terrain/test_island_blueprint.tres",
+    "game/world/frontier_islands/sulfur_island_blueprint.tres",
+    "game/world/frontier_islands/islands.json",
+    "game/life/harvest/harvest.gd",
+    "spec/04_life/mining.md",
+    "game/tests/world/frontier_islands/test_ore_spread.gd",
+    "game/tests/world/frontier_islands/test_volcano.gd",
+    "game/tests/world/frontier_islands/test_islands.gd",
+    "game/tests/world/terrain/test_island_shape.gd",
+    "game/tests/world/terrain/test_same_seed_same_island.gd",
+    "game/tests/craft/recipes/test_tool_recipes.gd",
+    "game/tests/craft/test_from_empty_hands.gd"
+   ],
+   "decision": null
+  },
+  "test": "s/gut/gut.gd:684)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:813)\n         [5] test_scripts (res://addons/gut/gut.gd:1047)\n         [6] run_tests (res://addons/gut/gui/GutRunner.gd:198)\n         [7] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n         [8] main (res://addons/gut/cli/gut_cli.gd:297)\n         [9] _init (res://addons/gut/gut_cmdln.gd:39)\n* test_wanders_around_home\n    걸은 곳 가장 멀리 20.39m · 걸은 거리 30.91m\n* test_picked_spots_stay_within_the_wander_radius\n    집 (-370.0, 200.0) — 고른 곳 가장 멀리 19.99m\n    집 (-251.0, -240.0) — 고른 곳 가장 멀리 20.00m\n    집 (120.7662, 21.05808) — 고른 곳 가장 멀리 19.93m\n* test_picks_again_where_a_single_pick_lands_outside\nWARNING: Navigation region synchronization had 2 edge error(s).\nMore than 2 edges tried to occupy the same map rasterization space.\nThis causes a logical error in the navigation mesh geometry and is commonly caused by overlap or too densely placed edges.\nConsider baking with a higher 'cell_size', greater geometry margin, and less detailed bake objects to cause fewer edges.\nConsider lowering the 'navigation/3d/merge_rasterizer_cell_scale' in the project settings.\nThis warning can be toggled under 'navigation/3d/warnings/navmesh_edge_merge_errors' in the project settings.\n     at: _build_step_find_edge_connection_pairs (modules/navigation_3d/3d/nav_region_builder_3d.cpp:219)\n    집 (130.0, 35.39642) — 한 번 고르기 200번 중 8번 반경 밖 · 가장 멀리 21.93m\n    [Failed]:  Unexpected Errors:\n    [1] <engine-1>Navigation region synchronization had 2 edge error(s).\n    More than 2 edges tried to occupy the same map rasterization space.\n    This causes a logical error in the navigation mesh geometry and is commonly caused by overlap or too densely placed edges.\n    Consider baking with a higher 'cell_size', greater geometry margin, and less detailed bake objects to cause fewer edges.\n    Consider lowering the 'navigation/3d/merge_rasterizer_cell_scale' in the project settings.\n    This warning can be toggled under 'navigation/3d/warnings/navmesh_edge_merge_errors' in the project settings.\n      at line 195\n* test_never_steps_into_water_even_when_sent_there\n* test_no_seed_steps_into_water\n* test_wild_ground_lies_on_the_terrain_collision\n    지형 충돌과 짐승의 땅 면 — 500 점 · 가장 큰 차 0.0004m\n* test_does_not_fall_off_cliff_even_when_sent_below\n* test_nav_mesh_has_no_water_or_cliff\n* test_goes_around_trees_not_stuck\n* test_walk_values_live_in_one_place_marked_temporary\n9/10 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/life/hunting/test_animal_walk.gd\n- test_picks_again_where_a_single_pick_lands_outside\n    [Failed]:  Unexpected Errors:\n    [1] <engine-1>Navigation region synchronization had 2 edge error(s).\n    More than 2 edges tried to occupy the same map rasterization space.\n    This causes a logical error in the navigation mesh geometry and is commonly caused by overlap or too densely placed edges.\n    Consider baking with a higher 'cell_size', greater geometry margin, and less detailed bake objects to cause fewer edges.\n    Consider lowering the 'navigation/3d/merge_rasterizer_cell_scale' in the project settings.\n    This warning can be toggled under 'navigation/3d/warnings/navmesh_edge_merge_errors' in the project settings.\n          at line 195\n\nTotals\n------\nScripts               1\nTests                10\nPassing Tests         9\nFailing Tests         1\nAsserts           266/267\nTime              67.603s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           641\nTests            4636\nPassing Tests    4635\nFailing Tests       1\nRisky/Pending       0\nAsserts        229559\nTime           968s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/life/hunting/test_animal_walk.gd\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
