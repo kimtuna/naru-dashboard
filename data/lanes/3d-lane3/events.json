@@ -11,5 +11,51 @@
   "type": "pass",
   "title": "차선 합치기 — 3d-lane2(c11f6e48) → 3d-lane3",
   "commit": "b2f46c34"
+ },
+ {
+  "time": "2026-10-25 15:38:29",
+  "epoch": 1792910309,
+  "type": "pass",
+  "title": "통과 — G-319 단계 1 (워터 펌프)",
+  "group": "G-319",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "워터 펌프(water_pump) 시설 — 화산 섬 온천(지열 자리) 위에만 · 펌프끼리 온천 하나에 하나 · 출력 끝 하나(outlets, Stations.pipe_outlets) · 제작대 레시피(임시). 바뀐 곳만 276개 파일 2210개 테스트 통과",
+   "approach": "stations.json 에 water_pump(near=geothermal, outlets=1)를 한 줄 더했다. 지열 시설은 자리 하나에 하나인데, 펌프가 그 자리를 차지하면 펌프 곁에 온탕을 못 놓아 물을 댈 수 없다 — 그래서 펌프는 펌프끼리만 센다(_geothermal_taken 에 pump 갈래). 까닭도 제 것(STATION_PLACE_NEEDS_PUMP_SPRING · PUMP_TAKEN)으로 띄운다. 출력 끝 자리는 Stations.pipe_outlets(몸 앞면 한가운데 높이 절반) — 다음 단계 배관이 여기서 나간다. 저장은 놓인 시설로 담기고 온천 밖 펌프는 기존 지열 규칙으로 빠진다(테스트). 시설이 하나 늘자 test_villager_hand_close 의 9칸 격자에서 35번째 시설이 밭 자리 (30,10) 위에 정확히 서서 밭 길이 막혔다 — 격자가 밭 · 상자 자리를 건너뛰게 고쳤다. test_docs_match_code_g275 의 「표 밖」 목록에 water_pump 를 더했고, facilities.md 는 150줄 여유 검사 때문에 새 줄 대신 온탕 줄 끝에 붙였다. 새 spec spec/07_automation/water-pipes.md 를 썼다.",
+   "why": "워터 펌프 크기 1.0×1.2×1.0 · 색 3a7a9a — 아트 범위 밖; 제작대 레시피 철괴 6 + 돌 8 — 재료는 다시 밸런싱한다(사람 2026-10-25); 펌프끼리 온천 하나에 하나 · 지열 시설과 자리를 다투지 않음 — Claude 가 정함; 출력 끝 자리(앞면 한가운데 높이 절반) — Claude 가 정함",
+   "files": [
+    "game/craft/stations/stations.json",
+    "game/craft/stations/station_catalog.gd",
+    "game/craft/stations/stations.gd",
+    "game/craft/recipes/workbench.json",
+    "game/player/inventory_hotbar/items.json",
+    "game/ui/manual/manual_toc.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "spec/07_automation/water-pipes.md",
+    "spec/05_craft/facilities.md",
+    "game/tests/automation/water/test_water_pump.gd",
+    "game/tests/core/test_docs_match_code_g275.gd",
+    "game/tests/automation/villagers/test_villager_hand_close.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "「워터 펌프」 시설 — 화산 섬 지열 자리(온천) 위에만 놓인다 · 출력 끝 하나 · 제작대 레시피(임시) (테스트)",
+     "evidence": "tests/automation/water/test_water_pump.gd 7개 — near=geothermal · outlets_of==1(다른 시설 0) · 제작대 레시피와 재료 · 개발용 상자; 온천 밖 WHY_PUMP_SPRING · 온천을 모르는 섬(본섬)도 거부 · 같은 온천 둘째 WHY_PUMP_TAKEN · 서버 place_for 도 같은 규칙; pipe_outlets 가 앞면 한가운데 한 곳 · 온탕은 0; 저장본에 담기고 온천 밖 것은 restore 에서 빠짐. 직접 깨 봄: _geothermal_taken 의 펌프 갈래 조건을 지우자 이 파일이 떨어졌고, 되돌린 뒤 다시 통과. 이름 · 까닭 키는 ko/en 둘 다 있다. 크기 · 색 · 레시피 · 하나에 하나는 spec/07_automation/water-pipes.md 와 stations.json 에 「임시」라고 적혀 있다. 바뀐 곳 276개 파일 2210개 테스트 통과, guard 통과. md 는 29 · 144줄"
+    }
+   ],
+   "issues": [
+    "is_water_pump 가 「출력 끝이 있나」로 판정한다 — station_catalog.gd 의 is_water_pump 는 outlets_of(key) > 0 이다. 다음 단계에서 출력 끝이 있는 다른 시설(배관 분기 같은 것)이 생기면 그것도 펌프로 쳐서 온천 규칙(_geothermal_taken · WHY_PUMP_*)에 걸린다. key == \"water_pump\" 나 stations.json 의 \"pump\": true 같은 제 표로 가르고, test_water_pump.gd 에 「outlets 가 있어도 펌프가 아닌 시설은 펌프 규칙을 안 탄다」는 단언을 더하라 (막는 것은 아니다)"
+   ],
+   "good": []
+  },
+  "test": "k      3s  res://tests/multiplayer/test_guard_pen_on_server.gd\nok      3s  res://tests/multiplayer/test_gate_on_server.gd\nok      3s  res://tests/multiplayer/test_modules_on_server.gd\nok      3s  res://tests/multiplayer/test_power_on_server.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear_modules.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      3s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      1s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/test_item_key_groups.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/automation/power/test_sensor.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/automation/villagers/test_villager_skills.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/test_docs_match_code_g275.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/stations/test_geothermal_spec.gd\nok      2s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    391s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           276\nTests            2210\nPassing Tests    2210\nFailing Tests       0\nRisky/Pending       0\nAsserts         94635\nTime           391s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane3/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "44a6b04a"
  }
 ]
