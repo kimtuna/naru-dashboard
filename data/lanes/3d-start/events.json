@@ -1,67 +1,5 @@
 [
  {
-  "time": "2026-10-19 20:13:07",
-  "epoch": 1792408387,
-  "type": "pass",
-  "title": "통과 — G-250 단계 2 (메인 화면엔 가장 높은 주민 하나)",
-  "group": "G-250",
-  "step": "2",
-  "attempt": "4",
-  "report": {
-   "problem": "HUD 배고픔 · 목마름 고리 바로 위에 스트레스 아이콘(고리+번개) + 「가온 100」 — 가장 높은 주민 하나. 주민마다 · 문턱마다 쌓이던 오른쪽 위 스트레스 경고 줄은 없앴다. 바뀐 곳만 337개 파일: 2704/2708 통과 — 떨어진 둘 중 test_round_trip 은 고쳤고(새 박자 _wait 를 안 담는 목록에) test_villager_gear_window 는 혼자 · 6개 동시로 돌려 6번 다 통과(부하 때 타이밍)",
-   "approach": "앞 시도 셋은 경고 줄을 남긴 채 불러오기 때 다시 세는 길(_mark_stress_warned)을 덧대다 save.md 가 낡았다는 지적과 전체 실행의 다른 파일(owl_trees · bird_cage_on_server — 이번에 둘만 따로 돌려 통과)에 걸렸다. 이번엔 접근을 바꿔 **경고 줄 자체를 없앴다**: 사람 결정(메인 화면엔 간단히 — 가장 높은 하나)대로 줄을 HUD 표시가 대신하니 Villager._watch_stress · _stress_warned · stress_alert_id · 번역 키 VILLAGER_STRESS_WARN 이 통째로 빠졌고, 담을 상태도 불러오기 때 다시 셀 것도 없어졌다. 「넘을 때 한 번 알림」은 넣지 않았다(기준에서 고를 수 있는 것) — 대신 사람이 정한 50 · 80 경고는 고리 색으로 남겼다(50 주황 · 80 빨강). 표시(StressBadge)는 주민 무리(Villager.GROUP)를 0.25초마다 읽어 스트레스가 가장 높은 **주민 하나하나**를 잡는다 — 그래서 앞 단계 QA 의 「이름이 겹친 둘이 줄 하나를 나눠 쓴다」는 나눠 쓸 줄이 사라져 풀렸고, 같은 이름 둘이 50 을 넘어도 줄이 0 이고 표시가 둘을 따로 고르는지 테스트한다(줄 둘을 보는 테스트 대신 — 줄은 이제 없다). 자리는 HUD/Body 의 배고픔 · 목마름 줄 바로 위, 같은 줄 모양(NeedsRow) · 같은 38px 고리라 고리가 세로로 맞는다(주민이 없으면 숨어 기존 몸 상태 칸 배치 테스트가 그대로다). ui_shots hud 에 주민 둘(하람 60 · 가온 100)을 세워 「가온 100」 / 「Gaon 100」이 보이는 것을 PNG 로 열어 확인했다(.loop/out/shots_g250_2b). spec: save.md 65줄을 지금 동작(표시는 담을 것 없음 · 줄은 없어짐)으로, villager-persona.md 의 G-233.2 줄을 바꾸고, hud.md 에 사람 결정을 적었다. 바뀐 곳 그물에서 test_round_trip 이 새 박자 Stress:_wait 를 「안 담는 것」으로 잡아 까닭과 함께 그 목록에 올렸다.",
-   "why": "StressBadge.REFRESH 0.25초 — 주민을 다시 보는 박자 (스트레스는 1분에 많아야 20 오른다); StressRing 번개 모양 · 굵기 2.5px — 아이콘 그림이 없어 고리 안에 그은 임시 표지 (사람이 그림을 끼우면 바꾼다)",
-   "files": [
-    "game/ui/hud/stress_badge.gd",
-    "game/ui/hud/stress_badge.tscn",
-    "game/ui/hud/stress_ring.gd",
-    "game/player/movement_controls/player.tscn",
-    "game/automation/villagers/villager.gd",
-    "game/automation/villagers/persona.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/core/debug/ui_shots.gd",
-    "game/tests/ui/hud/test_stress_badge.gd",
-    "game/tests/settings/save/test_round_trip.gd",
-    "game/tests/automation/villagers/test_villager_stress_warn.gd (지움)",
-    "game/tests/automation/villagers/test_villager_stress_one_line.gd (지움)",
-    "spec/01_settings/save.md",
-    "spec/07_automation/villager-persona.md",
-    "spec/12_ui/hud.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "HUD 에 스트레스 아이콘 + 「가온 100」처럼 **가장 스트레스가 높은 주민 하나**의 이름 · 값. 주민이 없으면 숨는다. 오른쪽 위 알림 목록에 주민마다 · 문턱마다 쌓이던 스트레스 경고 줄은 이 표시로 대신한다(넘을 때 한 번 알림은 남겨도 된다 — 줄이 쌓이지 않게)",
-     "evidence": "test_stress_badge.gd: test_it_shows_the_most_stressed_villager_only(하람 60 · 가온 100 → shown()==가온, label 「가온 100」, 자식 2개뿐) · test_no_villagers_hides_the_badge(visible false) · test_it_follows_who_is_highest_and_hides_when_they_leave(바뀌면 따라가고 다 떠나면 숨음) · test_it_refreshes_by_itself · test_crossing_50_and_80_puts_no_lines_in_the_log(_rest_tick 로 50 · 80 을 실제로 넘겨도 AlertLog 에 스트레스 줄 0) · test_loading_shows_the_saved_stress_without_lines(사람 저장본처럼 100 둘을 restore 두 번 — 줄 0, 표시 「하람 100」). villager.gd 에서 _watch_stress · _stress_warned · stress_alert_id · VILLAGER_STRESS_WARN 이 통째로 빠져 grep 에 남은 곳이 없다. 전체 실행(498 파일 3722/3722) 에서 10/10 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "자리는 배고픔 · 목마름 고리 곁 등 ui 규칙(UiTheme)에 맞춘다 · ui_shots hud 에 보인다 · spec 의 스트레스 경고 줄을 고친다",
-     "evidence": "player.tscn HUD/Body 에 Needs 바로 앞 Stress(NeedsRow 테마 · 38px 고리 · HudSmallLabel). test_it_sits_above_the_needs_rings_in_the_player_hud 가 진짜 player.tscn 에서 index 바로 위 · 같은 theme_type_variation · 고리 크기 · x 정렬 · 겹치지 않음 · 화면 왼쪽 아래를 본다. ui_shots.gd hud 에 주민 둘(하람 60 · 가온 100)을 세웠고 .loop/out/shots_g250_2b/hud_ko.png 를 열어 배고픔 · 목마름 고리 위에 빨간 번개 고리 + 「가온 100」을 눈으로 확인했다. spec: save.md 65줄(앞 회차 QA 지적)을 지금 동작으로 고쳤고, villager-persona.md 의 G-233.2/G-250.1 지금 게임 줄을 사람 결정 2026-10-19 와 함께 바꿨고, hud.md 에 한 줄 더했다. test_round_trip DONT_SAVE 에 Stress:_wait 를 까닭과 함께 올렸다(표시는 읽기만 — 스트레스 자체는 담긴다)"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 이름이 다 쓰이면 주민 둘이 경고 줄 하나를 나눠 쓴다 — Villagers._free_name 은 NAMES 가 다 쓰이면 이름을 겹쳐 고른다(villagers.gd:257 주석 「다 쓰였을 때만 겹친다」). 줄 이름이 stress:<name_key> 라 같은 이름 두 주민은 한 줄을 서로 덮어쓴다. 막는 것은 아니다(주민 수가 이름 수보다 많을 때만). 고치려면 저장되는 주민 고유 표지(없으면 하나 만들어 to_dict/from_dict 에 담기)로 묶거나, 겹친 이름일 때 접미사를 붙이고, 같은 name_key 두 주민이 스트레스 50 을 넘으면 줄이 둘인지 보는 테스트를 더하라",
-     "evidence": "줄 자체가 없어져 나눠 쓸 줄이 사라졌다. test_two_villagers_with_the_same_name_are_told_apart 가 같은 HARAM 둘을 실제 _rest_tick 로 50 넘게 올려 줄 0 을 보고, 표시가 이름이 아니라 인스턴스로 높은 쪽(second → first.stress=99 로 바꾸면 first)을 고르는지 shown() 동일성으로 확인한다"
-    }
-   ],
-   "issues": [
-    "persona spec 의 옛 경고 결정 줄에 바뀜 표시가 없다 — spec/07_automation/villager-persona.md:10 「경고는 사라지지 않고 오른쪽 위에 로그로 계속 뜬다」(사람 결정 2026-09-28)가 그대로라 같은 절 21~26줄(사람 결정 2026-10-19 — 알림 줄을 없앴다)과 어긋나 읽힌다. 사람 줄은 지우지 말고 그 줄 끝에 「→ 2026-10-19 사람 결정으로 HUD 스트레스 표시(가장 높은 하나 · 고리 색)가 대신한다 — 아래 G-250.2」처럼 덧붙여라",
-    "notice.gd 주석이 없어진 경고를 예로 든다 — game/ui/hud/notice.gd:43 「주민 스트레스 경고의 이름이 올릴 때의 언어로 굳었다」는 이제 없는 스트레스 경고 줄을 들어 설명한다. 「(G-233.3 앞 단계 QA 때의 예 — 그 줄은 G-250.2 에서 없앴다)」처럼 낡았음을 적거나 지금 쓰는 다른 번역 키 이름 예로 바꿔라"
-   ],
-   "good": [
-    "StressRing 고리 색으로 50 주황 · 80 빨강 경고를 나타냈다 — 기준에 없지만 사람 결정 「50 과 80 에 경고」를 표시 쪽에 남긴 것이라 순서를 흐트러뜨리지 않는다"
-   ]
-  },
-  "test": " res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      0s  res://tests/build/test_placers_comment.gd\nok      0s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      0s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      1s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           498\nTests            3722\nPassing Tests    3722\nFailing Tests       0\nRisky/Pending       0\nAsserts        167652\nTime           730s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "1c35afe1"
- },
- {
   "time": "2026-10-19 20:27:56",
   "epoch": 1792409276,
   "type": "fail",
@@ -8502,5 +8440,37 @@
   },
   "test": "indow_reads.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      1s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      2s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/core/test_docs_match_code_g275.gd\nok      2s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           659\nTests            4715\nPassing Tests    4715\nFailing Tests       0\nRisky/Pending       0\nAsserts        233543\nTime           924s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "629d264a"
+ },
+ {
+  "time": "2026-10-25 23:23:09",
+  "epoch": 1792938189,
+  "type": "pass",
+  "title": "차선 합치기 — 3d-lane2(8d6b5752) → 3d-start",
+  "group": "G-320",
+  "step": "4",
+  "attempt": "1",
+  "report": {
+   "problem": "데려온 주민이 거주지 방에 들면 그 방의 빈 침대를 짝지어 받는지 진짜 섬에서 보는 테스트를 더했다 (바뀐 곳만: 1개 파일 4개 테스트 통과)",
+   "approach": "침략 주민을 마취탄으로 재워 우클릭으로 데려온 뒤(_bring_raider), 사람 등 뒤 세 판 자리에 1판 방(RoomKit, 섬 땅 높이)과 침대 하나를 놓고 house 로 들이면 bed_of 가 그 침대를 돌려주는지 본다. 방을 데려오기 전에 지으면 조준점이 침략자를 짚지 못해 이 테스트와 뒤 멧돼지 테스트가 같이 떨어졌다. 그래서 데려온 뒤에 짓고, 끝나면 그 주민과 침대를 걷어 조준선 위에 남지 않게 했다. 게임 코드는 고치지 않았다 (Villagers.settle 길이 이미 맞다).",
+   "why": "",
+   "files": [
+    "game/tests/world/invasion/test_invasion_capture_real.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "침대 규칙 테스트가 거주지 없는 경우뿐 — test_invasion_capture_real.gd 는 bed_of(v)==null(거주지 없음)만 본다. 거주지 방 · 빈 침대가 있는 섬에서 데려온 주민이 여느 주민처럼 침대를 짝지어 받는지 한 단언을 더해 두면 좋다 (Villagers.settle 이 F4 와 같은 길이라 지금도 맞다)",
+     "evidence": "test_a_raider_brought_in_gets_a_bed_in_a_home_room_like_any_villager — 진짜 섬에서 침략 주민을 마취탄으로 재워 우클릭으로 데려온 뒤(_bring_raider, 주민 수 +1 전제), RoomKit 으로 1판 방과 침대 하나를 놓고 여느 주민이 쓰는 길(Villagers.house — 주민 창 villager_window.gd:514 와 같은 함수)로 들이면 v.home==home, bed_of(v)==그 침대임을 단언한다. 일부러 깨 봤다: 침대를 방 밖(+40,0,+40)으로 옮기자 이 테스트만 떨어졌다(3 통과 · 1 실패) — 껍데기가 아니다. 되돌린 뒤 파일은 원래와 같다. 전체 테스트(659 파일 · 4715 개)와 guard 가 모두 통과했다(test.log)."
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "indow_reads.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      1s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      2s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/core/test_docs_match_code_g275.gd\nok      2s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           659\nTests            4715\nPassing Tests    4715\nFailing Tests       0\nRisky/Pending       0\nAsserts        233543\nTime           924s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "43a05e13"
  }
 ]
