@@ -1,67 +1,5 @@
 [
  {
-  "time": "2026-10-19 17:15:32",
-  "epoch": 1792397732,
-  "type": "fail",
-  "title": "QA 불합격 — G-252 단계 2 (시도 1)",
-  "group": "G-252",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "망원경 팀 셋 — 팀 새장이 사람 곁 30 m(임시) 안일 때만 듣는다(서버도 잰다) · 먼 팀은 HUD 회색 「1팀 — 새장이 멀다」+한 줄 · HUD 「망원경 4배 · 2팀(매 3)」 · 팀마다 보낸 짐승 머리 위 팀 번호 · ui_shots telescope · ko/en. 바뀐 곳 그물 82개 파일 698개 통과",
-   "approach": "G-252.1 이 팀(차례대로 세운 새장 셋)과 숫자키를 이미 만들어, 이번에는 사람 결정 「플레이어 주변에 새장이 있어야돼」를 넣었다. Telescope.NEAR(= BirdCage.RANGE 15 m × 2, 임시)를 두고, 고른 팀 새장이 사람 곁(땅 위 거리) 밖이면 좌클릭 · R 이 한 줄(TELESCOPE_FAR)만 띄우고 아무것도 보내지 않는다. 팀 번호는 그대로라 고를 수는 있고, HUD 는 회색 「1팀 — 새장이 멀다」. 서버(net_world._station_for)도 망원경 명령을 그 사람 몸에서 NEAR 안 새장일 때만 받는다 — 멀티 테스트에서 50 m 면 안 가고 20 m 로 다가가면 간다. 짐승까지 거리는 재지 않는다. HUD 는 「망원경 %d배 · %s」에 팀 글(새 종마다 수 · 빈 새장 · 새장 없음 · 멀다)을 끼운다. 보낸 짐승은 팀마다 기억해(_orders) 머리 위에 Label3D 로 팀 번호(몰리면 「1 · 2」)를 단다 — 쓰는 동안만 보이고, 짐승이 죽거나 사라지거나 그 팀을 다시 보내거나 R 로 부르면 걷힌다. 담지 않는다(save.md 목록에 더했다). 옛 G-243.3 멀티 테스트의 새장이 44 m 라 새 반경에 걸려 18 m 자리로 옮겼다. hunting.md 는 줄 한도(146 미만)라 줄을 늘리지 않고 「쓰기 · 팀」 줄의 「반경은 없다」를 「망원경은 원격 조종이 아니다 — 곁의 새장만」으로 바꿨다. ui_shots 에 telescope 자리(4배 · 2팀 매 3 · 두 오소리에 1 · 2)를 더해 ko/en 을 찍어 보았다 — HUD 글 · 초록 테두리 · 팀 번호가 가리지 않고 보인다.",
-   "why": "Telescope.NEAR 30 m — 새가 나는 반경(15 m)의 두 배, 사람이 「임시 30m」로 적었다; Telescope.MARK_LIFT 0.6 m — 팀 번호를 짐승 머리 위에 띄우는 높이",
-   "files": [
-    "game/life/hunting/telescope.gd",
-    "game/core/net/net_world.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/tests/life/hunting/test_telescope.gd",
-    "game/tests/multiplayer/test_bird_cage_on_server.gd",
-    "spec/04_life/hunting.md",
-    "spec/01_settings/save.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": false,
-     "criterion": "새장 하나 = 한 팀. 놓은 차례대로 앞의 셋만 1 · 2 · 3 번(넷째부터는 팀이 없다 — 앞의 것을 캐면 다음 것이 올라온다). 쓰는 동안 1 · 2 · 3 으로 팀을 고르고 좌클릭한 야생동물을 그 팀의 새들이 공격한다(잡을 수 있는 새만 — 크기 · 낮밤 규칙 그대로). 팀마다 다른 짐승도 · 같은 짐승도 된다",
-     "evidence": "test_teams_are_the_first_three_cages_set_up 가 앞의 셋 · 넷째 제외 · 숫자키 · 같은 짐승 몰아치기를, test_two_teams_go_after_two_beasts_each_marked_with_its_team 가 다른 짐승을, test_the_owl_hunts_only_at_night · test_a_beast_the_team_cannot_catch_is_outlined_red 등이 크기 · 낮밤을 본다. 그러나 기준에 적힌 「앞의 것을 캐면 다음 것이 올라온다」를 확인하는 테스트가 어디에도 없다 (teams() 를 부르는 테스트를 다 찾았다 — 새장을 치운 뒤 teams() 를 다시 보는 곳이 없다)"
-    },
-    {
-     "ok": true,
-     "criterion": "사람 결정 2026-10-19 「플레이어 주변에 새장이 있어야돼」 — 팀이 명령을 받는 것은 그 새장이 플레이어 곁 반경(임시 30m) 안일 때만 … 반경은 서버가 잰다 (테스트: 새장에서 50m 떨어지면 공격 명령이 안 간다 · 다가가면 간다)",
-     "evidence": "test_a_team_whose_cage_is_far_is_grey_and_does_not_obey — 50 m 새장: 팀 번호 그대로 · HUD 「망원경 1배 · 1팀 — 새장이 멀다」 · hud_greyed · 좌클릭 안 감 · 한 줄 TELESCOPE_FAR · R 0, 20 m 로 옮기면 간다. 멀티 test_the_guest_sends_and_calls_a_bird_only_near_its_cage — 참가자가 50 m 에서 CAGE_HUNT 를 보내도 서버 새가 안 가고 다가가면 간다. net_world._station_for 의 _within(...Telescope.NEAR) 를 지워 돌리니 「50 m 떨어진 새장은 듣지 않는다」로 떨어졌다(되돌렸다). 짐승까지 거리는 재지 않는다"
-    },
-    {
-     "ok": true,
-     "criterion": "spec 에 「망원경은 원격 조종이 아니다 — 곁의 새장만」 한 줄 · 반경 수는 임시",
-     "evidence": "hunting.md 「쓰기 · 팀」 줄에 그 문구 · 30 m(임시), 수치 줄에 「망원경 곁 반경 30 m … 전부 임시」. Telescope.NEAR 주석에 임시. 사람 결정 인용은 그대로 남았다. 145줄"
-    },
-    {
-     "ok": true,
-     "criterion": "HUD 에 「망원경 4배 · 2팀(매 3)」처럼 고른 팀 · 팀의 새 수, 팀마다 겨눈 짐승에 팀 번호 표시 (테스트: 두 새장 · 두 짐승 — 1팀 → A, 2팀 → B 가 따로 간다)",
-     "evidence": "test_the_hud_reads_like_zoom_four_team_two_hawks_three 가 ko 로 「망원경 4배 · 2팀(매 3)」을 글자 그대로 단언. test_two_teams_go_after_two_beasts_each_marked_with_its_team — order_of 0/1 = A/B · mark_on A「1」 B「2」 · tick 뒤 각 팀 매가 제 짐승 1 m 안 · 떼면 숨고 R 로 걷힌다. test_two_teams_on_one_beast_show_both_numbers 「1 · 2」"
-    },
-    {
-     "ok": true,
-     "criterion": "ui_shots 에 쓰는 중 망원경 HUD 한 장 · ko/en 문구",
-     "evidence": "ui_shots.gd _telescope · PLACES 에 telescope. ko/en.po 에 TELESCOPE_HUD(바뀜) · TEAM · TEAM_EMPTY · TEAM_NONE · TEAM_FAR · FAR 이 둘 다 있고 test_the_lines_are_translated_in_korean_and_english 가 새 키를 다 본다"
-    }
-   ],
-   "issues": [
-    "앞 새장을 캐면 넷째가 올라오는 테스트가 없다 — 기준 1의 「앞의 것을 캐면 다음 것이 올라온다」를 지키는 테스트가 없다. game/tests/life/hunting/test_telescope.gd 에 새장 넷(one · two · three · four, 다 곁)을 세우고 teams() == [one, two, three] 를 본 뒤 two 를 캐는 길(Stations 의 시설 치우기 — 사람이 캐는 것과 같은 길, 그냥 free 가 아니라 queue_free 직후 같은 프레임도 포함)로 없애고 teams() == [one, three, four] 를 단언하라. 숫자키 3 → 좌클릭하면 four 의 매가 사냥하러 가는지(four.cage.bird_at(0).hunting())도 단언하라. 구현(teams() 가 is_queued_for_deletion 을 거른다)은 맞아 보이나 지키는 테스트가 없다"
-   ],
-   "good": []
-  },
-  "test": "ok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           498\nTests            3728\nPassing Tests    3728\nFailing Tests       0\nRisky/Pending       0\nAsserts        167788\nTime           731s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-19 17:32:30",
   "epoch": 1792398750,
   "type": "fail",
@@ -8687,6 +8625,34 @@
   "group": "G-938",
   "step": "1",
   "attempt": "1",
+  "report": {
+   "problem": "test_geothermal_stations.gd:52 주석이 없는 파일 대신 tests/craft/recipes/test_dev_only_recipes_g315.gd 를 가리키게 고쳤다 (바뀐 곳만: 1개 파일 · 10개 테스트 통과)",
+   "approach": "주석이 가리키던 test_geothermal_smelter_recipes.gd 는 없었다. 지열 용광로 목록 = 용광로 목록을 실제로 검사하는 것은 test_dev_only_recipes_g315.gd 의 test_the_geothermal_smelter_makes_the_smelter_list_without_fuel 임을 확인하고 경로만 바꿨다. 주석 한 줄이라 새 테스트는 없다.",
+   "why": "",
+   "files": [
+    "game/tests/craft/stations/test_geothermal_stations.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "test_geothermal_stations.gd 주석도 없는 테스트를 가리킨다 — game/tests/craft/stations/test_geothermal_stations.gd:52 의 주석 「tests/craft/recipes/test_geothermal_smelter_recipes.gd」 파일이 없다. 이번 기준의 json 과 같은 낡은 경로다. tests/craft/recipes/test_dev_only_recipes_g315.gd 로 고쳐라",
+     "evidence": "git diff 로 52줄 주석이 tests/craft/recipes/test_dev_only_recipes_g315.gd 로 바뀐 것을 확인했다. 그 파일이 있고 86줄 test_the_geothermal_smelter_makes_the_smelter_list_without_fuel 가 지열 용광로 목록 = 용광로 목록을 실제로 검사한다. game · spec 어디에도 test_geothermal_smelter_recipes 를 가리키는 줄이 남지 않았다. 주석 한 줄 고침이라 테스트가 걸릴 기준이 아니다. test.log 전체 650 파일 4687 테스트 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "test_fed_heals.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      3s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      3s  res://tests/settings/save/test_spot_per_island.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      3s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      3s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           650\nTests            4687\nPassing Tests    4687\nFailing Tests       0\nRisky/Pending       0\nAsserts        232317\nTime           974s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-25 19:35:38",
+  "epoch": 1792924538,
+  "type": "start",
+  "title": "루프 시작",
   "report": {
    "problem": "test_geothermal_stations.gd:52 주석이 없는 파일 대신 tests/craft/recipes/test_dev_only_recipes_g315.gd 를 가리키게 고쳤다 (바뀐 곳만: 1개 파일 · 10개 테스트 통과)",
    "approach": "주석이 가리키던 test_geothermal_smelter_recipes.gd 는 없었다. 지열 용광로 목록 = 용광로 목록을 실제로 검사하는 것은 test_dev_only_recipes_g315.gd 의 test_the_geothermal_smelter_makes_the_smelter_list_without_fuel 임을 확인하고 경로만 바꿨다. 주석 한 줄이라 새 테스트는 없다.",
