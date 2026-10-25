@@ -5383,7 +5383,7 @@
   - 기준: (앞 단계 QA) 활 소리가 총소리다 — Attack.shoot · NetVitals._shoot 이 활에도 Sound.GUNSHOT 을 낸다(구현 보고서가 스스로 밝힘). 화살은 총성처럼 멀리 들리지 않아야 사냥 감각이 맞다 — 활에 낮은 소리(예: Sound 에 BOW 종류 · 작은 반경, 값은 임시 표시)를 내게 하고 둘레 짐승이 덜 놀라는지 보는 테스트를 더하라
   - 기준: (앞 단계 QA) 주민이 활을 들면 화살을 못 넣는다 — VillagerGear.is_ammo 가 탄 네 종 · 마취탄만 탄으로 본다. 활이 쏘는 도구가 됐으니 주민 장비 칸에 arrow 도 탄으로 받게 하고(is_ammo 가 ToolCatalog.ammo_item 들을 보게), 활 든 주민이 화살을 쓰는지 테스트하라
 
-## [ ] G-313 싸우는 짐승 — 멧돼지 · 매 · 곰, 다치면 도망
+## [x] G-313 싸우는 짐승 — 멧돼지 · 매 · 곰, 다치면 도망
 - 차선: 3d-start · 시작 2026-10-25 12:09
 - 순서: G-312 뒤
 - spec: spec/08_combat/mob-ai.md, spec/04_life/hunting.md
