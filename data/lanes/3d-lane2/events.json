@@ -1,68 +1,5 @@
 [
  {
-  "time": "2026-10-19 04:15:23",
-  "epoch": 1792350923,
-  "type": "pass",
-  "title": "통과 — G-245 단계 3 (올빼미 나무 — 나무가 집)",
-  "group": "G-245",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "올빼미 나무 — 나무마다 시드로 굴려 낮은 확률로 올빼미 나무가 되고(밑동에 펠릿), 낮엔 그 안에서 자다 한 대라도 치면 날아올라 둘레를 돌고 플레이어가 둘레 밖이면 돌아간다 · 밤엔 나와 돌다 새벽에 돌아간다 · 집 나무가 없어지면 떠돈다 · 저장 · 멀티. 매가 쫓던 담비가 나무에 오르면 포기하는 테스트 더함(앞 단계 QA). changed_tests 그물 135개 파일 1174개 중 1173 통과 — 떨어진 1개(test_day_length: 새 테스트의 한 줄 주석이 하루 길이 검사에 걸림)를 고친 뒤 그 둘만 다시 돌려 13/13 통과",
-   "approach": "올빼미 나무를 저장하지 않고도 어느 기계 · 언제든 같게 하려고, 나무 표시(\"종류:번호\")와 섬의 resource_seed 를 hash 해 확률(AnimalKinds.ROOST_CHANCE)과 견준다(IslandAnimals.roost_tree). 그래서 참가자도 제 섬에서 펠릿을 깔고 보낼 것이 없다. 올빼미 집은 populate 끝에 add_roosts 가 집 목록 맨 뒤에 붙인다 — 빈 집 저장(standing · restore) · 다음 날 채우기 · 낮엔 들어가 있음(_away)을 그대로 쓴다. 설계도의 owl 집 자리는 지웠고 _dens_of 도 ROOSTERS 를 건너뛴다(G-239 대체) — 그 때문에 뒤에 오던 고슴도치 집 번호가 하나 당겨져, 옛 저장본의 '오늘 비운 집' 하나가 하루 동안 다른 집을 가리킬 수 있다(하루 뒤 저절로 맞는다). 깨우기는 Harvest.struck 을 들어(플레이어 · 주민 · 서버가 대신 친 참가자 다 같은 길) 자던 올빼미를 내보내 나무에서 달아나게 한다. 올빼미는 나는 짐승이라 걸을 지도를 굽지 않고 Animal.bounds · roam 으로 나무 둘레 25m(뭍만) 안을 곧장 난다. tick_night 가 낮에 성한 올빼미를 보고 사람이 다 15m 밖이면 run_to 로 나무로 보내 2.5m 안에 들면 넣는다(_tuck). 밤엔 나와 돈다. 집 나무가 없어지면(_home_gone) 돌아가지 않고, 나무가 없는 동안 다시 나지 않으며, 다시 나면(restored) 펠릿이 보이고 다음 날 산다. 저장본 되돌리기(set_gone_marks)는 taken 을 내지 않아 _process 가 1초마다 펠릿 보임을 다시 맞춘다. ResourceView 에 all_of(kinds)를 더했다. 처음 그물에서 test_day_length 가 떨어졌다 — 새 테스트의 `minutes_per_day = 0.0  # 주석` 한 줄이 '하루 길이를 두 곳에 적었다' 정규식에 걸렸다(0 예외가 줄 끝을 요구). 주석을 윗줄로 옮겨 통과. 내 섬에서는 올빼미 나무가 6 그루 나왔다. 펠릿 그림은 shot 으로 찍어 보지 않았다(밑동의 작은 도형 셋). test_wild_kinds 의 test_the_owl_comes_out_only_at_night 는 나무 없는 집 자리로 populate 한 옛 길 — 지금도 맞아 그대로 두었다.",
-   "why": "AnimalKinds.ROOST_CHANCE 0.001 — 내 섬 나무 약 3900 그루에 몇 그루(실측 6); AnimalKinds.ROOST_ROAM 25m — 올빼미가 나무 둘레를 도는 반경; AnimalKinds.ROOST_GUARD 15m — 플레이어가 이 안에 있으면 집에 안 들어간다(「나무 영역」); AnimalKinds.ROOST_ENTER 2.5m — 나무에서 이 안이면 들어간다; IslandAnimals.PELLET_COUNT 3 · PELLET_GAP 0.3m — 펠릿 그림(에셋 전 도형)",
-   "files": [
-    "game/life/hunting/island_animals.gd",
-    "game/life/hunting/animal_kinds.gd",
-    "game/world/terrain/resource_view.gd",
-    "game/world/terrain/island_blueprint.gd",
-    "game/world/terrain/test_island.gd",
-    "game/tests/life/hunting/test_owl_trees.gd",
-    "game/tests/multiplayer/test_owl_trees_on_server.gd",
-    "game/tests/life/hunting/test_bird_hunt.gd",
-    "game/tests/life/hunting/test_island_animals.gd",
-    "game/tests/life/hunting/test_wild_kinds.gd",
-    "game/tests/life/hunting/test_burrows.gd",
-    "spec/04_life/hunting.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "나무가 날 때 낮은 확률(임시)로 올빼미 나무가 된다 — 밑에 펠릿이 보인다(줍지 못하는 표시 — 쓰임은 사람이 정할 때). G-239 의 「올빼미는 밤에만 집 자리에 난다」를 이것으로 바꾼다 (테스트)",
-     "evidence": "test_owl_trees.gd test_a_tree_becomes_an_owl_tree_by_a_low_chance_fixed_by_seed_and_mark — 4000 그루에 1~12 · 같은 표시면 같은 결과 · 설계도 wild_dens 에 owl 없음. test_an_owl_tree_is_a_den_at_the_back_with_pellets_under_it — 펠릿이 나무 밑에 보이고 MeshInstance3D 뿐 · DroppedItem 0 · 확률 0 이면 없음. ROOST_CHANCE 0.001 은 animal_kinds.gd · spec 에 임시. _dens_of 가 ROOSTERS 를 건너뛰고 test_burrows · test_wild_kinds 도 그에 맞춰 고쳤다. _home_gone 스폰 막기를 끄면 테스트가 떨어진다(확인)"
-    },
-    {
-     "ok": true,
-     "criterion": "낮 — 올빼미는 그 나무 안에서 잔다. 그 나무를 한 대라도 치면 날아올라 달아나 둘레를 돌아다니고, 플레이어가 나무 둘레(반경 임시) 밖으로 나가면 집으로 돌아간다 (테스트)",
-     "evidence": "test_by_day_the_owl_sleeps_inside_its_tree · test_one_hit_on_the_tree_wakes_the_owl_and_it_flies_off_around(한 대 — 나무는 서 있고 FLEE 로 6m 넘게 멀어지며 25m 둘레 안 · 사람이 2m 에 있는 동안 안 들어감) · test_when_the_player_leaves_the_tree_the_owl_flies_home(ROOST_GUARD 밖이면 away · 또 치면 또 깸) · test_a_villager_hit_also_wakes_the_owl. tick_night 의 _player_near 조건을 지우면 1개가 떨어진다(일부러 깨 봄 · 되돌림). 반경 ROOST_ROAM/GUARD/ENTER 임시 표시 있음"
-    },
-    {
-     "ok": true,
-     "criterion": "밤 — 집을 비우고 돌아다니다(사냥은 이번에 안 만든다) 새벽에 돌아온다 · 집 나무가 베여 없어지면 떠돌다 디스폰된다(단계 4) · 저장 · 멀티 (테스트)",
-     "evidence": "test_at_night_the_owl_leaves_home_and_returns_at_dawn(22시 나와 4m 넘게 돌고 · 밤엔 안 들어가고 · 6시에 away) · test_when_the_home_tree_falls_the_owl_wanders_and_never_returns(펠릿 숨김 · 안 들어감 · next_day 에 안 남 · restore 하면 펠릿 · 다음 날 다시 삶) · test_a_tree_gone_while_the_owl_sleeps_lets_it_out · 저장 test_an_owl_caught_from_its_tree_stays_gone_after_loading(standing → 새 IslandAnimals restore — 같은 나무 · 그날 밤 안 남 · 다음 날 남). 올빼미 나무 자체는 시드+표시라 담지 않아도 같다(저장 기본 원칙에 맞게 spec 에 적힘). 멀티 test_owl_trees_on_server.gd — 참가자도 펠릿 · 서버가 깨우면 참가자 화면에 올빼미 · 돌아가면 사라짐. 디스폰은 단계 4 몫으로 남김(기준대로). test.log 바뀐 곳 318 파일 2535 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 새가 쫓던 중 나무에 오르면 포기하는 길이 테스트가 없다 — craft/stations/stations.gd _follow_prey 에 `or prey.treed()` 를 더해 새장 새가 give_up 하게 했는데, 이 줄을 지켜 주는 테스트가 없다(피해는 take_hit 이 0 으로 막아 기준은 지켜진다). tests/life/hunting/test_bird_hunt.gd 에 '매를 땅 위 담비에게 보낸 뒤 담비를 나무에 올리면(_perch 또는 hear 로 오르게) tick_cages 다음에 cage.hunting() 이 거짓이고 담비 체력이 그대로' 를 단언하는 테스트를 하나 더해라",
-     "evidence": "test_bird_hunt.gd test_a_bird_gives_up_when_its_prey_climbs_a_tree — 쫓는 중 확인 → climb_to + _perch → tick_cages 뒤 hunting() 거짓 · 덮치지 않음 · 체력 30 그대로. stations.gd:360 의 `or prey.treed()` 를 `or false` 로 바꾸면 이 테스트가 떨어진다(일부러 깨 봄 · 되돌림)"
-    }
-   ],
-   "issues": [
-    "옛 저장본의 집 번호가 하나 당겨진다 — island_blueprint.gd wild_dens 에서 owl 을 지워 뒤의 hedgehog 집 번호가 하나 앞으로 왔다. 옛 저장본의 「오늘 비운 집」 번호가 하루 동안 다른 집을 가리킬 수 있다(하루 뒤 저절로 맞아 막는 것은 아니다). spec/01_settings/save.md 의 옛 저장본 줄이나 hunting.md 에 한 줄 적어 두거나, 집 번호 대신 종+자리로 담도록 바꿔라",
-    "밤에 나와 있는 올빼미를 치는 길에 테스트가 없다 — island_animals.gd _on_struck 의 `elif _lives_at(i): flee_from(...)` 가지를 꺼도 test_owl_trees.gd 가 지키지 않는다. 22시에 나온 올빼미 곁에서 harvest.strike 한 뒤 mode()==Animal.FLEE 를 단언하는 테스트를 더해라"
-   ],
-   "good": [
-    "ResourceView.all_of(kinds) 를 더했다 — 올빼미 나무를 고르는 데 쓴다(이번 기준에 필요한 것)"
-   ]
-  },
-  "test": "\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_guard_pen_window.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok      3s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placer.gd\nok      0s  res://tests/core/net/test_net_link_one_place.gd\nok      0s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      0s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           318\nTests            2535\nPassing Tests    2535\nFailing Tests       0\nRisky/Pending       0\nAsserts         90635\nTime           562s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "259273c5"
- },
- {
   "time": "2026-10-19 04:39:08",
   "epoch": 1792352348,
   "type": "fail",
@@ -8727,5 +8664,43 @@
   },
   "test": "/tests/ui/hud/test_item_slot_names_apart.gd\nok      4s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      4s  res://tests/ui/menu/test_key_rebind.gd\nok      4s  res://tests/ui/menu/test_menu_text.gd\nok      3s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/world/day_night/test_game_clock.gd\nok      3s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      3s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      3s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\nok      3s  res://tests/automation/villagers/test_job_work_shared.gd\nok      3s  res://tests/build/test_placeable_tidy.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\nok      3s  res://tests/build/test_take_spec_lines.gd\nok      3s  res://tests/combat/damage_death/test_health.gd\nok      3s  res://tests/core/input/test_input_spec_table.gd\nok      3s  res://tests/core/net/test_guild.gd\nok      3s  res://tests/core/test_grid.gd\nok      3s  res://tests/craft/recipes/test_handle_name.gd\nok      3s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      3s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      3s  res://tests/life/hunting/test_nav_weld.gd\nok      3s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/player/equipment/test_future_wear.gd\nok      3s  res://tests/player/hunger_thirst/test_starving.gd\nok      3s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      3s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      3s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/menu/test_character_preview.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     35s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           625\nTests            4538\nPassing Tests    4538\nFailing Tests       0\nRisky/Pending       0\nAsserts        222925\nTime           1002s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "92caa11b"
+ },
+ {
+  "time": "2026-10-25 10:34:37",
+  "epoch": 1792892077,
+  "type": "pass",
+  "title": "통과 — G-307 단계 4 ((앞 단계 QA) 권한 거절 단언이 옛 동작을 못 잡는다)",
+  "group": "G-307",
+  "step": "4",
+  "attempt": "1",
+  "report": {
+   "problem": "켜고 끄기 안내 테스트가 Notice.say 로 띄운 키를 모아 보고, 거절 · 서버장 끔 · 멀어 거절 갈래에서 SWITCH_OFF 가 한 번도 안 떴는지 단언한다 · save.md 「안 담는다」에 _flip_wait 한 줄을 더했다",
+   "approach": "앞 단언은 Notice 의 마지막 글만 봐서, 옛 동작이 먼저 「껐다」를 띄워도 서버의 「권한이 없다」가 뒤에 덮어쓰면 통과했다. 테스트 안에 Notice 를 이은 SaidKeys(show_key 를 받을 때마다 키를 모은다)를 notice 무리에 넣어 Notice.say 가 띄운 줄을 다 남기고, 각 갈래에서 SAY_SWITCH_OFF 가 기록에 없음을 단언했다(켠 갈래는 SWITCH_ON 이 한 번 — 기록이 실제로 받는다는 확인). flip_asked 를 잠깐 옛 동작(act 앞에 Notice.say)으로 되돌려 돌리니 권한 갈래 · 서버장 갈래 · 거리 갈래가 다 떨어졌고, 되돌린 뒤 바뀐 곳 그물(10개 파일 82개 테스트) 통과.",
+   "why": "",
+   "files": [
+    "game/tests/multiplayer/test_wiring_on_server.gd",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "권한 거절 단언이 옛 동작을 못 잡는다 — test_switch_notice_only_when_the_server_flipped 의 권한 갈래는 마지막 한 줄만 본다. … Notice 가 띄운 줄을 모아 두는 기록(또는 Notice.say 횟수)을 보고 flip_asked 뒤에 SWITCH_OFF 가 한 번도 안 떴는지 단언하게 고쳐라",
+     "evidence": "test_wiring_on_server.gd 에 Notice 를 이은 SaidKeys(show_key 마다 키를 모음, _ready 로 notice 무리에 든다)를 두고 권한 · 서버장 · 거리 갈래에서 assert_false(said.keys.has(SAY_SWITCH_OFF)) 를 단언한다. 켠 갈래의 count(SWITCH_ON)==1 이 기록이 실제로 받는다는 확인. QA 가 flip_asked 의 remote 갈래를 옛 동작(act 앞에 Notice.say)으로 바꿔 그 파일만 돌리니 권한 갈래의 새 단언(「거절됐는데 … 한 번도 뜨지 않았다」)이 떨어졌다 — 앞 회차에는 이 갈래가 통과했던 것. 되돌린 뒤 git diff 로 원상 확인"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) _flip_wait 이 「안 담는다」 목록에 없다 — … 한 줄을 더하라",
+     "evidence": "spec/01_settings/save.md 66줄, 섬 전기 줄 바로 뒤에 「참가자가 바란 켜고 끄기(Stations._flip_wait, G-307.2 앞 단계 QA)도 담지 않는다 — 몇 초짜리 바람이라 껐다 켜면 서버 목록을 다시 받는다」가 들어갔다. save.md 108줄(150 안쪽), 사람 결정 줄 지워진 것 없음"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "est_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/world/day_night/test_day_length.gd\nok      4s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/world/day_night/test_game_clock.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_islands.gd\nok      4s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      3s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/terrain/test_dig_save.gd\nok      5s  res://tests/world/terrain/test_beach_sand_texture.gd\nok      3s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      4s  res://tests/world/terrain/test_drill_look.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      3s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\nok      3s  res://tests/automation/power/test_island_power.gd\nok      3s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      3s  res://tests/automation/power/test_power_monitor.gd\nok      3s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      3s  res://tests/build/test_placers_comment.gd\nok      3s  res://tests/combat/damage_death/test_death_chest.gd\nok      3s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      3s  res://tests/core/debug/test_perf_probe.gd\nok      3s  res://tests/core/net/test_net_link_one_place.gd\nok      3s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      4s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      3s  res://tests/life/hunting/test_food_chain.gd\nok      3s  res://tests/life/hunting/test_same_animal.gd\nok      3s  res://tests/life/hunting/test_summon.gd\nok      3s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      3s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      3s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      3s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      3s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/settings/save/test_world_data_keys_note.gd\nok      3s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/map/test_map_memory.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     35s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           625\nTests            4538\nPassing Tests    4538\nFailing Tests       0\nRisky/Pending       0\nAsserts        222944\nTime           992s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "74668d1d"
  }
 ]

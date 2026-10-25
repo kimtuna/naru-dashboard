@@ -5308,7 +5308,7 @@
   - 기준: 스위치에 켜짐 · 꺼짐 불빛 · 스패너를 들면 이어진 선이 보인다(안 들면 안 보인다) (찍는 자리 — 스위치 하나와 이어진 연구대)
 - [x] 3. spec — power.md 에 스패너 · 스위치 (사람 원문 · 임시)
   - 기준: (앞 단계 QA) 참가자 화면의 켜고 끄기 안내가 거절돼도 뜬다 — Stations.interact 가 act(station, SWITCH_FLIP) 앞에 Notice.say(SWITCH_ON/OFF)를 먼저 띄운다. 참가자가 권한 「시설」이 없거나 서버가 거리로 거절해도 「스위치를 껐다」가 뜬다. 혼자 판은 act 결과를 보고 띄우거나, 참가자는 서버 목록(sync)으로 switched_on 이 바뀐 것을 보고 띄우게 고치고, 권한 없는 참가자가 우클릭했을 때 안내가 안 뜨는지 test_wiring_on_server.gd 에 단언을 더하라
-- [ ] 4. (앞 단계 QA) 권한 거절 단언이 옛 동작을 못 잡는다
+- [x] 4. (앞 단계 QA) 권한 거절 단언이 옛 동작을 못 잡는다
   - 기준: 권한 거절 단언이 옛 동작을 못 잡는다 — test_switch_notice_only_when_the_server_flipped 의 권한 갈래는 마지막 한 줄만 본다. 옛 동작(먼저 「껐다」를 띄움)이어도 서버의 「권한이 없다」가 뒤에 덮어써 assert_ne(said_off) 가 통과한다(깨 봤을 때 떨어진 것은 거리 갈래뿐이었다). Notice 가 띄운 줄을 모아 두는 기록(또는 Notice.say 횟수)을 보고 flip_asked 뒤에 SWITCH_OFF 가 한 번도 안 떴는지 단언하게 고쳐라
   - 기준: (앞 단계 QA) _flip_wait 이 「안 담는다」 목록에 없다 — Stations._flip_wait(참가자가 바란 켜고 끄기, G-307.2 앞 단계 QA)은 담지 않는데 spec/01_settings/save.md 의 「안 담는다」 목록(65줄 섬 전기 줄 곁)에 까닭이 없다. 「참가자가 바란 켜고 끄기(Stations._flip_wait)도 담지 않는다 — 몇 초짜리 바람이라 껐다 켜면 서버 목록을 다시 받는다」 한 줄을 더하라
 
