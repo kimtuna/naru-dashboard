@@ -5292,7 +5292,7 @@
   - 기준: (앞 단계 QA) 참가자 화면의 발전기 창이 낡을 수 있다 — 참가자는 tick_generators 를 돌리지 않고(remote) 시설 목록 sync 로만 generator 를 받는다. 창의 남은 초 · kW 가 sync 사이에 멈춰 보일 수 있다. 같이 하는 판에서 참가자 창이 서버와 같은 kW · 남은 연료를 보이는지 테스트(tests/multiplayer 쪽)를 하나 더하라
 - [x] 4. spec — power.md 를 고친다 (사람 원문 · Claude 가 정한 것 · 임시 값 · 미정: 레시피 · 얻는 길 · 전기 시설 목록)
 
-## [ ] G-307 스패너 · 전원 스위치
+## [x] G-307 스패너 · 전원 스위치
 - 차선: 3d-lane2 · 시작 2026-10-25 08:02
 - 순서: G-306 뒤
 - spec: spec/07_automation/power.md
