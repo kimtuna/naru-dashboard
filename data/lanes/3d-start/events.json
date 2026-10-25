@@ -1,56 +1,5 @@
 [
  {
-  "time": "2026-10-19 14:52:09",
-  "epoch": 1792389129,
-  "type": "pass",
-  "title": "통과 — G-247 단계 1 (약점은 친 사람 쪽 반원에)",
-  "group": "G-247",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "나무 약점이 친 사람 쪽 반원에 뜨고 옮기며, 고리를 지름 0.7m 깜박이는 노랑-주황으로 키웠다 (바뀐 곳만 95개 파일 768개 테스트 통과)",
-   "approach": "약점 방향이 rng 로 아무 데나 정해져 뒤쪽에 뜨면 안 보였다. Harvest.strike 에 친 사람이 선 자리(from)를 더해, 약점이 뜨거나 크리티컬로 옮길 때 줄기에서 그 사람을 향한 방향 ±90° 안에서 고르게 했다 — 혼자면 swing 이 player.global_position 을, 서버는 참가자 몸 자리(where)를 넘긴다. 주민(strike_blind)은 from 이 없어 예전처럼 아무 방향. 같은 쪽 반원에 머물러도 옛 자리와 겹치지 않게, 옮길 때 높이는 옛 높이 ±WEAK_RADIUS 를 뺀 토막에서 고른다. 고리는 바깥 지름 0.7m(예전 ≈0.49m)로 키우고 밝은 노랑 ↔ 주황을 0.6초마다 오가는 트윈으로 깜박이게 했다. 맞히는 반지름 WEAK_RADIUS 는 고리와 같은 비율로 0.35 → 0.5m. shots 의 tree_weak_spot 은 시작점 쪽 2.5m 에 선 사람이 치고 그 뒤 위에서 보게 바꿨고, 찍은 그림에서 줄기 앞쪽에 노란 고리가 보이는 것을 확인했다. spec/04_life/logging.md 에 반원 규칙과 새 수치를 적었다.",
-   "why": "약점 고리 바깥 지름 0.7m (MARK_DIAMETER) — 사람이 「크게」, 수는 임시; 고리 깜박임: 밝은 노랑 (1,0.85,0.3) ↔ 주황 (1,0.45,0.1), 0.6초마다 (MARK_BRIGHT · MARK_DIM · MARK_PULSE); 약점 둘레 맞히는 반지름 WEAK_RADIUS 0.35 → 0.5m — 고리 바깥 반지름(0.35)의 약 1.43배, 예전 비율 그대로",
-   "files": [
-    "game/life/harvest/harvest.gd",
-    "game/core/net/net_world.gd",
-    "game/core/debug/shots.gd",
-    "game/tests/life/harvest/test_tree_weak_spot.gd",
-    "game/tests/multiplayer/test_harvest_on_server.gd",
-    "spec/04_life/logging.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "약점이 뜰 때 · 크리티컬로 옮길 때 친 사람이 선 쪽 반원(줄기에서 그 사람을 향한 방향 ±90°) 안에 뜬다. 조준 없는 주민이 친 나무는 지금처럼 아무 방향 (테스트: 나무 둘레 네 방향에서 쳐 약점이 늘 친 쪽 반원에 있다)",
-     "evidence": "test_tree_weak_spot.gd::test_the_weak_spot_rises_and_moves_on_the_strikers_side 가 씨앗 10개 × 네 방향(±x · ±z 3m)에서 처음 뜰 때와 크리티컬로 옮길 때 모두 내적>0 을 단언한다. test_a_villagers_tree_still_gets_its_weak_spot_anywhere 가 strike_blind 40그루에서 동 · 서 반원 둘 다 5개 넘게 나오는지 본다. test_a_swing_raises_the_weak_spot_on_the_players_side 가 진짜 swing() 길(player.global_position 전달)을, test_harvest_on_server 가 서버가 참가자 자리(where)로 띄우는지를 본다. QA 가 _move_weak 의 from 갈래를 angle = rng.randf()*TAU 로 바꿔 돌리자 rises_and_moves · swing_raises 두 테스트가 실패했다 (되돌림 확인). 전체 494 파일 3688 테스트 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "고리를 지금보다 크고 밝게 — 수는 임시 (예: 지름 0.5m → 0.7m, 은은하게 깜박이는 빛). 약점 둘레 맞히는 반지름(WEAK_RADIUS)은 고리에 맞춰 같이 고친다",
-     "evidence": "MARK_DIAMETER 0.7 · MARK_BRIGHT/DIM · MARK_PULSE 0.6 트윈, WEAK_RADIUS 0.35→0.5. harvest.gd 주석과 spec/04_life/logging.md 수치 줄에 「임시」로 적혔다. test_the_ring_is_bigger_brighter_and_pulses 가 토러스 바깥 지름 = MARK_DIAMETER ≥0.7, WEAK_RADIUS 가 고리 바깥 반지름 이상 · 1.5배 미만, 반 주기 뒤 albedo_color 가 바뀌는지 단언한다"
-    },
-    {
-     "ok": true,
-     "criterion": "ui_shots 또는 shots 에 약점이 뜬 나무를 플레이어 자리에서 본 한 장 — 고리가 화면에 보인다",
-     "evidence": "shots.gd 의 tree_weak_spot 이 시작점 쪽 2.5m 에 선 사람이 치고 그 뒤 위에서 본다. QA 가 harness/shot.sh /tmp/qa_g247 tree_weak_spot 로 직접 찍었다 — 화면 한가운데 줄기 왼쪽에 노란 고리가 조준점 바로 옆에 보인다"
-    }
-   ],
-   "issues": [
-    "반원 가장자리에선 고리가 옆모습이다 — 약점 방향이 친 사람 쪽 ±90° 안에서 고르게 뽑혀, 끝 가까이(±70~90°)면 고리 축이 시선과 거의 직각이라 얇은 세로 막대로 보인다. QA 가 찍은 tree_weak_spot.png 에서도 고리가 줄기 왼쪽에 납작한 타원으로 섰다. 보이긴 해서 기준은 통과지만, harvest.gd _move_weak 의 from 갈래 범위를 ±60° 쯤으로 좁히거나(spec/04_life/logging.md 의 「±90°」 줄도 같이) _mark 에서 고리 축을 줄기 바깥과 친 사람 방향 사이로 기울이면 더 잘 보인다. 고치면 test_the_weak_spot_rises_and_moves_on_the_strikers_side 의 _faces 를 각도 단언으로 바꿔라"
-   ],
-   "good": [
-    "크리티컬로 옮길 때 높이를 옛 높이 ±WEAK_RADIUS 밖에서 고르게 했다 — 같은 쪽 반원에 머물러도 제자리 크리티컬이 안 나게 하려는 것으로 기준을 받치는 일이라 흠은 아니다"
-   ]
-  },
-  "test": "mbat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      1s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/save/test_old_barn.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           494\nTests            3688\nPassing Tests    3688\nFailing Tests       0\nRisky/Pending       0\nAsserts        165952\nTime           726s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "e571677a"
- },
- {
   "time": "2026-10-19 15:14:40",
   "epoch": 1792390480,
   "type": "pass",
@@ -8520,5 +8469,38 @@
   },
   "test": "ment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      3s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      1s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           640\nTests            4635\nPassing Tests    4635\nFailing Tests       0\nRisky/Pending       0\nAsserts        228708\nTime           934s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "1a702b6d"
+ },
+ {
+  "time": "2026-10-25 17:12:37",
+  "epoch": 1792915957,
+  "type": "pass",
+  "title": "차선 합치기 — 3d-lane2(8605654f) → 3d-start",
+  "group": "G-314",
+  "step": "4",
+  "attempt": "1",
+  "report": {
+   "problem": "알로에 · 인삼 · 박하 · 쑥 — 본섬에 나고 맨손으로 캐며 다시 난다는 것은 G-201.2 에 이미 있었다. 넷마다 실제로 난 포기를 보는 찍는 자리(herb_aloe · herb_ginseng · herb_mint · herb_mugwort)를 더하고 테스트로 묶었다 (바뀐 곳만: 22개 파일 · 208개 통과)",
+   "approach": "약초 넷은 G-201.2 에서 이미 본섬(TestIsland)의 벨라도나 곁 산비탈 풀밭에 나고(자리 임시, Herbs.wild_spots), 빈손 좌클릭 스킬체크로 캐지고, REGROW_DAYS 뒤 같은 약초로 다시 난다 — test_wild_herbs.gd 가 진짜 섬에서 이미 확인한다. 빠져 있던 것은 「찍는 자리」였다. shots.gd 에 넷마다 섬에 실제로 난 첫 포기를 가까이 보는 자리를 더했다. 벨라도나 자리와 같은 카메라 고르기를 _herb_view 하나로 묶었는데, 그냥 가장 낮은 쪽만 고르면 쑥 카메라가 바위 틈 도랑 속에 들어가 벽만 찍혔다 — 땅이 시선을 가리지 않는 쪽 가운데 가장 낮은 쪽을 고르게 고쳤다. 다섯 장(herb_* 넷 + belladonna0)을 찍어 열어 보니 포기가 다 화면 한가운데 보인다. 박하 사진은 앞쪽에 돌 두 개가 걸리지만 포기는 가려지지 않는다.",
+   "why": "",
+   "files": [
+    "game/core/debug/shots.gd",
+    "game/tests/life/gathering/test_wild_herbs.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "알로에 · 인삼 · 박하 · 쑥이 **본섬** 들판에 만드라고라처럼 난다(채집 · 다시 난다 · 자리 임시) · 맨손으로 뽑는다 (테스트 + 찍는 자리)",
+     "evidence": "game/tests/life/gathering/test_wild_herbs.gd 가 진짜 TestIsland(본섬)를 세워 본다 — test_all_four_grow_on_my_island(넷마다 assert_gt 0 · 들풀 자리 수 = 포기 수), test_they_grow_wild_within_walking_reach(작물 · 씨앗 아님 · 스폰에서 걸어서 닿음 · 산자락 높이 · 땅에 붙음), test_zz_each_is_dug_with_empty_hands_and_regrows(빈 가방 · 도구 없이 조준점 → 좌클릭 → 스킬체크 → 가방에 1포기 · 포기 뽑힘 · 캔 자리 picked 에 적힘(저장 목록) · REGROW_DAYS 뒤 같은 약초가 같은 자리에 다시 남). 자리 임시는 herbs.gd WILD_FROM_SLOPE · REGROW_DAYS 주석에 「임시」로 적혀 있다. 찍는 자리: shots.gd _views 에 herb_aloe · herb_ginseng · herb_mint · herb_mugwort 가 섬에 실제로 난 첫 포기를 보도록 더해졌고, 새 테스트 test_each_has_a_shot_place_at_a_real_plant 가 이름별 자리가 있는지 · 볼 곳이 그 약초의 실제 포기에서 1m 안인지 · 카메라가 8m 안인지 단언한다(이름 · 거리를 실제 포기와 대조하므로 껍데기가 아니다). 이번 test.log 는 전체(640파일 · 4635 통과 · 실패 0)이고 guard 통과. ITEM_aloe/ginseng/mint/mugwort 번역 키가 ko.po · en.po 둘 다 있다. 새 저장 상태 없음(캔 자리는 기존 picked 로 담김)."
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "ment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      3s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      1s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           640\nTests            4635\nPassing Tests    4635\nFailing Tests       0\nRisky/Pending       0\nAsserts        228708\nTime           934s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "2f083aad"
  }
 ]
