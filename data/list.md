@@ -5673,11 +5673,15 @@
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
 - [x] 1. 스위치 창 그림이 없다 (G-325 단계 1)
   - 기준: 스위치 창 그림이 없다 — report 에 ui_shots 자리에 스위치가 없어 못 찍었다고 했다. ui_shots 에 스위치(이은 시설 둘)를 연 자리를 더해 창 꼴을 찍어 두어라
-- [ ] 2. 센서 창 「끊기」 글자가 위로 붙는다 (G-325 단계 3)
+- [x] 2. 센서 창 「끊기」 글자가 위로 붙는다 (G-325 단계 3)
   - 기준: 센서 창 「끊기」 글자가 위로 붙는다 — 한국어 그림(power_sensor_ko · day_night_sensor_ko)에서 이은 것 줄의 「끊기」 버튼 글자가 같은 줄의 이름 · 거리(3m · 7m) 글자보다 몇 px 위에 앉는다(영어 Cut 은 맞다). 센서 창의 이은 것 줄 HBox 에서 끊기 Button 의 size_flags_vertical 을 SIZE_SHRINK_CENTER 로 두거나 Label 과 같은 높이로 맞춰라. harness/shot.sh --ui <폴더> power_sensor day_night_sensor 로 다시 찍어 확인
   - 기준: (앞 단계 QA) 영어 시설 이름 대소문자가 갈린다 — game/i18n/en.po:795 의 연구대 msgstr 가 "Research bench" 인데 옆의 "Thermal Generator" · "Power Switch" 는 단어마다 대문자다. 스위치 창 en 그림에서 두 줄이 나란히 보여 눈에 띈다. en.po 의 시설 이름 대소문자를 한 꼴로 맞추고(예: "Research Bench"), 그 문자열을 그대로 단언하는 테스트가 있으면 같이 고쳐라
 - [ ] 3. 센서 그림 테스트가 소스 글자만 본다 (G-325 단계 3)
   - 기준: 센서 그림 테스트가 소스 글자만 본다 — test_ui_shots.gd::test_plan_has_the_three_sensor_windows 는 plan 이름과 ui_shots.gd 글자(Stations.SENSOR_LOW 등)만 확인해, 센서 자리 꾸미기가 실제로 창을 열고 값 줄 · 이은 것 줄을 채우는지는 보지 않는다. 다른 자리(test_butcher_shot_… 처럼) 장면을 세워 Tune 의 값 글자에 3 · 12 kW / 8 m 이 있고 이은 것 줄이 2개인지 단언하는 테스트로 바꿔라
+  - 기준: (앞 단계 QA) 끊기 글자가 누름 · 올림에 색이 안 바뀐다 — switch_panel.gd _row 의 cut_text Label 은 Button 의 font_hover_color · font_pressed_color 를 따르지 않는다. 지금 테마가 그 색을 달리 두는지 보고, 달리 둔다면 Button 의 mouse_entered/exited · button_down/up 에 맞춰 Label 의 font_color override 를 바꾸거나 테마 색이 같음을 테스트로 못박아라
+  - 기준: (앞 단계 QA) 다른 한국어 Button 도 글자가 뜰 수 있다 — 구현 세션은 어긋남이 Button 이 한글 대체 글꼴을 그리는 방식에서 난다고 했다. 그렇다면 센서 창 −/+ · 낮에 켜짐/밤에 켜짐 같은 다른 Button 도 같은 줄의 Label 과 어긋날 수 있다. ui 그림 전체에서 Button 글자 + 옆 Label 이 한 줄에 선 곳을 찾아 보고, 같으면 공용 테마 · 글꼴(대체 글꼴을 기본 글꼴에 묶기) 쪽에서 한 번에 고쳐라 — 버튼마다 Label 을 넣는 땜질을 늘리지 말고
+- [ ] 2. 영어 아이템 이름 대소문자도 갈린다 (G-939 단계 2)
+  - 기준: 영어 아이템 이름 대소문자도 갈린다 — 시설은 맞췄지만 단축바 en 그림의 Iron ore · Iron ingot 은 소문자 꼴이다(시설 아닌 아이템). 아이템 이름 꼴(문장 꼴/단어마다 대문자)을 한 쪽으로 맞출지 en.po ITEM_ 전체를 훑어 한 꼴로 맞추고 test_station_names_title_case 와 같은 훑는 테스트를 아이템에도 둬라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
