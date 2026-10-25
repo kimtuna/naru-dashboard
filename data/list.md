@@ -5367,7 +5367,7 @@
   - 기준: 섬이 다르면 개발용 키가 조용히 버려진다 — net_world.gd _dev_key 는 not _here(id) 이면 까닭 없이 return 한다. 기준의 「못 하면 까닭 한 줄」 정신에 맞게 _here 가 아닌 경우에도 _session().acts().give(id, …) 로 한 줄(예: 새 키 DEV_NOT_SAME_ISLAND, ko/en)을 주고 테스트 하나를 더하라 (막는 것은 아니다 — 서버장과 다른 섬에 선 참가자의 경우)
   - 기준: (앞 단계 QA) DEV_ERUPT_HOST_ONLY 문구가 낡았다 — 이제 참가자 F6 은 서버에 가서 되는데 「분출은 서버장이 F6 으로 낸다」가 남았다. 이 키는 서버에 잇지 않은 remote 화산(끊긴 참가자)에서만 뜨니 ko/en 문구를 「서버에 잇지 않았다」 쪽으로 고쳐라
 
-## [ ] G-312 활 — 총처럼 쏜다 · 마취 화살 · 가죽끈
+## [x] G-312 활 — 총처럼 쏜다 · 마취 화살 · 가죽끈
 - 차선: 3d-start · 시작 2026-10-25 09:59
 - 순서: G-311 뒤
 - spec: spec/08_combat/tools-as-weapons.md, spec/04_life/hunting.md
