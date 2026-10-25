@@ -1,85 +1,5 @@
 [
  {
-  "time": "2026-10-19 03:15:45",
-  "epoch": 1792347345,
-  "type": "pass",
-  "title": "통과 — G-245 단계 1 (바위 속 굴 — 오소리 · 앙고라토끼 · 호저)",
-  "group": "G-245",
-  "step": "1",
-  "attempt": "2",
-  "report": {
-   "problem": "바위 속 굴 — 플레이어가 바위를 다 부술 때 0.5% 로 굴이 남고(오소리 · 앙고라토끼 · 호저 중 무작위), 물을 부어야 식구가 나온다. 오소리 가족 반격 · 토끼 다섯 흩어짐 · 호저 가시 경고와 뒤로 돌진 · 새끼(G-238 나이) · 저장 · 멀티. 바뀐 곳에 걸린 248개 파일(2001개) 통과",
-   "approach": "앞 시도는 기능을 다 만들었으나 전체 검사에서 test_hunt_on_server 의 「참가자가 쓰다듬고 먹인다」 하나가 떨어졌다. 혼자 돌리면 통과 — 붐빌 때만 떨어지는 경주였다: 서버가 놓은 짐승의 물리를 미르 그림이 뜰 때까지 기다린 뒤에야 멈춰서, 그 사이 짐승이 몇 m 걸어 손 닿는 거리(Aim.REACH + Mob.RADIUS)를 벗어나 서버가 손길을 거절했다. 새끼(born=0)라서가 아님을 어른(born=-1000)과 나란히 찍어 확인했다(둘 다 0.5초 안에 약 7m 이동). 테스트에서 놓자마자 물리를 멈추게 고쳤고, 같은 파일 6개를 한꺼번에 돌려 84/84 통과, changed_tests 그물(248개 파일 · 2001개) 모두 통과.",
-   "why": "굴 확률 셋의 무게 같음(사람 결정은 0.5% · 무작위, 무게는 임시); 굴 속을 물 붓기 전엔 모른다 · 굴은 다 같은 모습; 물 안 부은 굴이 메워지는 날 FILL_DAYS 1일; 굴 겨냥 반경 · 굴 그림 크기; 오소리 달아나는 빠르기 1.6배; 호저 걷기 0.5배 · 경고 반경 6m · 돌진 반경 2.5m · 찌르는 피해 12 · 돌진 3m/s; 다 자라는 나이 ADULT_AGE 1살 · 새끼 몸 0.6배 · 새끼 도축 산출 0.5배(내림)",
-   "files": [
-    "game/life/hunting/burrows.gd",
-    "game/life/harvest/harvest.gd",
-    "game/life/hunting/animal.gd",
-    "game/life/hunting/animal_kinds.gd",
-    "game/life/hunting/captives.gd",
-    "game/life/hunting/island_animals.gd",
-    "game/life/ranching/ranch.gd",
-    "game/life/farming/crops.gd",
-    "game/core/net/net_world.gd",
-    "game/core/debug/shots.gd",
-    "game/settings/save/world_data.gd",
-    "game/world/frontier_islands/island_state.gd",
-    "game/world/terrain/island_blueprint.gd",
-    "game/world/terrain/test_island.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "spec/04_life/hunting.md",
-    "spec/04_life/mining.md",
-    "spec/04_life/ranching-breeding.md",
-    "game/tests/multiplayer/test_hunt_on_server.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "플레이어가 바위를 다 부술 때 0.5% 로 굴린다 — 붙으면 오소리 · 토끼 · 호저 가운데 무작위로 하나(셋의 무게는 같게 임시). 주민이 캔 바위는 안 굴린다 · 서버가 굴린다 · 오소리 · 토끼 · 호저는 집 자리에서 더는 나지 않는다 (테스트)",
-     "evidence": "test_burrows.gd — CHANCE==0.005 · 2만 번 굴려 60~140 · 갈라질 때는 0개 · 다 부술 때 1개(바위 자리) · 3000 번에 셋이 각 850~1150 · strike_blind 와 나무는 0 · 설계도 wild_dens 에 셋이 없음. test_burrows_on_server.gd — 참가자는 roll/next_day/open 을 못 한다. 일부러 깨 봤다: strike_blind 를 by_player=true 로 바꾸자 test_a_villager_mined_rock… 이 떨어졌다(되돌림)"
-    },
-    {
-     "ok": true,
-     "criterion": "굴은 셋 다 같다 — 붙으면 바위 자리에 굴이 남고, 물뿌리개로 물을 부어야 나온다. 무엇이 든 굴인지는 물을 붓기 전엔 모른다(임시) · 물을 안 부은 굴은 하루 뒤(임시) 메워진다 · 저장 · 멀티 (테스트)",
-     "evidence": "test_burrows.gd — 세 굴 그림의 메시 · 색이 같다 · 물 없을 때/빈 물뿌리개/다른 도구/빗나간 자리는 안 열린다 · 부으면 물 3→2 · 우클릭(interact) 경로 · FILL_DAYS 뒤 메워짐 · IslandState 왕복과 쓰레기 칸 건너뛰기. test_burrows_on_server.gd — 참가자와 늦게 든 사람이 같은 굴을 보고 · 참가자 물 붓기는 서버의 사본 가방으로 열고 · 사냥 권한 없으면 안 열린다"
-    },
-    {
-     "ok": true,
-     "criterion": "오소리 — 물을 부으면 엄마 · 아빠 · 새끼 셋이 나와 빠르게 달아난다 · 한 마리라도 맞으면 셋이 다 덤빈다(사람 답) (테스트)",
-     "evidence": "test_burrow_beasts.gd — 셋 · 새끼 하나 · 같은 family · FLEE 이고 FLEE_SPEED*1.6 · 물 부은 쪽에서 멀어짐 · 새끼를 치면 셋 다 angry+CHASE · 다른 굴 식구는 안 성남. 일부러 깨 봤다: kin().rally 를 빼자 test_when_one_badger_is_hit… 이 떨어졌다(되돌림)"
-    },
-    {
-     "ok": true,
-     "criterion": "앙고라토끼 — 물을 부으면 엄마 · 아빠 · 새끼 셋 다섯이 튀어나와 흩어져 달아난다 · 무조건 달아난다(덤비지 않는다) (테스트)",
-     "evidence": "test_burrow_beasts.gd — 다섯 · 새끼 셋 · 모두 FLEE · 방향 벌어짐 > 90° · 맞아도 angry/CHASE 가 아니다 · retaliates/hostile 거짓"
-    },
-    {
-     "ok": true,
-     "criterion": "호저 — 물을 부으면 혼자 나온다 · 건드리지 않으면 천천히 걷는다 · 다가가면(반경 임시) 가시를 세우고 달그락 소리로 경고 · 더 다가가면 뒤로 돌진해 찌른다(피해 임시) (테스트)",
-     "evidence": "test_burrow_beasts.gd — 하나 · family 0 · 안 달아남 · WALK_SPEED*0.5 · 발소리에도 안 달아남 · WARN 안에서 quills·cry 한 번·CRY_porcupine 글자·멈춤·안 찌름 · 1.2m 에서 CHASE·찌름·등이 사람 쪽(dot<-0.5) · 멀어지면 가시를 눕힘 · 피해 == QUILL_DAMAGE · 참가자 그림도 가시"
-    },
-    {
-     "ok": true,
-     "criterion": "새끼는 G-238 의 나이로 — 작고 도축 산출이 적고(임시) 다 자라기 전엔 번식하지 않는다 · 저장 · 멀티 (테스트)",
-     "evidence": "test_burrow_beasts.gd — born==today · 몸·메시가 0.6배 · 산출이 어른보다 적다 · ADULT_AGE 뒤엔 어른 · 잡으면 가방 칸 born 이 그대로(가방은 저장된다) · mirror 한 참가자 그림도 새끼·작음. test_pen_yields.gd test_babies_do_not_breed_until_grown — 새끼끼리 · 한쪽만 새끼면 안 낳고, 둘 다 자라면 낳는다. 들판 짐승 몸은 원래 안 담는다(test_round_trip DONT_SAVE 에 까닭 적힘)"
-    }
-   ],
-   "issues": [],
-   "good": [
-    "core/debug/shots.gd 에 「burrow」 찍기 장면(굴 · 오소리 식구 · 가시 세운 호저)을 더했다 — 확인용이라 괜찮다",
-    "Captives.pick_up_for 가 나이를 아는 짐승(born>=0)은 그 날을 그대로 칸에 담는다 — 우리에서 기르던 짐승을 다시 주워도 나이가 1~5살로 새로 정해지지 않게 바뀌었다(새끼 나이 유지를 위해 필요한 변경)",
-    "test_hunt_on_server.gd 의 붐빌 때만 떨어지던 경주(물리를 늦게 멈춤)를 고쳤다 — 앞 회차 기계 검사가 떨어진 것"
-   ]
-  },
-  "test": "_box_everything.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      2s  res://tests/core/net/test_acts_alone.gd\nok      3s  res://tests/core/net/test_steam_game.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      3s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      3s  res://tests/life/hunting/test_captive_age.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/multiplayer/test_looks_seen.gd\nok      2s  res://tests/multiplayer/test_modules_on_server.gd\nok      2s  res://tests/multiplayer/test_join_spot.gd\nok      3s  res://tests/multiplayer/test_server_from_game.gd\nok      2s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      3s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_old_barn.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           248\nTests            2001\nPassing Tests    2001\nFailing Tests       0\nRisky/Pending       0\nAsserts         59796\nTime           493s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "dfe51914"
- },
- {
   "time": "2026-10-19 03:44:18",
   "epoch": 1792349058,
   "type": "pass",
@@ -8801,5 +8721,25 @@
   },
   "test": "  res://tests/life/ranching/test_taming.gd\nok      4s  res://tests/life/ranching/test_troughs.gd\nok      5s  res://tests/life/vehicles/test_garage_bring_in.gd\nok      3s  res://tests/player/equipment/test_armor_modules.gd\nok      5s  res://tests/multiplayer/test_traces_on_server.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      4s  res://tests/multiplayer/test_wild_kinds_on_server.gd\nok      3s  res://tests/player/equipment/test_future_wear_modules.gd\nok      3s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      3s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/settings/save/test_old_stove.gd\nok      4s  res://tests/player/movement_controls/test_control_locks.gd\nok      4s  res://tests/settings/save/test_death_chest_save.gd\nok      3s  res://tests/settings/save/test_world_data_keys_note.gd\nok      4s  res://tests/settings/test_item_key_groups.gd\nok      4s  res://tests/settings/test_world_settings_in_game.gd\nok      4s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      4s  res://tests/ui/hud/test_ammo_label.gd\nok      3s  res://tests/ui/hud/test_station_collect_note.gd\nok      4s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      4s  res://tests/world/frontier_islands/test_islands.gd\nok      4s  res://tests/ui/theme/test_ui_theme.gd\nok      4s  res://tests/world/day_night/test_day_length.gd\nok      5s  res://tests/world/lighting/test_torch.gd\nok      5s  res://tests/world/storage/test_chest_move_inside.gd\nok      3s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      4s  res://tests/world/terrain/test_dig_save.gd\nok      4s  res://tests/world/terrain/test_drill_pitch.gd\nok      4s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      3s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      3s  res://tests/automation/villagers/test_villager_gear.gd\nok      4s  res://tests/combat/damage_death/test_death_chest.gd\nok      4s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      3s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      3s  res://tests/core/net/test_guild.gd\nok      3s  res://tests/core/net/test_net_interp.gd\nok      3s  res://tests/core/net/test_steam_api.gd\nok      3s  res://tests/core/net/test_steam_room.gd\nok      3s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      3s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      3s  res://tests/life/harvest/test_rare_drops.gd\nok      4s  res://tests/life/fishing/test_bobbers.gd\nok      3s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      4s  res://tests/multiplayer/test_modules_on_server.gd\nok      3s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      3s  res://tests/settings/save/test_old_cups.gd\nok      4s  res://tests/world/storage/test_chest.gd\nok      4s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      4s  res://tests/world/storage/test_chest_save.gd\nok      4s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      4s  res://tests/world/terrain/test_shovel_home.gd\nok      4s  res://tests/world/terrain/test_volcano_carve.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     41s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           393\nTests            3085\nPassing Tests    3085\nFailing Tests       0\nRisky/Pending       0\nAsserts        106386\nTime           724s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "7823486b"
+ },
+ {
+  "time": "2026-10-25 09:45:21",
+  "epoch": 1792889121,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-307 단계 3 (시도 1)",
+  "group": "G-307",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "스위치 켜고 끄기 안내를 실제로 뒤집혔을 때만 띄운다 — 혼자 · 서버장은 act 결과로, 참가자는 서버 목록(sync)에서 바란 대로 뒤집힌 것을 보고. 바뀐 곳만 194개 파일 · 1521개 테스트 통과",
+   "approach": "Stations.interact 가 act(SWITCH_FLIP) 앞에 Notice.say 를 먼저 불러, 참가자가 권한 「시설」이 없거나 멀어 서버가 거절해도 「스위치를 껐다」가 떴다. 우클릭을 flip_asked 로 옮겨 혼자 · 서버장은 act 가 true 일 때만 띄우고, 참가자는 _flip_wait 에 바란 켜짐과 기다림 끝(FLIP_WAIT_MS)을 적어 두었다가 sync 에서 그 스위치가 바란 대로 뒤집혀 돌아오면 띄운다. 기다림이 지나면 버려, 거절된 뒤 서버장이 뒤집은 것을 참가자의 한 줄로 띄우지 않는다. 테스트는 권한 없는 참가자 · 거절 뒤 서버장이 끈 것 · 권한을 켠 참가자 · 멀리 있는 스위치를 단언한다.",
+   "why": "FLIP_WAIT_MS = 3000 — 참가자가 바란 켜고 끄기를 서버 목록에서 기다리는 시간. 목록이 0.1초마다 가므로 넉넉히 잡은 임시 값",
+   "files": [
+    "game/craft/stations/stations.gd",
+    "game/tests/multiplayer/test_wiring_on_server.gd"
+   ],
+   "decision": null
+  },
+  "test": "     4s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      3s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      3s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      3s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      3s  res://tests/build/test_take_not_hit_wording.gd\nok      3s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/core/test_grid.gd\nok      3s  res://tests/core/test_project_setup.gd\nok      3s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      3s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      3s  res://tests/craft/recipes/test_workbench_gear.gd\nok      3s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      3s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      3s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     33s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n================ 떨어진 파일: res://tests/core/tools/test_no_triple_blank_lines.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/core/tools/test_no_triple_blank_lines.gd\n* test_no_script_under_game_has_three_blank_lines_in_a_row\n    [Failed]:  ARRAY([\"tests/multiplayer/test_wiring_on_server.gd:108\"]) != ARRAY([]).\n    [\"tests/multiplayer/test_wiring_on_serve...r.gd:108\"] != []  1 of 1 indexes do not match.  빈 줄이 셋 이상 이어진다 — 함수 사이는 둘, 파일 끝은 줄바꿈 하나:\n    tests/multiplayer/test_wiring_on_server.gd:108\n      at line 46\n* test_the_check_catches_three_blank_lines\n* test_the_check_passes_two_blank_lines\n2/3 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/core/tools/test_no_triple_blank_lines.gd\n- test_no_script_under_game_has_three_blank_lines_in_a_row\n    [Failed]:  ARRAY([\"tests/multiplayer/test_wiring_on_server.gd:108\"]) != ARRAY([]).\n    [\"tests/multiplayer/test_wiring_on_serve...r.gd:108\"] != []  1 of 1 indexes do not match.  빈 줄이 셋 이상 이어진다 — 함수 사이는 둘, 파일 끝은 줄바꿈 하나:\n    tests/multiplayer/test_wiring_on_server.gd:108\n          at line 46\n\nTotals\n------\nScripts               1\nTests                 3\nPassing Tests         2\nFailing Tests         1\nAsserts             7/8\nTime              0.633s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           625\nTests            4538\nPassing Tests    4537\nFailing Tests       1\nRisky/Pending       0\nAsserts        222934\nTime           1057s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/core/tools/test_no_triple_blank_lines.gd\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
