@@ -5768,7 +5768,7 @@
   - 기준: (앞 단계 QA) 같이 하는 판 테스트가 짐승 없이 batter 를 손으로 부른다 — test_battering_on_server.gd 는 서버에서 Placeable.batter 를 직접 불러 동기화만 본다. 서버 짐승이 실제로 닿아 치는 것 · 참가자 화면의 remote 짐승이 batters 를 늘리지 않는 것은 단언이 없다(지금은 _physics_process 의 remote 조기 반환이 구조로 막는다). 서버 섬에 침략 짐승 하나를 상자 너머에 두고 서버 쪽 batters > 0 · 참가자 쪽 같은 짐승 그림의 batters == 0 을 단언하는 테스트를 더하라
   - 기준: (앞 단계 QA) 돌아가는 길이면 안 친다는 테스트가 없다 — test_a_flying_hawk_and_a_beast_off_the_straight_way_do_not_batter 는 이름과 달리 매만 본다. 주민의 땅(FOLK_LAYERS)에 짧게 돌아갈 길을 굽어 DETOUR 가 된 곰이 옆의 상자에 스쳐도 batters == 0 · hits_left == HITS 인지 단언을 더하거나, 테스트 이름에서 '곧은 길이 아닌 짐승' 을 빼라
 
-## [ ] G-335 ESC 「kill」 · 섬 스폰은 선착장 앞
+## [x] G-335 ESC 「kill」 · 섬 스폰은 선착장 앞
 - 차선: 3d-lane2 · 시작 2026-10-26 23:48
 - 순서: G-333 뒤
 - spec: spec/08_combat/damage-death.md, spec/03_world/frontier-islands.md
