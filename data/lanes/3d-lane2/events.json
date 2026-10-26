@@ -1,65 +1,5 @@
 [
  {
-  "time": "2026-10-20 11:09:26",
-  "epoch": 1792462166,
-  "type": "pass",
-  "title": "통과 — G-263 단계 1 (위에 탭 · 마우스)",
-  "group": "G-263",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "설정 화면 위에 탭(키보드 · 마우스) — 마우스 탭에 감도 미끄럼(기본 0.003 이 가운데 · 바로 반영 · user://settings.cfg 에 저장). 메인 메뉴와 ESC 가 같은 화면. 바뀐 곳에 걸린 338 파일 2806 개 통과",
-   "approach": "감도는 player_config.tres 에 박힌 값이었고 사용자 설정을 둘 자리가 없었다. 월드 · 캐릭터 저장과 따로 사는 autoload UserPrefs(settings/user/user_prefs.gd)를 두고 user://settings.cfg(ConfigFile)에 감도를 쓴다 — 미끄럼을 움직이는 그 자리에서 쓰고 changed 를 낸다. Player 는 _ready 에서 UserPrefs 값을 config.mouse_sensitivity 에 얹고 changed 에 붙어 따라간다 — 테스트 수십 곳이 player.config.mouse_sensitivity 로 나누므로 그 자리를 그대로 살렸다. 설정 화면은 Tabs(단추) · Pages(같은 이름의 쪽) 짝이라 짝을 더하면 탭이 붙는다. 메인 메뉴(MenuRoot.SETTINGS)와 ESC(PauseMenu.SETTINGS)가 같은 settings_screen.tscn 임을 두 테스트가 본다. 테스트 godot 은 사람과 같은 user:// 를 쓰므로 감도 테스트는 UserPrefs 를 임시 폴더로 돌려 두고 끝나면 사람 파일에서 다시 읽기만 한다. ui 찍기 자리 settings_mouse 를 더해 찍어 보았다 — 탭 · 미끄럼(가운데) · 뒤로가 잘리지 않는다. 쓰지 않게 된 MENU_SETTINGS_EMPTY 키는 지웠다. ESC 데이터베이스 목차 파일은 아직 없어(G-264) 건너뛰었다",
-   "why": "마우스 감도 범위 0.0005 ~ 0.0055 (기본 0.003 이 가운데 오게) · 걸음 0.0001 — 사람이 해 보고 정한다 (user_prefs.gd SENSITIVITY_MIN/MAX)",
-   "files": [
-    "game/settings/user/user_prefs.gd",
-    "game/project.godot",
-    "game/ui/menu/settings_screen.gd",
-    "game/ui/menu/settings_screen.tscn",
-    "game/ui/menu/pause_menu.gd",
-    "game/player/movement_controls/player.gd",
-    "game/player/movement_controls/player_config.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/tests/ui/menu/test_settings_screen.gd",
-    "game/tests/ui/menu/test_main_menu.gd",
-    "game/tests/ui/menu/test_pause_menu.gd",
-    "spec/12_ui/menu.md",
-    "spec/01_settings/input.md",
-    "spec/01_settings/save.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "설정 화면 위에 탭 버튼(키보드 · 마우스 — 뒤에 탭이 더 붙을 수 있게). 마우스 탭: 감도 미끄럼(지금 값이 가운데쯤 · 범위 임시) · 바로 반영 · 사용자 설정으로 저장(월드 저장이 아니다) · 껐다 켜도 남는다",
-     "evidence": "test_settings_screen.gd: test_tab_buttons_sit_on_top_and_switch_pages(Tabs 가 Pages 보다 위 · 키보드/마우스 · 누르면 쪽 전환), test_tabs_are_pairs_so_more_can_be_added(단추=쪽 짝), test_sensitivity_starts_near_the_middle(0.003 · 비율 0.4~0.6), test_moving_the_slider_turns_the_camera_faster_right_away(미끄럼 0.005 → 다시 켜지 않은 Player 가 100px 에 0.5 rad 돈다), test_sensitivity_is_saved_as_a_user_setting_and_survives_restart(새 UserPrefs 가 파일에서 0.0012 를 읽는다). 일부러 깨 봤다 — Player 의 UserPrefs.changed 연결을 빼자 「바로 반영」이 0.3≠0.5 로 떨어졌고, cfg.save 를 빼자 파일 · 껐다 켜기 단언 셋이 떨어졌다(되돌렸다). 범위 0.0005~0.0055 는 user_prefs.gd · input.md 에 「임시」로 적혔다. 저장 자리는 user://settings.cfg(ConfigFile) — save.md 에 「사용자 설정은 따로」 줄이 붙었다. 테스트 뒤 사람의 user://settings.cfg 는 생기지 않았다"
-    },
-    {
-     "ok": true,
-     "criterion": "메인 메뉴의 설정과 ESC 의 설정이 같은 화면이다",
-     "evidence": "test_main_menu.gd test_settings_has_tabs_on_top_and_back 가 메인 메뉴에서 연 화면의 scene_file_path == PauseMenu.SETTINGS 를, test_pause_menu.gd test_settings_opens_the_settings_screen 가 ESC 로 연 화면의 scene_file_path == MenuRoot.SETTINGS 를 본다. 둘 다 settings_screen.tscn 을 preload 하고, 바뀐 곳 338 파일 2806 개 통과 · guard 통과"
-    }
-   ],
-   "issues": [
-    "「월드 저장이 아니다」 단언이 늘 참이다 — test_settings_screen.gd test_sensitivity_is_saved_as_a_user_setting_and_survives_restart 의 assert_false(_file.begins_with(SaveStore.DEFAULT_ROOT)) 는 _file 이 테스트가 만든 임시 폴더라 언제나 통과한다. 실제 자리를 보게 assert_false(USER_PREFS.DEFAULT_PATH.begins_with(SaveStore.DEFAULT_ROOT)) 로 바꾸고, 가능하면 캐릭터/월드 저장본(SaveStore 가 쓰는 사전)에 'mouse' · 'sensitivity' 키가 없는지도 단언하라 (막는 것은 아니다 — 쓰는 길이 UserPrefs 뿐이라 지금은 맞다)",
-    "미끄럼 걸음이 화면에 박혔다 — settings_screen.gd:24 _sensitivity.step = 0.0001 은 범위(UserPrefs.SENSITIVITY_MIN/MAX)와 떨어져 화면 쪽에 박힌 수다. user_prefs.gd 에 SENSITIVITY_STEP 상수로 옮겨 범위와 같이 「임시」로 적고 화면은 그것을 읽게 하라",
-    "공유 PlayerConfig 를 고쳐 쓴다 — player.gd:188 _follow_sensitivity 가 config.mouse_sensitivity(player_config.tres, 모든 Player 가 함께 쓰는 Resource)를 덮어쓴다. 남의 몸(원격 플레이어)까지 같은 값을 갖게 되고 테스트가 끝나도 메모리의 tres 값이 남는다. 지금은 감도를 내 카메라만 읽어 해가 없지만, 카메라 회전(player.gd:196-197)이 UserPrefs.mouse_sensitivity 를 바로 읽게 하거나 config 를 duplicate 해 두는 편이 낫다 — 바꾸면 tests/crosshair.gd 등 config.mouse_sensitivity 로 나누는 곳도 같이 고친다"
-   ],
-   "good": [
-    "ui 찍기 자리 settings_mouse 를 더했다 (core/debug/ui_shots.gd · ui_shots_kit.gd) — 화면 확인용이라 해는 없다",
-    "PauseMenu.settings_screen() 접근자를 더했다 (테스트 · 찍기용)"
-   ]
-  },
-  "test": "tion_recipes.gd\nok      3s  res://tests/craft/stations/test_station_queue.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/fishing/test_bait_grades.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      3s  res://tests/life/hunting/test_captive_age.gd\nok      2s  res://tests/life/hunting/test_summon.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      3s  res://tests/life/medicine/test_medicine.gd\nok      2s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      1s  res://tests/life/ranching/test_cage_bond.gd\nok      1s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/ranching/test_ranch_escape.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/life/ranching/test_taming.gd\nok      1s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      1s  res://tests/player/equipment/test_armor_health.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      3s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           338\nTests            2806\nPassing Tests    2806\nFailing Tests       0\nRisky/Pending       0\nAsserts        140945\nTime           564s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "f90bc4b5"
- },
- {
   "time": "2026-10-20 11:38:04",
   "epoch": 1792463884,
   "type": "fail",
@@ -8393,5 +8333,41 @@
   },
   "test": "water/test_water_pump.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      3s  res://tests/build/test_room_overlay.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/build/test_take_spec_lines.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/core/net/test_net_link_one_place.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      3s  res://tests/core/test_open_chest_window.gd\nok      2s  res://tests/core/test_spec_stale_lines_g310.gd\nok      2s  res://tests/craft/recipes/test_dev_only_recipes_g315.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/craft/stations/test_geothermal_spec.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      3s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      2s  res://tests/life/vehicles/test_car_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/life/vehicles/test_garage_one_per_island.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           172\nTests            1479\nPassing Tests    1479\nFailing Tests       0\nRisky/Pending       0\nAsserts        147992\nTime           285s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "a5abcd7e"
+ },
+ {
+  "time": "2026-10-27 03:14:03",
+  "epoch": 1793038443,
+  "type": "pass",
+  "title": "통과 — G-942 단계 2 (흐르는 동안 tick 단언이 부하에서 흔들린다 (G-333 단계 4))",
+  "group": "G-942",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "용암 태우기 몫이 부하 판에서도 한도 안에 들게 — 받침 재기 세우기·끝내기를 마감 틈 있을 때만, 몫 350→300 µs, 부하 테스트는 분출 셋을 재 가운데 값으로 단언 (바뀐 곳만: 206 파일 1698 개 통과)",
+   "approach": "태우기 걸음마다 시간을 재 보니(혼자 판) 몫 350 µs 를 넘는 몫이 최대 132 µs 였고, 가장 큰 것은 걸음으로 못 나누는 받침 재기 세우기(CollapseJob 생성 163 µs)와 끝내기(받침 잃은 것 넘기기 · announce 104 µs)가 마감 끝에 붙는 것이었다. 둘을 마감까지 JOB_EDGE_US(150 µs) 남았을 때만 하고 모자라면 다음 프레임으로 미뤘고, 몫을 300 µs 로 낮췄다(250 은 훑기가 몫을 거의 다 써 받침 재기 한 번이 1.9→4.7 초로 늘어 버렸다). 혼자 판 태우기 몫 최대 0.47~0.53 → 0.34~0.37 ms, 그물 판 0.41~0.44 ms. 한 판의 튐(OS 선점)은 코드로 못 막으므로 테스트는 분출 0·1·2 를 판마다 다시 깔아 재고 흐르는 동안 · 흐름 뒤 · 태우기 몫을 세 번 가운데 값으로 단언한다(받침 재기 테스트는 분출 3 으로 옮김). performance-lava.md 표와 G-942.2 줄을 고쳤다. 다른 차선 부하를 같이 띄운 판은 이 회차에서 재 보지 못했다.",
+   "why": "LavaMelt.BUDGET_US 300 µs — 부하 판 틈을 키우려 350 에서 낮춤, 250 은 받침 재기 지연이 2배 넘게 늘어 300; LavaMelt.JOB_EDGE_US 150 µs — 걸음으로 못 나누는 받침 재기 세우기·끝내기(혼자 판 0.1~0.16 ms)를 할 마감 앞 틈",
+   "files": [
+    "game/world/terrain/lava_melt.gd",
+    "game/tests/perf/test_lava_melt_load.gd",
+    "spec/00_core/performance-lava.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "흐르는 동안 tick 단언이 부하에서 흔들린다 — 다른 차선 전체 판(엔진 6 개)이 같이 돌 때 TEST_DIR=res://tests/perf 를 혼자 세 번 돌려 두 번 「흐르는 동안 최대 1.038 ms · 1.507 ms」(태우기 몫 1.034 · 1.505)로 FAIL, 한 번 통과. 이번 단계가 건드린 흐름 뒤가 아니라 G-333.3 태우기 몫이다. 루프 판에서 우연히 깨지면 회차를 버린다 — 태우기 걸음의 마감 검사를 더 촘촘히 하거나 태우기 예산을 낮춰 틈을 키우거나, 세 번 재 중앙값으로 단언하는 식으로 부하 판에서도 안 깨지게 하라",
+     "evidence": "기준이 든 세 길을 다 했다. ① lava_melt.gd: 걸음으로 못 나누는 받침 재기 세우기·끝내기를 마감까지 JOB_EDGE_US(150 µs, 임시) 남았을 때만 하게 했다 (CollapseJob.done() 이 있고 step 반환값 대신 done() 으로 본다 — 뜻이 같다). ② BUDGET_US 350→300 (임시 표시 · 까닭 주석 있다). ③ test_lava_melt_load.gd 가 분출 0·1·2 를 판마다 다시 깔아 재고 흐르는 동안 · 흐름 뒤 · 태우기 몫을 _mid(정렬 뒤 [1], 셋 중 둘이 넘어야 떨어진다)로 assert_lt 한다 — 분출마다 melting 꺼짐 · done==k · 태운 수 > THINGS/2 도 단언해 판이 정말 돈다. 받침 재기 테스트는 분출 RUNS(3)로 옮겼다. 루프 전체 판(엔진 6, 4942 개 통과)에서 세 분출 태우기 몫 0.40~0.46 ms. QA 가 yes 8 개로 CPU 를 채운 채 이 파일을 세 번 돌려 셋 다 통과(태우기 몫 가운데 값 0.43 ms 안팎, 한도 1 ms). performance-lava.md 표 · G-942.2 줄 고쳤고 사람 줄은 그대로, 49 줄."
+    }
+   ],
+   "issues": [
+    "spec 표의 흐르는 동안 최대가 혼자 판 숫자뿐이다 — performance-lava.md 표 「흐르는 동안 tick 최대 · 태우기 몫 최대 0.34~0.37 ms」는 혼자 판이고, 같은 회차 루프 그물 판은 0.40~0.46 ms 였다(report 에도 0.41~0.44). 아래 「다른 테스트와 같이 돈 루프 판」 줄에 300 µs 뒤 그물 판 숫자(0.40~0.46 ms)와 받침 재기가 부하에서 4.9 초까지 늘어난 것(QA 가 CPU 를 채워 잰 판 293 프레임)을 한 줄 더 적어라 (막는 것은 아니다)"
+   ],
+   "good": []
+  },
+  "test": "save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      3s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_compass.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      1s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/theme/test_korean_font.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/settings/test_world_settings.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           696\nTests            4942\nPassing Tests    4942\nFailing Tests       0\nRisky/Pending       0\nAsserts        242846\nTime           981s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "7edc65f5"
  }
 ]
