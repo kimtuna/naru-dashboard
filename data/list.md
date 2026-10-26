@@ -5756,10 +5756,14 @@
 - [x] 2. 길 찾기
   - 기준: 길은 주민처럼 PathWalk 로 굽는다 — 놓은 것을 막힘으로 넣은 땅과 안 넣은 땅 두 길을 견주어, 돌아가는 길이 곧은 길의 임시 2배 안이면 돌아가고 넘으면 곧은 길로 가며 막는 것을 부순다 · 매는 날아서 곧장 (테스트)
   - 기준: 길은 임시 3초마다 · 목표가 임시 4m 넘게 움직였을 때만 다시 굽는다 — 침략 무리 임시 10마리가 한꺼번에 굽어도 한 프레임 튐이 performance.md 한도 안 (테스트)
-- [ ] 3. 막으면 부순다
+- [x] 3. 막으면 부순다
   - 기준: 길을 막은 놓은 것(벽 · 울 · 문 · 시설)에 닿으면 그것을 친다 — 종마다 힘(임시 곰 1초에 1번 · 멧돼지 2초에 1번 · 적대 주민 1.5초에 1번)으로 Placeable 남은 횟수를 깎아 0 이면 무너진다(돌려받는 재료 없음) · 치는 동안 흔들림 · 소리 (테스트)
   - 기준: 선착장은 안 부순다 · 같이 하는 판(서버가 고르고 부순다) · 저장(반쯤 깎인 횟수) · spec 줄 (사람 원문 · Claude 가 정함 · 임시) (테스트)
   - 기준: (앞 단계 QA) 재기 한도가 느슨하고 performance 표에 안 실렸다 — test_attack_route.gd 의 FRAME_US 16667 은 잰 값 1.45 ms 의 11배라 열 배 느려져도 통과한다. performance.md 에 프레임 튐 한도 숫자가 따로 없어 한 프레임으로 잡은 것이니, 잰 값(10마리 1.5 ms · 1504 조각)을 performance.md(또는 performance-island.md) 멀티 · 주민 · 몹 쪽 표에 한 줄 적고 assert_lt 를 예컨대 5 ms(임시)로 좁혀라. 테스트 머리 주석은 spec/00_core/performance-island.md 를 가리키는데 기준은 performance.md 를 말한다 — 한 곳으로 맞춰라
+- [ ] 4. (앞 단계 QA) 참가자 화면에는 치는 흔들림 · 소리가 없다
+  - 기준: 참가자 화면에는 치는 흔들림 · 소리가 없다 — 서버만 Placeable.shake · HitSound.ring 을 부르고 참가자는 놓는 곳 목록(깎인 대수)만 받는다(report 에도 적혔다). 같이 하는 판에서 곰이 참가자 집 벽을 쳐도 참가자는 아무것도 못 보고 듣다가 갑자기 사라진다. 놓는 곳 목록을 받아 hits_left 가 줄어든 것을 보면 참가자 쪽에서 Placeable.shake + HitSound.ring(HIT), 사라지면 CRACK 을 내게 하고, test_battering_on_server.gd 에 참가자 쪽 Placeable.shaking(_chest_of(gi)) · HitSound 그룹 단언을 더하라
+  - 기준: (앞 단계 QA) 같이 하는 판 테스트가 짐승 없이 batter 를 손으로 부른다 — test_battering_on_server.gd 는 서버에서 Placeable.batter 를 직접 불러 동기화만 본다. 서버 짐승이 실제로 닿아 치는 것 · 참가자 화면의 remote 짐승이 batters 를 늘리지 않는 것은 단언이 없다(지금은 _physics_process 의 remote 조기 반환이 구조로 막는다). 서버 섬에 침략 짐승 하나를 상자 너머에 두고 서버 쪽 batters > 0 · 참가자 쪽 같은 짐승 그림의 batters == 0 을 단언하는 테스트를 더하라
+  - 기준: (앞 단계 QA) 돌아가는 길이면 안 친다는 테스트가 없다 — test_a_flying_hawk_and_a_beast_off_the_straight_way_do_not_batter 는 이름과 달리 매만 본다. 주민의 땅(FOLK_LAYERS)에 짧게 돌아갈 길을 굽어 DETOUR 가 된 곰이 옆의 상자에 스쳐도 batters == 0 · hits_left == HITS 인지 단언을 더하거나, 테스트 이름에서 '곧은 길이 아닌 짐승' 을 빼라
 
 ## [ ] G-335 ESC 「kill」 · 섬 스폰은 선착장 앞
 - 차선: 3d-lane2
