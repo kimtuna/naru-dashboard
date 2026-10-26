@@ -5739,9 +5739,12 @@
   - 기준: 몸마다 판정은 임시 0.25초 간격 lava_at 한 번 · 같이 하는 판(서버가 깎는다) (테스트)
   - 기준: (앞 단계 QA) 루프 재기 숫자가 spec 표보다 높다 — spec 표는 가 0.045~0.048 · 나 0.109~0.114 · 다 0.063~0.066 ms, 다 첫 프레임 뺀 최대 0.15 ms 인데, 루프가 다른 테스트와 같이 돌린 test.log 판은 가 0.060 · 나 0.140 · 다 0.070 ms, 첫 프레임 뺀 최대 가 3.86 · 나 4.26 · 다 0.32 ms 였다. 순서 · 결론(다 가 흐르는 동안 튐이 없다 · 몸 피해는 싸다)은 같다. performance.md 표 아래에 「다른 테스트와 같이 돌면 1.3~2배까지 오른다(루프 판: …)」 한 줄을 적어 두면 2단계가 숫자를 잘못 읽지 않는다 (150줄이 꽉 찼으니 한 줄을 합치거나 performance 쪽 파일을 나눠라)
   - 기준: (앞 단계 QA) performance.md 가 딱 150줄이다 — 용암 표를 넣으려 멀티 쪽 줄을 합쳐 맞췄다(사람 결정 줄은 안 지워졌다). 2단계에서 줄을 더하면 넘는다 — 용암 태우기 절을 performance-lava.md 같은 따로 파일로 옮기고 performance.md 갈래 줄에서 가리키게 하라
-- [ ] 3. 놓은 것
+- [x] 3. 놓은 것
   - 기준: 1단계 숫자로 고른 방식으로 바꾼다 — 놓은 것이 많아져도(임시 3000) 용암 흐르는 동안 한 프레임 튐이 1단계에서 정한 한도 안 · 고른 까닭을 spec 에 한 줄 (사람 원문 · 임시) (테스트)
   - 기준: 사라질 때 그 자리에 짧은 불꽃 · 연기(임시 1초) — 「녹았다」가 보인다 (테스트)
+- [ ] 4. (앞 단계 QA) LavaMelt.GROUPS 가 무리 이름을 글자로 다시 적었다
+  - 기준: LavaMelt.GROUPS 가 무리 이름을 글자로 다시 적었다 — game/world/terrain/lava_melt.gd 의 GROUPS 가 &"placeables" · &"field_patches" · &"dropped_items" · &"death_chests" 를 글자로 들고 있다. 한쪽 이름이 바뀌면 조용히 어긋난다. Placeable.GROUP · FieldPatch.GROUP · DroppedItem.GROUP · DeathChest.GROUP 로 바꾸고(상수 배열이 안 되면 static func 로), Volcano.burnable_alive 의 네 is_in_group 도 GROUPS 를 돌게 해 한 곳에 모아라
+  - 기준: (앞 단계 QA) 흐름 끝 첫 프레임 tick 이 1 ms 를 넘는다 — 태우기가 아니라 G-283 굳은 판 몸통(BODY_BUDGET_MS 1.0 ms) 몫이라 이번 기준 밖이다(막는 것은 아니다). test_lava_melt_load.gd 에서 흐름 뒤 tick 최대 1.37 ms. 몸통 몫 자체가 한도와 같은 1 ms 라 다른 몫이 조금만 붙어도 넘는다 — BODY_BUDGET_MS 를 0.6 ms 안팎으로 낮추거나 흐름 끝 첫 프레임에 몸통을 건너뛰고, 그 프레임 tick 을 test_lava_melt_load.gd 에서 assert_lt(worst_end, FRAME_LIMIT_MS) 로 단언하라
 
 ## [x] G-334 공격하는 것들 — 목표를 고르고 · 길을 찾고 · 막으면 부순다
 - 차선: 3d-start · 시작 2026-10-26 17:46
