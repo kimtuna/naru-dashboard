@@ -1,61 +1,5 @@
 [
  {
-  "time": "2026-10-20 04:45:38",
-  "epoch": 1792439138,
-  "type": "pass",
-  "title": "통과 — G-261 단계 3 (매 프레임을 가볍게)",
-  "group": "G-261",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "망원경 매 프레임을 가볍게 — 들지 않으면 _process 즉시 돌아감 · 팀은 프레임에 한 번 같은 배열에 · HUD 글은 값이 바뀔 때만 · 사라지는 짐승/캐는 새장 테스트 10개 · 튕긴 원인은 못 찾아 테스트 로그를 user://logs/tools.log 로 갈랐다",
-   "approach": "부하: 예전 _process 는 들지 않아도 매 프레임 refresh 했고, 쓰는 중에는 teams() 를 여러 번(테두리 · 조준선의 catchable 이 team_birds → teams · birds() 배열) 돌고, 팀 번호 표시용 Dictionary · Array 를 새로 만들고, HUD · 팀 줄 글을 매 프레임 새로 지었다. 이제 (1) 손에 든 것은 가방의 changed · selection_changed 때만 다시 보고(_watch_hand) 들지 않았으면 _process 가 곧바로 돌아간다(새장 차례 알림만 표시가 섰을 때 본다) (2) 쓰는 중 팀 · 거리는 refresh 마다 한 번 같은 배열(_all · _dist)을 다시 채우고, 잡을 수 있나는 한 번 재서(_can) 테두리와 조준선이 같이 쓴다 — birds() 대신 cage.slots 를 돈다 (3) HUD · 팀 줄 글은 배율 · 팀 · 곁인지 · 거리 m · 새(종 · 이름) · 언어를 수로 더한 셈(_signature)이 바뀔 때만 짓고, 보이기 · 색 · 자리도 다를 때만 넣는다 (4) 팀 번호 표시는 명령 · 쓰기가 바뀌거나 맡은 짐승이 사라질 때만 다시 단다. 남은 매 프레임 할당은 Aim.at 의 광선 하나(엔진이 주는 결과 Dictionary)뿐이다 — 「한 길」이라 그대로 뒀다. 튕김: 겨눈 짐승이 곧바로 free · 프레임 끝 queue_free(디스폰) · 죽음 · 잡혀서 없어짐, 맡긴 짐승이 없어짐, 쓰는 중 새장을 캠(같은 프레임 refresh 포함), 몸 그림이 MeshInstance3D 가 아니거나 없는 짐승 — 전부 _process 를 실제로 돌려 한 프레임 넘겨도 SCRIPT ERROR · 엔진 에러 없이 지나간다. 직접 원인은 **못 찾았다**(물리는 별도 스레드가 아니라 _process 의 광선도 안전). 사람 판의 로그는 ~/Library/Application Support/Godot/app_userdata/Naru/logs/ 에서 이미 테스트 실행에 밀려 사라졌다(godot.log + 4개만 남는다) — 그래서 tools/test.sh 의 godot 실행이 모두 --log-file user://logs/tools.log 를 쓰게 했고(실측: tools.log 가 따로 생긴다), spec/01_settings/save.md 에 로그 자리 한 줄을 적었다. 다만 harness/shot.sh · harness/bin/godot 은 하네스라 못 고쳐 아직 기본 godot.log 를 쓴다 — 같은 --log-file 을 붙이면 사람 로그가 온전히 남는다. hunting.md 망원경 줄에 조준선 한 마디를 더했다(145줄). 바뀐 곳 그물(TESTS=changed_tests) 첫 판: 508 파일 3819개 중 3816 통과 — test_round_trip 이 새 캐시 _bag · _order_dirty 를 「안 담기는 것」으로 잡아 DONT_SAVE 에 까닭을 적었고, 그 파일만 다시 돌려 23/23 통과. 망원경 폴더(tests/life/hunting) 283/283 · 새 파일 10/10 통과.",
-   "why": "",
-   "files": [
-    "game/life/hunting/telescope.gd",
-    "game/tests/life/hunting/test_telescope_light.gd",
-    "game/tests/settings/save/test_round_trip.gd",
-    "tools/test.sh",
-    "spec/01_settings/save.md",
-    "spec/04_life/hunting.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "망원경을 들지 않았으면 _process 가 아무것도 하지 않는다(set_process 끄기나 이른 return) · 쓰는 중에도 팀 목록은 한 프레임에 한 번(또는 새장이 놓이고 캐질 때)만 · HUD 글자 · 색은 바뀔 때만 넣는다 · 매 프레임 새 Dictionary/Array 를 만들지 않는다",
-     "evidence": "_process 는 들지 않으면 곧바로 return 한다(손에 든 것은 가방 changed/selection_changed 때만 다시 본다). test_without_the_telescope_in_hand_process_does_nothing 가 _refreshes 가 빈손 · 다른 아이템 · 내려놓은 뒤에 늘지 않는 것을 본다. 팀은 refresh 에서 _fill_teams 한 번만 돌고, _can_catch · _signature · _rows_text · _team_text_of 가 모두 _all/_dist 를 쓴다(코드로 확인: 매 프레임 teams() 부름 없음 · _watch_order 는 dirty 일 때만). test_while_looking_the_text_is_built_only_when_it_changes 가 같은 배열(is_same) · 5프레임 동안 _rebuilds 그대로 · 배율/거리가 바뀌면 +1 을 본다. 일부러 _all = _all.duplicate() 로 깨 보니 그 테스트가 떨어졌다. HUD 색 · 테두리 색 · 조준선 자리/색 · visible 은 다를 때만 넣는다(코드 확인). 남은 매 프레임 할당은 Aim.at 의 광선 질의뿐 — 아래 지적"
-    },
-    {
-     "ok": true,
-     "criterion": "튕길 만한 자리를 찾는다 — 겨눈 짐승이 사라지거나(디스폰 · 죽음 · 잡힘) 새장이 캐지는 순간 쓰는 중 망원경이 freed 를 건드리지 않는지 테스트로 돈다(각각 한 프레임에) · 외곽선(_make_outline)이 MeshInstance3D 가 아닌 짐승에서도 안 터진다",
-     "evidence": "test_telescope_light.gd 에 곧바로 free · 프레임 끝 queue_free(디스폰) · 죽음 · 잡혀서 없어짐 · 맡긴 짐승이 없어짐 · 쓰는 중 새장 캐기(같은 프레임 refresh 포함) · 몸이 Node3D 인/없는 짐승이 각각 있고, _process 를 실제로 한 프레임 이상 돌린다. GUT 9.7.1 이 엔진 오류를 Unexpected Errors 로 떨어뜨린다 — _gone 의 is_instance_valid 를 빼 보니 테스트가 떨어졌고, _make_outline 의 as 캐스트를 타입 대입으로 바꾸니 SCRIPT ERROR 로 떨어졌다(둘 다 되돌렸다)"
-    },
-    {
-     "ok": true,
-     "criterion": "결과(찾은 원인 또는 못 찾음)를 report 에 적는다 — 못 찾았으면 다음에 튕길 때 로그가 남도록 사람용 로그 자리를 spec 한 줄로(사람이 튕긴 판의 godot.log 를 루프 도구 실행이 덮어쓴다 — 도구 실행이 다른 로그 파일을 쓰게)",
-     "evidence": "report.json how 에 「직접 원인은 못 찾았다」와 살펴본 길을 적었다. tools/test.sh 의 godot 실행(import · TIMING · 파일마다 · 재시도) 모두 --log-file user://logs/tools.log. spec/01_settings/save.md 에 「로그 자리」 한 줄(사람 판 godot.log 자리 · 테스트는 tools.log · 하네스는 아직 기본 자리). 하네스 쪽은 세션 손 밖이라 [결정] 지적으로 넘긴다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) spec 에 조준선 줄이 없다 — 사람 결정 2026-10-20 「망원경에 조준선 표시」가 telescope.gd 머리 주석에만 있고 spec/04_life/hunting.md 망원경 「쓰기 · 팀」 줄에는 없다. 그 줄에 「쓰는 동안 화면에 조준선(좌클릭 광선 자리 · 짐승에 걸리면 초록/빨강 · 안 쓰면 없다, 사람 결정 2026-10-20, G-261.2)」를 한 마디 더하라(150줄 넘지 않게)",
-     "evidence": "hunting.md 「쓰기 · 팀」 줄에 그 문구가 그대로 들어갔다. 지운 줄 없음 · 145줄"
-    }
-   ],
-   "issues": [
-    "[결정] 하네스 godot 이 아직 godot.log 를 덮는다 — harness/shot.sh · harness/bin/godot 의 godot 실행은 기본 user://logs/godot.log 를 써서, 사람이 튕긴 판의 로그를 찍기 · 하네스 실행이 여전히 밀어낼 수 있다. 세션은 하네스를 못 고친다 — 사람이 합칠 줄기에서 두 곳에 tools/test.sh 처럼 --log-file user://logs/tools.log 를 붙여 주면 된다",
-    "매 프레임 광선 질의가 새 Array · Dictionary 를 만든다 — 쓰는 중 _aimed_animal 이 부르는 Aim.at(game/player/movement_controls/aim.gd:32-34)이 프레임마다 PhysicsRayQueryParameters3D · q.exclude = [rid] 배열 · intersect_ray 결과 Dictionary 를 새로 만든다. 막는 것은 아니다(광선 하나). 줄이려면 망원경이 PhysicsRayQueryParameters3D 하나를 쥐고 from/to 만 바꿔 쓰거나(exclude 는 한 번만) 플레이어 카메라에 RayCast3D 를 두어라",
-    "테두리 · 조준선 「바뀔 때만」 테스트가 이름만큼 보지 않는다 — test_telescope_light.gd test_the_outline_colour_and_crosshair_are_set_only_on_change 는 색이 그대로인지만 보므로 매 프레임 같은 색을 넣어도 통과한다. 넣은 횟수를 세는 값(_rebuilds 처럼)을 두거나 테스트 이름을 실제로 보는 것(색이 유지된다)에 맞춰라"
-   ],
-   "good": []
-  },
-  "test": "indow_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           508\nTests            3819\nPassing Tests    3819\nFailing Tests       0\nRisky/Pending       0\nAsserts        171570\nTime           735s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "8b16e678"
- },
- {
   "time": "2026-10-20 05:09:18",
   "epoch": 1792440558,
   "type": "fail",
@@ -8572,5 +8516,70 @@
   },
   "test": "--- 바뀐 곳만: 4 개 ---\ntest.sh: 파일 4 개를 6 개씩 한꺼번에 돌린다\nok      2s  res://tests/core/net/test_net_interp.gd\nok      6s  res://tests/perf/test_lava_burn_load.gd\nok     14s  res://tests/perf/test_net_stutter.gd\nok     18s  res://tests/perf/test_net_measure.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             4\nTests              22\nPassing Tests      22\nFailing Tests       0\nRisky/Pending       0\nAsserts           201\nTime           18s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "b8b3da62"
+ },
+ {
+  "time": "2026-10-26 18:37:01",
+  "epoch": 1793007421,
+  "type": "pass",
+  "title": "통과 — G-333 단계 2 (사람 · 짐승 피해)",
+  "group": "G-333",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "용암이 사람 · 짐승 · 주민 · 적대 주민을 태운다 (초마다 25 · 걸음 반 · 나와도 2초 초마다 5 · 짐승은 체력 비율) — 0.25초마다 몸마다 lava_at 한 번, 참가자 몫은 서버가 깎는다. 바뀐 곳만 돌린 판(566 파일 · 4199개)에서 1개(spec README 목차) 떨어진 것을 고쳐 그 파일 다시 통과",
+   "approach": "몸 하나의 타는 셈을 LavaBurn(RefCounted — 용암 위인가 · 남은 불 2초 · 1 미만 몫)으로 떼어 Player · Animal · Villager · NetVitals.Vitals 가 하나씩 든다. 섬마다 LavaHurt 노드가 0.25초마다 이 섬의 몸(플레이어 · 짐승 무리 · 주민 무리)에 Volcano.lava_at 한 번씩 묻고 그 사이만큼 깎는다 — 용암이 안 보이고 타는 몸이 없으면 훑지 않는다. 사람 · 주민은 25/초 고정, 짐승(적대 주민 RAIDER 는 짐승이다)은 가득/100 을 곱한다. 갑옷은 덜지 않고(Health 에 곧장 · Villager.burn 새로), 죽음은 각자의 보통 길(Death 의 데스 상자 · 다시 시작 / 주검 / 주민 hp 0)을 탄다. 다시 설 때 불을 끈다(revive_at · 서버 사본 refill). 걸음은 speed_multiplier · speed_factor · walk_speed 에 LavaBurn.speed_factor 를 곱했다. 같이 하는 판: 참가자 몸은 서버장 화면에 VisitorBody 라 무리에 안 들고, NetVitals 가 열기(heat_of)와 같은 꼴로 lava_of(where(id) → TestIsland.on_lava)를 이어 사본 체력을 깎는다 — 0 이면 기존 _push 가 죽음을 치른다. 참가자 기계(volcano.remote)의 LavaHurt 는 깎지 않고 제 걸음만 줄인다. 앞 단계 QA 두 줄: performance.md 의 용암 절을 performance-lava.md 로 옮기고 갈래 줄 · README 목차에서 가리키게 했고, 그 아래 「다른 테스트와 같이 돌면 1.3~2배」 루프 판 숫자 줄과 2단계가 고른 길을 적었다(performance.md 137줄). 돌린 것: test_lava_hurt.gd 9개 통과 · changed_tests 그물 566 파일 4199개 중 test_spec_stale_lines_g310 하나가 README 목차에 새 파일이 없어 떨어짐 → 한 줄 더하고 그 파일만 다시 돌려 통과. ESC 데이터베이스 목차에 「용암」(MANUAL_lava) 한 줄.",
+   "why": "LavaBurn.BURN 25/초 (체력 100 → 4초) — 사람 요청의 숫자는 없어 current.md 의 임시 값; LavaBurn.AFTER 5/초 · AFTER_SECONDS 2초 — 나온 뒤 불; LavaBurn.SLOW 0.5 — 용암 위 걸음; LavaBurn.CHECK 0.25초 — 몸마다 판정 간격; LavaHurt.FLY_CLEAR 3m — 이보다 높이 나는 짐승은 안 탄다 (큰 분출 판 2.6m 위)",
+   "files": [
+    "game/world/terrain/lava_burn.gd",
+    "game/world/terrain/lava_hurt.gd",
+    "game/world/terrain/test_island.gd",
+    "game/core/net/net_vitals.gd",
+    "game/player/movement_controls/player.gd",
+    "game/life/hunting/animal.gd",
+    "game/automation/villagers/villager.gd",
+    "game/ui/manual/manual_toc.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/world/terrain/test_lava_hurt.gd",
+    "game/tests/perf/test_lava_burn_load.gd",
+    "spec/00_core/performance.md",
+    "spec/00_core/performance-lava.md",
+    "spec/03_world/frontier-islands.md",
+    "spec/01_settings/save.md",
+    "spec/README.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "용암 칸 위의 사람은 초마다 임시 25 피해(체력 100 → 4초) · 걸음 50% · 나와도 2초 동안 불붙어 초마다 5 — 짐승 · 주민 · 적대 주민도 같은 규칙(짐승은 체력 비율대로) · 죽으면 보통 죽음과 같다 (테스트)",
+     "evidence": "test_lava_hurt.gd 가 진짜 유황 섬에 용암을 흘려 확인한다 — test_the_numbers…(16번 tick=100 · 걸음 0.5 · 나와서 12번=10 · 가득 300 짐승 1초 75), test_the_player_burns_out…(0.25초 94 · speed_multiplier 반 · 3.75초 생존 · 4초에 Death.died 1번 · 다시 서면 가득 · 불 꺼짐), test_the_player_keeps_burning…(1초 75 → 나와서 65 · 걸음 복귀), test_off_the_lava_nothing_burns(마른 땅 0), test_beasts_and_raiders…(곰 · 사슴 · RAIDER 가 1초에 가득의 25% · 걸음 반 · 4초 뒤 is_carcass), test_villagers…(1초 25 · walk_speed 반 · hp 0 · 몸 Health 죽음). 단언이 모두 구체적인 숫자라 값을 바꾸면 깨진다. Villager.burn 은 take_hit 과 같은 0 처리(갑옷만 뺌)라 「보통 죽음」과 같다. 상수에 「임시」 표시 있음. test.log 에서 통과(5s)"
+    },
+    {
+     "ok": true,
+     "criterion": "몸마다 판정은 임시 0.25초 간격 lava_at 한 번 · 같이 하는 판(서버가 깎는다) (테스트)",
+     "evidence": "test_step_asks_the_lava_once_every_quarter_second — 60프레임(1초) 동안 probe 가 정확히 4번 불리고 25 깎임. LavaHurt.check 는 몸마다 lava_at 한 번. test_the_server_burns_a_guest_where_the_server_sees_them — NetVitals.attach 가 화산섬에서 lava_of 를 잇고 where(id) 자리로 서버 사본을 1초 75 · 나와서 65 로 깎음. test_a_guest_machine_only_slows_its_own_body — volcano.remote 면 체력은 그대로 · 걸음만 반. 참가자 사본이 0 이면 기존 _push 가 죽음을 치르고 lava.reset 한다(코드 확인). NetVitals._process 는 members(참가자)만 돌아 서버장 몸과 겹쳐 깎지 않는다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 루프 재기 숫자가 spec 표보다 높다 — … performance.md 표 아래에 「다른 테스트와 같이 돌면 1.3~2배까지 오른다(루프 판: …)」 한 줄을 적어 두면 2단계가 숫자를 잘못 읽지 않는다 (150줄이 꽉 찼으니 한 줄을 합치거나 performance 쪽 파일을 나눠라)",
+     "evidence": "spec/00_core/performance-lava.md 표 아래에 「다른 테스트와 같이 돌면 1.3~2배까지 오른다」 + 루프 판 숫자(가 0.060 · 나 0.140 · 다 0.070 ms, 첫 프레임 뺀 최대 3.86 · 4.26 · 0.32 ms) 줄이 들어갔다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) performance.md 가 딱 150줄이다 — … 용암 태우기 절을 performance-lava.md 같은 따로 파일로 옮기고 performance.md 갈래 줄에서 가리키게 하라",
+     "evidence": "용암 절이 performance-lava.md(23줄)로 옮겨졌고 performance.md 는 137줄 · 갈래 줄이 `performance-lava.md` 를 가리킨다. spec/README.md 목차에도 한 줄. 지운 줄은 옮긴 용암 절과 바꾼 갈래 줄뿐 — 사람 결정 줄은 그대로"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "ESC 데이터베이스 목차(manual_toc.json)에 「용암」(MANUAL_lava, ko · en 둘 다) 항목 하나 — 페이지 내용은 다른 항목처럼 아직 없음"
+   ]
+  },
+  "test": "gd\nok      3s  res://tests/core/test_path_walk.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      2s  res://tests/core/test_spec_stale_lines_g310.gd\nok      3s  res://tests/core/test_window_fit.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      3s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      3s  res://tests/craft/stations/test_geothermal_spec.gd\nok      3s  res://tests/craft/stations/test_fried_food.gd\nok      3s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      3s  res://tests/craft/stations/test_loom.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_captive_fed.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      3s  res://tests/life/hunting/test_same_animal.gd\nok      2s  res://tests/life/ranching/test_bond.gd\nok      2s  res://tests/multiplayer/test_owl_trees_on_server.gd\nok      3s  res://tests/player/equipment/test_armor_health.gd\nok      3s  res://tests/multiplayer/test_raider_welcome_on_server.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      3s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_compass.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      3s  res://tests/world/terrain/test_obsidian.gd\nok      3s  res://tests/world/terrain/test_volcano_cycle.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           566\nTests            4199\nPassing Tests    4199\nFailing Tests       0\nRisky/Pending       0\nAsserts        223397\nTime           913s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "63dfd13f"
  }
 ]
