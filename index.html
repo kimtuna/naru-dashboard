@@ -146,6 +146,12 @@ const STATE = {
   running: "실행 중", waiting: "토큰 한도 대기", error_wait: "실행 오류 대기",
   done: "완료", stopped: "멈춤", crashed: "비정상 종료", stale: "응답 없음?",
 };
+// 「대기」는 토큰 한도만이 아니다 — 세션이 곧바로 끊긴 것 · claude 무응답도 waiting 으로 쉰다.
+// 사유에 「한도」가 없으면 「잠깐 쉼」으로 보인다 (2026-10-26 끊긴 세션이 「토큰 한도 대기」로 보였다)
+function stateLabel(state, s) {
+  if (state === "waiting" && !/한도/.test((s && s.reason) || "")) return "잠깐 쉼";
+  return STATE[state] || esc(state);
+}
 
 function ago(epoch) {
   if (!epoch) return "";
@@ -176,7 +182,7 @@ function renderStatus(s) {
     : "—";
   $("status").innerHTML = `
     <div class="state">
-      <span class="badge b-${stale ? "stale" : esc(state)}">${stale ? STATE.stale : (STATE[state] || esc(state))}</span>
+      <span class="badge b-${stale ? "stale" : esc(state)}">${stale ? STATE.stale : stateLabel(state, s)}</span>
       <span class="reason">${esc(s.reason || (state === "running" ? "정상 동작 중" : ""))}</span>
     </div>
     ${stale ? `<div class="warn">「실행 중」인데 ${Math.round(staleMin)}분째 갱신이 없다. 맥이 꺼졌거나 잠들었거나 루프가 강제로 죽었을 수 있다.</div>` : ""}
@@ -361,7 +367,7 @@ function renderLanes(names, statuses) {
     const state = s.state || "stopped";
     const stale = state === "running" && (Date.now() / 1000 - (s.updated_epoch || 0)) / 60 > 120;
     return `<button class="lane ${n === lane ? "on" : ""}" data-lane="${esc(n)}">
-      <span class="name">${esc(aiLabel(Object.assign({ lane: n }, s)))} <span class="badge b-${stale ? "stale" : esc(state)}">${stale ? STATE.stale : (STATE[state] || esc(state))}</span></span>
+      <span class="name">${esc(aiLabel(Object.assign({ lane: n }, s)))} <span class="badge b-${stale ? "stale" : esc(state)}">${stale ? STATE.stale : stateLabel(state, s)}</span></span>
       <span class="what">${esc(laneWhat(s))} <span class="sub">· ${ago(s.updated_epoch)}</span></span></button>`;
   }).join("");
   $("lanes").querySelectorAll(".lane").forEach((b) => (b.onclick = () => {

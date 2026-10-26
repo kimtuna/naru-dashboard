@@ -5769,7 +5769,7 @@
   - 기준: (앞 단계 QA) 돌아가는 길이면 안 친다는 테스트가 없다 — test_a_flying_hawk_and_a_beast_off_the_straight_way_do_not_batter 는 이름과 달리 매만 본다. 주민의 땅(FOLK_LAYERS)에 짧게 돌아갈 길을 굽어 DETOUR 가 된 곰이 옆의 상자에 스쳐도 batters == 0 · hits_left == HITS 인지 단언을 더하거나, 테스트 이름에서 '곧은 길이 아닌 짐승' 을 빼라
 
 ## [ ] G-335 ESC 「kill」 · 섬 스폰은 선착장 앞
-- 차선: 3d-lane2
+- 차선: 3d-lane2 · 시작 2026-10-26 23:48
 - 순서: G-333 뒤
 - spec: spec/08_combat/damage-death.md, spec/03_world/frontier-islands.md
 - **사람 요청 2026-10-26** (원문 그대로): 「esc에 kill을 쳐서 해당 섬의 스폰 장소로 스폰 되는걸로 만들어주고」 「본섬을 제외한 나머지 섬의 스폰장소는 선착장 앞으로 해줘」
