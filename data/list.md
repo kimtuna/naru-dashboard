@@ -5689,7 +5689,7 @@
   - 기준: (앞 단계 QA) 센서 kW 단언이 13 kW 도 통과시킨다 — test_ui_shots.gd::test_plan_has_the_three_sensor_windows 의 assert_string_contains(low.text, "3 kW") 는 「13 kW」 같은 값에도 참이다. 값 글자 앞이 공백 · 줄 처음인지까지 보거나(예: low.text.ends_with(" 3 kW") 또는 정규식 (^|\s)3 kW) 같은 꼴로 바꿔라
   - 기준: (앞 단계 QA) 라틴 글자도 한글 글꼴 꼴로 바뀌었다 — 테마 기본 글꼴을 한글 SystemFont 로 두어 영어 화면 · 숫자도 Apple SD Gothic Neo / Malgun Gothic 꼴로 그려진다. 윈도 빌드(windows 브랜치)에서 Malgun Gothic 으로 잘림 · 줄 높이가 달라지지 않는지 한 번 찍어 보고, spec/12_ui/menu.md 미정 쪽에 「기본 글꼴: 한글 SystemFont(임시)」 한 줄을 적어 두어라
 
-## [ ] G-939-2 영어 아이템 이름 대소문자도 갈린다 (G-939 단계 2)
+## [x] G-939-2 영어 아이템 이름 대소문자도 갈린다 (G-939 단계 2)
 - 차선: 3d-lane2 · 시작 2026-10-26 15:04
 - 결정: (Claude 가 풂 2026-10-26 — 사람 「어떤게 나아?」) **영어 이름은 아이템 · 시설 모두 단어마다 대문자(Title Case)** — 「Iron Ore」 · 「Research Bench」. 시설이 이미 그 꼴이고 게임 아이템 이름에 흔한 꼴이다. 윈도에서 찍어 보는 일은 **루프 몫에서 뺀다** — 사람이 다음 윈도 판에서 본다. menu.md 미정 줄만 적는다
 - 떼어 온 곳: G-939 단계 2 — 나머지 단계는 G-939 가 이어 한다. 하다 만 것은 브랜치 g/G-939-2
