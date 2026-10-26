@@ -1,56 +1,5 @@
 [
  {
-  "time": "2026-10-20 12:28:50",
-  "epoch": 1792466930,
-  "type": "pass",
-  "title": "통과 — G-264 단계 1 (데이터베이스 창 · 목차)",
-  "group": "G-264",
-  "step": "1",
-  "attempt": "2",
-  "report": {
-   "problem": "ESC → 데이터베이스 창(왼쪽 목차 · 오른쪽 「설명은 아직이다」, ko/en) — 목차는 game/ui/manual/manual_toc.json 하나에서 읽고, QA 지적대로 횃불 · 조명 항목을 더했다. 바뀐 곳만 46개 파일 403개 테스트 통과",
-   "approach": "QA 지적 두 가지를 풀었다. ① 횃불이 목차에 없었다 — 생활 갈래에 torch(MANUAL_torch: 「횃불 · 조명」/「Torches · Lighting」)를 더했고, 빠뜨림 테스트가 hand.json 의 모든 output(상자 · 작업대 · 횃불 · 도면)이 목차 어느 갈래엔가 항목으로 있는지 보게 했다. 다른 spec 갈래도 game/ 코드와 맞대 봤다 — 날씨 · 계절(game_clock 에 「계절은 아직 없다」) · 레벨 · 드론 · 전력 · 경제 · 원정은 코드가 없어 넣지 않았다. ② 사진을 실제로 찍었다: harness/shot.sh --ui 로 database 자리를 찍어 .loop/out/shots_g264/database_ko.png · database_en.png 에 남기고 열어 봤다 — 목차가 잘리지 않고 사슴을 고르면 오른쪽에 「설명은 아직이다」/「No description yet」이 나온다.",
-   "why": "",
-   "files": [
-    "game/ui/manual/manual_toc.json",
-    "game/ui/menu/manual_screen.gd",
-    "game/ui/menu/manual_screen.tscn",
-    "game/ui/menu/pause_menu.gd",
-    "game/ui/menu/pause_menu.tscn",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/tests/ui/menu/test_manual_screen.gd",
-    "game/tests/ui/menu/test_pause_menu.gd",
-    "spec/12_ui/menu.md",
-    "spec/01_settings/save.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "ESC 메뉴에 「데이터베이스」 버튼 → 창. 왼쪽 목차(갈래 — 생활 · 농사 · 낚시 · 사냥 · 목장 · 새장 · 건설 · 제작 · 시설 · 주민 · 전투 · 멀티 …)와 항목 이름, 오른쪽은 항목을 고르면 「설명은 아직이다」 한 줄(본문은 확정된 뒤 쓴다). 목차는 데이터 파일 하나(예: game/ui/manual/manual_toc.json)에서 읽는다 · ko/en",
-     "evidence": "test_manual_screen.gd — test_the_pause_menu_opens_the_database(버튼 → 창 · 뒤로 닫힘), test_reset_folds_the_database, test_the_toc_comes_from_the_data_file(나무 갈래·항목 수 = manual_toc.json), test_the_toc_has_the_named_categories(사람이 적은 12 갈래 전부 · 빈 갈래 없음), test_picking_an_entry_says_not_yet(사슴 → [사슴, 설명은 아직이다]), test_it_reads_korean_and_english(말 바꾸면 Living / Deer · No description yet), test_every_name_is_in_korean_and_english(모든 키 ko.po · en.po). test.log 바뀐 곳만 46파일 403개 통과 · guard 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "지금 게임에 있는 것으로 목차를 채운다 — spec/ 의 문서 갈래와 지금까지 만든 시설 · 창 · 동물을 보고 빠뜨리지 않는다 · ui_shots 한 장",
-     "evidence": "test_the_toc_misses_nothing_in_the_game 이 stations.json 시설 · AnimalKinds.WILD · livestock.json · BirdCage.KINDS · rooms.json 방 · hand.json 손 제작 output(torch 포함)을 목차와 맞댄다. 일부러 torch · smoker · goose 를 목차에서 지우고 TEST_DIR=res://tests/ui/menu 로 돌리자 세 단언이 떨어졌다(되돌림 확인 cmp 동일). game/ 의 world · life · player · combat · craft · build · automation 폴더를 spec 갈래와 맞대 봤다 — 죽음 · 낙하는 「체력 · 죽음」, 모듈은 「장비 · 모듈」, 벌집 습격 · 상자 · 지도 · 횃불 다 있다. 날씨 · 레벨 · 드론 · 전력 · 경제 · 원정은 코드가 없다. 사진 .loop/out/shots_g264/database_ko.png · database_en.png 를 열어 봤다 — 목차와 사슴 → 「설명은 아직이다」/「No description yet」"
-    }
-   ],
-   "issues": [
-    "빠뜨림 테스트가 HUD 창을 안 본다 — test_the_toc_misses_nothing_in_the_game 은 시설 · 동물 · 방 · 손 제작만 맞댄다. 지도 · 낚시 · 주민 · 길드 · 부두 창은 지금 목차에 있지만 새 창(game/ui/hud/*_window.gd)을 더해도 떨어지지 않는다. 막는 것은 아니다 — 창 이름 → 목차 id 표를 테스트에 두고 game/ui/hud 의 *_window.gd 가 그 표에 다 있는지 단언하면 「새로 더하면 한 줄」 약속이 창까지 지켜진다"
-   ],
-   "good": []
-  },
-  "test": "--- 바뀐 곳만: 46 개 ---\ntest.sh: 파일 46 개를 6 개씩 한꺼번에 돌린다\nok      9s  res://tests/ui/layout/test_window_layout.gd\nok     10s  res://tests/settings/save/test_round_trip.gd\nok      5s  res://tests/core/debug/test_dev_box.gd\nok      7s  res://tests/world/terrain/test_island_in_game.gd\nok     17s  res://tests/craft/stations/test_g212_human_save.gd\nok      6s  res://tests/core/debug/test_ui_shots.gd\nok     21s  res://tests/craft/stations/test_stations.gd\nok      6s  res://tests/ui/menu/test_pause_menu.gd\nok      5s  res://tests/core/debug/test_dev_box_open.gd\nok      3s  res://tests/core/debug/test_dev_animals.gd\nok      3s  res://tests/ui/hud/test_room_window.gd\nok      4s  res://tests/ui/hud/test_room_names.gd\nok      4s  res://tests/ui/hud/test_station_g230_look.gd\nok      2s  res://tests/core/net/test_steam_game.gd\nok      3s  res://tests/ui/hud/test_villager_gear_window.gd\nok      3s  res://tests/core/net/test_steam_quit.gd\nok      3s  res://tests/core/test_game_root_tidy.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/multiplayer/test_server_from_game.gd\nok     30s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      3s  res://tests/ui/hud/test_kept_window.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok     32s  res://tests/combat/tools_as_weapons/test_fire_rate.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            46\nTests             403\nPassing Tests     403\nFailing Tests       0\nRisky/Pending       0\nAsserts         17393\nTime           39s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "3b44db71"
- },
- {
   "time": "2026-10-20 12:43:45",
   "epoch": 1792467825,
   "type": "pass",
@@ -8274,5 +8223,39 @@
   },
   "test": "t_spec.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_guard_pen_window.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/theme/test_korean_font.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_obsidian.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/automation/villagers/test_villager_body.gd\nok      2s  res://tests/world/terrain/test_volcano_cycle.gd\nok      2s  res://tests/automation/villagers/test_villager_skills.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/build/test_placer.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           697\nTests            4943\nPassing Tests    4943\nFailing Tests       0\nRisky/Pending       0\nAsserts        242845\nTime           980s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "72b30d42"
+ },
+ {
+  "time": "2026-10-27 04:29:00",
+  "epoch": 1793042940,
+  "type": "stop",
+  "title": "루프 끝 — 목록을 모두 처리했다",
+  "group": "G-942",
+  "step": "1",
+  "attempt": "2",
+  "report": {
+   "problem": "용암 spec 테스트 머리 주석에 G-942 단계 1(293 프레임 단언을 줄 덩어리로 좁힌 까닭) 한 줄 · 전체 검사에서 떨어진 test_pause_menu_kill 의 임시 폴더 경합을 고쳤다 — 바뀐 곳만: 2개 파일 8 테스트 통과",
+   "approach": "머리 주석 4줄에 「G-942 단계 1 — 293 프레임 단언은 파일 전체가 아니라 그 줄 덩어리(block)를 본다. 이어지는 줄이라 line 에 안 든다」를 더했다. 전체 검사에서 test_kill_ignores_case_and_spaces 가 「임시 자리가 지워졌다」로 떨어졌고 TMPDIR 에 worlds/<id>.sav 만 남아 있었다. kill 로 죽으면 game_root.autosave 가 WorkerThreadPool 스레드에서 월드를 쓰는데, after_each 의 TempDir.clean 이 그 쓰기가 끝나기 전에 폴더를 지워 뒤늦게 worlds/ 가 다시 생기는 경합이었다(이 묶음의 앞 단계와는 상관없다). after_each 에서 game.autosaving() 이 끝날 때까지 프레임을 기다린 뒤 지우게 했다. tests/ui/menu 18개 파일 145 테스트 통과, 그 폴더를 다섯 번 거듭 돌려 kill 파일이 다 통과 · 찌꺼기 없음, changed_tests 그물 2개 파일 8 테스트 통과. 남아 있던 naru_pause_kill_3510439008 찌꺼기는 지웠다.",
+   "why": "",
+   "files": [
+    "game/tests/core/test_lava_perf_spec_loop_line.gd",
+    "game/tests/ui/menu/test_pause_menu_kill.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "테스트 머리 주석이 이번 단계를 안 적는다 — game/tests/core/test_lava_perf_spec_loop_line.gd 2~3줄 머리 주석은 G-942.3 만 말한다. 293 프레임 단언을 이어지는 줄 덩어리(block)로 좁힌 까닭(G-942 단계 1, 이어지는 줄이라 line 에 안 든다)을 한 줄 더하라 (막는 것은 아니다)",
+     "evidence": "4줄에 「## G-942 단계 1 — 293 프레임 단언은 파일 전체가 아니라 그 줄 덩어리(block)를 본다. 이어지는 줄이라 line 에 안 든다.」가 더해졌다. 실제 단언(31줄 assert_true(\"293 프레임(4.9 초)\" in block))과 주석이 맞는다. 주석만 바꾼 기준이라 테스트는 필요 없다"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "앞 회차 전체 검사에서 떨어진 test_pause_menu_kill.gd 를 고쳤다 — after_each 에서 game.autosaving() 이 끝날 때까지 프레임을 기다린 뒤 TempDir.clean 한다(자동 저장 작업 스레드가 지운 뒤 worlds/ 를 다시 만드는 경합). 기계 검사가 떨어진 것을 고친 것이라 덤이라기보다 이번 회차의 몫이다. 이번 test.log 전체 697 파일 4943 테스트가 모두 통과했고 찌꺼기 경고도 없다"
+   ]
+  },
+  "test": "t_spec.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_guard_pen_window.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/theme/test_korean_font.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_obsidian.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/automation/villagers/test_villager_body.gd\nok      2s  res://tests/world/terrain/test_volcano_cycle.gd\nok      2s  res://tests/automation/villagers/test_villager_skills.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/build/test_placer.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           697\nTests            4943\nPassing Tests    4943\nFailing Tests       0\nRisky/Pending       0\nAsserts        242845\nTime           980s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
