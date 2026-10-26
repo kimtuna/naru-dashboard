@@ -5702,7 +5702,7 @@
   - 기준: (앞 단계 QA) 라틴 글자도 한글 글꼴 꼴로 바뀌었다 — 테마 기본 글꼴을 한글 SystemFont 로 두어 영어 화면 · 숫자도 Apple SD Gothic Neo / Malgun Gothic 꼴로 그려진다. spec/12_ui/menu.md 미정 쪽에 「기본 글꼴: 한글 SystemFont(임시)」 한 줄을 적어 두어라 (윈도 확인은 사람이 — 결정 줄)
 
 ## [ ] G-331 배관 이음새 — 배관 중간에 끼워 나눈다
-- 차선: 3d-lane3
+- 차선: 3d-lane3 · 시작 2026-10-26 17:46
 - spec: spec/07_automation/water-pipes.md
 - **사람 요청 2026-10-26** (원문 그대로): 「이음세가 배관 중간에 넣어서 분배하는 방향으로 잡아줘.」
 - 지금은 이음새가 배관 끝(seg.b)에만 붙는다(pipes.gd junction_snap · place_for). 아래 「어떻게」는 Claude 가 정함 2026-10-26 (임시)

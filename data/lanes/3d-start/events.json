@@ -1,65 +1,5 @@
 [
  {
-  "time": "2026-10-20 06:44:33",
-  "epoch": 1792446273,
-  "type": "fail",
-  "title": "QA 불합격 — G-260 단계 2 (시도 2)",
-  "group": "G-260",
-  "step": "2",
-  "attempt": "2",
-  "report": {
-   "problem": "새장 새 칸마다 「못 나가게」(켜고 끄기 · 창 아래 「다 못 나가게」) · 「쉬기」(피로도 0 까지 머물고 0 에서 나간다) · 저장 · 복원 · 창 글자 ko/en · ui_shots bird_cage 갱신. 바뀐 곳만: 191 파일 1607 테스트 통과",
-   "approach": "CagedBird 에 kept(칸의 것 — 새를 빼고 넣어도 남는다) · rest_out 을 더했다. 날 때 kept · rest_out 이면 돌아오고, 앉아 있을 때 둘 중 하나면 나가지 않는다. rest_out 은 피로도 0 에서 풀려 스스로 나간다. kept 면 사냥도 보내지 않는다. Stations.CAGE_KEEP([켬] · [칸, 켬]) · CAGE_REST([칸]) 를 더했고, 창 칸에는 「쉬기」 · 「못 나가게」(토글), 아래에 「다 못 나가게」를 달았다. 하는 일 글자는 「못 나가게」 · 「쉰다(피로도 %d%)」다. 둘 다 to_dict/restore 에 담았고 옛 저장본에서는 꺼진 채로 돌아온다. 앞 시도의 기계 검사에서 떨어진 test_villager_gear_window 는 이 일과 상관이 없다: 바닥 없는 판에서 사람이 떨어지는데, 바쁠 때 물리가 몰아 돌면 광선이 상자 아래로 지나가 null 을 냈다. 혼자 6번 돌려도 재현되지 않았고, 그 테스트에서 사람의 physics_process 를 꺼 붙잡아 두었다. 쓰레기 .uid 도 지웠다.",
-   "why": "",
-   "files": [
-    "game/life/ranching/caged_bird.gd",
-    "game/life/ranching/bird_cage.gd",
-    "game/craft/stations/stations.gd",
-    "game/ui/hud/cage_panel.gd",
-    "game/core/debug/ui_shots.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "spec/04_life/bird-cage.md",
-    "game/tests/life/ranching/test_cage_keep_rest.gd",
-    "game/tests/ui/hud/test_villager_gear_window.gd",
-    "game/tests/life/ranching/test_cage_open_no_call.gd.uid (지움)"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "새 칸마다(그리고 「다」 하나) **「못 나가게」** 켜고 끄기 — 켜면 새장에 있는 새는 나가지 않고, 밖에 있으면 돌아와 머문다(끌 때까지). 저장 · 복원",
-     "evidence": "test_cage_keep_rest.gd — test_kept_bird_flies_home_and_stays_until_turned_off(나는 새 HOME → 10분 동안 FLY 없음 → PERCH · 사냥 거부 · 끄면 FLY) · test_keep_all_turns_every_slot(빈 칸까지 다 켜고 끈다) · test_kept_is_saved_and_restored(새 칸 · 빈 칸 kept 복원, 옛 저장본은 꺼짐) · 창 테스트에서 칸 단추 · 「다 못 나가게」 단추가 Stations.CAGE_KEEP 을 거쳐 켜고 끈다. CagedBird.to_dict/restore 에 keep 이 담긴다"
-    },
-    {
-     "ok": false,
-     "criterion": "**「쉬기」** — 누르면 돌아와 **피로도 0 이 될 때까지** 안 나가고, 0 이 되면 스스로 다시 나간다(여느 RESTED 20 이 아니라 0). 새 칸의 하는 일에 「못 나가게」 · 「쉰다(피로도 %d)」가 뜬다 (테스트: 피로도 60 에서 쉬기 → 0 전에는 HOME · 0 에서 FLY)",
-     "evidence": "test_rest_stays_until_fatigue_zero_then_flies 는 진짜다(60 에서 쉬기 → 20 아래 0 초과에서 PERCH · rest_out, 0 에서 FLY). 창 글자 「쉰다(피로도 60%)」 · 「못 나가게」도 test_rest_and_keep_through_station_acts_and_window_text 가 본다. 그러나 쉬는 새가 0 전에 나가는 길이 남았다: 망원경 좌클릭(Stations.send_bird, slot -1 = 갈 수 있는 새 다)이 쉬는 새까지 사냥 보낸다 — ready_to_hunt 가 rest_out 을 보지 않고 hunt() 가 rest_out 을 지운다. 사람 결정 「0이 될 때까지 안나갔다가」와 어긋난다"
-    },
-    {
-     "ok": true,
-     "criterion": "ui_shots bird_cage 갱신 · ko/en",
-     "evidence": "ui_shots.gd bird_cage 자리에 첫 칸 쉬기 · 다섯째 칸 못 나가게를 더했고 test_ui_shots 통과. ko.po · en.po 에 CAGE_KEEP · CAGE_KEEP_ALL · CAGE_REST · CAGE_STATE_keep · CAGE_STATE_rest_out 다섯 키가 둘 다 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 쓰레기 .uid 파일이 남았다 — game/tests/life/ranching/test_cage_open_no_call.gd.uid 가 짝이 되는 .gd 없이 추적 안 된 채 남았다. rm 으로 지워라",
-     "evidence": "git status 에 D 로 지워졌고 파일이 없다"
-    }
-   ],
-   "issues": [
-    "망원경 「다 보내기」가 쉬는 새도 내보낸다 — Stations.send_bird(s, prey, -1)(stations.gd:507-519)는 갈 수 있는 새를 다 보내는데, CagedBird.ready_to_hunt(caged_bird.gd:236)가 rest_out 을 보지 않고 hunt() 가 rest_out = false 로 지운다. 그래서 「쉬기」를 누른 새가 피로도 0 전에 망원경 좌클릭 한 번에 나간다. 고치는 법: ready_to_hunt 에 `and not rest_out` 을 더해(못 나가게와 같이) 쉬는 새는 사냥을 가지 않게 하고 hunt() 의 `rest_out = false` 는 지운다(칸을 집어 보내는 길도 같이 막힌다 — 쉬기를 풀려면 0 까지 기다린다는 사람 결정 그대로). test_cage_keep_rest.gd 에 「피로도 60 에서 rest() 뒤 ready_to_hunt(false) 가 false · hunt(...) 가 false · rest_out 그대로」 단언을 더하고, Stations.can_send/send_bird(slot -1)로 쉬는 새가 안 나가는 것도 하나 보라. spec/04_life/bird-cage.md 의 못 나가게 · 쉬기 줄에 「쉬는 동안 사냥도 보내지 못한다」를 적어라"
-   ],
-   "good": [
-    "game/tests/ui/hud/test_villager_gear_window.gd 에 player.set_physics_process(false) 를 더했다 — 앞 시도의 전체 검사에서 떨어진 깜빡이는 테스트(바닥 없는 판에서 사람이 떨어져 광선이 상자 아래로 지남)를 붙잡은 것. 이 단계 기준 밖이나 테스트의 뜻(광선 맨 앞이 상자)은 그대로다"
-   ]
-  },
-  "test": "craft/recipes/test_workbench_gear.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      3s  res://tests/craft/stations/test_cook_table.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      3s  res://tests/life/ranching/test_bird_cage_five.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_bond.gd\nok      2s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      3s  res://tests/life/ranching/test_taming.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      3s  res://tests/life/ranching/test_ranch_escape.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/automation/villagers/test_villager_skills.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok    435s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           191\nTests            1607\nPassing Tests    1607\nFailing Tests       0\nRisky/Pending       0\nAsserts         58557\nTime           435s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-20 07:02:42",
   "epoch": 1792447362,
   "type": "pass",
@@ -8540,6 +8480,37 @@
   "group": "G-323",
   "step": "2",
   "attempt": "1",
+  "report": {
+   "problem": "net_vitals _shoot 의 주석 두 개를 제 줄로 되돌렸다 — 바뀐 곳만 23개 파일 156개 테스트 통과",
+   "approach": "「# 흔들림이 가장 클 때까지 받는다」가 limit 줄에서 빠져 power 줄 끝에 겹쳐 붙어 있었다. limit 줄 끝으로 옮기고 power 줄엔 「덜 당긴 활은 참가자 기계가 이미 막았다」 하나만 남겼다. 두 줄의 주석을 소스에서 읽어 보는 테스트를 더했다. 바뀐 곳 그물을 돌리다 test_holding_the_click_draws_and_releasing_looses_a_full_arrow 가 한 번 떨어졌다(70.13 ≠ 70) — 화살 속력이 날아가는 동안 중력에 바뀌는데 2프레임 뒤에 쟀기 때문이다(혼자 돌리면 통과, 여럿 같이 돌면 프레임이 길어져 어긋남). shot 신호가 오는 순간의 속력을 재도록 고쳤다. 다시 돌린 바뀐 곳 그물: 23개 파일 156개 테스트 전부 통과.",
+   "why": "",
+   "files": [
+    "game/core/net/net_vitals.gd",
+    "game/tests/combat/tools_as_weapons/test_bow_draw.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "net_vitals 주석이 엉뚱한 줄에 붙었다 — game/core/net/net_vitals.gd 의 _shoot 에서 「# 흔들림이 가장 클 때까지 받는다」가 limit 줄에서 빠지고 power 줄 끝에 주석 두 개로 겹쳐 붙었다. 그 주석을 `var limit := clampf(...)` 줄 끝으로 되돌리고 power 줄에는 「덜 당긴 활은 참가자 기계가 이미 막았다」만 남겨라",
+     "evidence": "net_vitals.gd:459 limit 줄 끝에 「# 흔들림이 가장 클 때까지 받는다」, :460 power 줄 끝에 「# 덜 당긴 활은 참가자 기계가 이미 막았다」 하나만 있다 (diff 로 확인, 두 줄 모두 파일에 하나씩뿐). test_bow_draw.gd 의 test_server_shoot_comments_sit_on_their_own_lines 가 소스를 읽어 두 줄의 끝 주석과 power 줄의 # 개수(1)를 단언한다 — 앞 상태(power 줄에 주석 둘, limit 줄에 없음)라면 세 단언 모두 떨어진다. test.log 는 전체 677개 파일 4835개 테스트 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "test_holding_the_click_draws_and_releasing_looses_a_full_arrow 의 흔들림을 고쳤다 — 화살 속력을 2프레임 뒤가 아니라 shot 신호가 오는 순간에 잰다. 기준 밖이지만 같은 테스트 파일의 잦게 떨어지던 단언을 바로잡은 것이라 해는 없다"
+   ]
+  },
+  "test": "p_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_obsidian.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      3s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_body.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      3s  res://tests/world/terrain/test_volcano_cycle.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           677\nTests            4835\nPassing Tests    4835\nFailing Tests       0\nRisky/Pending       0\nAsserts        238254\nTime           958s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-26 17:46:01",
+  "epoch": 1793004361,
+  "type": "start",
+  "title": "루프 시작",
   "report": {
    "problem": "net_vitals _shoot 의 주석 두 개를 제 줄로 되돌렸다 — 바뀐 곳만 23개 파일 156개 테스트 통과",
    "approach": "「# 흔들림이 가장 클 때까지 받는다」가 limit 줄에서 빠져 power 줄 끝에 겹쳐 붙어 있었다. limit 줄 끝으로 옮기고 power 줄엔 「덜 당긴 활은 참가자 기계가 이미 막았다」 하나만 남겼다. 두 줄의 주석을 소스에서 읽어 보는 테스트를 더했다. 바뀐 곳 그물을 돌리다 test_holding_the_click_draws_and_releasing_looses_a_full_arrow 가 한 번 떨어졌다(70.13 ≠ 70) — 화살 속력이 날아가는 동안 중력에 바뀌는데 2프레임 뒤에 쟀기 때문이다(혼자 돌리면 통과, 여럿 같이 돌면 프레임이 길어져 어긋남). shot 신호가 오는 순간의 속력을 재도록 고쳤다. 다시 돌린 바뀐 곳 그물: 23개 파일 156개 테스트 전부 통과.",
