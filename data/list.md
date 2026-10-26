@@ -5792,7 +5792,7 @@
 - [x] 2. (앞 단계 QA) 짐승 한 대 뒤 망치 해체에 참가자 「쩍」
   - 기준: 짐승 한 대 뒤 망치 해체에 참가자 「쩍」 — 짐승이 한 대 쳐서 battered=1 이 된 상자 · 벽을 사람이 망치로 마저 쳐 해체하면 참가자 쪽 echo_dents 는 was(battered)>0 인 채 사라진 것으로 보고 CRACK 을 울린다(서버 쪽은 망치 해체라 조용하다). game/build/placeable.gd 의 hit_all 이 마지막 대로 부술 때(또는 take 경로) BATTERED 를 지우거나, 사라짐을 짐승 무너짐과 가를 다른 표시를 두고, test_battering_on_server.gd 에 서버 Placeable.batter 한 번 → 참가자 HIT 도착 확인 → take_thing 해체 → 참가자 CRACK 이 늘지 않음을 단언하는 테스트를 더하라
   - 기준: (앞 단계 QA) 망치로 1대 남긴 것을 짐승이 무너뜨리면 조용 — report · placeable.gd 주석이 스스로 적은 틈이다: 망치로 HITS-1 대까지 깎아 둔 것을 짐승이 첫 대에 무너뜨리면 battered 가 목록에 실릴 틈이 없어 참가자 쪽 「쩍」이 안 난다. 사라지기 직전 batter 가 무너뜨렸음을 알리는 길(예: 놓는 곳 목록과 별도로 무너짐 자리를 rpc 로 보내기)을 두고 참가자 CRACK==1 을 단언하는 테스트를 더하라
-- [ ] 1. 테스트 머리 주석이 낡았다 (G-941 단계 2)
+- [x] 1. 테스트 머리 주석이 낡았다 (G-941 단계 2)
   - 기준: 테스트 머리 주석이 낡았다 — game/tests/multiplayer/test_battering_on_server.gd 5번째 줄 「깎인 채로 사라진 것에 「쩍」을 낸다 (G-334.4, Placeable.echo_dents)」는 이제 틀리다(「쩍」은 echo_razed 로 낸다 — 바로 아래 7번째 줄과 어긋난다). 5번째 줄에서 「, 깎인 채로 사라진 것에 「쩍」」을 지워라
 
 ## [ ] G-942 루프가 찾은 것 — 스스로 갚는다
