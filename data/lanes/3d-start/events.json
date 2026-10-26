@@ -1,133 +1,5 @@
 [
  {
-  "time": "2026-10-20 18:15:43",
-  "epoch": 1792487743,
-  "type": "pass",
-  "title": "통과 — G-267 단계 2 (고친다 — 모습은 잃어도 되는 길로 · 받는 쪽은 사이를 메운다)",
-  "group": "G-267",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "짐승 · 주민 자리 · 보는 쪽을 unreliable_ordered 자리 소식으로 떼고 받는 쪽은 100 ms 뒤를 메워 그린다 — 잃음 5% 1분 판 끊김 짐승 12/분 · 주민 12/분 → 0 · 0, 받음 4.5 → 2.4 KB/s. 바뀐 곳 그물 176 파일 1344 개 통과 (전체는 돌리지 않았다)",
-   "approach": "1단계는 reliable 머리 막힘을 짐작대로 보였다. 자리 · 보는 쪽(MOTION_KEYS)을 reliable 지문에서 빼고(_still) 서버가 0.1초마다 이 섬 사람에게 전부를 바이트 줄(한 마리 20 B, 50 마리씩)로 unreliable_ordered 로 보낸다(_animals_moved · _folk_moved, 서버 시계를 붙인다). 처음 세울 때 · 이름 · 체력 · 잡힘 · 사라짐은 reliable 그대로. 받는 그림은 NetInterp 에 넣어 「서버 시계 + 가장 짧았던 늦음」보다 100 ms 뒤를 앞뒤 사이로 메워 그린다 — 늦게 온 것은 버리고, 다음 것이 늦으면 0.25초까지 마지막 빠르기로 잇는다. 그런데 짧은 판에서 잃음 5% 가 272 B/s 로 말라 2.8초 섰다 — ENet 꾸러미 조이기가 왕복 시간 흔들림에 unreliable 을 보내는 쪽에서 버렸다. 줄이는 몫을 0 으로(NetLink.unthrottle, 붙은 뒤에 — 참가자가 붙는 중에 바꾸면 못 붙었다). 1분 일곱 판: 잃음 2% · 5% 모두 끊김 0, 받음 4.5 → 2.4 KB/s(주민 자리가 딕셔너리 조각에서 바이트 줄이 됐다). QA 흠: 고친 뒤에는 잃음 판이 0 이라 「잃음 판 > 0」 대신 망이 0.6초씩 통째로 끊기는 받침 판을 더해 그 판이 0 아님을 단언했다(세는 길이 고장 나 늘 0 이면 떨어진다). 표 밑에 「두 배쯤 흔들린다」 줄. App Nap 은 1단계에서 안 보여 하지 않았다. 남의 몸은 이미 unreliable 이라 보간은 그대로(다가가기) 뒀다",
-   "why": "NetInterp.DELAY 100 ms — current.md 의 임시 값; NetInterp.EXTRAPOLATE 0.25초 — 둘을 내리 잃어도(0.3초 빔) 서지 않을 만큼; NetInterp.Clock.LEAK 0.01 초/초 — 두 기계 시계 어긋남을 따라가는 몫; NetWorld.MOTION_CHUNK 50 — 1 KB 로 ENet 꾸러미 한 장을 넘지 않게; NetLink.THROTTLE_DOWN 0 — ENet 꾸러미 조이기를 줄이지 않는다 (우리가 싣는 것은 사람당 몇 KB/s)",
-   "files": [
-    "game/core/net/net_interp.gd",
-    "game/core/net/net_world.gd",
-    "game/core/net/net_link.gd",
-    "game/core/net/net_session.gd",
-    "game/life/hunting/animal.gd",
-    "game/automation/villagers/villager.gd",
-    "game/tests/core/net/test_net_interp.gd",
-    "game/tests/multiplayer/test_send_less.gd",
-    "game/tests/perf/lossy_link.gd",
-    "game/tests/perf/stutter_probe.gd",
-    "game/tests/perf/test_net_stutter.gd",
-    "spec/00_core/performance.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "짐승 · 주민 · 남의 몸의 자리 · 방향은 unreliable(또는 unreliable_ordered)로 늘 전부 싣는다 — 한 꾸러미를 잃어도 다음 것이 곧 덮는다. 잘 안 바뀌는 칸(이름 · 체력 · 잡힘 · 사라짐)은 reliable 그대로 (G-227.3 의 「첫 소식 잃음」 함정을 다시 만들지 않는다)",
-     "evidence": "net_world.gd _animals_moved · _folk_moved 가 unreliable_ordered 로 0.1초마다 전부(pack_motion)를 싣고, MOTION_KEYS 를 _still 로 reliable 지문에서 뺐다. 처음 세우기(_all_animals · _all_folk)는 자리까지 reliable. 남의 몸(net_bodies.gd _snapshot)은 이미 unreliable_ordered. test_net_interp.gd test_only_moving_does_not_go_on_the_reliable_path(자리만 바뀌면 reliable 로 안 감 · 처음은 자리 포함 · 체력은 reliable) · test_motion_is_unreliable_and_the_rest_stays_reliable(RPC 모드) · test_motion_packs_twenty_bytes_each_and_comes_back · test_send_less.gd test_animal_motion_rides_the_unreliable_stream(실제 ENet 둘에서 자리 소식으로 그림이 섬)"
-    },
-    {
-     "ok": true,
-     "criterion": "받는 쪽은 받은 두 모습 사이를 메운다(받은 시각을 붙여 조금 뒤(임시 100 ms)를 그린다 — 흔한 스냅숏 보간). 늦게 온 꾸러미는 버린다",
-     "evidence": "NetInterp(DELAY 0.1 임시) — 서버 시계 + 가장 짧은 늦음으로 맞춰 100 ms 뒤를 앞뒤 사이로 lerp. test_net_interp.gd 가 사이 메우기 · 늦은/같은 때 꾸러미 버림(push false) · 잃은 것 잇기 · EXTRAPOLATE 까지 잇고 섬 · SNAP · 시계(흔들린 늦음에도 고르게) 를 구체 값으로 단언. animal.gd · villager.gd _follow 가 motion.sample() 을 그린다"
-    },
-    {
-     "ok": true,
-     "criterion": "1단계 시험에서 0.2초 넘게 멈춤이 잃음 없을 때와 같은 수준이 된다 (테스트). 초당 바이트를 전후로 적는다 — 크게 늘면 줄인 꼴(G-227.2)을 그대로 쓴다",
-     "evidence": "test_net_stutter.gd 가 깨끗 판 끊김 == 0, 잃음 5% 판 끊김 0~2, 끊김 판 > 0 을 단언. 전체 실행 로그: 깨끗 0 · 잃음 5%(버림 9.4%) 0 · 끊김 판 12. QA 가 _animals_moved · _folk_moved 를 reliable 로 되돌려 돌리니 잃음 5% 판 끊김 6 으로 FAIL — 테스트가 고침을 지킨다(되돌림 확인, cmp 동일). performance.md 표에 전/뒤 받음 4.5 → 2.4 KB/s 적힘(줄었다)"
-    },
-    {
-     "ok": true,
-     "criterion": "2단계 짐작(맥 서버장이 쉴 때)이 1단계에서 보였으면 — 게임 중에는 맥 App Nap 을 막는다(NSProcessInfo 활동 · Godot 설정이 있으면 그것)",
-     "evidence": "조건부 — 1단계 표에서 서버 30 · 15 fps 판 끊김 0 이라 짐작이 보이지 않았다. 이번 뒤 판도 0. performance.md 에 「그래서 App Nap 막기는 하지 않았다」 적힘"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 끊김 재기 테스트가 끊김 수를 단언하지 않는다 — test_net_stutter.gd test_guests_count_stalls_over_a_lossy_link 는 STUTTER 줄을 print 만 한다. stutter_probe.gd 의 _watch 가 고장 나 늘 0을 세어도(STALL=99 등) 통과한다. 짧은 두 판(깨끗 · 잃음 5%)에서 「깨끗 판 beast.stalls + folk.stalls == 0」과 「잃음 판 jumps > 0 (또는 stalls 합 > 0)」을 단언하라. 5초 판에서도 잃음 5% 판은 짐승 튐 44 · 주민 끊김 12 가 나왔다. 다음 단계(고치기)가 끊김을 줄였는지 지킬 받침도 된다",
-     "evidence": "고친 뒤에는 잃음 판이 0 이 맞으므로 「0 아님」 받침을 망 0.6초 통째 끊김 판(OUTAGE)으로 옮겨 assert_gt(stalls, 0) — _watch 가 늘 0 을 세면 떨어진다. 깨끗 판 == 0 단언 있음. 취지(세는 길이 살아 있나 + 고침 지킴)를 지키며 QA 의 되돌림 실험에서 실제로 떨어졌다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 표 숫자가 판마다 흔들린다는 말이 없다 — performance.md 끊김 표는 한 번 잰 값(잃음 2% 짐승 8.0/분 · 주민 6.0/분)이다. QA 가 다시 재니 짐승 4.0 · 주민 13.0 이었다. 표 밑에 「한 판 1분이라 판마다 두 배쯤 흔들린다 — 크기보다 0과 0 아님을 본다」 한 줄을 적어라",
-     "evidence": "performance.md 표 바로 밑에 「한 판 1분이라 판마다 두 배쯤 흔들린다 — 크기보다 0과 0 아님을 본다 (QA 가 다시 재니 …)」 줄이 있다. 파일 137줄"
-    }
-   ],
-   "issues": [
-    "test_net_stutter 머리 주석이 낡았다 — game/tests/perf/test_net_stutter.gd 머리 주석 끝 줄이 아직 「여섯 판은 한꺼번에 돈다(… 열둘)」다. 판이 일곱(끊김 판 더함)이니 「일곱 판 … 열넷」으로 고쳐라",
-    "ENet 조이기 값에 「임시」 표시가 없다 — game/core/net/net_link.gd THROTTLE_INTERVAL_MS · THROTTLE_UP · THROTTLE_DOWN(0) 은 report 의 temporary 에 올랐는데 코드 주석에는 **임시** 가 없다. 다른 임시 값(NetInterp.DELAY · MOTION_CHUNK)처럼 주석에 「**임시**」를 달아라",
-    "남의 몸은 아직 메우지 않는다 — 남의 몸은 unreliable 이라 머리 막힘은 없지만 그림은 옛 다가가기 그대로다(report: 「보간은 그대로 뒀다」). 끊김 시험(stutter_island)에 남의 몸을 더해 재 보고, 끊김이 보이면 net_bodies.gd 받는 쪽에 NetInterp 를 붙여라",
-    "App Nap 은 15 fps 까지만 재었다 — 맥이 가려진 창 · App Nap 에서 그보다 더 느려지는지(예 1~5 fps)는 재지 않았다. test_net_stutter CASES 에 「서버 5 fps」 판을 더해 보고 끊김이 나면 App Nap 막기를 하라"
-   ],
-   "good": [
-    "ENet 꾸러미 조이기 풀기(NetLink.unthrottle, 서버 · 참가자 둘 다) — 기준에 없지만 unreliable 이 흔들리는 망에서 말라 끊기던 것을 고치려 필요했고 test_send_less 가 지킨다",
-    "lossy_link.gd 의 통째 끊김 흉내(outage_every · outage_for)와 받은 바이트 셈 — 기준 3 · 앞 단계 QA 기준을 위한 받침"
-   ]
-  },
-  "test": "/world/storage/test_chest_slots.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      0s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      0s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      0s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           525\nTests            3949\nPassing Tests    3949\nFailing Tests       0\nRisky/Pending       0\nAsserts        182059\nTime           765s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "eba97dba"
- },
- {
-  "time": "2026-10-20 18:47:01",
-  "epoch": 1792489621,
-  "type": "pass",
-  "title": "통과 — G-267 단계 3 ((앞 단계 QA) test_net_stutter 머리 주석이 낡았다)",
-  "group": "G-267",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "참가자 화면의 남의 몸도 받은 두 모습 사이를 메운다(NetInterp) · 끊김 시험에 서버장 몸을 더했다 · 낡은 주석과 ENet 조이기 값의 「임시」 표시를 고쳤다. 바뀐 곳만: 파일 248개 · 테스트 1865개 통과",
-   "approach": "끊김 시험(stutter_probe)에서 서버장이 제 몸(Player)도 짐승 · 주민처럼 둥글게 걸리고, 참가자가 남의 몸 그림도 센다. 20초 판 일곱을 재니 남의 몸은 unreliable 이라 멈춤은 0 이었지만 받은 자리로 다가가기만 해서 튐(한 프레임에 기대 걸음의 세 배 넘게)이 늦음만 2 · 잃음 2% 6 · 잃음 5% 9 였다 — 끊김이 보였다. 그래서 서버가 몸 소식(_snapshot)에 서버 시계를 붙여 보내고(늦게 온 것은 버린다), 참가자 화면의 남의 몸(VisitorBody.interp)이 짐승 · 주민과 같은 NetInterp 로 100 ms 뒤를 메워 그린다. 다시 재니 튐 0 · 0 · 1, 받음은 초당 +80 B 남짓(서버 시계 8바이트 × 10번). 서버장 화면의 참가자 몸은 시계가 없어서 옛 다가가기 그대로 뒀다. 처음엔 변수 이름을 motion 으로 지었다가 VisitorBody 에 이미 있는 motion() 함수와 겹쳐 파싱이 깨졌다 — interp 로 바꿨다. 그 밖에 test_net_stutter 머리 주석을 「일곱 판 … 열넷」으로, net_link.gd THROTTLE_* 셋에 「임시」를 달았다. 잰 값은 performance.md 끊김 절에 적었다.",
-   "why": "NetLink.THROTTLE_INTERVAL_MS 5000 · THROTTLE_UP 2 · THROTTLE_DOWN 0 — 가짜 망(잃음 5% · 늦음 50~150 ms)에서만 골랐다. 실제 Steam 중계 · 와이파이에서 다시 본다 (G-267.2 값, 이번에 코드 주석에 임시 표시)",
-   "files": [
-    "game/core/net/net_bodies.gd",
-    "game/multiplayer/visitor_body.gd",
-    "game/core/game_root.gd",
-    "game/core/net/net_link.gd",
-    "game/tests/perf/stutter_probe.gd",
-    "game/tests/perf/test_net_stutter.gd",
-    "game/tests/multiplayer/test_visitor_interp.gd",
-    "spec/00_core/performance.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "test_net_stutter 머리 주석이 낡았다 — game/tests/perf/test_net_stutter.gd 머리 주석 끝 줄이 아직 「여섯 판은 한꺼번에 돈다(… 열둘)」다. 판이 일곱(끊김 판 더함)이니 「일곱 판 … 열넷」으로 고쳐라",
-     "evidence": "diff 에서 머리 주석 10행이 「일곱 판은 한꺼번에 돈다(… 열넷)」로 바뀌었다. 표 테스트 위 주석도 「판 일곱 줄」로 맞췄다. 주석만 고치는 일이라 테스트 대상은 아니다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) ENet 조이기 값에 「임시」 표시가 없다 — game/core/net/net_link.gd THROTTLE_INTERVAL_MS · THROTTLE_UP · THROTTLE_DOWN(0) 은 report 의 temporary 에 올랐는데 코드 주석에는 **임시** 가 없다. 다른 임시 값(NetInterp.DELAY · MOTION_CHUNK)처럼 주석에 「**임시**」를 달아라",
-     "evidence": "net_link.gd 27~30행: 「셋 다 **임시** — 가짜 망 … 에서만 골랐다」 줄이 붙었고 상수 셋마다 `# 임시` 가 달렸다. NetInterp.DELAY 의 표시 방식과 같다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 남의 몸은 아직 메우지 않는다 — 남의 몸은 unreliable 이라 머리 막힘은 없지만 그림은 옛 다가가기 그대로다(report: 「보간은 그대로 뒀다」). 끊김 시험(stutter_island)에 남의 몸을 더해 재 보고, 끊김이 보이면 net_bodies.gd 받는 쪽에 NetInterp 를 붙여라",
-     "evidence": "stutter_probe.gd 가 서버장 몸을 걸리고 참가자 쪽에서 kind=body 로 센다. test_net_stutter 가 몸 1개를 단언하고(assert_eq g.body.count 1) 끊김 합에 몸을 더한다. 전체 실행 로그에서 끊김 판의 몸은 끊김 2 · 튐 2 가 나와 세는 길이 살아 있다. report 의 20초 판에서 튐이 2·6·9 로 보였고 그 값이 performance.md 에 적혀 NetInterp 를 붙였다(_snapshot 에 서버 시계 t, 늦은 것은 버림, VisitorBody.interp). test_visitor_interp.gd 는 진짜 테스트 넷이다. 깨 보았다: visitor_body._process 의 interp 분기를 막으니 「두 모습 한가운데를 그린다」가 떨어졌다. game_root 의 _heard_visitor 부르기를 지우니 ENet 둘 테스트 「참가자 화면의 서버장 몸이 받은 모습을 쥔다」가 떨어졌다. 둘 다 되돌렸다(diff stat 이 그대로다). 전체 3953개 통과, guard 통과"
-    }
-   ],
-   "issues": [
-    "끊김 시험이 몸의 튐을 단언하지 않는다 — test_net_stutter.gd 는 g.body.stalls 를 끊김 합에 더하지만 G-267.3 이 고친 것은 튐(jumps)이다. 보간을 빼도 이 시험은 그대로 통과할 수 있다(지금은 test_visitor_interp 가 막는다). 잃음 5% 판의 int(g.body.jumps) 를 깨끗 판 수준(SAME_LEVEL 안쪽)으로 assert_between 하라. 짐승 jumps 도 같이 보면 좋다",
-    "STUTTER 줄의 몸 칸 글자가 어긋났다 — test_net_stutter.gd print 의 「몸 %d 끊김 튐 %d」는 짐승 칸(「끊김 %.1f/분 … 튐 %d」)과 꼴이 달라 「끊김」 뒤에 숫자가 없다. 「몸 끊김 %d · 튐 %d」처럼 고쳐라"
-   ],
-   "good": []
-  },
-  "test": "uild/test_buildings_tidy.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/core/net/test_net_link_one_place.gd\nok      3s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      3s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      3s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      0s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           526\nTests            3953\nPassing Tests    3953\nFailing Tests       0\nRisky/Pending       0\nAsserts        182307\nTime           777s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "042f5b5a"
- },
- {
   "time": "2026-10-20 18:52:00",
   "epoch": 1792489920,
   "type": "pass",
@@ -8534,5 +8406,69 @@
    "good": []
   },
   "test": "ests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/theme/test_korean_font.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/world/terrain/test_volcano_cycle.gd\nok      2s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           689\nTests            4907\nPassing Tests    4907\nFailing Tests       0\nRisky/Pending       0\nAsserts        241615\nTime           978s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-27 00:25:14",
+  "epoch": 1793028314,
+  "type": "pass",
+  "title": "합치기 풀기 — 3d-lane2 (spec/00_core/performance.md spec/01_settings/save.md )",
+  "group": "G-941",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "test_battering_on_server.gd 머리 주석 5번째 줄에서 낡은 「깎인 채로 사라진 것에 「쩍」」을 지웠다 (tests/multiplayer 폴더 통과)",
+   "approach": "G-941.2 에서 참가자 「쩍」을 사라짐이 아니라 서버가 따로 보내는 무너진 자리(Placeable.echo_razed)로 내게 바꿨는데, 머리 주석 5번째 줄은 여전히 echo_dents 가 깎인 채 사라진 것에 「쩍」을 낸다고 적어 7번째 줄과 어긋났다. 5번째 줄을 「스스로 흔들고 「탁」을 낸다 (G-334.4, Placeable.echo_dents).」로 고쳤다. 주석만 바뀌어 새 테스트는 없고, TEST_DIR=res://tests/multiplayer 로 돌려 All tests passed.",
+   "why": "",
+   "files": [
+    "game/tests/multiplayer/test_battering_on_server.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "테스트 머리 주석이 낡았다 — game/tests/multiplayer/test_battering_on_server.gd 5번째 줄 「깎인 채로 사라진 것에 「쩍」을 낸다 (G-334.4, Placeable.echo_dents)」는 이제 틀리다(「쩍」은 echo_razed 로 낸다 — 바로 아래 7번째 줄과 어긋난다). 5번째 줄에서 「, 깎인 채로 사라진 것에 「쩍」」을 지워라",
+     "evidence": "git diff 로 확인 — 5번째 줄이 「스스로 흔들고 「탁」을 낸다 (G-334.4, Placeable.echo_dents).」가 됐다. 「, 깎인 채로 사라진 것에 「쩍」」만 빠졌고 조사 「을」이 「탁」 뒤로 붙어 문장이 맞는다. 7번째 줄(echo_razed)과 이제 어긋나지 않는다. 주석만 바뀐 단계라 새 테스트는 필요 없고, test.log 전체 실행(689 파일 · 4907 테스트 모두 통과, guard 통과)으로 깨진 것이 없음을 확인"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "ests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/theme/test_korean_font.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/world/terrain/test_volcano_cycle.gd\nok      2s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           689\nTests            4907\nPassing Tests    4907\nFailing Tests       0\nRisky/Pending       0\nAsserts        241615\nTime           978s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "77a92841"
+ },
+ {
+  "time": "2026-10-27 00:25:14",
+  "epoch": 1793028314,
+  "type": "pass",
+  "title": "차선 합치기 — 3d-lane2(3226e3a2) → 3d-start",
+  "group": "G-941",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "test_battering_on_server.gd 머리 주석 5번째 줄에서 낡은 「깎인 채로 사라진 것에 「쩍」」을 지웠다 (tests/multiplayer 폴더 통과)",
+   "approach": "G-941.2 에서 참가자 「쩍」을 사라짐이 아니라 서버가 따로 보내는 무너진 자리(Placeable.echo_razed)로 내게 바꿨는데, 머리 주석 5번째 줄은 여전히 echo_dents 가 깎인 채 사라진 것에 「쩍」을 낸다고 적어 7번째 줄과 어긋났다. 5번째 줄을 「스스로 흔들고 「탁」을 낸다 (G-334.4, Placeable.echo_dents).」로 고쳤다. 주석만 바뀌어 새 테스트는 없고, TEST_DIR=res://tests/multiplayer 로 돌려 All tests passed.",
+   "why": "",
+   "files": [
+    "game/tests/multiplayer/test_battering_on_server.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "테스트 머리 주석이 낡았다 — game/tests/multiplayer/test_battering_on_server.gd 5번째 줄 「깎인 채로 사라진 것에 「쩍」을 낸다 (G-334.4, Placeable.echo_dents)」는 이제 틀리다(「쩍」은 echo_razed 로 낸다 — 바로 아래 7번째 줄과 어긋난다). 5번째 줄에서 「, 깎인 채로 사라진 것에 「쩍」」을 지워라",
+     "evidence": "git diff 로 확인 — 5번째 줄이 「스스로 흔들고 「탁」을 낸다 (G-334.4, Placeable.echo_dents).」가 됐다. 「, 깎인 채로 사라진 것에 「쩍」」만 빠졌고 조사 「을」이 「탁」 뒤로 붙어 문장이 맞는다. 7번째 줄(echo_razed)과 이제 어긋나지 않는다. 주석만 바뀐 단계라 새 테스트는 필요 없고, test.log 전체 실행(689 파일 · 4907 테스트 모두 통과, guard 통과)으로 깨진 것이 없음을 확인"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "ests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/theme/test_korean_font.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/world/terrain/test_volcano_cycle.gd\nok      2s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           689\nTests            4907\nPassing Tests    4907\nFailing Tests       0\nRisky/Pending       0\nAsserts        241615\nTime           978s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "77a92841"
  }
 ]

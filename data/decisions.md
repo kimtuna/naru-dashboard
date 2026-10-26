@@ -20,9 +20,3 @@
 - 어디서: 차선 합치기 (3d-lane2)
 - 무엇: 부딪힌다: spec/00_core/performance.md spec/01_settings/save.md — 루프의 푸는 세션도 못 풀었다. 이 줄기(3d-lane2)에서 `git merge 3d-start` 을 손으로 풀어 커밋해 달라. 풀릴 때까지 이 차선은 3d-start 없이 돈다
 - **사람이 답할 것**: 
-
-## 물음 — 차선 3d-lane2(bc73cf75) 을 3d-start 에 합치지 못했다
-- 물은 때: 2026-10-26 23:50:19
-- 어디서: 차선 합치기 (3d-start)
-- 무엇: 부딪힌다: spec/00_core/performance.md spec/01_settings/save.md — 루프의 푸는 세션도 못 풀었다. 이 줄기(3d-start)에서 `git merge 3d-lane2` 을 손으로 풀어 커밋해 달라. 풀릴 때까지 이 차선은 3d-lane2 없이 돈다
-- **사람이 답할 것**: 
