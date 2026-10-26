@@ -5742,7 +5742,7 @@
 - [x] 3. 놓은 것
   - 기준: 1단계 숫자로 고른 방식으로 바꾼다 — 놓은 것이 많아져도(임시 3000) 용암 흐르는 동안 한 프레임 튐이 1단계에서 정한 한도 안 · 고른 까닭을 spec 에 한 줄 (사람 원문 · 임시) (테스트)
   - 기준: 사라질 때 그 자리에 짧은 불꽃 · 연기(임시 1초) — 「녹았다」가 보인다 (테스트)
-- [ ] 4. (앞 단계 QA) LavaMelt.GROUPS 가 무리 이름을 글자로 다시 적었다
+- [x] 4. (앞 단계 QA) LavaMelt.GROUPS 가 무리 이름을 글자로 다시 적었다
   - 기준: LavaMelt.GROUPS 가 무리 이름을 글자로 다시 적었다 — game/world/terrain/lava_melt.gd 의 GROUPS 가 &"placeables" · &"field_patches" · &"dropped_items" · &"death_chests" 를 글자로 들고 있다. 한쪽 이름이 바뀌면 조용히 어긋난다. Placeable.GROUP · FieldPatch.GROUP · DroppedItem.GROUP · DeathChest.GROUP 로 바꾸고(상수 배열이 안 되면 static func 로), Volcano.burnable_alive 의 네 is_in_group 도 GROUPS 를 돌게 해 한 곳에 모아라
   - 기준: (앞 단계 QA) 흐름 끝 첫 프레임 tick 이 1 ms 를 넘는다 — 태우기가 아니라 G-283 굳은 판 몸통(BODY_BUDGET_MS 1.0 ms) 몫이라 이번 기준 밖이다(막는 것은 아니다). test_lava_melt_load.gd 에서 흐름 뒤 tick 최대 1.37 ms. 몸통 몫 자체가 한도와 같은 1 ms 라 다른 몫이 조금만 붙어도 넘는다 — BODY_BUDGET_MS 를 0.6 ms 안팎으로 낮추거나 흐름 끝 첫 프레임에 몸통을 건너뛰고, 그 프레임 tick 을 test_lava_melt_load.gd 에서 assert_lt(worst_end, FRAME_LIMIT_MS) 로 단언하라
 
@@ -5792,6 +5792,16 @@
 - [ ] 2. (앞 단계 QA) 짐승 한 대 뒤 망치 해체에 참가자 「쩍」
   - 기준: 짐승 한 대 뒤 망치 해체에 참가자 「쩍」 — 짐승이 한 대 쳐서 battered=1 이 된 상자 · 벽을 사람이 망치로 마저 쳐 해체하면 참가자 쪽 echo_dents 는 was(battered)>0 인 채 사라진 것으로 보고 CRACK 을 울린다(서버 쪽은 망치 해체라 조용하다). game/build/placeable.gd 의 hit_all 이 마지막 대로 부술 때(또는 take 경로) BATTERED 를 지우거나, 사라짐을 짐승 무너짐과 가를 다른 표시를 두고, test_battering_on_server.gd 에 서버 Placeable.batter 한 번 → 참가자 HIT 도착 확인 → take_thing 해체 → 참가자 CRACK 이 늘지 않음을 단언하는 테스트를 더하라
   - 기준: (앞 단계 QA) 망치로 1대 남긴 것을 짐승이 무너뜨리면 조용 — report · placeable.gd 주석이 스스로 적은 틈이다: 망치로 HITS-1 대까지 깎아 둔 것을 짐승이 첫 대에 무너뜨리면 battered 가 목록에 실릴 틈이 없어 참가자 쪽 「쩍」이 안 난다. 사라지기 직전 batter 가 무너뜨렸음을 알리는 길(예: 놓는 곳 목록과 별도로 무너짐 자리를 rpc 로 보내기)을 두고 참가자 CRACK==1 을 단언하는 테스트를 더하라
+
+## [ ] G-942 루프가 찾은 것 — 스스로 갚는다
+- 차선: 3d-lane2
+- QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
+  루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
+- 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
+- [ ] 1. 흐름 뒤 단언이 몸통 프레임을 안 잰다 (G-333 단계 4)
+  - 기준: 흐름 뒤 단언이 몸통 프레임을 안 잰다 — test_lava_melt_load.gd 의 루프는 흐름 끝 뒤 melting() 이 꺼지면 바로 빠져서 「흐름 뒤 마저 한 프레임 1」, 즉 몸통을 건너뛰는 fresh 프레임 하나만 worst_end 에 든다. 단언 글은 「굳은 판 몸통 몫 포함」이라 하지만 몸통(_follow_body)이 도는 프레임은 하나도 안 잰다. 흐름 뒤 몇 프레임(몸통 한 바퀴 약 27 프레임 + 여유, 예: 40)을 더 돌려 worst_end 에 넣고 같은 assert_lt 로 단언하라 — QA 가 40 프레임 더 돌려 본 판 0.62 ms 라 지금 코드로 통과한다. performance-lava.md 의 「흐름 뒤 tick 최대 0.35~0.38 ms」도 몸통 든 숫자로 고쳐라
+- [ ] 2. 흐르는 동안 tick 단언이 부하에서 흔들린다 (G-333 단계 4)
+  - 기준: 흐르는 동안 tick 단언이 부하에서 흔들린다 — 다른 차선 전체 판(엔진 6 개)이 같이 돌 때 TEST_DIR=res://tests/perf 를 혼자 세 번 돌려 두 번 「흐르는 동안 최대 1.038 ms · 1.507 ms」(태우기 몫 1.034 · 1.505)로 FAIL, 한 번 통과. 이번 단계가 건드린 흐름 뒤가 아니라 G-333.3 태우기 몫이다. 루프 판에서 우연히 깨지면 회차를 버린다 — 태우기 걸음의 마감 검사를 더 촘촘히 하거나 태우기 예산을 낮춰 틈을 키우거나, 세 번 재 중앙값으로 단언하는 식으로 부하 판에서도 안 깨지게 하라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
