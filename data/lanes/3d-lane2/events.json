@@ -1,45 +1,5 @@
 [
  {
-  "time": "2026-10-20 02:12:43",
-  "epoch": 1792429963,
-  "type": "pass",
-  "title": "차선 합치기 — 3d-start(a6ff5855) → 3d-lane2",
-  "group": "G-256",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "F5 로 불러낸 야생동물이 체력 25%로 선다 — 맞기 전엔 도망치지 않고 곧바로 마취가 걸린다 (바뀐 곳만: 74개 파일 통과)",
-   "approach": "F5(G-248)는 이미 이 줄기에 합쳐져 있었다. IslandAnimals.summon 이 짐승을 세운 뒤(add_child 로 Health 가 생긴 뒤) Animal.weaken_to(SUMMON_HEALTH 0.25)를 부른다. 그냥 체력을 깎으면 Health.changed → _on_hurt 가 30% 아래라 곧장 공황 도주를 부르므로, weaken_to 는 그 한 번만 _on_hurt 연결을 떼고 set_left 한 뒤 다시 잇는다 — 서 있다가 맞으면 그때부터 여느 때처럼 도망친다. 무리째 소환은 루프 안에서 마리마다 부르므로 무리 모두 25%. 테스트: 야생 전부를 불러 10프레임 뒤에도 체력 25% · 마취 구간 · panicked 아님 · FLEE 아님, 무리 셋(오소리·토끼·담비) 모두 25%, 모든 종이 마취탄 한 발에 게이지가 오른다, 사슴은 진짜 투사체 벨라도나 세 발에 산 채로 잡히고 체력은 그대로. 잡힌 뒤 게이지는 프레임마다 깨어나며 줄어 3발째는 포획 여부로만 본다. spec world-settings.md 의 F5 줄에 25% 를 사람 결정과 함께 적었다. 저장: 소환한 몸은 원래 담지 않는다(G-248.2) — 새 상태 없음.",
-   "why": "",
-   "files": [
-    "game/life/hunting/island_animals.gd",
-    "game/life/hunting/animal.gd",
-    "spec/01_settings/world-settings.md",
-    "game/tests/life/hunting/test_summon_weak.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "F5(G-248) 로 소환한 야생동물은 체력 25%로 선다 — 곧바로 마취가 걸린다. 맞기 전까지는 공황 도주하지 않는다(서 있거나 여느 걸음 — 시험하기 쉽게). 무리째 소환이면 무리 모두 25% (테스트: 소환 → 체력 25% · 마취탄 한 발에 게이지가 찬다 · 사슴이면 1단 세 발에 포획)",
-     "evidence": "test_summon_weak.gd 4개: 야생 전부 소환 10프레임 뒤 체력=round(max*0.25) · sedatable · panicked 아님 · FLEE 아님 / 오소리·토끼·담비 무리 모두 25% / 모든 종이 마취탄 한 발에 sedation=Tranq.dose(1) / 사슴이 진짜 투사체 벨라도나 세 발에 산 채로 포획, 체력 그대로. 일부러 깨 봄: summon 의 weaken_to 호출을 빼면 4개 모두 떨어짐, weaken_to 의 _on_hurt 떼기를 빼면 '맞기 전엔 공황 도주하지 않는다' 테스트가 떨어짐(둘 다 되돌림). F5 는 debug_tools.gd:123 에서 IslandAnimals.summon 을 부른다. 전체 505파일 3787 테스트 통과 · guard 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "F5 가 이 줄기에 아직 없으면(G-248 이 다른 차선) 그 차선을 합친 뒤에 한다 — 루프가 차선 합치기로 받는다",
-     "evidence": "F5 는 이미 이 줄기에 있다 — core/debug/debug_tools.gd 가 animals.summon(kind, at) 을 부른다. 기다릴 것 없음"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "/tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/net/test_guild.gd\nok      0s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      0s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           505\nTests            3787\nPassing Tests    3787\nFailing Tests       0\nRisky/Pending       0\nAsserts        170945\nTime           739s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "a6ff5855"
- },
- {
   "time": "2026-10-20 02:12:45",
   "epoch": 1792429965,
   "type": "stop",
@@ -8563,5 +8523,53 @@
     "question": "윈도 글꼴 확인: 테마 기본 글꼴이 한글 SystemFont 라 윈도에선 영어 · 숫자도 Malgun Gothic 으로 그려진다. 루프는 맥에서만 돌아 Windows 판을 찍을 수 없다 — 사람이 Windows 에서 영어 가방 · 단축바를 한 번 보고 잘림 · 줄 높이가 괜찮은지 알려 주거나, 이 기준에서 「윈도에서 찍어 보라」를 빼고 menu.md 미정 줄만 남겨도 되는지 정해 달라 (나머지 기준은 다 됐다)"
    }
   }
+ },
+ {
+  "time": "2026-10-26 15:39:09",
+  "epoch": 1792996749,
+  "type": "pass",
+  "title": "통과 — G-939-2 단계 1 (영어 아이템 이름 대소문자도 갈린다 (G-939 단계 2))",
+  "group": "G-939-2",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "en.po ITEM_ 이름 전부 Title Case · 아이템 훑는 테스트 · 센서 값 단언을 낱말 경계로 · menu.md 미정에 기본 글꼴 줄 — 전체 테스트 681파일 4844개 통과",
+   "approach": "앞 회차(브랜치 g/G-939-2, 커밋 21213249)가 한 일이 이미 들어 있었다: en.po ITEM_ 전부를 단어마다 대문자로 바꾸고(하이픈 뒤는 소문자 그대로 — Double-barrel Shotgun), ITEM_ 를 모두 훑는 테스트를 두었고, 센서 창 단언은 정규식 (^|\\s)값($|\\s)으로 바꿔 13 kW 가 3 kW 로 통과하지 않게 했고, menu.md 미정에 「기본 글꼴: 한글 SystemFont(임시)」 줄을 적었다. 지난번 떨어진 Leather hat → Leather Hat 기대값은 test_top_bottoms_names 에서 이미 Hat 으로 고쳐져 있었다. changed_tests.py 가 빈 목록을 내서 지침대로 전체를 돌렸다 — test.log: Scripts 681 · Tests 4844 · Failing 0. 윈도 확인은 결정 줄대로 사람 몫으로 남긴다.",
+   "why": "기본 글꼴을 한글 SystemFont 로 둔 것 — menu.md 미정에 적었다. 라틴 글꼴을 따로 둘지는 미정",
+   "files": [
+    "game/i18n/en.po",
+    "game/tests/items/test_item_names_title_case.gd",
+    "game/tests/core/debug/test_ui_shots.gd",
+    "game/tests/player/equipment/test_top_bottoms_names.gd",
+    "game/tests/ui/hud/test_item_slot_names_apart.gd",
+    "game/tests/build/test_building_preview.gd",
+    "spec/12_ui/menu.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "영어 아이템 이름 대소문자도 갈린다 — 시설은 맞췄지만 단축바 en 그림의 Iron ore · Iron ingot 은 소문자 꼴이다(시설 아닌 아이템). en.po ITEM_ 전체를 단어마다 대문자(Title Case, 결정 줄)로 맞추고 test_station_names_title_case 와 같은 훑는 테스트를 아이템에도 둬라",
+     "evidence": "en.po diff 는 msgstr 대소문자만 바뀌었다(소문자로 견주면 바뀐 줄 0 · msgid 변화 0). ITEM_ 308개를 파이썬으로 훑어 소문자로 시작하는 낱말 0개(하이픈 뒤 소문자 Double-barrel 등은 테스트 머리말에 적힌 관례). tests/items/test_item_names_title_case.gd 가 ITEM_ 전부를 훑는다 — Iron Ore→Iron ore · Wooden Plank→Wooden plank 로 깨 보니 두 테스트가 떨어졌다(되돌림 확인). 기대값이 바뀐 옛 테스트 3개도 맞춰 고쳤고 전체 4844개 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 센서 kW 단언이 13 kW 도 통과시킨다 — test_ui_shots.gd::test_plan_has_the_three_sensor_windows 의 assert_string_contains(low.text, \"3 kW\") 는 「13 kW」 같은 값에도 참이다. 값 글자 앞이 공백 · 줄 처음인지까지 보거나(예: low.text.ends_with(\" 3 kW\") 또는 정규식 (^|\\s)3 kW) 같은 꼴로 바꿔라",
+     "evidence": "_has_value 가 정규식 (^|\\s)값($|\\s) 로 보고 3 kW · 12 kW · 8 m 단언 셋을 모두 바꿨다. test_has_value_tells_3_kw_from_13_kw 가 「켜짐 13 kW」·「반경 18 m」를 거짓으로 단언해 막아야 할 경우를 넣었다. 전체 실행에서 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 라틴 글자도 한글 글꼴 꼴로 바뀌었다 — 테마 기본 글꼴을 한글 SystemFont 로 두어 영어 화면 · 숫자도 Apple SD Gothic Neo / Malgun Gothic 꼴로 그려진다. spec/12_ui/menu.md 미정 쪽에 「기본 글꼴: 한글 SystemFont(임시)」 한 줄을 적어 두어라 (윈도 확인은 사람이 — 결정 줄)",
+     "evidence": "spec/12_ui/menu.md 「## 미정」 끝에 「기본 글꼴: 한글 SystemFont(임시) — …」 줄이 들어갔다. 지운 줄 없음 · 38줄"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      3s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      3s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      3s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_compass.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_obsidian.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      3s  res://tests/world/terrain/test_volcano_cycle.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           681\nTests            4844\nPassing Tests    4844\nFailing Tests       0\nRisky/Pending       0\nAsserts        239880\nTime           958s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "d7bf8bb8"
  }
 ]
