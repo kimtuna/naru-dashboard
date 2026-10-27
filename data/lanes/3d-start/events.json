@@ -1,44 +1,5 @@
 [
  {
-  "time": "2026-10-20 19:05:15",
-  "epoch": 1792490715,
-  "type": "pass",
-  "title": "통과 — G-924 단계 3 (끊김 시험이 몸의 튐을 단언하지 않는다 (G-267 단계 3))",
-  "group": "G-924",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "test_net_stutter 가 잃음 5% 판의 몸 · 짐승 튐과 1분 판 fps 만 낮춘 판(30 · 15 · 5 fps)의 끊김 0 을 단언한다 — 바뀐 곳 그물: 파일 1 개(test_net_stutter.gd) 3 테스트 통과, 1분 판도 3 테스트 116 단언 통과",
-   "approach": "끊김 합에 g.body.stalls 만 더해 보간을 빼도 통과할 수 있었다. 판마다 [몸 jumps, 짐승 jumps] 를 모아 잃음 5% 판에서 assert_between(0, 튐 수준) 한다. SAME_LEVEL(2)은 5초 판 몫이라 1분 판에서는 짐승 튐 6(늦음만 있는 판도 6) · 몸 1 이 나와 떨어졌다 — 튐 수준을 SAME_LEVEL × ceil(초/5) 로 늘렸다(1분 24, 고치기 전 짐승 튐은 5초에 44). 그리고 1분 판에서만 도는 fps 만 낮춘 판(c.size()<=5 · c[1]<60 · 잃음 0)은 끊김 0 을 assert_eq 한다 — 1분 판 재어 보니 30 · 15 · 5 fps 모두 0 이었다.",
-   "why": "",
-   "files": [
-    "game/tests/perf/test_net_stutter.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "끊김 시험이 몸의 튐을 단언하지 않는다 — test_net_stutter.gd 는 g.body.stalls 를 끊김 합에 더하지만 G-267.3 이 고친 것은 튐(jumps)이다. 보간을 빼도 이 시험은 그대로 통과할 수 있다(지금은 test_visitor_interp 가 막는다). 잃음 5% 판의 int(g.body.jumps) 를 깨끗 판 수준(SAME_LEVEL 안쪽)으로 assert_between 하라. 짐승 jumps 도 같이 보면 좋다",
-     "evidence": "test_guests_count_stalls_over_a_lossy_link 끝에서 잃음 5% 판의 몸 jumps · 짐승 jumps 를 assert_between(0, SAME_LEVEL × ceil(초/5)) 한다 — 5초 판은 SAME_LEVEL(2) 그대로. 일부러 깨 봤다: visitor_body.gd _process 의 interp 갈래를 끄자 몸 튐 4 로 떨어졌고, animal.gd _follow 의 motion 갈래를 끄자 짐승 튐 10 으로 떨어졌다(둘 다 되돌림). 보간을 켠 채 다섯 번 더 돌리니 잃음 판 짐승 튐 0~2 · 몸 튐 0 으로 모두 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 느린 서버 판의 끊김 0 을 단언하지 않는다 — 1분 판(NARU_STUTTER_SECONDS)에서 「서버 30 · 15 · 5 fps」 판은 STUTTER 줄만 찍고 끊김 수를 단언하지 않아, 5 fps 에서 끊김이 생겨도 테스트는 통과한다. 이번 기준은 「재 보고 끊기면 막기」라 막지는 않지만, test_net_stutter.gd test_guests_count_stalls_over_a_lossy_link 끝에서 fps 만 낮춘 판(c[2]==0 · c.size()<=5 이고 c[1]<60)은 stalls[i] == 0 을 assert_eq 로 단언해 두면 App Nap 쪽 회귀를 잡는다",
-     "evidence": "같은 테스트 끝의 for 문이 잰 판마다 c.size()<=5 · int(c[1])<60 · c[2]==0.0 인 판(CASES 4·5·6 = 서버 30·15·5 fps)의 stalls[i] 를 assert_eq(…, 0) 한다. 깨끗 · 늦음 판(60 fps)과 끊김 · 서버장 멈춤 판(크기 7·10)은 걸러진다. 짧은 판에는 해당 판이 없어 1분 판에서만 돈다(기준대로). 구현 세션이 1분 판을 돌려 116 단언 통과라 적었다"
-    }
-   ],
-   "issues": [
-    "1분 판 튐 한계가 느슨하다 — test_net_stutter.gd 의 jump_level 이 SAME_LEVEL × ceil(초/5) 라 1분 판에서는 24 다. 재어 본 값은 짐승 6 · 몸 1 이고 보간을 뺀 5초 판 몸 튐이 4 라, 1분 판에서 몸 보간이 빠져도(5초에 4 → 1분 ~48) 걸리겠지만 짐승 쪽은 여유가 크다. 막는 것은 아니다 — 1분 판에서 재어 본 값(짐승 6)에 맞춰 몸 · 짐승 한계를 따로(예: 몸 SAME_LEVEL, 짐승 12) 잡으면 더 단단하다"
-   ],
-   "good": []
-  },
-  "test": "--- 바뀐 곳만: 3 개 ---\ntest.sh: 파일 3 개를 6 개씩 한꺼번에 돌린다\nok      2s  res://tests/core/net/test_net_interp.gd\nok     12s  res://tests/perf/test_net_stutter.gd\nok     14s  res://tests/perf/test_net_measure.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             3\nTests              18\nPassing Tests      18\nFailing Tests       0\nRisky/Pending       0\nAsserts           187\nTime           14s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "64c15890"
- },
- {
   "time": "2026-10-20 19:20:21",
   "epoch": 1792491621,
   "type": "pass",
@@ -8460,5 +8421,18 @@
    "good": []
   },
   "test": "ests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/theme/test_korean_font.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/world/terrain/test_volcano_cycle.gd\nok      2s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           689\nTests            4907\nPassing Tests    4907\nFailing Tests       0\nRisky/Pending       0\nAsserts        241615\nTime           978s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-27 18:49:55",
+  "epoch": 1793094595,
+  "type": "start",
+  "title": "루프 시작",
+  "report": {
+   "problem": "손대지 않았다 — 작업 트리가 드워프 광산 이전 상태(77a92841)로 낡아 있어 단계 1을 세울 땅이 없다",
+   "approach": "g/G-338 의 HEAD 는 268add0a(드워프 광산 커밋 셋 포함)인데 인덱스 · 작업 트리는 그 앞 합치기 커밋 77a92841 의 트리와 똑같다(git write-tree = 77a92841^{tree}). 그래서 git status 가 dwarf-island.md · dwarf_island_blueprint.tres · test_dwarf_island.gd 삭제와 islands.gd · island_landform.gd 등 되돌림을 staged 로 보여 준다. 지휘 세션이 3d-start 에 드워프 커밋(cd71f42a..268add0a)을 이 작업 트리 밖에서(update-ref 따위로) 얹는 동안 이 트리는 3d-start 를 체크아웃하고 있었고, 루프가 loop.sh:269 checkout -b 로 브랜치만 옮겨 낡은 인덱스가 그대로 남은 것으로 보인다. 이대로 만들고 루프가 loop.sh:433/520 에서 git add -A 로 커밋하면 사람이 지은 드워프 광산(spec 까지)을 통째로 지우는 커밋이 된다. 그래서 코드를 고치지 않았다.",
+   "why": "",
+   "files": [],
+   "decision": null
+  }
  }
 ]
