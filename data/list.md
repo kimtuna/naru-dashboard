@@ -5913,7 +5913,7 @@
   - 기준: 테두리 두 곳에서 구덩이 바닥 · 협곡 어귀까지 **짚라인**(줄 · 기둥) — 위 기둥에서 우클릭하면 줄을 타고 내려간다(임시 초속 12m · 손에 든 것 그대로) · **내려가기만** 된다 · 같이 하는 판 (테스트)
   - 기준: spec dwarf-island.md 줄 (사람 원문 · 임시)
   - 기준: (앞 단계 QA) 사람을 같이 옮기는 것을 지키는 테스트가 없다 — pit_lift.gd _shift 의 rider 옮기기(n.global_position.y += dy)를 지워도 test_a_player_rides_up_and_steps_off_onto_the_landing 는 통과했다(판 StaticBody 가 몸을 물리로 밀어 올리는 듯). 떨어진 것 · 짐승 테스트만 떨어졌다. test_riders_go_with_the_plate 에 Player 를 넣거나, 플레이어 테스트에서 _shift 한 번에 판이 크게(예: take(1.0, 0)) 움직일 때 몸이 같은 만큼 오르는지 단언해 참가자 take 길(한 번에 크게 뛰는 경우)을 지켜라
-- [ ] 4. (앞 단계 QA) 쓰레기 파일이 남았다
+- [x] 4. (앞 단계 QA) 쓰레기 파일이 남았다
   - 기준: 쓰레기 파일이 남았다 — game/tests/world/frontier_islands/test_zz_probe.gd.uid 가 짝(.gd) 없이 남았다. rm 으로 지워라
   - 기준: (앞 단계 QA) 초속 12m 를 상수와만 견준다 — test_right_click_at_the_top_post_rides_down_at_twelve_a_second 는 gone ≈ PitZipline.SPEED 로만 단언해 SPEED 를 5 로 바꿔도 통과한다. 이름대로 assert_eq(PitZipline.SPEED, 12.0, "임시 초속 12m (사람 기준)") 한 줄을 더해라
   - 기준: (앞 단계 QA) 죽을 때 놓는 길이 테스트되지 않는다 — test_dying_lets_go 는 revive_at 만 부른다. _on_died(체력 0) 에서 leave_zip 이 불리는지, 매달린 몸을 죽게 한 뒤 p.zipline() 이 null 인지 단언하는 테스트를 더해라
