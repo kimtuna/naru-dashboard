@@ -5837,7 +5837,7 @@
 - [x] 1. 판 닫기 테스트가 늘 참 단언뿐이다 (G-336 단계 3)
   - 기준: 판 닫기 테스트가 늘 참 단언뿐이다 — game/tests/world/terrain/test_mine_rebake.gd 의 test_closing_the_board_mid_bake_does_not_break 는 assert_true(true) 하나라 끝 부르기가 사라진 판을 건드려도 오류 로그 말고는 잡을 것이 없다(막는 것은 아니다). b.free() 전에 b.walks 를 weakref 로 쥐어 30 프레임 뒤 get_ref()==null 임을 단언하고, 굽기를 하나 띄운 다음 다른 판에서 rebakes 가 늘지 않는지 같은 실제 단언으로 바꿔라
 
-## [ ] G-337 드워프 광산 — 구덩이 바닥 입구에서 땅굴로 내려가 본다
+## [x] G-337 드워프 광산 — 구덩이 바닥 입구에서 땅굴로 내려가 본다
 - 차선: 3d-lane3 · 시작 2026-10-27 18:37
 - spec: spec/03_world/dwarf-island.md, spec/00_core/performance.md
 - **사람 요청 2026-10-27** (원문 그대로): 「화산섬때처럼 섬을 날라다닐 수 있게 만들어주고 플레이어 넣어줘. 아래 땅굴도 가는거 테스트를 일단 다 해야되니까」
