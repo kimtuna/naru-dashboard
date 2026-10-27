@@ -5859,7 +5859,7 @@
   - 기준: 벽 속에 **땅속 광물 다섯**(루비 · 사파이어 · 에메랄드 · 코발트 · 운철 — dwarf-island.md 표)이 박혀 있다 — 깊이별(얕은 · 중간 · 깊은 · 운철은 드묾) · 드릴로 파면 아이템으로 떨어진다 · 아이템 · 번역 · 아이콘 색(임시) (테스트)
   - 기준: (앞 단계 QA) 되살기 테스트가 신호를 손으로 낸다 — test_respawned_on_the_island_while_below_clears_the_tunnel 은 island.death.respawned.emit() 을 직접 불러, 땅굴 안에서 실제로 죽었을 때 Death 가 respawned 를 내는지(그리고 판 위가 아니라 섬 되살 자리로 옮기는지)는 거치지 않는다. game/tests/world/mine/test_mine_shaft.gd 에 내려간 뒤 island.player 체력을 0 으로 깎아(또는 Death 의 죽는 길을 불러) 되살기까지 기다린 뒤 shaft.below == false · board == null 을 단언하는 테스트를 더하라
   - 기준: (앞 단계 QA) 같이 하는 판 몸 소식 여유가 숫자로 박혔다 — net_world.gd mine_ride_for 의 `MineCage.REACH + 1.0` 의 1.0 은 임시라고 report 에만 적혔고 코드 주석 · 상수에는 없다. MineCage 또는 NetWorld 에 `## 몸 소식이 늦게 닿는 것을 덮는 여유 (m) — **임시**` 주석을 단 상수(예: NET_REACH_SLACK)로 빼라
-- [ ] 4. 무리 시험
+- [x] 4. 무리 시험
   - 기준: 땅굴 안에서 **개발용 키 F9** — 작은 괴물(지금 몸 임시) 무리 켜기 / 끄기: 켜면 굴 끝 · 어둠에서 끝없이 나와(상한 LIVE_CAP 40) 사람에게 몰린다 · 끄면 다 사라진다 · F9 창에 지금 마릿수 (테스트)
   - 기준: 같이 하는 판 — 참가자도 같이 내려간다 · 서버가 무리를 낳는다 · 같이 하는 판이 이 묶음에서 어려우면 혼자 판만 하고 까닭을 report 에 (테스트)
   - 기준: spec dwarf-island.md 「지금 지은 것」 줄 · debug_tools 머리 주석 F9 (사람 원문 · 임시)
