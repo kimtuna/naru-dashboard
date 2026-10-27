@@ -5865,7 +5865,7 @@
   - 기준: spec dwarf-island.md 「지금 지은 것」 줄 · debug_tools 머리 주석 F9 (사람 원문 · 임시)
   - 기준: (앞 단계 QA) 참가자 땅굴 드릴 부스러기 길이 안 지켜진다 — shovel.gd use() 의 below 갈래는 ask 를 건너뛰고 아래 혼자 길로 내려가는데, 그 길에서 드릴 부스러기(_bite)가 튀는지 보는 단언이 test_shovel_and_drill_in_hand_dig_the_tunnel_wall_even_as_a_joiner 에 없다. 막는 것은 아니다 — 확인 겸 drill · joiner 갈래에서 부스러기 노드가 생겼는지 한 줄 단언을 더하면 좋다
 
-## [ ] G-338 드워프 광산 — 대문 · 석상 · 벽 마을 · 불빛 · 권양탑 · 소리
+## [x] G-338 드워프 광산 — 대문 · 석상 · 벽 마을 · 불빛 · 권양탑 · 소리
 - 차선: 3d-start · 시작 2026-10-27 18:37
 - spec: spec/03_world/dwarf-island.md
 - **사람 요청 2026-10-27** (원문 그대로): 「뭔가 드워프 마을인데 웅장하지가 않아」 · 「여기서 더 개선 사항은 있어 ?」 → Claude 제안 11가지 → 「쭉 다 해봐」
