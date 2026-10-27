@@ -5907,10 +5907,14 @@
   - 기준: 30m 벽마다 **나무 승강기**(단 사이 · 임시 단마다 하나 · 둘레 4m 판) — 판 위에서 우클릭 「오른다 / 내린다」 · 약 6초에 한 단 · 탄 사람 · 떨어진 아이템 · 짐승이 같이 움직인다 · 같이 하는 판 (테스트)
   - 기준: (앞 단계 QA) PitBridge.ramp_height 주석이 낡았다 — game/world/frontier_islands/pit_bridge.gd 의 ramp_height 문서 주석 「island_landform.gd 의 slope 와 같은 값」 — _pit_bowl 에서 slope 변수가 없어지고 rim - pit_depth * ramp.y 가 됐다. 「island_landform.gd _pit_bowl 의 길 높이(rim - pit_depth × 몫)와 같은 값」으로 고쳐라
   - 기준: (앞 단계 QA) 다리를 세우는지 보는 테스트가 소스 글자만 본다 — test_pit_bridge.gd 의 test_the_dwarf_island_stands_the_bridge 는 test_island.gd 소스에 「PitBridge.make(blueprint)」 글자가 있는지만 본다. 드워프 섬 TestIsland 를 띄워 island.pit_bridge != null 이고 span() 이 PitBridge.crossing(DWARF) 와 같은지, 본섬에서는 null 인지 단언하는 테스트로 바꿔라
-- [ ] 3. 짚라인
+- [x] 3. 짚라인
   - 기준: 테두리 두 곳에서 구덩이 바닥 · 협곡 어귀까지 **짚라인**(줄 · 기둥) — 위 기둥에서 우클릭하면 줄을 타고 내려간다(임시 초속 12m · 손에 든 것 그대로) · **내려가기만** 된다 · 같이 하는 판 (테스트)
   - 기준: spec dwarf-island.md 줄 (사람 원문 · 임시)
   - 기준: (앞 단계 QA) 사람을 같이 옮기는 것을 지키는 테스트가 없다 — pit_lift.gd _shift 의 rider 옮기기(n.global_position.y += dy)를 지워도 test_a_player_rides_up_and_steps_off_onto_the_landing 는 통과했다(판 StaticBody 가 몸을 물리로 밀어 올리는 듯). 떨어진 것 · 짐승 테스트만 떨어졌다. test_riders_go_with_the_plate 에 Player 를 넣거나, 플레이어 테스트에서 _shift 한 번에 판이 크게(예: take(1.0, 0)) 움직일 때 몸이 같은 만큼 오르는지 단언해 참가자 take 길(한 번에 크게 뛰는 경우)을 지켜라
+- [ ] 4. (앞 단계 QA) 쓰레기 파일이 남았다
+  - 기준: 쓰레기 파일이 남았다 — game/tests/world/frontier_islands/test_zz_probe.gd.uid 가 짝(.gd) 없이 남았다. rm 으로 지워라
+  - 기준: (앞 단계 QA) 초속 12m 를 상수와만 견준다 — test_right_click_at_the_top_post_rides_down_at_twelve_a_second 는 gone ≈ PitZipline.SPEED 로만 단언해 SPEED 를 5 로 바꿔도 통과한다. 이름대로 assert_eq(PitZipline.SPEED, 12.0, "임시 초속 12m (사람 기준)") 한 줄을 더해라
+  - 기준: (앞 단계 QA) 죽을 때 놓는 길이 테스트되지 않는다 — test_dying_lets_go 는 revive_at 만 부른다. _on_died(체력 0) 에서 leave_zip 이 불리는지, 매달린 몸을 죽게 한 뒤 p.zipline() 이 null 인지 단언하는 테스트를 더해라
 
 ## [ ] G-340 드워프 광산 — 광차 선로
 - 차선: 3d-start
