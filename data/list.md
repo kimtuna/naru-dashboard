@@ -5890,13 +5890,14 @@
 - [x] 1. 협곡 돌다리 · 나선 길 늘리기
   - 기준: 나선 길이 협곡을 건너도록 설계 값을 바꾼다(`dwarf_island_blueprint.tres` 의 pit_ramp_start_deg · pit_ramp_turns — 예 200° · 1.25 바퀴, 경사 약 15% 아래) · 길이 협곡을 건너는 자리에 **돌다리**(아치 · 난간 · 너비 = 길 너비) — 다리 위를 걷고 차가 지나간다 · 다리 밑으로 협곡을 걷는다 (테스트 — 나선 길 끝에서 끝까지 걸어 막힘 없음)
   - 기준: test_dwarf_island 의 나선 길 테스트를 다리 위로 지나가게 맞춘다 (테스트)
-- [ ] 2. 짐 승강기
+- [x] 2. 짐 승강기
   - 기준: 30m 벽마다 **나무 승강기**(단 사이 · 임시 단마다 하나 · 둘레 4m 판) — 판 위에서 우클릭 「오른다 / 내린다」 · 약 6초에 한 단 · 탄 사람 · 떨어진 아이템 · 짐승이 같이 움직인다 · 같이 하는 판 (테스트)
   - 기준: (앞 단계 QA) PitBridge.ramp_height 주석이 낡았다 — game/world/frontier_islands/pit_bridge.gd 의 ramp_height 문서 주석 「island_landform.gd 의 slope 와 같은 값」 — _pit_bowl 에서 slope 변수가 없어지고 rim - pit_depth * ramp.y 가 됐다. 「island_landform.gd _pit_bowl 의 길 높이(rim - pit_depth × 몫)와 같은 값」으로 고쳐라
   - 기준: (앞 단계 QA) 다리를 세우는지 보는 테스트가 소스 글자만 본다 — test_pit_bridge.gd 의 test_the_dwarf_island_stands_the_bridge 는 test_island.gd 소스에 「PitBridge.make(blueprint)」 글자가 있는지만 본다. 드워프 섬 TestIsland 를 띄워 island.pit_bridge != null 이고 span() 이 PitBridge.crossing(DWARF) 와 같은지, 본섬에서는 null 인지 단언하는 테스트로 바꿔라
 - [ ] 3. 짚라인
   - 기준: 테두리 두 곳에서 구덩이 바닥 · 협곡 어귀까지 **짚라인**(줄 · 기둥) — 위 기둥에서 우클릭하면 줄을 타고 내려간다(임시 초속 12m · 손에 든 것 그대로) · **내려가기만** 된다 · 같이 하는 판 (테스트)
   - 기준: spec dwarf-island.md 줄 (사람 원문 · 임시)
+  - 기준: (앞 단계 QA) 사람을 같이 옮기는 것을 지키는 테스트가 없다 — pit_lift.gd _shift 의 rider 옮기기(n.global_position.y += dy)를 지워도 test_a_player_rides_up_and_steps_off_onto_the_landing 는 통과했다(판 StaticBody 가 몸을 물리로 밀어 올리는 듯). 떨어진 것 · 짐승 테스트만 떨어졌다. test_riders_go_with_the_plate 에 Player 를 넣거나, 플레이어 테스트에서 _shift 한 번에 판이 크게(예: take(1.0, 0)) 움직일 때 몸이 같은 만큼 오르는지 단언해 참가자 take 길(한 번에 크게 뛰는 경우)을 지켜라
 
 ## [ ] G-340 드워프 광산 — 광차 선로
 - 차선: 3d-start
