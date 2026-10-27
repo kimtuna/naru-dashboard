@@ -1,44 +1,5 @@
 [
  {
-  "time": "2026-10-20 19:20:21",
-  "epoch": 1792491621,
-  "type": "pass",
-  "title": "통과 — G-924 단계 4 (STUTTER 줄의 몸 칸 글자가 어긋났다 (G-267 단계 3))",
-  "group": "G-924",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "STUTTER 줄 몸 칸을 「몸 끊김 %d · 튐 %d」로 고치고, 잃음 5% 판 튐 한계를 몸(SAME_LEVEL 고정) · 짐승(1분에 12, 짧은 판은 SAME_LEVEL)으로 따로 잡았다 — 바뀐 곳만: test_net_stutter.gd 3개 통과",
-   "approach": "print 의 몸 칸이 「몸 %d 끊김 튐 %d」라 「끊김」 뒤에 숫자가 없었다 — 「몸 끊김 %d · 튐 %d」로 고쳤다(로그로 확인). 튐 한계는 SAME_LEVEL × ceil(초/5) 하나여서 1분 판에서 24 까지 느슨했다. 몸은 판 길이와 상관없이 SAME_LEVEL(2) — 보간을 빼면 5초 판에서 벌써 4 라 걸린다. 짐승은 BEAST_JUMPS_PER_MINUTE=12(1분 판 재어 본 6 의 두 배)를 판 길이에 비례해 잡되 SAME_LEVEL 아래로는 내리지 않는다. 짧은 판으로 test_net_stutter.gd 를 돌려 3개 통과(changed_tests 그물도 같은 파일 하나). 1분 판은 돌리지 않았다.",
-   "why": "",
-   "files": [
-    "game/tests/perf/test_net_stutter.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "STUTTER 줄의 몸 칸 글자가 어긋났다 — test_net_stutter.gd print 의 「몸 %d 끊김 튐 %d」는 짐승 칸(「끊김 %.1f/분 … 튐 %d」)과 꼴이 달라 「끊김」 뒤에 숫자가 없다. 「몸 끊김 %d · 튐 %d」처럼 고쳐라",
-     "evidence": "test_net_stutter.gd:126 의 print 가 「몸 끊김 %d · 튐 %d 가장 긴 멈춤 %.0f ms」로 바뀌었고 인자 순서(body.stalls, body.jumps, body.longest_ms)도 맞다. 전체 돌림 로그 test_files/tests__perf__test_net_stutter.gd.log 에 「몸 끊김 0 · 튐 0」「몸 끊김 1 · 튐 2」로 찍힌 것을 확인했다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 1분 판 튐 한계가 느슨하다 — test_net_stutter.gd 의 jump_level 이 SAME_LEVEL × ceil(초/5) 라 1분 판에서는 24 다. …몸 · 짐승 한계를 따로(예: 몸 SAME_LEVEL, 짐승 12) 잡으면 더 단단하다",
-     "evidence": "jump_level 을 없애고 몸 튐은 판 길이와 상관없이 assert_between(0, SAME_LEVEL=2), 짐승 튐은 beast_level = maxi(SAME_LEVEL, ceili(BEAST_JUMPS_PER_MINUTE(12) × secs / 60)) 로 따로 잡았다 — 5초 판 2 · 1분 판 12. 1분 판 몸 한계가 24 → 2 로, 짐승이 24 → 12 로 조여졌다. 새 상수에 까닭(1분 판 재어 본 6 의 두 배)이 주석으로 있다. 전체 돌림에서 test_net_stutter.gd 통과(12s)"
-    }
-   ],
-   "issues": [
-    "1분 판을 새 한계로 돌려 보지 않았다 — report 에 「1분 판은 돌리지 않았다」고 적혀 있다. 몸 한계가 1분 판에서도 2 인데 재어 본 값이 1 이라 여유가 하나뿐이다(막는 것은 아니다 — 1분 판은 NARU_STUTTER_SECONDS 를 줄 때만 돈다). 다음에 NARU_STUTTER_SECONDS=60 TEST_DIR=res://tests/perf/test_net_stutter.gd ./tools/test.sh 로 한 번 돌려 몸 튐이 2 안에 드는지 보고, 넘으면 몸 한계를 1분 판만 3 쯤으로 잡아라"
-   ],
-   "good": []
-  },
-  "test": "ld_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      2s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      2s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      0s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/hunting/test_summon.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      0s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           526\nTests            3953\nPassing Tests    3953\nFailing Tests       0\nRisky/Pending       0\nAsserts        182293\nTime           771s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "e0cf2a8b"
- },
- {
   "time": "2026-10-20 19:41:42",
   "epoch": 1792492902,
   "type": "pass",
@@ -8434,5 +8395,27 @@
    "files": [],
    "decision": null
   }
+ },
+ {
+  "time": "2026-10-27 19:13:59",
+  "epoch": 1793096039,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-338 단계 1 (시도 1)",
+  "group": "G-338",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "드워프 광산 대문(약 40m 돌 문틀 · 기둥 둘 · 윗인방 · 머릿돌 · 어두운 굴)과 드워프 석상 둘(약 30m — 투구 · 뿔 · 수염 · 망치)을 협곡 맞은편 벽 발치에 박고, 광산 입구 자리를 MineGate.entrance_spot 하나로 내놓았다 — 바뀐 곳 그물 151개 파일 · 1129 테스트 통과",
+   "approach": "MineGate(Node3D)는 섬 설계 값만 보고 서는 고정 맵이라 저장하지 않는다(선착장처럼 — 섬이 설 때마다 같은 자리에 다시 선다). 처음엔 바닥 가장자리(pit_floor_radius 50m)에 세웠더니 그 사이에 벽 발치 돌무더기(50→64m, 6m 오르막)가 있어 문 뒤 벽이 6m 뿐이었다 — 바닥 가장자리에서 밖으로 0.5m씩 걸어 땅이 1m에 1.5m 넘게 오르는 첫 자리를 벽 발치로 잡고 거기 세웠다(뒤 굴 끝 땅이 20m 넘게 높다). 문틀 · 받침은 4m 땅에 묻어 비탈 위에 뜨지 않게 했고, 석상은 받침 밑 5×5 자리 중 가장 낮은 땅에 앉혀 한쪽이 떠 보이던 것을 고쳤다(높은 쪽은 돌무더기에 묻힌다). 굴 앞면을 벽 발치보다 1.5m 앞에 내어 땅이 문 안으로 비죽 솟는 것을 줄였다. G-337 이 아직 안 끝나 광산 입구 자리는 MineGate.entrance_spot(shape) 하나로 내놓았다 — 두 기둥 사이 · 굴 앞 바닥(G-337 이 여기 세우면 된다). 협곡 어귀(선착장에서 구덩이 쪽 8m)에서 대문 가운데까지 땅이 시야를 막지 않음을 테스트하고, pit_arrival(정면 멀리 대문 · 석상이 보인다) · 새 자리 pit_gate(가까이 올려다보기) 그림으로 봤다. 개발 중 TEST_DIR=frontier_islands 98개, 끝내기 전 바뀐 곳 그물(changed_tests.py) 151개 파일 · 1129 테스트 통과.",
+   "why": "대문 크기 — 기둥 5×32×10m · 문 너비 14m · 윗인방 5m · 머릿돌 3m (땅 위로 약 40m) · 굴 깊이 14m · 굴 앞면 벽 발치 앞 1.5m: 기준 「약 40m」에 맞춘 Claude 임시값; 석상 — 받침 14×10m 포함 약 29.5m · 문 가운데에서 옆 21m · 문틀 앞 6m: 기준 「약 30m」 · 문을 가리지 않게; 벽 발치 판정 기울기 1.5 (1m 에 1.5m 오르면 벽) · 땅에 묻는 깊이 4m: 돌무더기 비탈 위에 뜨지 않게; 색 — 돌 회색 세 단 · 굴은 거의 검정(빛 안 받음) · 망치 자루 나무빛: 에셋 없음 블록 꼴",
+   "files": [
+    "game/world/frontier_islands/mine_gate.gd",
+    "game/world/terrain/test_island.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/world/frontier_islands/test_mine_gate.gd"
+   ],
+   "decision": null
+  },
+  "test": "s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      3s  res://tests/world/terrain/test_volcano_cycle.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok    391s  res://tests/craft/test_from_empty_hands.gd\n\n================ 떨어진 파일: res://tests/life/hunting/test_island_animals.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/life/hunting/test_island_animals.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:471)\n         [1] _ready (res://world/terrain/test_island.gd:147)\n         [2] _build_island (res://core/game_root.gd:312)\n         [3] _ready (res://core/game_root.gd:260)\n         [4] before_all (res://tests/life/hunting/test_island_animals.gd:31)\n         [5] _call_before_all (res://addons/gut/gut.gd:684)\n         [6] _test_the_scripts (res://addons/gut/gut.gd:813)\n         [7] test_scripts (res://addons/gut/gut.gd:1047)\n         [8] run_tests (res://addons/gut/gui/GutRunner.gd:198)\n         [9] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n         [10] main (res://addons/gut/cli/gut_cli.gd:297)\n         [11] _init (res://addons/gut/gut_cmdln.gd:39)\n* test_traces_on_the_island_sit_on_land_around_the_dens_and_are_of_the_den_kind\n* test_the_island_you_enter_has_deer_on_land\n* test_a_deer_stands_at_every_den_of_the_blueprint\n* test_the_ground_around_each_den_is_baked_to_walk\n    [Failed]:  [215.833023071289] expected to be < than [2.0]:  집 자리 (-400.0, 62.41066, -120.0) 둘레에 걸을 땅이 구워졌다\n      at line 123\n* test_the_ground_around_the_dens_has_no_water_or_cliff\n* test_a_den_under_the_sea_is_skipped\n* test_an_emptied_den_gets_a_new_deer_the_next_day\n* test_a_den_emptied_before_saving_stays_empty_after_loading_until_the_next_day\n* test_a_den_emptied_days_ago_is_not_kept_empty\n* test_owls_come_out_at_night_on_the_real_island\n9/10 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/life/hunting/test_island_animals.gd\n- test_the_ground_around_each_den_is_baked_to_walk\n    [Failed]:  [215.833023071289] expected to be < than [2.0]:  집 자리 (-400.0, 62.41066, -120.0) 둘레에 걸을 땅이 구워졌다\n          at line 123\n\nTotals\n------\nScripts               1\nTests                10\nPassing Tests         9\nFailing Tests         1\nAsserts           162/163\nTime              5.063s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           151\nTests            1129\nPassing Tests    1128\nFailing Tests       1\nRisky/Pending       0\nAsserts         37999\nTime           391s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/life/hunting/test_island_animals.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
