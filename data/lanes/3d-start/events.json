@@ -1,89 +1,5 @@
 [
  {
-  "time": "2026-10-21 02:41:01",
-  "epoch": 1792518061,
-  "type": "pass",
-  "title": "통과 — G-271 단계 3 (건축 키 — Tab 고르기 · R 돌리기 · F 스냅)",
-  "group": "G-271",
-  "step": "3",
-  "attempt": "2",
-  "report": {
-   "problem": "건축 키 Tab 지을 것 바꾸기 · R 돌리기(총이면 장전) · F 계단 스냅, T 비움 · 든 아이템 키 안내 한 줄 · 낡은 「도면 우클릭」「내리기」 문구 정리 · R 짝 키 다시 잡기 겹침 수정 — 바뀐 곳만 407개 파일 3239개 테스트 통과",
-   "approach": "앞 회차가 키 배치(Tab=build_pick · R=build_rotate·reload 공유 · F=build_stairs_flip)와 키 안내 줄을 만들어 두었고 테스트도 통과했지만, QA 가 R 짝의 키 다시 잡기 구멍을 찾았다 — rebind(RELOAD, M) 하면 돌리기만 R 에 남아 맞바꿔 R 을 받은 지도와 겹쳤다. KeyBinds.partners() 를 더하고 rebind 가 짝을 늘 같은 키로 함께 옮기게 고쳤다(재장전 · 돌리기 어느 쪽을 옮겨도 R 은 지도 하나, M 은 짝 둘만 쥔다는 테스트). 덤으로 QA 가 짚은 permissions.md · netcode.md 의 없앤 「내리기」를 빼고 문구 테스트를 고쳤다. input.md 에 짝 규칙 한 줄. 바뀐 곳 그물(changed_tests.py, 407개 파일)로 3239개 통과 — 전체는 돌리지 않았다.",
-   "why": "든 아이템 키 안내 줄의 화면 자리(왼쪽 위) — spec/12_ui/hud.md 에 자리가 정해지지 않아 임시",
-   "files": [
-    "game/project.godot",
-    "game/core/input/input_actions.gd",
-    "game/settings/user/key_binds.gd",
-    "game/settings/user/user_prefs.gd",
-    "game/build/buildings.gd",
-    "game/build/furniture/furniture.gd",
-    "game/build/furniture/furnitures.gd",
-    "game/build/placeable.gd",
-    "game/core/net/net_world.gd",
-    "game/player/movement_controls/player.gd",
-    "game/player/movement_controls/player.tscn",
-    "game/ui/hud/item_keys_hint.gd",
-    "game/ui/hud/item_keys_hint.tscn",
-    "game/ui/manual/manual_toc.json",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "spec/01_settings/input.md",
-    "spec/02_player/movement-controls.md",
-    "spec/04_life/bird-cage.md",
-    "spec/05_craft/facilities.md",
-    "spec/06_build/building.md",
-    "spec/11_multiplayer/permissions.md",
-    "spec/11_multiplayer/netcode.md",
-    "game/tests/build/test_build_keys.gd",
-    "game/tests/build/test_take_not_hit_wording.gd",
-    "game/tests/build/test_blueprint.gd",
-    "game/tests/build/test_building_qa_sweep.gd",
-    "game/tests/build/test_building_stairs_flip.gd",
-    "game/tests/build/test_furniture.gd",
-    "game/tests/core/input/test_input_spec_table.gd",
-    "game/tests/craft/test_from_empty_hands.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "도면을 들고 **Tab = 토대 · 벽 · 문 … 지을 것 바꾸기** · **R = 돌리기**(놓인 벽 · 문 뒤집기 · 든 가구 90°) · **F = 스냅 바꾸기**(계단 위 ↔ 아래). T 는 비운다. 총을 든 R(장전 · 꾹 눌러 탄 고르기)은 그대로 — 든 것에 따라 갈린다 (테스트)",
-     "evidence": "tests/build/test_build_keys.gd — 진짜 물리 키를 push_input 으로 넣는다: test_tab_picks_the_next_piece_and_r_f_do_not(R·F·T 로는 안 바뀌고 Tab 으로 토대→벽) · test_r_turns_the_aimed_wall_and_t_does_nothing(T 그대로 · R 반 바퀴) · test_f_flips_the_stairs_and_tab_does_not · test_r_turns_the_held_furniture(90°) · test_r_still_reloads_the_gun_and_turns_nothing(is_reloading) · test_the_build_keys_are_tab_r_and_f(어느 동작도 T 를 안 쥔다). 앞 QA 의 R 짝 구멍도 test_moving_one_sharer_off_r_moves_the_other_too 가 RELOAD · BUILD_ROTATE 양쪽 → M 뒤 R 은 MAP 하나뿐 · M 은 둘을 단언. 일부러 깨 봤다: user_prefs.gd rebind 의 짝 옮기기를 빼자 6개 단언이 떨어졌고, buildings.gd _blueprint_key 의 BUILD_PICK 을 RELOAD 로 되돌리자 Tab · R · F 테스트가 떨어졌다(계단 테스트는 Tab 으로 계단에 못 가 멈췄다). 되돌린 뒤 cmp 로 같음 확인. 전체 4044개 통과(test.log 전체 · guard 통과)"
-    },
-    {
-     "ok": true,
-     "criterion": "들고 있을 때 화면 구석에 그 아이템의 키 안내 한 줄 · spec/06_build/building.md · 설명서(G-264) · input_actions.gd 주석을 고친다",
-     "evidence": "ui/hud/item_keys_hint.gd(+tscn, player.tscn HUD/ItemKeys) — test_the_corner_line_follows_what_is_held 가 목재=숨김 · 도면=Tab·R·F·좌클릭 · 가구=R 돌리기 · 총=R 장전 · en 로케일 reload 를 보고, test_the_line_hides_while_a_window_is_open 이 창 잠금 때 숨김을 본다. HUD_KEYS_* · KEYBIND_build_pick · MANUAL_build_keys 가 ko · en 둘 다 있다. building.md 미정 줄을 사람 결정 원문과 함께 고쳤고(137줄), manual_toc.json 에 build_keys 한 줄(설명서는 목차만 — menu.md 규칙), input_actions.gd 의 RELOAD · BUILD_ROTATE · BUILD_PICK · BUILD_STAIRS_FLIP 주석이 새 키를 말한다. input.md 키 표 · facilities.md 도 따라 고쳤다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 낡은 「도면 우클릭」 주석 · spec 줄이 남았다 — … 「망치 우클릭」으로 고치고 net_world.gd 에서 「내리기」를 빼라. tests/build/test_take_not_hit_wording.gd 가 bird-cage.md · placeable.gd 의 옛 문구를 그대로 단언하니 같이 고쳐라",
-     "evidence": "net_world.gd:19 「해체(망치 우클릭 … G-271.2) · 돌리기 · 올리기」(내리기 뺐다) · placeable.gd:14 · 36-43 · ko.po 주석 · bird-cage.md:26 모두 「망치 우클릭」. test_take_not_hit_wording.gd 가 새 문구를 단언하고, test_taking_is_the_hammer_not_the_blueprint_in_comments_and_spec 가 여섯 파일에 옛 문구(도면 우클릭 · 올리기 · 내리기 · 해체 · 내리기)가 없음을 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) movement-controls.md 사람 결정 줄에 「바뀌었다」가 없다 — … 「→ 같은 날 해체는 망치 우클릭으로 바뀌었다 (사람 결정 2026-10-20, G-271.2)」를 붙여라(원문은 지우지 않는다)",
-     "evidence": "git diff — movement-controls.md:39 · building.md:79 에 그 문장이 붙었고 원문 줄(「도면을 든 손은 건설 모드다 …」)은 그대로 남았다"
-    }
-   ],
-   "issues": [
-    "없앤 「내리기」가 코드 주석에 둘 남았다 — game/core/net/acts.gd:52 「… 치기 · 한 등급 내리기」, game/core/net/net_world.gd:546 꼬리 주석 「해체 · 내리기도 건축이다」. 내리기는 G-271.2 에서 없앴다. 「내리기」를 빼라(acts.gd 는 「해체」로). test_take_not_hit_wording.gd BLUEPRINT_TAKE_GONE 에 acts.gd 「내리기」를 더하면 다시 안 생긴다",
-    "netcode.md 에 계단 키가 Tab 으로 남았다 — spec/11_multiplayer/netcode.md:40 「미리 보기 · 도면 고르기 · 휠 · Tab 은 각자」. 계단 스냅은 이제 F 이고 Tab 은 도면 고르기다. buildings.gd:126 처럼 「· 휠 · F 는 각자」로 고쳐라",
-    "QA 훑기 테스트 주석이 T 키를 말한다 — game/tests/build/test_building_qa_sweep.gd:150 「벽 · 문은 T 로 돌아선다」. R 로 고쳐라",
-    "키 안내 줄 자리가 spec 에 「임시」로 안 적혔다 — item_keys_hint.gd 와 report 는 왼쪽 위 자리를 임시라 하지만 spec/06_build/building.md 미정 줄은 「화면 왼쪽 위에 … 한 줄이 뜬다」로 임시 표시가 없고 spec/12_ui/hud.md 에는 줄이 없다. hud.md 미정에 「든 아이템 키 안내 줄 — 지금 임시로 왼쪽 위(HINT_CONTROLS 밑)」 한 줄을 적어라"
-   ],
-   "good": []
-  },
-  "test": "      1s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/automation/villagers/test_job_work_shared.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/automation/villagers/test_villager_skills.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      0s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           537\nTests            4044\nPassing Tests    4044\nFailing Tests       0\nRisky/Pending       0\nAsserts        191617\nTime           774s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "25cda63d"
- },
- {
   "time": "2026-10-21 02:56:26",
   "epoch": 1792518986,
   "type": "pass",
@@ -8271,5 +8187,38 @@
   },
   "test": "ild/test_build_piece_tidy.gd\nok      3s  res://tests/build/test_building_stairs_note.gd\nok      3s  res://tests/build/test_buildings_tidy.gd\nok      3s  res://tests/build/test_placer.gd\nok      2s  res://tests/build/test_take_spec_lines.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      3s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      3s  res://tests/core/net/test_room_code.gd\nok      3s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/core/net/test_steam_room.gd\nok      4s  res://tests/core/test_lava_perf_spec_loop_line.gd\nok      4s  res://tests/core/test_spec_small_drifts.gd\nok      3s  res://tests/core/tools/test_test_totals_awk.gd\nok      3s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      3s  res://tests/craft/recipes/test_handle_name.gd\nok      3s  res://tests/craft/stations/test_geothermal_spec.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_still_alcohol.gd\nok      3s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      3s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      3s  res://tests/life/climbing/test_stamina.gd\nok      4s  res://tests/life/farming/test_crop_kinds.gd\nok      4s  res://tests/life/farming/test_seed_back.gd\nok      4s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      3s  res://tests/life/harvest/test_rare_drops.gd\nok      3s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      3s  res://tests/life/hunting/test_captive_fed.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      3s  res://tests/life/ranching/test_animal_stats.gd\nok      3s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      3s  res://tests/life/ranching/test_cage_bond.gd\nok      4s  res://tests/life/ranching/test_cage_pack_home.gd\nok      4s  res://tests/player/equipment/test_armor_modules.gd\nok      4s  res://tests/player/equipment/test_armor_health.gd\nok      3s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      4s  res://tests/player/equipment/test_armor.gd\nok      3s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      3s  res://tests/settings/save/test_old_vehicle_module.gd\nok      4s  res://tests/test_temp_dir.gd\nok      3s  res://tests/ui/hud/test_alert_log_place.gd\nok      4s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_islands.gd\nok      4s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      4s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      3s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      3s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      3s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     36s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           711\nTests            5024\nPassing Tests    5024\nFailing Tests       0\nRisky/Pending       0\nAsserts        247214\nTime           1122s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "792df026"
+ },
+ {
+  "time": "2026-10-28 01:20:59",
+  "epoch": 1793118059,
+  "type": "pass",
+  "title": "차선 합치기 — 3d-lane2(9b485c4f) → 3d-start",
+  "group": "G-944",
+  "step": "1",
+  "attempt": "3",
+  "report": {
+   "problem": "대문 굴 앞 바닥에 어두운 돌 문턱(Sill)을 깔아 굴 앞면 앞으로 솟던 땅을 덮었다 — 바뀐 곳만 19 파일 148 테스트 통과",
+   "approach": "굴 상자는 SINK 만큼만 묻혀 있어 벽 발치 땅(메시가 꼭짓점 사이를 비스듬히 잇는다)이 굴 앞면을 뚫고 솟았다. 굴 앞면 1m 뒤부터 문틀 앞면까지 문 너비 안의 땅을 0.25m 간격으로 재서 가장 높은 땅보다 5cm 위를 윗면으로 하는 DARK_STONE 문턱을 깔았다(밑은 SINK 만큼 묻히고 밟힌다). 테스트는 그 구역 어느 땅도 문턱 윗면을 넘지 않는지 · 문 너비를 덮는지 · 넘을 만한 높이(<1.5m)인지 본다. pit_gate 를 다시 찍어(.loop/out/g944_after → g338_1/pit_gate.png) 굴 아래 가운데에 솟은 땅이 없는 것을 잘라 키워 확인했다. 앞 회차 기계 검사에서 떨어진 tests/perf/test_lava_melt_load.gd(1.003ms > 1.0ms)는 엔진 여섯이 같이 도는 전체 판의 부하 흔들림이다 — 대문과 닿는 곳이 없고 단독으로 돌리면 통과한다.",
+   "why": "SILL_CLEAR 0.05m · SILL_BACK 1.0m — 문턱이 땅 위로 나오는 여유와 굴 앞면 뒤로 재는 거리, 그림으로 맞춘 값",
+   "files": [
+    "game/world/frontier_islands/mine_gate.gd",
+    "game/tests/world/frontier_islands/test_mine_gate.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "굴 문 안 바닥에 땅이 비죽 솟는다 — .loop/out/g338_1/pit_gate.png 에서 검은 굴 아래 가운데에 땅 뾰족한 돌이 굴 앞면을 뚫고 보인다(TUNNEL_LIP 1.5m 앞으로 내도 남음). 굴 상자 아래를 SINK 보다 더 묻거나 굴 앞 바닥 높이를 대문 원점 높이로 덮는 판(DARK_STONE 문턱)을 깔아 가려라 — 그림으로 확인",
+     "evidence": "다시 찍은 .loop/out/g338_1/pit_gate.png(00:42, 코드 바뀐 뒤)의 굴 발치를 잘라 키워 보니 검은 굴 아래에 솟은 땅이 없고 회색 DARK_STONE 문턱만 깔렸다. test_mine_gate.gd::test_a_sill_covers_the_ground_in_front_of_the_tunnel 이 문턱 색(DARK_STONE) · 굴 앞면 뒤에서 문틀 앞면까지 · 문 너비 · 묻힘 · 높이<1.5m · 0.25m 간격으로 그 구역 땅이 문턱 윗면을 넘지 않음 · 밟힘(StaticBody3D)을 본다. 일부러 깨 봄: 문턱 윗면을 잰 땅 대신 0+SILL_CLEAR 로 놓자 「땅이 문턱을 뚫는다」가 여러 자리에서 떨어졌다(되돌렸다). 전체 판 5024/5024 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "ild/test_build_piece_tidy.gd\nok      3s  res://tests/build/test_building_stairs_note.gd\nok      3s  res://tests/build/test_buildings_tidy.gd\nok      3s  res://tests/build/test_placer.gd\nok      2s  res://tests/build/test_take_spec_lines.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      3s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      3s  res://tests/core/net/test_room_code.gd\nok      3s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/core/net/test_steam_room.gd\nok      4s  res://tests/core/test_lava_perf_spec_loop_line.gd\nok      4s  res://tests/core/test_spec_small_drifts.gd\nok      3s  res://tests/core/tools/test_test_totals_awk.gd\nok      3s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      3s  res://tests/craft/recipes/test_handle_name.gd\nok      3s  res://tests/craft/stations/test_geothermal_spec.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_still_alcohol.gd\nok      3s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      3s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      3s  res://tests/life/climbing/test_stamina.gd\nok      4s  res://tests/life/farming/test_crop_kinds.gd\nok      4s  res://tests/life/farming/test_seed_back.gd\nok      4s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      3s  res://tests/life/harvest/test_rare_drops.gd\nok      3s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      3s  res://tests/life/hunting/test_captive_fed.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      3s  res://tests/life/ranching/test_animal_stats.gd\nok      3s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      3s  res://tests/life/ranching/test_cage_bond.gd\nok      4s  res://tests/life/ranching/test_cage_pack_home.gd\nok      4s  res://tests/player/equipment/test_armor_modules.gd\nok      4s  res://tests/player/equipment/test_armor_health.gd\nok      3s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      4s  res://tests/player/equipment/test_armor.gd\nok      3s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      3s  res://tests/settings/save/test_old_vehicle_module.gd\nok      4s  res://tests/test_temp_dir.gd\nok      3s  res://tests/ui/hud/test_alert_log_place.gd\nok      4s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_islands.gd\nok      4s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      4s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      3s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      3s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      3s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     36s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           711\nTests            5024\nPassing Tests    5024\nFailing Tests       0\nRisky/Pending       0\nAsserts        247214\nTime           1122s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "43c1cfe6"
  }
 ]
