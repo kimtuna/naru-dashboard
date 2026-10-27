@@ -5885,11 +5885,13 @@
 - **사람 요청 2026-10-27** (원문 그대로): 「뭔가 드워프 마을인데 웅장하지가 않아」 · 「여기서 더 개선 사항은 있어 ?」 → Claude 제안 11가지 → 「쭉 다 해봐」
 - 땅(구덩이 · 협곡 · 색)은 지휘 세션이 짓는다 — 이 묶음은 그 위에 **맵에 박힌 것**을 세운다(선착장처럼: 부수지 못하고 · 저장하지 않는 고정 맵 · 플레이어 건축이 아니다). 꼴은 지금 있는 상자 · 원기둥 블록으로(에셋 없음) · 값은 모두 임시 — Claude 가 정함 2026-10-27
 - 그림으로 본다: `harness/shot.sh <폴더> island=dwarf pit_arrival pit_floor pit_rim pit_overview` (+ 새 자리를 shots.gd 에 더한다)
-- [ ] 1. 협곡 돌다리 · 나선 길 늘리기
+- [x] 1. 협곡 돌다리 · 나선 길 늘리기
   - 기준: 나선 길이 협곡을 건너도록 설계 값을 바꾼다(`dwarf_island_blueprint.tres` 의 pit_ramp_start_deg · pit_ramp_turns — 예 200° · 1.25 바퀴, 경사 약 15% 아래) · 길이 협곡을 건너는 자리에 **돌다리**(아치 · 난간 · 너비 = 길 너비) — 다리 위를 걷고 차가 지나간다 · 다리 밑으로 협곡을 걷는다 (테스트 — 나선 길 끝에서 끝까지 걸어 막힘 없음)
   - 기준: test_dwarf_island 의 나선 길 테스트를 다리 위로 지나가게 맞춘다 (테스트)
 - [ ] 2. 짐 승강기
   - 기준: 30m 벽마다 **나무 승강기**(단 사이 · 임시 단마다 하나 · 둘레 4m 판) — 판 위에서 우클릭 「오른다 / 내린다」 · 약 6초에 한 단 · 탄 사람 · 떨어진 아이템 · 짐승이 같이 움직인다 · 같이 하는 판 (테스트)
+  - 기준: (앞 단계 QA) PitBridge.ramp_height 주석이 낡았다 — game/world/frontier_islands/pit_bridge.gd 의 ramp_height 문서 주석 「island_landform.gd 의 slope 와 같은 값」 — _pit_bowl 에서 slope 변수가 없어지고 rim - pit_depth * ramp.y 가 됐다. 「island_landform.gd _pit_bowl 의 길 높이(rim - pit_depth × 몫)와 같은 값」으로 고쳐라
+  - 기준: (앞 단계 QA) 다리를 세우는지 보는 테스트가 소스 글자만 본다 — test_pit_bridge.gd 의 test_the_dwarf_island_stands_the_bridge 는 test_island.gd 소스에 「PitBridge.make(blueprint)」 글자가 있는지만 본다. 드워프 섬 TestIsland 를 띄워 island.pit_bridge != null 이고 span() 이 PitBridge.crossing(DWARF) 와 같은지, 본섬에서는 null 인지 단언하는 테스트로 바꿔라
 - [ ] 3. 짚라인
   - 기준: 테두리 두 곳에서 구덩이 바닥 · 협곡 어귀까지 **짚라인**(줄 · 기둥) — 위 기둥에서 우클릭하면 줄을 타고 내려간다(임시 초속 12m · 손에 든 것 그대로) · **내려가기만** 된다 · 같이 하는 판 (테스트)
   - 기준: spec dwarf-island.md 줄 (사람 원문 · 임시)

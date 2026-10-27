@@ -1,39 +1,5 @@
 [
  {
-  "time": "2026-10-20 13:52:59",
-  "epoch": 1792471979,
-  "type": "pass",
-  "title": "통과 — G-923 단계 2 (공유 PlayerConfig 를 고쳐 쓴다 (G-263 단계 1))",
-  "group": "G-923",
-  "step": "2",
-  "attempt": "2",
-  "report": {
-   "problem": "Player 가 _ready 에서 config(player_config.tres)를 제 사본으로 복사해 감도가 공유 tres 를 덮지 않는다 — 누수 테스트가 실제로 잡도록 고쳤다 (바뀐 곳만: 307개 파일 2589개 통과)",
-   "approach": "_follow_sensitivity 가 모든 Player 가 함께 쥔 player_config.tres 에 감도를 덮어썼다. Player._ready 첫 줄에서 config = config.duplicate() 로 제 몫을 만들어 그것만 고친다 — crosshair 등 player.config.mouse_sensitivity 로 나누는 곳은 제 몸의 사본을 읽으니 그대로 맞는다. 앞 시도의 누수 테스트는 const SHARED := preload(...) 상수로 tres 를 읽어 실행 중 바뀐 값을 못 봤다(QA 지적). before_each 에서 load() 로 얻은 참조로 바꾸고, player.gd:123 을 잠깐 pass 로 바꿔 돌려 「tres 는 그대로다」 두 단언과 사본 단언 둘이 실제로 떨어지는 것(0.0042 ≠ 0.003)을 본 뒤 되돌렸다. 바뀐 곳에 걸리는 그물(changed_tests.py, 307개 파일 · 2589개)을 돌려 모두 통과.",
-   "why": "",
-   "files": [
-    "game/player/movement_controls/player.gd",
-    "game/player/movement_controls/player_config.gd",
-    "game/tests/player/movement_controls/test_shared_config.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "공유 PlayerConfig 를 고쳐 쓴다 — player.gd:188 _follow_sensitivity 가 config.mouse_sensitivity(player_config.tres, 모든 Player 가 함께 쓰는 Resource)를 덮어쓴다. 남의 몸(원격 플레이어)까지 같은 값을 갖게 되고 테스트가 끝나도 메모리의 tres 값이 남는다. 지금은 감도를 내 카메라만 읽어 해가 없지만, 카메라 회전(player.gd:196-197)이 UserPrefs.mouse_sensitivity 를 바로 읽게 하거나 config 를 duplicate 해 두는 편이 낫다 — 바꾸면 tests/crosshair.gd 등 config.mouse_sensitivity 로 나누는 곳도 같이 고친다",
-     "evidence": "player.gd:123 _ready 첫 줄에서 config = config.duplicate() — 이후 config 를 쓰는 곳(143~)은 모두 사본을 본다. tests/player/movement_controls/test_shared_config.gd 두 테스트: 두 몸의 config 가 tres 와도 서로와도 다른 객체인지, UserPrefs.set_mouse_sensitivity(0.0042) 뒤 내 몸·나중 몸은 0.0042 를 따르고 load() 로 얻은 tres 는 0.003 그대로인지 본다. 앞 QA 지적대로 const preload 대신 before_each 의 load() 참조를 쓴다. QA 가 player.gd:123 을 pass 로 바꿔 폴더를 돌리니 4개 단언이 떨어졌다(0.0042 ≠ 0.003, 같은 객체) — 되돌렸다. crosshair.gd · ui_shots.gd · shots.gd 등은 player.config(제 몸의 사본)를 실행 중에 읽으니 그대로 맞다. 전체 test.log 3928/3928 통과, guard 통과"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "est_slots.gd\nok      2s  res://tests/automation/villagers/test_job_work_shared.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      0s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           522\nTests            3928\nPassing Tests    3928\nFailing Tests       0\nRisky/Pending       0\nAsserts        181609\nTime           766s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "7d8134d7"
- },
- {
   "time": "2026-10-20 14:06:01",
   "epoch": 1792472761,
   "type": "pass",
@@ -8246,5 +8212,55 @@
   },
   "test": "t_spec.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_guard_pen_window.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/theme/test_korean_font.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_obsidian.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/automation/villagers/test_villager_body.gd\nok      2s  res://tests/world/terrain/test_volcano_cycle.gd\nok      2s  res://tests/automation/villagers/test_villager_skills.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/build/test_placer.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           697\nTests            4943\nPassing Tests    4943\nFailing Tests       0\nRisky/Pending       0\nAsserts        242845\nTime           980s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "e379e11a"
+ },
+ {
+  "time": "2026-10-27 19:33:54",
+  "epoch": 1793097234,
+  "type": "pass",
+  "title": "통과 — G-339 단계 1 (협곡 돌다리 · 나선 길 늘리기)",
+  "group": "G-339",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "드워프 광산 나선 길을 200° · 1.3 바퀴(기울기 약 14.7%)로 늘려 협곡을 건너게 하고, 건너는 자리에 돌 아치 다리(PitBridge — 판 · 난간 · 아치, 길 너비 12m)를 박았다. 바뀐 곳만 156 파일 1153 테스트 통과",
+   "approach": "나선 길을 200°에서 1.3 바퀴로 늘리면 몫 0.36~0.42(반지름 약 111m)에서 협곡(20°)을 한 번 건넌다 — 그 자리 협곡 바닥은 길보다 76m 낮다. 옛 나선 길은 높이를 반지름으로만 정해 길을 가로질러 1m 마다 1.2m 기울어 있었다(평평한 다리 판과 가장자리가 안 맞는다) — island_landform.gd 의 _pit_ramp_on 이 가장 가까운 길의 몫도 돌려주게 해 길 높이를 그 몫으로 정했다: 길이 가로로 평평해지고 다리 판(PitBridge.ramp_height)과 같은 식이 된다. PitBridge 는 나선을 따라 1m 칸마다 판 · 난간 둘 · 아치(끝에서 14m 깊고 가운데로 얇아진다) 상자 블록을 놓고 같은 꼴의 몸통을 단다 — 협곡 벽 너머로 4m 더 뻗어 끝이 길에 묻힌다. 협곡 바닥에는 기둥이 없다. 섬(test_island.gd)이 구덩이 · 협곡이 있고 길이 건널 때만 세운다 — 선착장처럼 박힌 것이라 저장하지 않는다(땅과 같이 섬 설계에서 늘 같게 나온다). 잰 값: 길 끝에서 끝까지 가장 큰 한 걸음 0.25m · 다리 위 114 걸음. 그림 자리 pit_bridge_under · pit_bridge_deck 을 shots.gd 에 더해 찍어 보았다 — 밑에서 아치가 벽에서 벽으로 걸치고, 판 위에서 길이 난간 사이로 이어진다.",
+   "why": "pit_ramp_start_deg 200 · pit_ramp_turns 1.3 — 협곡을 한 번 건너고 기울기 15% 아래가 되는 값; PitBridge.DECK 1m · RAIL 높이 1.2m 두께 0.6m · ARCH_RISE 14m · STEP 1m · LAND 4m · 돌 색 — 에셋 없는 상자 초안",
+   "files": [
+    "game/world/frontier_islands/pit_bridge.gd",
+    "game/world/frontier_islands/dwarf_island_blueprint.tres",
+    "game/world/terrain/island_landform.gd",
+    "game/world/terrain/test_island.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/world/frontier_islands/test_dwarf_island.gd",
+    "game/tests/world/frontier_islands/test_pit_bridge.gd",
+    "spec/03_world/dwarf-island.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "나선 길이 협곡을 건너도록 설계 값을 바꾼다(`dwarf_island_blueprint.tres` 의 pit_ramp_start_deg · pit_ramp_turns — 예 200° · 1.25 바퀴, 경사 약 15% 아래) · 길이 협곡을 건너는 자리에 **돌다리**(아치 · 난간 · 너비 = 길 너비) — 다리 위를 걷고 차가 지나간다 · 다리 밑으로 협곡을 걷는다 (테스트 — 나선 길 끝에서 끝까지 걸어 막힘 없음)",
+     "evidence": "tres 200° · 1.3 바퀴. test_the_ramp_is_gentle 이 나선 길이로 기울기 < 15.5% 와 협곡 건넘을 단언. test_pit_bridge: 판 윗면 = 길 높이 · 길 너비만큼 판 · 바깥 난간 솟음(test_the_deck_is_as_wide_as_the_ramp_with_rails), 판 0.25m 씩 턱 < 0.15m · 틈 없음(차), 협곡 가운데 줄 사람 키 높이로 쏘아 기둥 없음 · 머리 위 10m 넘게 다리(밑으로 걷기), 협곡 없으면 다리 없음. test_the_spiral_ramp_goes_down_without_a_wall 이 다리를 실제로 세우고 빛을 쏘아 땅·판 중 높은 쪽으로 끝에서 끝까지 따라가 한 칸 < 0.6m · 다리 위 50걸음 넘게를 단언. 일부러 깨 봄: 판 높이를 +1m 올리자 test_dwarf_island(턱 1.06m) · test_pit_bridge(판 윗면) 둘 다 실패 — 되돌림 확인"
+    },
+    {
+     "ok": true,
+     "criterion": "test_dwarf_island 의 나선 길 테스트를 다리 위로 지나가게 맞춘다 (테스트)",
+     "evidence": "test_the_spiral_ramp_goes_down_without_a_wall 이 PitBridge.make(DWARF) 를 세우고 _deck_at 으로 위에서 쏜 빛의 판 높이를 땅 높이와 견주어 높은 쪽을 밟는다 · on_bridge > 50 단언으로 실제로 다리 위를 지나는지 확인. 위 깨 보기에서 실패로 확인"
+    }
+   ],
+   "issues": [
+    "PitBridge.ramp_height 주석이 낡았다 — game/world/frontier_islands/pit_bridge.gd 의 ramp_height 문서 주석 「island_landform.gd 의 slope 와 같은 값」 — _pit_bowl 에서 slope 변수가 없어지고 rim - pit_depth * ramp.y 가 됐다. 「island_landform.gd _pit_bowl 의 길 높이(rim - pit_depth × 몫)와 같은 값」으로 고쳐라",
+    "다리를 세우는지 보는 테스트가 소스 글자만 본다 — test_pit_bridge.gd 의 test_the_dwarf_island_stands_the_bridge 는 test_island.gd 소스에 「PitBridge.make(blueprint)」 글자가 있는지만 본다. 드워프 섬 TestIsland 를 띄워 island.pit_bridge != null 이고 span() 이 PitBridge.crossing(DWARF) 와 같은지, 본섬에서는 null 인지 단언하는 테스트로 바꿔라"
+   ],
+   "good": [
+    "shots.gd 에 그림 자리 pit_bridge_under · pit_bridge_deck — current.md 가 「새 자리를 shots.gd 에 더한다」고 했으니 기준 안쪽 손질",
+    "_pit_ramp_on 이 가장 가까운 길의 몫을 돌려주게 해 나선 길을 가로로 평평하게 만들었다(test_the_ramp_is_level_across) — 다리 판과 길이 맞물리게 하는 데 필요한 손질"
+   ]
+  },
+  "test": "life/hunting/test_wild_kinds.gd\nok      4s  res://tests/life/ranching/test_cage_take_keeps_birds.gd\nok      2s  res://tests/world/frontier_islands/test_pit_bridge.gd\nok      4s  res://tests/world/storage/test_throw_out.gd\nok      4s  res://tests/world/lighting/test_torch.gd\nok      4s  res://tests/world/invasion/test_invasion_real.gd\nok      3s  res://tests/world/terrain/test_beach_sand_texture.gd\nok      4s  res://tests/world/invasion/test_island_progress_real.gd\nok      3s  res://tests/world/terrain/test_drill_look.gd\nok      3s  res://tests/world/terrain/test_drill_view.gd\nok      4s  res://tests/world/terrain/test_lava_melt.gd\nok      4s  res://tests/world/terrain/test_foundation_hides_grass.gd\nok      4s  res://tests/world/terrain/test_mine_board.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      3s  res://tests/build/test_build_blocked_click.gd\nok      3s  res://tests/build/test_size_4x4.gd\nok      2s  res://tests/life/vehicles/test_car_modules.gd\nok      3s  res://tests/life/food/test_food.gd\nok      3s  res://tests/life/vehicles/test_garage_kinds.gd\nok      3s  res://tests/player/inventory_hotbar/test_no_item_load.gd\nok      3s  res://tests/life/vehicles/test_garage.gd\nok      3s  res://tests/player/movement_controls/test_control_locks.gd\nok      3s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_drill_pitch.gd\nok      3s  res://tests/world/terrain/test_mine_rebake.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      3s  res://tests/world/terrain/test_volcano_cycle.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      1s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      3s  res://tests/world/terrain/test_obsidian.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok    390s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           156\nTests            1153\nPassing Tests    1153\nFailing Tests       0\nRisky/Pending       0\nAsserts         39212\nTime           390s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "47aa71e9"
  }
 ]
