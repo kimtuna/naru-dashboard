@@ -5854,7 +5854,7 @@
   - 기준: 돌아올 때는 승강장의 같은 승강기 · 같이 하는 판은 탄 사람만 간다(선착장과 같은 길) · 안 탄 사람은 남는다 (테스트)
   - 기준: (앞 단계 QA) play_island 명령줄 섬 고르기에 테스트가 없다 — 테스트는 island_id 속성으로만 띄워 tools/island.sh 가 넘기는 `-- island=dwarf` 길(play_island.gd _ready 의 OS.get_cmdline_user_args 읽기)은 안 거친다. island_id 가 비었을 때 명령줄 값을 읽는 부분을 정적 함수(예: static func pick_id(given: String, args: PackedStringArray) -> String)로 떼고 ["island=dwarf"] → "dwarf", [] → "sulfur", given 이 있으면 given 을 단언하는 테스트를 game/tests/world/mine 또는 core/debug 쪽에 둔다
   - 기준: (앞 단계 QA) 땅굴 판 걷기가 높이 하나에 걸렸다 — MineShaft._physics_process 는 below 동안 player.y > MineBoard.TOP + 1 이면 판을 걷는다. 굴 안에서 F1 날기로 천장 위로 뜨거나 판 굴을 위로 뚫으면(판 윗면 0 · 구덩이 바닥 약 11m) 땅굴이 통째로 사라질 수 있다. 판 위로 나온 것을 「섬 되살 자리로 옮겨졌다」(Death.stand 신호 등)로 좁히거나, 날기 중에는 건너뛰고, 그 경우를 막는 테스트를 더한다
-- [ ] 3. 땅굴 판
+- [x] 3. 땅굴 판
   - 기준: 땅굴은 **들어갈 때마다 새로**(시드) 굴 몇 갈래가 미리 파져 있다(임시 셋~다섯 · 지름 4~6m · 엘리베이터 방에서 뻗는다) · 벽은 드릴 · 삽으로 판다 · 어둡다(손전등 · 엘리베이터 방 등불) (테스트)
   - 기준: 벽 속에 **땅속 광물 다섯**(루비 · 사파이어 · 에메랄드 · 코발트 · 운철 — dwarf-island.md 표)이 박혀 있다 — 깊이별(얕은 · 중간 · 깊은 · 운철은 드묾) · 드릴로 파면 아이템으로 떨어진다 · 아이템 · 번역 · 아이콘 색(임시) (테스트)
   - 기준: (앞 단계 QA) 되살기 테스트가 신호를 손으로 낸다 — test_respawned_on_the_island_while_below_clears_the_tunnel 은 island.death.respawned.emit() 을 직접 불러, 땅굴 안에서 실제로 죽었을 때 Death 가 respawned 를 내는지(그리고 판 위가 아니라 섬 되살 자리로 옮기는지)는 거치지 않는다. game/tests/world/mine/test_mine_shaft.gd 에 내려간 뒤 island.player 체력을 0 으로 깎아(또는 Death 의 죽는 길을 불러) 되살기까지 기다린 뒤 shaft.below == false · board == null 을 단언하는 테스트를 더하라
@@ -5863,6 +5863,7 @@
   - 기준: 땅굴 안에서 **개발용 키 F9** — 작은 괴물(지금 몸 임시) 무리 켜기 / 끄기: 켜면 굴 끝 · 어둠에서 끝없이 나와(상한 LIVE_CAP 40) 사람에게 몰린다 · 끄면 다 사라진다 · F9 창에 지금 마릿수 (테스트)
   - 기준: 같이 하는 판 — 참가자도 같이 내려간다 · 서버가 무리를 낳는다 · 같이 하는 판이 이 묶음에서 어려우면 혼자 판만 하고 까닭을 report 에 (테스트)
   - 기준: spec dwarf-island.md 「지금 지은 것」 줄 · debug_tools 머리 주석 F9 (사람 원문 · 임시)
+  - 기준: (앞 단계 QA) 참가자 땅굴 드릴 부스러기 길이 안 지켜진다 — shovel.gd use() 의 below 갈래는 ask 를 건너뛰고 아래 혼자 길로 내려가는데, 그 길에서 드릴 부스러기(_bite)가 튀는지 보는 단언이 test_shovel_and_drill_in_hand_dig_the_tunnel_wall_even_as_a_joiner 에 없다. 막는 것은 아니다 — 확인 겸 drill · joiner 갈래에서 부스러기 노드가 생겼는지 한 줄 단언을 더하면 좋다
 
 ## [ ] G-338 드워프 광산 — 대문 · 석상 · 벽 마을 · 불빛 · 권양탑 · 소리
 - 차선: 3d-start · 시작 2026-10-27 18:37
