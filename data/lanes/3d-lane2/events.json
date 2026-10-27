@@ -1,100 +1,5 @@
 [
  {
-  "time": "2026-10-20 18:15:53",
-  "epoch": 1792487753,
-  "type": "pass",
-  "title": "통과 — G-266 단계 3 (도면으로 해체해도 새가 남는다)",
-  "group": "G-266",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "도면 해체(Placer.take_thing)한 새장이 새를 싣고 가서 다시 놓으면 그대로 드는 것을 재현 테스트로 확인했다(혼자 · 상자 · 저장 · 서버). 가방 칸에 「새 N마리」를 적고, 새장 창 요약 이름은 앉은 새만 밝게 했다. 바뀐 곳에 걸린 98개 파일 · 798개 테스트가 통과했다",
-   "approach": "재현부터 해 봤지만 지금 코드에서는 새가 사라지지 않는다. 도면 해체(Placeable.take)는 남은 대수를 1로 두고 Stations.hit_station 을 부른다. 그래서 새장째 싣는 길(_pack_cage → 가방 칸의 cage 열쇠)을 지나고, 다시 놓을 때도 혼자(place_held)든 서버(place_for)든 _unpack_cage 가 새를 되돌린다. crafting_station.gd 의 why_kept(BirdCage.out_count)와도 어긋나지 않는다. 둘 다 BirdCage.can_pack 하나를 보므로, 다 앉아 있으면 싣고 하나라도 밖이면 거두지 않는다(빈 「새장」 칸도 생기지 않는다). 그 상태를 테스트로 묶었다. 해체 → 다시 놓기, 상자에 넣고 섬 저장본을 디스크에 썼다 읽기, 캐릭터 저장본, 서버가 참가자 대신 해체하고 놓기까지 새 · 이름 · 스탯 · 관계 · 배고픔 · 나이(born) · 체력이 그대로인지 본다. 다만 가방 칸에는 「새장」이라는 이름만 보여서, 새를 싣고 있는지 알 길이 없었다. 사람이 「새가 없어졌다」고 본 것은 G-262 · G-260.4 전의 길이었거나 이 탓으로 보인다. 그래서 칸 오른쪽 아래(잡은 짐승의 나이 자리)에 「새 N마리」를 적는다(BirdCage.count_in, 번역 키 CAGE_SLOT_BIRDS, 말을 바꾸면 다시 옮긴다). 앞 단계 QA도 반영했다. 요약 이름이 ShortLabel(회색)이라 늘 흐렸는데, 바탕 글자색으로 바꾸고 그림 칸처럼 앉은 새만 밝게(그 밖은 AWAY_ALPHA) 했다. ui_shots bird_cage_ko 에서 1 · 5번 이름이 밝게 보이는 것을 확인했다. 테스트: 새로 짠 파일 7개, 창 테스트 11개가 통과했다. 바뀐 곳 그물(changed_tests.py)로 고른 98개 파일 · 798개 테스트가 모두 통과했다. 전체는 돌리지 않았다.",
-   "why": "",
-   "files": [
-    "game/life/ranching/bird_cage.gd",
-    "game/ui/hud/item_slot.gd",
-    "game/ui/hud/cage_panel.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/life/ranching/test_cage_take_keeps_birds.gd",
-    "game/tests/ui/hud/test_bird_cage_window.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "**재현부터** — 새가 든 새장을 도면 해체(Placer.take_thing)하면 「새장」 칸만 남고 새가 사라지는 것을 테스트로. crafting_station.gd:173 의 「다 들어있지 않으면 해체가 안되게」(BirdCage.out_count)와 어긋나는지도 본다",
-     "evidence": "test_cage_take_keeps_birds.gd test_taking_a_cage_with_the_blueprint_carries_every_bird 가 실제 게임 길(Buildings.take_target → Placer.take_thing → Placeable.take → Stations.hit_station → _pack_cage)로 해체해 「새장」 칸에 cage 열쇠가 실리고 새 둘이 그대로인지 본다. 지금 코드에서는 재현되지 않는다는 결론을 테스트로 묶었다. test_why_kept_and_the_blueprint_agree_one_bird_out_keeps_the_cage 는 새 하나가 밖이면 why_kept 와 take_thing 이 같이 막고 빈 「새장」 칸도 생기지 않는 것을 본다. QA 가 _pack_cage 의 entry[CAGE_KEY] 줄을 빼 보니 이 테스트를 포함해 4개가 떨어졌다(되돌림)"
-    },
-    {
-     "ok": true,
-     "criterion": "해체한 새장 칸이 **안의 새를 싣고** 간다(새 · 이름 · 스탯 · 관계 · 배고픔 · 나이) — 다시 설치하면 그 새들이 그대로 든다. 상자 · 저장 · 멀티에서도 (테스트). 칸 설명에 「새 N 마리」가 보인다",
-     "evidence": "_birds() 가 새 칸 전체(kind · born · hp · name · stats · tame · pet)와 fed 를 비교한다. 다시 놓기(place_held), 상자 → 섬 저장본 디스크 왕복 → 캐릭터 저장본 왕복, 서버의 take_thing(guest) → place_for 를 각각 테스트한다. test_the_slot_says_how_many_birds_are_inside 는 ItemSlot 칸에 「새 2마리」가 뜨고 말을 바꾸면 다시 옮겨지며 빈 새장은 비어 있는지 본다. CAGE_SLOT_BIRDS 는 ko · en 둘 다 있다. QA 가 item_slot 의 birds 를 0 으로 바꿔 보니 테스트가 떨어졌다(되돌림). test.log 에서 바뀐 곳 163개 파일 · 1345개 테스트와 guard 가 통과했다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 요약 이름이 늘 흐리다 — cage_panel.gd _summary 의 이름 Label 이 ShortLabel 꼴이라, 새장에 앉은 새(1 · 5번 칸, 그림은 밝다)도 나가 있는 새와 똑같이 회색으로 보인다(ui_shots bird_cage). 그림 칸처럼 perched() 일 때만 밝게 하거나, 일부러 흐리게 둔 것이면 주석에 까닭을 적어라 (막는 것은 아니다)",
-     "evidence": "ShortLabel 을 빼고 refresh 에서 perched() 일 때만 alpha 1, 그 밖에는 AWAY_ALPHA 로 둔다. test_summary_name_is_bright_only_for_a_perched_bird 가 앉은 새는 1.0, 나는 새는 AWAY_ALPHA 이고 그림 칸과 같은지 본다. QA 가 modulate 줄을 빼 보니 떨어졌다(되돌림)"
-    }
-   ],
-   "issues": [
-    "영어 「1 birds」 — en.po CAGE_SLOT_BIRDS 가 \"%d birds\" 하나라 새가 한 마리인 새장 칸에는 「1 birds」로 뜬다. CAGE_SLOT_BIRD(\"%d bird\") 키를 하나 더 두고 ItemSlot.note_text 에서 수가 1이면 그 키를 쓰거나, 수 없이 읽히는 꼴(예: \"Birds %d\")로 바꿔라. 한국어 「새 1마리」는 그대로 둔다"
-   ],
-   "good": []
-  },
-  "test": "hud/test_guard_pen_window.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      3s  res://tests/ui/hud/test_hotbar.gd\nok      3s  res://tests/ui/hud/test_kept_window.gd\nok      4s  res://tests/ui/hud/test_map_coords.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_no_output_slots.gd\nok      3s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_queue_window.gd\nok      3s  res://tests/ui/hud/test_station_row_columns.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/automation/villagers/test_villager_pen_room.gd\nok      3s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      3s  res://tests/ui/hud/test_villager_gear_window.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      3s  res://tests/craft/stations/test_oil_press.gd\nok      3s  res://tests/life/hunting/test_burrows.gd\nok      3s  res://tests/core/test_open_chest_window.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/hunting/test_same_animal.gd\nok      2s  res://tests/life/hunting/test_summon.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/life/ranching/test_troughs.gd\nok      3s  res://tests/life/ranching/test_taming.gd\nok      3s  res://tests/multiplayer/test_owl_trees_on_server.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/multiplayer/test_guard_pen_on_server.gd\nok      3s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok    435s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           163\nTests            1345\nPassing Tests    1345\nFailing Tests       0\nRisky/Pending       0\nAsserts         43691\nTime           435s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "4d82908e"
- },
- {
-  "time": "2026-10-20 18:28:08",
-  "epoch": 1792488488,
-  "type": "pass",
-  "title": "통과 — G-266 단계 4 (망원경은 곁의 새장만 표시한다)",
-  "group": "G-266",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "망원경 팀 줄에 곁(NEAR 30 m) 새장만 띄운다 · 새장 칸 영어 「1 bird」 단수 키",
-   "approach": "망원경의 「새장 표시」는 HUD 위 팀 줄(_rows_text)이었고 먼 팀도 「N팀 — 새장이 멀다 (48m)」로 다 띄웠다. 반경은 명령을 받는 곁 반경 NEAR(BirdCage.RANGE×2 = 30 m)와 같게 해 NEAR 밖 새장 줄은 건너뛴다 — 팀은 여전히 차례대로 세운 셋(G-252)이고 켤 때 곁의 가장 가까운 팀 고르기(G-261.1)도 그대로, 먼 팀을 고르면 HUD 가 회색 「멀다」로 말한다. 안 쓰게 된 TELESCOPE_ROW_FAR 키는 지우고, 줄 셈(_signature)도 먼 팀 거리가 바뀌면 다시 짓지 않게 했다. 영어 「1 birds」는 CAGE_SLOT_BIRD(\"%d bird\") 키를 더해 ItemSlot.paint 에서 새가 한 마리면 그 키를 쓴다(한국어는 같은 「새 %d마리」). 바뀐 곳 그물(changed_tests) 99개 파일 · 844개 통과.",
-   "why": "",
-   "files": [
-    "game/life/hunting/telescope.gd",
-    "game/ui/hud/item_slot.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/life/hunting/test_telescope.gd",
-    "game/tests/life/ranching/test_cage_take_keeps_birds.gd",
-    "spec/04_life/hunting.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "망원경에 뜨는 새장 표시를 내 둘레의 새장만으로 — 반경은 telescope.gd:53 NEAR(BirdCage.RANGE×2 = 30 m)와 맞추거나 따로 임시. 먼 새장은 표시하지 않는다(팀 1·2·3 고르기 규칙 G-252 · G-261.1 은 그대로) (테스트)",
-     "evidence": "telescope.gd _rows_text 가 dist > NEAR 인 줄을 건너뛴다. test_telescope.gd::test_only_the_cages_around_you_are_listed 가 먼 새장 둘 + 곁 하나로 teams().size()==3(팀 규칙 유지) · 켤 때 곁의 2팀 골라짐(G-261.1) · rows_text 가 곁 줄 하나뿐 · 먼 1팀을 골라도 줄 없음 + HUD 「1팀 — 새장이 멀다」 · 20 m 로 다가오면 줄이 뜨고 31 m 면 다시 빠짐을 정확한 문자열로 단언한다. 기존 test_the_nearest_team_beside_you_is_chosen_when_you_look 도 곁 줄만으로 고쳤다. test.log 바뀐 곳 164 파일 1363 통과 · guard 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 영어 「1 birds」 — en.po CAGE_SLOT_BIRDS 가 \"%d birds\" 하나라 새가 한 마리인 새장 칸에는 「1 birds」로 뜬다. CAGE_SLOT_BIRD(\"%d bird\") 키를 하나 더 두고 ItemSlot.note_text 에서 수가 1이면 그 키를 쓰거나, 수 없이 읽히는 꼴(예: \"Birds %d\")로 바꿔라. 한국어 「새 1마리」는 그대로 둔다",
-     "evidence": "en.po CAGE_SLOT_BIRD \"%d bird\" · ko.po 「새 %d마리」 추가, item_slot.gd paint 가 birds==1 이면 BIRD_KEY 를 쓴다. test_cage_take_keeps_birds.gd::test_one_bird_reads_as_one_bird 가 en 에서 Count 글자 == \"1 bird\" 를, ko 로 바꾼 뒤 \"새 1마리\" 를 단언한다(키를 안 나누면 \"1 birds\" 로 깨진다)"
-    }
-   ],
-   "issues": [
-    "망원경 키 주석이 낡았다 — game/life/hunting/telescope.gd:86 「## 팀마다 한 줄 (…) · 먼 팀 (%d 팀 · %d 거리 m) · 빈 새장 …」 에 지운 ROW_FAR_KEY 몫 「먼 팀 (%d 팀 · %d 거리 m)」 이 남았다. 그 토막을 지우고 「곁의 팀마다 한 줄」로 고쳐라"
-   ],
-   "good": []
-  },
-  "test": "ple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      3s  res://tests/ui/hud/test_hotbar.gd\nok      4s  res://tests/ui/hud/test_hotbar_wheel.gd\nok      3s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_no_output_slots.gd\nok      3s  res://tests/ui/hud/test_map_coords.gd\nok      3s  res://tests/ui/hud/test_station_doing_line.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_station_queue_window.gd\nok      3s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      3s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      3s  res://tests/ui/hud/test_villager_gear_window.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/automation/villagers/test_villager_pen_room.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok      1s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      2s  res://tests/life/hunting/test_captive_fed.gd\nok      2s  res://tests/life/hunting/test_summon.gd\nok      2s  res://tests/life/hunting/test_same_animal.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_bond.gd\nok      3s  res://tests/life/ranching/test_bird_cage_five.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shearing.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      3s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok    434s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           164\nTests            1363\nPassing Tests    1363\nFailing Tests       0\nRisky/Pending       0\nAsserts         43786\nTime           435s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "81e6472d"
- },
- {
   "time": "2026-10-20 18:50:03",
   "epoch": 1792489803,
   "type": "pass",
@@ -8316,5 +8221,33 @@
    "files": [],
    "decision": null
   }
+ },
+ {
+  "time": "2026-10-27 23:35:27",
+  "epoch": 1793111727,
+  "type": "pass",
+  "title": "합치기 풀기 — 3d-start (game/core/debug/shots.gd spec/03_world/dwarf-island.md )",
+  "report": {
+   "problem": "손대지 못했다 — 고칠 대문(MineGate · TUNNEL_LIP)이 이 줄기에 없다",
+   "approach": "G-944 단계 1 은 G-338.1(349a6199 「대문과 석상」)이 만든 game/world/frontier_islands/mine_gate.gd 의 굴 바닥을 고치는 일이다. 그런데 그 커밋은 g/G-338-2 에만 있고(결정을 기다리며 떼어 둔 브랜치) 3d-lane2 · 3d-start · 3d-lane3 · main 어디에도 없다 — 이 작업 트리(g/G-944, 3d-lane2 위)에는 mine_gate.gd 도, shots.gd 의 pit_gate 자리도, TUNNEL_LIP 도 없다. 대문 파일을 여기로 가져와 고치면 G-338 묶음을 통째로 몰래 들이는 것이고 G-338 이 합쳐질 때 부딪힌다. 그래서 아무 파일도 고치지 않았다. 다시 불러도 같은 자리에서 막힌다.",
+   "why": "",
+   "files": [],
+   "decision": null
+  },
+  "commit": "9b485c4f"
+ },
+ {
+  "time": "2026-10-27 23:35:27",
+  "epoch": 1793111727,
+  "type": "pass",
+  "title": "차선 합치기 — 3d-start(9a3a8e67) → 3d-lane2",
+  "report": {
+   "problem": "손대지 못했다 — 고칠 대문(MineGate · TUNNEL_LIP)이 이 줄기에 없다",
+   "approach": "G-944 단계 1 은 G-338.1(349a6199 「대문과 석상」)이 만든 game/world/frontier_islands/mine_gate.gd 의 굴 바닥을 고치는 일이다. 그런데 그 커밋은 g/G-338-2 에만 있고(결정을 기다리며 떼어 둔 브랜치) 3d-lane2 · 3d-start · 3d-lane3 · main 어디에도 없다 — 이 작업 트리(g/G-944, 3d-lane2 위)에는 mine_gate.gd 도, shots.gd 의 pit_gate 자리도, TUNNEL_LIP 도 없다. 대문 파일을 여기로 가져와 고치면 G-338 묶음을 통째로 몰래 들이는 것이고 G-338 이 합쳐질 때 부딪힌다. 그래서 아무 파일도 고치지 않았다. 다시 불러도 같은 자리에서 막힌다.",
+   "why": "",
+   "files": [],
+   "decision": null
+  },
+  "commit": "9b485c4f"
  }
 ]
