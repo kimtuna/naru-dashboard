@@ -5922,7 +5922,7 @@
   - 기준: (앞 단계 QA) 초속 12m 를 상수와만 견준다 — test_right_click_at_the_top_post_rides_down_at_twelve_a_second 는 gone ≈ PitZipline.SPEED 로만 단언해 SPEED 를 5 로 바꿔도 통과한다. 이름대로 assert_eq(PitZipline.SPEED, 12.0, "임시 초속 12m (사람 기준)") 한 줄을 더해라
   - 기준: (앞 단계 QA) 죽을 때 놓는 길이 테스트되지 않는다 — test_dying_lets_go 는 revive_at 만 부른다. _on_died(체력 0) 에서 leave_zip 이 불리는지, 매달린 몸을 죽게 한 뒤 p.zipline() 이 null 인지 단언하는 테스트를 더해라
 
-## [ ] G-340 드워프 광산 — 광차 선로
+## [x] G-340 드워프 광산 — 광차 선로
 - 차선: 3d-lane2 (G-338 이 3d-start 에 합쳐지면 차선 합치기로 받아 시작 — 지휘 세션 2026-10-27) · 시작 2026-10-27 22:58
 - 순서: G-338 뒤
 - spec: spec/03_world/dwarf-island.md
