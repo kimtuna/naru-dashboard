@@ -14,3 +14,9 @@
 ---
 
 
+
+## 물음 — 차선 3d-start(cd71f42a) 을 3d-lane3 에 합치지 못했다
+- 물은 때: 2026-10-27 18:18:33
+- 어디서: 차선 합치기 (3d-lane3)
+- 무엇: 깨끗이 합쳐지지만 전체 테스트가 떨어진다: 떨어진 파일 1 개:   res://tests/multiplayer/test_build_on_server.gd  파일별 로그: /Users/tuna/Desktop/naru-lane3/.loop/out/test_files/  — 서로 모르고 만든 것이 만났다. 기록은 이 차선의 .loop/out/sync_test.log. 손으로 합쳐 고쳐 달라
+- **사람이 답할 것**: 
