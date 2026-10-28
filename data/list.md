@@ -6008,10 +6008,13 @@
 - [x] 2. 총 모듈 (루비 · 에메랄드 손놀림)
   - 기준: 공격력 +10% · 약점 피해 +25% · 연사 +12% · 재장전 +15% · 탄창 +25% · 반동 −20%(있다) · 탄 퍼짐 −15% · 상급 「과열 총열」(공격력 +30% · 반동 +20%) · 「폭주 탄창」(연사 +30% · 재장전 −20%) — 총 패시브 칸에만 · 효과가 실제로 붙는다 (테스트)
   - 기준: (앞 단계 QA) NetVitals 서버 사본에 wear 를 붙인 것은 테스트가 없다 — test_server_copy_also_follows_the_modules 는 HungerThirst.wear 를 손으로 부를 뿐이고, net_vitals.gd 의 _tick · vitals_of 에 넣은 v.needs.wear(kit.equipment) 를 빼도 통과한다. 이 기준을 막는 것은 아니다(기준은 서버 사본까지 요구하지 않는다). tests/multiplayer 쪽에 NetVitals 를 세우고 참가자 kit 장비에 regen_module 을 끼운 뒤 _tick 을 흘려 서버 사본 체력이 차는지, satiety_module 이면 배고픔이 0.85배로 닳는지 단언하는 테스트를 더하라
-- [ ] 3. 드릴 모듈 (코발트)
+- [x] 3. 드릴 모듈 (코발트)
   - 기준: 파는 빠르기 +20% · 파는 굵기 +25% · 광물 덤(20 % 로 +1) · 상급 「광맥 날」(덤 50 % 로 +1 · 파는 빠르기 −15%) — 드릴 칸에만 · 땅굴 판 · 화산섬 복셀에서 효과 (테스트)
   - 기준: 모듈 창(장비 · 무기 제작대 「모듈」 탭)에 효과 줄이 보인다 — 상급은 대가 줄을 빨갛게 · equipment-modules.md 줄 (테스트)
   - 기준: (앞 단계 QA) 서버가 굴리는 알의 모듈 연결은 테스트가 없다 — test_server_copy_fits_the_magazine_and_bullet_to_the_modules 는 Attack.pellet_for 를 손으로 불러 볼 뿐이라, net_vitals.gd _shoot 의 pellet_for(..., bag.held()) 와 m.fit(t, gun, bag.held(), bag) 를 빼도 통과한다. tests/multiplayer 에 NetVitals 를 세우고 Acts.alone 가방에 overheat_barrel 을 끼운 총 · 탄을 쥐인 뒤 SHOOT 를 흘려 서버가 만든 알의 damage 가 tools.damage×1.3 인지, rate_module 이면 사본 탄창 cooldown 이 fire_delay/1.12 인지 단언하라
+- [ ] 4. (앞 단계 QA) 땅굴 판 문 테스트가 글자만 본다
+  - 기준: 땅굴 판 문 테스트가 글자만 본다 — test_drill_effect_modules.gd 의 test_the_mine_board_through_the_island_door_passes_the_held_drill 는 test_island.gd 소스에 「mine.board.dig(..., tool)」 글자가 있나만 본다(막는 것은 아니다 — MineBoard.dig 의 효과는 따로 행동으로 확인된다). TestIsland 를 땅굴 안(digs_below 참)으로 세우거나 digs_below 를 가짜로 둔 뒤 island.dig(..., _drill("dig_width_module")) 의 rec.r 가 DRILL_RADIUS×1.25 인지 단언하는 행동 테스트로 바꿔라
+  - 기준: (앞 단계 QA) 혼자 손으로 판 깨기 길이 테스트 밖이다 — Shovel._break_rock 가 island.break_rock(at, null, tool) 로 든 칸을 넘기는 길은 테스트가 isle.break_rock 를 직접 불러 건너뛴다. 화산섬 테스트에서 굳은 판을 겨누고 shovel.use() 로 깼을 때 광물 덤 모듈이 흑요석 +1 을 주는지(ArmorModules.roll 을 0.1 로) 단언하는 테스트를 더하라
 
 ## [ ] G-345 드워프 광산 — 의뢰소 (대장장이)
 - 차선: 3d-lane2
