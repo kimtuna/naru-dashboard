@@ -1,56 +1,5 @@
 [
  {
-  "time": "2026-10-22 17:46:28",
-  "epoch": 1792658788,
-  "type": "pass",
-  "title": "통과 — G-282 단계 1 (미래 재질 넷 — 상의 · 하의 · 모자 · 신발 아이템, 장비 칸에 끼운다)",
-  "group": "G-282",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "미래 옷 넷(future_armor · future_leggings · future_helmet · future_boots) — 아이템 · 이름 · 제 칸에만 끼움 · 수치 임시로 강철과 같다 · 개발용 상자에만 든다. 바뀐 곳만: 파일 101개 · 테스트 903개 통과",
-   "approach": "미래를 재질 하나로 더했다 — Armor.DEFENSE · ArmorModules.NORMAL_SLOTS · HEALTH 에 future 를 강철과 같은 값(14 · 2 · 65)으로 넣어 상의 · 모자 · 하의는 이름 규칙(<재질>_<벌>)만으로 방어 · 체력 · 모듈 칸이 따라온다. 신발(future_boots)은 Equipment.FITS 로 신발칸에만 들고, Armor.PIECES 에 boots 가 없어 스파이크처럼 방어 · 체력 · 모듈 칸이 없다. 레시피가 없으니 Armor.FUTURE 목록을 두고 개발용 상자가 그것을 하나씩 담는다. 저장 · 데스 상자는 기존 장비 딕셔너리 길을 그대로 탄다(테스트로 확인). NORMAL_SLOTS · HEALTH 표를 통째로 비교하던 test_armor_modules 두 곳에 future 줄을 더했다. 이름은 ko 「미래 상의 · 하의 · 모자 · 신발」, en Future top · bottoms · hat · shoes.",
-   "why": "미래 재질 방어 14 · 체력 65 · 일반 모듈 칸 2 — 강철과 같게 (사람이 안 정했다, armor.gd · armor_modules.gd); 미래 신발은 방어 · 체력 0 · 모듈 칸 없음 — 지금 신발(스파이크)과 같게",
-   "files": [
-    "game/player/equipment/equipment.gd",
-    "game/player/equipment/armor.gd",
-    "game/player/equipment/armor_modules.gd",
-    "game/core/debug/dev_box.gd",
-    "game/player/inventory_hotbar/items.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "spec/02_player/equipment.md",
-    "game/tests/player/equipment/test_future_wear.gd",
-    "game/tests/player/equipment/test_armor_modules.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "아이템 넷(이름 예: future_armor · future_leggings · future_helmet · future_boots — 기존 이름 규칙을 따른다) · items.json · ko.po/en.po 번역(「미래 상의 · 미래 하의 · 미래 모자 · 미래 신발」) · 끌어 놓아 제 칸(상의 · 하의 · 모자 · 신발)에만 끼워진다 (테스트)",
-     "evidence": "test_future_wear.gd test_the_four_are_items_with_names 가 items.json 등재 · ko.po 문자열 그대로 · en.po 키 존재를 보고, test_each_goes_only_into_its_own_slot 이 넷 × 장비 칸 여덟을 전부 돌려 제 칸만 true · 나머지는 false 이고 가방에서 안 빠지는지 단언한다 (막아야 할 경우 포함). 이름은 <재질>_<armor|helmet|leggings> 규칙을 따라 material_of 로 재질이 잡힌다"
-    },
-    {
-     "ok": true,
-     "criterion": "방어 · 체력은 **임시로 강철과 같게** — spec equipment.md 에 「미래 재질 — 수치 임시(강철과 같다), 사람이 안 정했다」로 적는다. 신발도 방어 합에 드는지는 지금 신발(스파이크)과 같게 한다",
-     "evidence": "armor.gd DEFENSE future 14 · armor_modules.gd NORMAL_SLOTS 2 · HEALTH 65 모두 「임시로 강철과 같다」 주석. equipment.md:32 에 기준 문장 그대로 적혔다. test_numbers_are_temporarily_the_same_as_steel 이 벌마다 · 합 · 체력을 강철과 비교하고, test_boots_count_like_spikes 가 신발 방어 · 체력 · 모듈 칸을 스파이크와 비교한다. 일부러 DEFENSE future 를 14→11 로 바꿔 돌리니 test_future_wear 가 깨졌다 (되돌림 확인)"
-    },
-    {
-     "ok": true,
-     "criterion": "개발용 상자에 넷이 들어 있다 · 저장 · 불러오기 · 데스 상자에 안 담김이 기존 장비와 같다 (테스트)",
-     "evidence": "test_the_dev_box_holds_all_four 가 DevBox.contents() 에 넷이 하나씩 드는지 본다. test_worn_future_wear_rides_in_the_save 가 넷을 끼운 CharacterData 를 JSON 으로 왕복해 칸마다 되살아나는지 본다. test_worn_future_wear_stays_on_you_when_you_die 가 실제 Player · Death 로 죽이고 장비가 그대로 · 데스 상자(1개, 나무는 들어감)에 미래 옷이 없음을 단언한다. test.log 바뀐 곳만 903/903 통과 · guard 통과"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "  res://tests/settings/test_item_key_groups.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_chest_window_search.gd\nok      3s  res://tests/world/storage/test_chest_shift_click.gd\nok      4s  res://tests/ui/hud/test_item_slot_fit.gd\nok      3s  res://tests/ui/hud/test_villager_gear_window.gd\nok      2s  res://tests/core/net/test_acts_alone.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      3s  res://tests/combat/tools_as_weapons/test_scope.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      3s  res://tests/combat/damage_death/test_death_chest_owner.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      3s  res://tests/life/hunting/test_captive_age.gd\nok      3s  res://tests/multiplayer/test_modules_on_server.gd\nok      3s  res://tests/life/climbing/test_grip_long_frame.gd\nok      3s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_armor_health.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      3s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      2s  res://tests/automation/villagers/test_villager_gear.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           101\nTests             903\nPassing Tests     903\nFailing Tests       0\nRisky/Pending       0\nAsserts         30644\nTime           82s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "92d4cd85"
- },
- {
   "time": "2026-10-22 18:03:34",
   "epoch": 1792659814,
   "type": "fail",
@@ -8241,5 +8190,67 @@
   },
   "test": "ests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_compass_top.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_compass.gd\nok      3s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      2s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      2s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      3s  res://tests/world/terrain/test_mine_rebake.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           734\nTests            5198\nPassing Tests    5198\nFailing Tests       0\nRisky/Pending       0\nAsserts        265112\nTime           1059s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "75d4d3a3"
+ },
+ {
+  "time": "2026-10-28 22:30:42",
+  "epoch": 1793194242,
+  "type": "fail",
+  "title": "QA 불합격 — G-346 단계 1 (시도 1)",
+  "group": "G-346",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "보스 의뢰(채굴 · 시추를 깰 때마다 1 % · 알림 · 저장 · F11) · 보스 사냥 땅굴(지름 30 m 큰 방 · 보스 오크 + 작은 오크 · 잡으면 버티기 없이 열림 · 운철 5 · 색 광물 넷 각 5 · 의뢰 풀림 · 죽으면 의뢰 남음) — 바뀐 곳만 340 파일 2775 개 가운데 2774 통과, 떨어진 1 개(test_world_data_keys_note — 저장본 키 주석에 mine_boss 빠짐)는 고쳐 따로 다시 돌려 통과",
+   "approach": "MineShaft 가 채굴 · 시추를 깨고 올라올 때 roll_boss 로 굴림(boss_roll — 테스트가 주입)을 MineMissions.boss_drawn(< 0.01)에 대 보스 의뢰를 내고(알림 MISSION_BOSS_REQUEST) · 의뢰는 서버장 기계만 굴리며 참가자에게는 임무와 같은 rpc(_mission_now 에 boss 인자)로 보낸다. 보스 사냥을 쥐고 내려가면 MineBoard.boss_room 이 처음 방에서 22 m 떨어진 납작한 원통 방(지름 30 · 높이 8, 처음 방 바닥 높이 · 곧은 굴로 이음)을 기록 없이 판다 — 무리의 걸을 땅(±40 m) 안에 들게 두었고, 방이 복셀 칸(32 m)보다 넓어 네 귀만 보던 touched 대신 반 칸마다 칸을 짚어 충돌을 갈아 끼운다. 무리는 boss_fight 로 서고 boss_at(방 가운데)에 보스가 선다. must_call 을 임무 전부로 넓혀 보스 전에는 「목표를 채워야」, boss_down 을 받으면 goal_done · lift_ready 를 곧장 세워 버티기 없이 열린다. 올라오면 BOSS_REWARD 를 가방에(넘치면 발치) · 의뢰를 거둔다. 땅굴에서 죽으면 임무만 풀리고 boss_request 는 그대로다. 저장은 섬 저장본 mine_boss(되돌릴 때는 알림 없이) · save.md · world_data 키 주석에 적었다. 개발용 F11(debug_boss_request)이 의뢰를 바로 낸다. ESC 목차에 보스 사냥 한 줄. 한계: 같이 하는 판에서 참가자가 제 기계에서 깬 것은 서버가 몰라 굴리지 않는다(판 맞추기 뒤 — 기존 G-342.4 와 같은 까닭).",
+   "why": "보스 사냥 큰 방 지름 30 m(current.md 임시) · 높이 8 m · 처음 방에서 22 m · 잇는 굴 반지름 2.5 m — 무리 걸을 땅(±40 m) 안에 들게 고른 값; 보스 사냥 보상 운철 5 · 색 광물 넷 각 5 — spec 「보스 사냥」 임시값",
+   "files": [
+    "game/world/mine/mine_missions.gd",
+    "game/world/mine/mine_shaft.gd",
+    "game/world/terrain/mine_board.gd",
+    "game/world/terrain/mine_horde.gd",
+    "game/world/frontier_islands/island_state.gd",
+    "game/settings/save/world_data.gd",
+    "game/core/net/net_world.gd",
+    "game/core/debug/debug_tools.gd",
+    "game/core/input/input_actions.gd",
+    "game/project.godot",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/ui/manual/manual_toc.json",
+    "game/tests/world/mine/test_mine_boss_hunt.gd",
+    "spec/03_world/dwarf-island.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "채굴 · 시추를 깰 때마다 **1 %** 로 「보스 의뢰」가 생긴다(알림 · 저장) · 감독 임무 창에 「보스 사냥」이 나타난다 · 개발용 키로 보스 의뢰를 바로 낸다 (테스트 — 굴림을 주입해 1 % 경계)",
+     "evidence": "test_mine_boss_hunt.gd — test_the_one_percent_edge(boss_drawn 0.0099 참 · 0.01 거짓 · 보스 사냥은 안 낳음), test_clearing_mining_at_the_edge_brings_a_boss_request_with_a_notice(실제로 채굴을 깨고 올라와 굴림 0.01 → 없음 · 0.0099 → 의뢰 · MISSION_BOSS_REQUEST 알림 · 임무 창 MissionWindow.button(BOSS) · 있으면 다시 안 굴림), test_drilling_also_rolls_and_participants_do_not(시추도 굴림 · 참가자 기계는 안 굴림), test_dev_key_posts_a_boss_request_at_once(F11 액션 · give_boss_request), 저장은 test_the_boss_request_is_saved_and_restored_quietly(IslandState mine_boss JSON 왕복 · 되돌릴 때 알림 없음). 전체 실행에서 통과(11s)"
+    },
+    {
+     "ok": true,
+     "criterion": "보스 사냥 땅굴 — 큰 방(임시 지름 30 m)에 보스 오크(G-341) · 작은 오크 무리만 · 보스를 잡으면 「승강기를 불러라」 — **버티기 없이** 곧장 열린다 · 보상 운철 5 · 색 광물 넷 각 5 · 보스 의뢰가 풀린다 · 죽으면 의뢰는 남는다 (테스트)",
+     "evidence": "test_boss_hunt_big_room_boss_and_small_orcs_then_lift_opens_without_holding — 복셀 SDF 로 방 가운데 · 가장자리 비었고 방 밖 바위 · 잇는 굴 확인, 보스가 방 가운데 1 m 안, pick_kind 50번 ORC_SMALL, 잡기 전 NOT_YET, 잡으면 CALL_LIFT · lift_ready · call_left 0 · 문 열림, 올라오면 cleared(BOSS) · 보상 다섯 가지 각 5 · BOSS_PAID · 의뢰 풀림. test_dying_in_the_boss_hunt_keeps_the_request 가 죽으면 임무만 풀리고 의뢰가 남음을 본다. test_ordinary_boards_have_no_big_room 로 막을 경우도 넣었다"
+    },
+    {
+     "ok": false,
+     "criterion": "spec dwarf-island.md 「지금 지은 것」 줄 · save.md (테스트)",
+     "evidence": "spec 두 파일은 고쳤으나(dwarf-island.md 「보스 의뢰 · 보스 사냥은 G-346.1」 줄 · save.md 「광산 보스 의뢰 mine_boss」) 이를 확인하는 테스트가 없다. test_mine_boss_hunt.gd 에 spec 을 읽는 단언이 하나도 없고, test_world_data_keys_note 는 world_data.gd 코드 주석만 본다 — save.md 를 보지 않는다. 앞 묶음(G-343.2 test_mine_drill_raid.gd test_spec_lines)처럼 spec 파일을 읽어 단언하는 테스트가 기준의 「(테스트)」다"
+    }
+   ],
+   "issues": [
+    "spec 줄을 확인하는 테스트가 없다 — 기준 3 「spec dwarf-island.md 「지금 지은 것」 줄 · save.md (테스트)」의 테스트가 빠졌다. game/tests/world/mine/test_mine_boss_hunt.gd 에 test_spec_lines 를 더하라(test_mine_drill_raid.gd 251줄의 _spec() 처럼 ProjectSettings.globalize_path(\"res://\").path_join(\"../spec/\" + path) 로 읽는다): dwarf-island.md 에 assert_string_contains(\"보스 의뢰 · 보스 사냥은 G-346.1\") · \"F11\" · \"mine_boss\", 그리고 낡은 줄 \"루프 묶음 G-344 · G-346\" 이 없다는 assert_false; save.md 에 \"**광산 보스 의뢰**(드워프 섬 저장본 `mine_boss`\" 와 \"보스 의뢰(boss_request)는 담는다\" 를 보고, 낡은 \"보스 의뢰(boss_request)는 G-346 이 담는다\" 가 없다는 assert_false. 고친 뒤 TEST_DIR=res://tests/world/mine ./tools/test.sh 로 돌려라",
+    "시추를 실제로 깨는 길은 안 돈다 — test_drilling_also_rolls_and_participants_do_not 는 roll_boss(DRILLING) 를 직접 부를 뿐 시추 임무를 깨고 올라오는 ascend 길(_pay_oil 뒤 roll_boss)을 타지 않는다. 지금 코드는 kind 를 가리지 않고 roll_boss(kind) 를 불러 맞지만, 채굴처럼 시추를 깨고 굴림 0.0099 로 의뢰가 서는 단언을 하나 더해 두면 좋다 (막는 것은 아니다)"
+   ],
+   "good": [
+    "ESC 목차(manual_toc.json)에 「보스 사냥」 한 줄 — 기준에 없으나 기존 임무 줄 곁이라 작다",
+    "MineShaft.must_call 을 임무 전부(mission != &\"\")로 넓혔다 — 보스 사냥 귀환을 위해 필요한 변경이나 앞으로 새 임무도 모두 「목표를 채워야」 길을 타게 된다"
+   ]
+  },
+  "test": "ests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_item_key_groups.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      2s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      9s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           737\nTests            5225\nPassing Tests    5225\nFailing Tests       0\nRisky/Pending       0\nAsserts        266883\nTime           1067s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
