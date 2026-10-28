@@ -6017,7 +6017,7 @@
   - 기준: (앞 단계 QA) 혼자 손으로 판 깨기 길이 테스트 밖이다 — Shovel._break_rock 가 island.break_rock(at, null, tool) 로 든 칸을 넘기는 길은 테스트가 isle.break_rock 를 직접 불러 건너뛴다. 화산섬 테스트에서 굳은 판을 겨누고 shovel.use() 로 깼을 때 광물 덤 모듈이 흑요석 +1 을 주는지(ArmorModules.roll 을 0.1 로) 단언하는 테스트를 더하라
 
 ## [ ] G-345 드워프 광산 — 의뢰소 (대장장이)
-- 차선: 3d-lane2
+- 차선: 3d-lane2 · 시작 2026-10-28 17:07
 - 순서: G-344 뒤
 - spec: spec/03_world/dwarf-island.md 「의뢰소 레시피」
 - 대장장이는 지휘 세션이 세웠다 — `TestIsland.pit_dwarves.smith`. 레시피는 spec 그대로 (Claude 가 정함 — 임시) — 「무역」의 첫 꼴이다(roadmap 2단계)
