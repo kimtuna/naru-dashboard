@@ -6019,7 +6019,7 @@
   - 기준: 땅굴 판 문 테스트가 글자만 본다 — test_drill_effect_modules.gd 의 test_the_mine_board_through_the_island_door_passes_the_held_drill 는 test_island.gd 소스에 「mine.board.dig(..., tool)」 글자가 있나만 본다(막는 것은 아니다 — MineBoard.dig 의 효과는 따로 행동으로 확인된다). TestIsland 를 땅굴 안(digs_below 참)으로 세우거나 digs_below 를 가짜로 둔 뒤 island.dig(..., _drill("dig_width_module")) 의 rec.r 가 DRILL_RADIUS×1.25 인지 단언하는 행동 테스트로 바꿔라
   - 기준: (앞 단계 QA) 혼자 손으로 판 깨기 길이 테스트 밖이다 — Shovel._break_rock 가 island.break_rock(at, null, tool) 로 든 칸을 넘기는 길은 테스트가 isle.break_rock 를 직접 불러 건너뛴다. 화산섬 테스트에서 굳은 판을 겨누고 shovel.use() 로 깼을 때 광물 덤 모듈이 흑요석 +1 을 주는지(ArmorModules.roll 을 0.1 로) 단언하는 테스트를 더하라
 
-## [ ] G-345 드워프 광산 — 의뢰소 (대장장이)
+## [x] G-345 드워프 광산 — 의뢰소 (대장장이)
 - 차선: 3d-lane2 · 시작 2026-10-28 17:07
 - 순서: G-344 뒤
 - spec: spec/03_world/dwarf-island.md 「의뢰소 레시피」
