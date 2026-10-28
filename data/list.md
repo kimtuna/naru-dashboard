@@ -6049,7 +6049,7 @@
   - 기준: en.po 의 중간 오크가 그냥 「Orc」다 — 한국어는 「중간 오크」인데 영어 LIVESTOCK_orc_medium 은 "Orc" 다. 보스 오크(다음 단계)가 오면 「Orc」 와 「Boss orc」 사이가 흐리다 — 「Orc」 로 둘 것이면 그대로, 맞추려면 "Medium orc" 로 고치고 test_orcs.gd WANT 의 en 도 같이 바꿔라
 - [x] 2. 약초 자리 doc 주석이 오크 상수 위로 떨어졌다 (G-341 단계 3)
   - 기준: 약초 자리 doc 주석이 오크 상수 위로 떨어졌다 — game/core/debug/shots.gd 에서 const ORC_SHOT_BOSS_LEFT · ORC_SHOT_ASIDE · orc_lineup 이 _herb_view 의 「## 약초 한 포기 …」 「## 땅이 시선을 …」 두 줄과 static func _herb_view 사이에 끼어, 그 두 줄이 이제 ORC_SHOT_BOSS_LEFT 의 설명이 됐다. 오크 상수 · orc_lineup 묶음을 그 두 줄 위(return views 뒤)로 옮겨 두 줄이 _herb_view 바로 위에 붙게 하라
-- [ ] 3. ORC_SHOT_ASIDE 에 「임시」 표시가 없다 (G-341 단계 3)
+- [x] 3. ORC_SHOT_ASIDE 에 「임시」 표시가 없다 (G-341 단계 3)
   - 기준: ORC_SHOT_ASIDE 에 「임시」 표시가 없다 — report 의 temporary 에는 올렸는데 shots.gd 의 주석에는 **임시** 가 없다. ORC_SHOT_BOSS_LEFT 처럼 「**임시** (찍기용)」을 붙여라
   - 기준: (앞 단계 QA) ORC_SHOT_BOSS_LEFT 단언이 조용히 빠질 수 있다 — test_herb_doc_sits_right_above_herb_view 의 마지막 for 는 const ORC_SHOT_BOSS_LEFT 줄을 못 찾으면 단언을 하나도 안 한다. 찾은 줄 번호를 변수에 담아 assert_gt(orc_at, 0, "ORC_SHOT_BOSS_LEFT 가 없다") 를 먼저 걸어라 (막는 것은 아니다)
 - [ ] 4. 주석 낱말 겹침 (G-341 단계 3)

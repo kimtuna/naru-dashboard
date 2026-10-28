@@ -3900,5 +3900,43 @@
   },
   "test": "--- 바뀐 곳만: 31 개 ---\ntest.sh: 파일 31 개를 6 개씩 한꺼번에 돌린다\nok     12s  res://tests/life/hunting/test_sedation_capture.gd\nok     17s  res://tests/life/hunting/test_carry_cage.gd\nok     18s  res://tests/world/mine/test_orcs.gd\nok     18s  res://tests/automation/villagers/test_villager_fight.gd\nok     10s  res://tests/player/movement_controls/test_face_aim.gd\nok      7s  res://tests/core/debug/test_ui_shots.gd\nok      6s  res://tests/core/debug/test_dev_box.gd\nok      7s  res://tests/life/gathering/test_wild_herbs.gd\nok      7s  res://tests/life/hunting/test_part_yields.gd\nok      6s  res://tests/core/debug/test_dev_box_open.gd\nok      5s  res://tests/core/debug/test_dev_invasion_window.gd\nok      7s  res://tests/world/day_night/test_day_light.gd\nok      5s  res://tests/combat/tools_as_weapons/test_bow.gd\nok      6s  res://tests/world/invasion/test_raider_welcome.gd\nok      5s  res://tests/combat/tools_as_weapons/test_bow_draw.gd\nok      5s  res://tests/world/invasion/test_invasion_capture_real.gd\nok      2s  res://tests/life/vehicles/test_car_modules.gd\nok      4s  res://tests/combat/tools_as_weapons/test_tranq_arrows.gd\nok      4s  res://tests/core/debug/test_dev_animals.gd\nok      4s  res://tests/life/hunting/test_wild_kinds.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/build/test_size_4x4.gd\nok     42s  res://tests/automation/villagers/test_villager_watering.gd\nok      2s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      2s  res://tests/core/debug/test_orc_shot.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/debug/test_play_island_pick.gd\nok      2s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok     56s  res://tests/life/hunting/test_butchery.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            31\nTests             261\nPassing Tests     261\nFailing Tests       0\nRisky/Pending       0\nAsserts         10498\nTime           56s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane3/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "b79446e7"
+ },
+ {
+  "time": "2026-10-28 17:23:54",
+  "epoch": 1793175834,
+  "type": "pass",
+  "title": "통과 — G-945 단계 3 (ORC_SHOT_ASIDE 에 「임시」 표시가 없다 (G-341 단계 3))",
+  "group": "G-945",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "ORC_SHOT_ASIDE 주석에 「**임시** (찍기용)」을 붙이고, ORC_SHOT_BOSS_LEFT 단언이 조용히 빠지지 않게 줄 번호를 먼저 단언한다 — 바뀐 곳만 30개 파일 258개 통과",
+   "approach": "ORC_SHOT_ASIDE 위 doc 주석 끝에 「**임시** (찍기용)」을 붙였다. test_herb_doc_sits_right_above_herb_view 의 마지막 for 는 const 줄을 못 찾으면 아무 단언도 안 했다 — 찾은 줄을 orc_at 에 담아 assert_gt(orc_at, 0, \"ORC_SHOT_BOSS_LEFT 가 없다\") 를 먼저 걸고 그 뒤에 위 설명을 본다. 새 테스트 test_orc_shot_consts_marked_temporary 는 두 상수 바로 위 주석에 「**임시** (찍기용)」이 있는지 본다 (상수를 못 찾으면 실패).",
+   "why": "",
+   "files": [
+    "game/core/debug/shots.gd",
+    "game/tests/core/debug/test_orc_shot.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "ORC_SHOT_ASIDE 에 「임시」 표시가 없다 — report 의 temporary 에는 올렸는데 shots.gd 의 주석에는 **임시** 가 없다. ORC_SHOT_BOSS_LEFT 처럼 「**임시** (찍기용)」을 붙여라",
+     "evidence": "shots.gd:1106 ORC_SHOT_ASIDE 위 주석 끝에 「**임시** (찍기용).」이 붙었다. 새 테스트 test_orc_shot_consts_marked_temporary 가 두 상수 바로 위 ## 줄에 「**임시** (찍기용)」이 있는지 본다. 일부러 ASIDE 주석의 임시를 지우고 tests/core/debug 를 돌리니 「ORC_SHOT_ASIDE 주석에 「임시」가 없다」로 떨어졌다 — 되돌렸다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) ORC_SHOT_BOSS_LEFT 단언이 조용히 빠질 수 있다 — test_herb_doc_sits_right_above_herb_view 의 마지막 for 는 const ORC_SHOT_BOSS_LEFT 줄을 못 찾으면 단언을 하나도 안 한다. 찾은 줄 번호를 변수에 담아 assert_gt(orc_at, 0, \"ORC_SHOT_BOSS_LEFT 가 없다\") 를 먼저 걸어라 (막는 것은 아니다)",
+     "evidence": "test_orc_shot.gd 에서 for 가 orc_at 에 줄 번호만 담고, 그 뒤 assert_gt(orc_at, 0, \"ORC_SHOT_BOSS_LEFT 가 없다\") 를 무조건 건 다음 위 설명을 본다. 상수 이름을 바꿔 깨 보려 했으나 같은 파일이 shots.ORC_SHOT_BOSS_LEFT 를 직접 써서 파싱부터 깨진다 — 코드상 단언이 무조건 한 번 걸리는 것은 diff 로 확인했다. test.log 바뀐 곳 31개 파일 262개 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 31 개 ---\ntest.sh: 파일 31 개를 6 개씩 한꺼번에 돌린다\nok     12s  res://tests/life/hunting/test_sedation_capture.gd\nok     17s  res://tests/life/hunting/test_carry_cage.gd\nok     18s  res://tests/world/mine/test_orcs.gd\nok     18s  res://tests/automation/villagers/test_villager_fight.gd\nok     11s  res://tests/player/movement_controls/test_face_aim.gd\nok      8s  res://tests/life/gathering/test_wild_herbs.gd\nok      7s  res://tests/world/day_night/test_day_light.gd\nok      8s  res://tests/core/debug/test_ui_shots.gd\nok      7s  res://tests/core/debug/test_dev_box.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      6s  res://tests/core/debug/test_dev_box_open.gd\nok      6s  res://tests/core/debug/test_dev_invasion_window.gd\nok      6s  res://tests/world/invasion/test_raider_welcome.gd\nok      4s  res://tests/core/debug/test_dev_animals.gd\nok      5s  res://tests/combat/tools_as_weapons/test_bow.gd\nok      5s  res://tests/combat/tools_as_weapons/test_bow_draw.gd\nok      3s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      4s  res://tests/combat/tools_as_weapons/test_tranq_arrows.gd\nok      4s  res://tests/life/hunting/test_wild_kinds.gd\nok      5s  res://tests/world/invasion/test_invasion_capture_real.gd\nok     41s  res://tests/automation/villagers/test_villager_watering.gd\nok      2s  res://tests/core/debug/test_orc_shot.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/debug/test_play_island_pick.gd\nok      2s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      2s  res://tests/life/vehicles/test_car_modules.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      2s  res://tests/core/debug/test_erupt_refusal_key.gd\nok     57s  res://tests/life/hunting/test_butchery.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            31\nTests             262\nPassing Tests     262\nFailing Tests       0\nRisky/Pending       0\nAsserts         10503\nTime           57s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane3/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "43d11223"
  }
 ]
