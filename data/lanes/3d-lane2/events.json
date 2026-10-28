@@ -1,128 +1,5 @@
 [
  {
-  "time": "2026-10-20 20:58:03",
-  "epoch": 1792497483,
-  "type": "pass",
-  "title": "통과 — G-268 단계 2 (케이지는 계속 쓴다)",
-  "group": "G-268",
-  "step": "2",
-  "attempt": "2",
-  "report": {
-   "problem": "케이지는 계속 쓴다 — 짐승이 케이지에서 나가면 빈 케이지가 가방으로(차 있으면 발밑으로) 돌아온다 · 안 쓰는 nearby() 지움 · hunting/netcode/permissions spec 고침",
-   "approach": "가방에서 짐승이 나가는 길은 둘뿐이다 — Captives.place_for(땅 · 우리에 놓기, Ranch.place) 와 Stations.put_bird(새장). 둘 다 케이지를 bag.add 로만 돌려주어 가방이 차 있으면 케이지가 사라졌다. Captives.give_back_cage(bag, entry, parent, feet) 하나로 모아 남는 것은 DroppedItem 으로 발밑에 떨군다. 도축은 땅의 주검에, 길들여 풀기는 이미 놓인 개체에 하므로 그때는 케이지가 이미 돌아와 있다 — spec 에 한 줄로 적었다. 허공 줍기를 걷은 뒤 아무도 안 부르던 Captives.nearby() 를 지웠다. netcode.md · permissions.md 의 「줍기」를 「든 케이지로 가두기(G-268.1)」로 고쳤다. 설명서(manual_toc.json)는 목차 제목(「케이지」)뿐이라 고칠 줄이 없었다. 앞 회차 전체 검사에서 떨어진 test_fish_on_server.gd 는 혼자 돌리니 8/8 통과 — 무거운 동시 실행 중 참가자가 늦게 들어온 타이밍 흔들림으로 보인다(이 묶음은 낚시를 건드리지 않았다). 끝내기 전 바뀐 곳 그물: 190 파일 1630 테스트 모두 통과.",
-   "why": "",
-   "files": [
-    "game/life/hunting/captives.gd",
-    "game/craft/stations/stations.gd",
-    "game/tests/life/hunting/test_cage_reuse.gd",
-    "spec/04_life/hunting.md",
-    "spec/11_multiplayer/netcode.md",
-    "spec/11_multiplayer/permissions.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "짐승이 케이지에서 나오면(놓아주기 · 우리 · 새장에 넣기 · 도축 · 길들여 풀기) 빈 케이지가 가방으로 돌아온다(captives.gd:206 의 놓아줄 때 돌려주기를 모든 나가는 길에) — 가방이 차 있으면 발밑에 떨군다 (테스트)",
-     "evidence": "가방에서 짐승 칸이 비는 곳을 grep 으로 다 찾았다 — Captives.place_for(땅 · 우리 놓기, 서버 대행 net_world:775 도 이것) · Stations.put_bird(새장, cage_panel 도 CAGE_PUT 으로 이것) · _escape(케이지 없는 칸만). 앞의 둘이 모두 Captives.give_back_cage 를 부른다. 도축 · 길들이기는 놓인 개체에 하므로 가방 칸과 무관하다. tests/life/hunting/test_cage_reuse.gd 6개: 한 케이지로 잡고 놓고 또 잡기(catch_for→place_for 두 번, 칸이 {cage_medium,1} 로 돌아옴) · 케이지 더미가 3이 됨 · put_bird 뒤 cage_small 2 · 케이지 없던 칸은 케이지 0 · 가방이 꽉 차면 DroppedItem 1개가 feet 의 x,z 에 · 자리 있으면 떨어지지 않음. give_back_cage 를 일부러 빈 함수로 만들어 그 파일만 돌리니 6개 가운데 5개가 떨어졌다(되돌림 확인). 마지막 전체 검사(test.log 20:56): 3995/3995 통과 · guard 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "spec/04_life/hunting.md 「잡기」를 사람 원문과 함께 고친다 · 설명서(G-264)에 잡기 줄이 있으면 같이 고친다",
-     "evidence": "hunting.md:57 에 첫 원문(G-268.1), :63 케이지 줄에 둘째 원문 「케이지는 1회용이 아닌 계속 사용할 수 있게하는거고」과 돌아오는 길 · 발밑 떨굼을 적었다. 사람 결정 줄은 지워지지 않았다(G-238.2 의 「케이지째 놓으면 가방으로」를 넓힌 것). 설명서는 manual_toc.json 의 MANUAL_cages(「케이지」 제목)뿐이고 ko/en.po 에 잡기 설명 줄이 없어 고칠 것이 없다. 145줄"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 쓰지 않는 Captives.nearby() 가 남았다 — game/life/hunting/captives.gd:310 의 nearby() 는 허공 줍기를 걷은 뒤 어디서도 부르지 않는다(grep 결과 테스트 · ui 모두 없음). 지우거나, 남길 까닭이 있으면 주석에 적어라",
-     "evidence": "nearby() 를 지웠다. grep 으로 부르는 곳이 남지 않았다. 남은 REACH 상수의 주석도 「줍는다」에서 「깨어 빠져나온 짐승이 이 안에 선다」로 고쳤고 **임시** 표시를 그대로 두었다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) netcode · permissions spec 의 「잡힌 짐승 줍기」가 낡았다 — spec/11_multiplayer/netcode.md:52 · :100 과 permissions.md:14 가 아직 「줍기」라고만 적는다. 「든 케이지로 가두기(G-268.1)」로 고쳐 hunting.md 와 맞춰라",
-     "evidence": "netcode.md:52 · :100, permissions.md:14 세 곳이 다 「든 케이지로 가두기(G-268.1)」로 바뀌었다. spec/11_multiplayer 에 짐승 「줍기」 줄이 더 남지 않았다(grep)"
-    }
-   ],
-   "issues": [
-    "[결정] 케이지에 든 곰은 나갈 길이 없다 — 곰은 AnimalKinds.WILD_ONLY 라 place_for 가 거부하고 새장에도 못 들어간다. 그래서 곰을 대형 케이지에 넣으면 그 케이지는 영영 돌아오지 않아 「케이지는 계속 쓴다」와 맞지 않는다. 곰을 들판에 놓아주는 길(기르지는 않고 깨어 달아남)을 둘지, 곰은 아예 케이지에 못 넣게 할지 사람이 골라야 한다",
-    "가방이 찼을 때 떨구는 길은 실제로 안 닿는다 — place_for · put_bird 는 짐승 칸을 비운 뒤에 케이지를 돌려주므로 bag.add 가 늘 자리를 찾는다. 떨구는 길은 give_back_cage 를 직접 부르는 테스트로만 확인된다. 막는 것은 아니니 captives.gd give_back_cage 주석에 「지금 나가는 길은 칸을 먼저 비우므로 떨굴 일이 없고, 칸을 먼저 비우지 않는 길이 생길 때를 위한 받침」이라고 적어 두어라"
-   ],
-   "good": []
-  },
-  "test": "world/storage/test_chest_shift_click.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/automation/villagers/test_villager_body.gd\nok      1s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/player/equipment/test_armor_health.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           531\nTests            3995\nPassing Tests    3995\nFailing Tests       0\nRisky/Pending       0\nAsserts        189448\nTime           761s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "ed4e98bd"
- },
- {
-  "time": "2026-10-20 21:13:53",
-  "epoch": 1792498433,
-  "type": "pass",
-  "title": "통과 — G-268 단계 3 ((앞 단계 QA) 가방이 찼을 때 떨구는 길은 실제로 안 닿는다)",
-  "group": "G-268",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "give_back_cage 주석에 지금 나가는 길은 칸을 먼저 비우므로 떨굴 일이 없고 떨구는 길은 받침이라고 적었다 (바뀐 곳만: 60개 파일 582개 테스트 통과)",
-   "approach": "place_for · put_bird 는 bag.set_slot(at, {}) 로 짐승 칸을 먼저 비운 뒤 give_back_cage 를 부르므로 bag.add 가 늘 그 빈 칸을 찾는다 — 발밑에 떨구는 길은 지금 게임 안에서 닿지 않는다. 막을 것은 아니므로 코드는 그대로 두고, give_back_cage 주석에 「지금 나가는 길은 칸을 먼저 비우므로 떨굴 일이 없고, 칸을 먼저 비우지 않는 길이 생길 때를 위한 받침」이며 떨구는 길은 test_cage_reuse 의 직접 호출로만 확인된다고 적었다. 주석만 바꿨으므로 새 테스트는 없다.",
-   "why": "",
-   "files": [
-    "game/life/hunting/captives.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "가방이 찼을 때 떨구는 길은 실제로 안 닿는다 — place_for · put_bird 는 짐승 칸을 비운 뒤에 케이지를 돌려주므로 bag.add 가 늘 자리를 찾는다. 떨구는 길은 give_back_cage 를 직접 부르는 테스트로만 확인된다. 막는 것은 아니니 captives.gd give_back_cage 주석에 「지금 나가는 길은 칸을 먼저 비우므로 떨굴 일이 없고, 칸을 먼저 비우지 않는 길이 생길 때를 위한 받침」이라고 적어 두어라",
-     "evidence": "captives.gd:289-290 의 give_back_cage 주석에 바로 그 문장과 test_cage_reuse 직접 호출 언급이 더해졌다. 주석의 사실도 맞는지 코드로 확인했다: give_back_cage 를 부르는 곳은 captives.gd:282(place_for, 앞 줄 :281 bag.set_slot(at, {}))와 stations.gd:570(put_bird, 앞 줄 :569 bag.set_slot(at, {})) 둘뿐이고 둘 다 칸을 먼저 비운다. 떨구는 길은 test_cage_reuse.gd:127 test_a_full_bag_drops_the_empty_cage_at_the_feet 에서만 직접 부른다. 주석만 바뀌었으므로 새 테스트가 필요 없다. 전체 테스트 3995/3995 통과, guard 통과"
-    }
-   ],
-   "issues": [
-    "put_bird 주석이 닿지 않는 떨굼을 말한다 — game/craft/stations/stations.gd:559 「가방이 차 있으면 새장 곁에 떨군다」는 put_bird 가 :569 에서 칸을 먼저 비우므로 일어나지 않는다. captives.gd give_back_cage 주석처럼 「칸을 먼저 비우므로 케이지는 늘 그 칸에 돌아온다」로 고쳐라 (막는 것은 아니다)"
-   ],
-   "good": []
-  },
-  "test": "nt.gd\nok      2s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      0s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      0s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           531\nTests            3995\nPassing Tests    3995\nFailing Tests       0\nRisky/Pending       0\nAsserts        189448\nTime           763s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "3f14b1ac"
- },
- {
-  "time": "2026-10-20 21:26:46",
-  "epoch": 1792499206,
-  "type": "pass",
-  "title": "차선 합치기 — 3d-start(90b31cdf) → 3d-lane2",
-  "group": "G-268",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "give_back_cage 주석에 지금 나가는 길은 칸을 먼저 비우므로 떨굴 일이 없고 떨구는 길은 받침이라고 적었다 (바뀐 곳만: 60개 파일 582개 테스트 통과)",
-   "approach": "place_for · put_bird 는 bag.set_slot(at, {}) 로 짐승 칸을 먼저 비운 뒤 give_back_cage 를 부르므로 bag.add 가 늘 그 빈 칸을 찾는다 — 발밑에 떨구는 길은 지금 게임 안에서 닿지 않는다. 막을 것은 아니므로 코드는 그대로 두고, give_back_cage 주석에 「지금 나가는 길은 칸을 먼저 비우므로 떨굴 일이 없고, 칸을 먼저 비우지 않는 길이 생길 때를 위한 받침」이며 떨구는 길은 test_cage_reuse 의 직접 호출로만 확인된다고 적었다. 주석만 바꿨으므로 새 테스트는 없다.",
-   "why": "",
-   "files": [
-    "game/life/hunting/captives.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "가방이 찼을 때 떨구는 길은 실제로 안 닿는다 — place_for · put_bird 는 짐승 칸을 비운 뒤에 케이지를 돌려주므로 bag.add 가 늘 자리를 찾는다. 떨구는 길은 give_back_cage 를 직접 부르는 테스트로만 확인된다. 막는 것은 아니니 captives.gd give_back_cage 주석에 「지금 나가는 길은 칸을 먼저 비우므로 떨굴 일이 없고, 칸을 먼저 비우지 않는 길이 생길 때를 위한 받침」이라고 적어 두어라",
-     "evidence": "captives.gd:289-290 의 give_back_cage 주석에 바로 그 문장과 test_cage_reuse 직접 호출 언급이 더해졌다. 주석의 사실도 맞는지 코드로 확인했다: give_back_cage 를 부르는 곳은 captives.gd:282(place_for, 앞 줄 :281 bag.set_slot(at, {}))와 stations.gd:570(put_bird, 앞 줄 :569 bag.set_slot(at, {})) 둘뿐이고 둘 다 칸을 먼저 비운다. 떨구는 길은 test_cage_reuse.gd:127 test_a_full_bag_drops_the_empty_cage_at_the_feet 에서만 직접 부른다. 주석만 바뀌었으므로 새 테스트가 필요 없다. 전체 테스트 3995/3995 통과, guard 통과"
-    }
-   ],
-   "issues": [
-    "put_bird 주석이 닿지 않는 떨굼을 말한다 — game/craft/stations/stations.gd:559 「가방이 차 있으면 새장 곁에 떨군다」는 put_bird 가 :569 에서 칸을 먼저 비우므로 일어나지 않는다. captives.gd give_back_cage 주석처럼 「칸을 먼저 비우므로 케이지는 늘 그 칸에 돌아온다」로 고쳐라 (막는 것은 아니다)"
-   ],
-   "good": []
-  },
-  "test": "nt.gd\nok      2s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/build/test_placeable_tidy.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      0s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      0s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      1s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           531\nTests            3995\nPassing Tests    3995\nFailing Tests       0\nRisky/Pending       0\nAsserts        189448\nTime           763s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "e56eb674"
- },
- {
   "time": "2026-10-20 21:48:11",
   "epoch": 1792500491,
   "type": "pass",
@@ -8290,5 +8167,163 @@
    ]
   },
   "test": "ion/water/test_water_pump.gd\nok      3s  res://tests/build/test_placers_file_end.gd\nok      3s  res://tests/build/test_spec_readme_building_kinds.gd\nok      3s  res://tests/build/test_water_rule_at_sea_level.gd\nok      3s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      3s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      2s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/core/input/test_pointer.gd\nok      3s  res://tests/core/net/test_guild.gd\nok      2s  res://tests/core/test_grid.gd\nok      3s  res://tests/core/test_project_setup.gd\nok      3s  res://tests/core/test_spec_small_drifts.gd\nok      3s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/stations/test_apothecary_bench.gd\nok      3s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      3s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      3s  res://tests/craft/stations/test_smoker.gd\nok      3s  res://tests/craft/stations/test_station_names_title_case.gd\nok      3s  res://tests/craft/stations/test_still_alcohol.gd\nok      3s  res://tests/export/test_windows_build.gd\nok      3s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      3s  res://tests/life/gathering/test_herb_kinds.gd\nok      3s  res://tests/life/harvest/test_rare_drops.gd\nok      3s  res://tests/life/hunting/test_captive_fed.gd\nok      3s  res://tests/life/hunting/test_summon.gd\nok      4s  res://tests/life/medicine/test_medicine.gd\nok      3s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      3s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      3s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     33s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           713\nTests            5039\nPassing Tests    5039\nFailing Tests       0\nRisky/Pending       0\nAsserts        247907\nTime           1114s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-28 13:36:42",
+  "epoch": 1793162202,
+  "type": "start",
+  "title": "루프 시작",
+  "report": {
+   "problem": "광차 선로 · 광차(상자 12칸 · 보낸다/돌려보낸다 · 초속 4m · 탄다 · 저장 · 같이 하는 판 · 선착장 곁 끝) — 앞 단계 QA 두 흠(광차가 곁 데스 상자를 가로챔 · 진짜 섬 되돌리기 미검사)을 고쳤다. 바뀐 곳 테스트 531개 파일 · 3808개 통과",
+   "approach": "QA 1: NetWorld._chest_at 이 광차를 NET_SLACK(4m) 안이면 맨 먼저 돌려주어, 광차 곁 데스 상자를 참가자가 열면 서버 · 참가자 모두 광차를 짚었다. 서버 Death 에 광차 1.6m 곁 데스 상자를 두고 참가자가 여는 테스트를 먼저 짜 떨어지는 것(MineCart 를 열었다)을 본 뒤, 광차 검사를 함수 맨 끝(놓은 상자 thing_at · 데스 상자 0.01 일치 뒤)으로 옮겨 정확히 맞는 상자가 먼저 이기게 했다. QA 2: before_all 에서 진짜 드워프 섬의 광차에 철광석 7 을 넣고 보낸 뒤 IslandState.of 로 담고, 새 드워프 섬을 세워 IslandState.apply 해 안의 것 7 · 끝 자리가 돌아오는지 단언을 더했다. 배 짐칸은 아직 없어 끝을 선착장 곁(배에 오르는 거리 + 손 닿는 거리 안)에 두고 광차에서 곧장 꺼낸다 — spec 줄에 적었다. 바뀐 곳 그물(changed_tests.py, 531개 파일) 3808개 통과.",
+   "why": "광차 칸 12 · 초속 4m (기준의 임시값); 선로가 협곡 가운데 줄에서 비키는 거리 9m · 시작 갱도 머리에서 12m · 끝 선착장 4m 안쪽 · 침목 · 레일 치수 — 꼴과 자리, Claude 가 정함; NET_SLACK 4m — 같이 하는 판에서 서버 · 참가자 광차를 같은 것으로 치는 거리",
+   "files": [
+    "game/core/net/net_world.gd",
+    "game/tests/multiplayer/test_mine_cart_on_server.gd",
+    "game/tests/world/frontier_islands/test_mine_track.gd",
+    "game/world/frontier_islands/mine_track.gd",
+    "game/world/frontier_islands/mine_cart.gd",
+    "game/tests/multiplayer/cart_island.gd",
+    "game/core/game_root.gd",
+    "game/core/debug/shots.gd",
+    "game/ui/hud/chest_window.gd",
+    "game/world/terrain/test_island.gd",
+    "game/world/frontier_islands/island_state.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/ui/manual/manual_toc.json",
+    "spec/03_world/dwarf-island.md",
+    "spec/01_settings/save.md",
+    "spec/11_multiplayer/netcode.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "구덩이 바닥(광산 대문 앞)에서 협곡을 따라 협곡 어귀 선착장 곁까지 **광차 선로**(침목 · 레일) · 광차 하나 — 우클릭으로 상자처럼 넣고 빼고(임시 칸 12) · 「보낸다」 누르면 선로 끝으로 굴러간다(임시 초속 4m) · 사람도 탈 수 있다 · 끝에서 「돌려보낸다」 (테스트)",
+     "evidence": "test_mine_track.gd — 진짜 드워프 섬에 선로 · 광차가 서고 본섬엔 없음(before_all 에서 진짜 섬 띄움), MineTrack.path 가 대문 갱도 머리 20m 안 · 구덩이 바닥 높이에서 시작해 200m 넘게 땅을 따라 선착장 곁(Dock.REACH+Aim.REACH 안) · 바다 위에서 끝남, 침목 · 레일 두 토막 수, 광차가 Chest · 12칸 · Placeable 아님, Death.aimed_chest/interact 로 진짜 조준 우클릭 열기 · 가방↔광차 넣고 빼기 · 다시 우클릭 닫기, press_go 로 1초 4m · 끝 도착 · 「돌려보낸다」 키 · 시작 복귀, 물리 틀에서 실제로 굴러감, 탄 사람이 4m · 40m 같이 가고 밖의 사람은 그대로, 창 단추(보낸다/가는 중 비활성/돌려보낸다 · 보관 상자엔 안 보임). 전체 실행(713 파일 5039 테스트) 모두 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "광차 안의 것은 저장 · 같이 하는 판 · 광차가 끝에 서 있으면 선착장 배에서 바로 꺼낼 수 있다(배 짐칸이 있으면 — 없으면 그냥 광차에서) · spec 줄 (테스트)",
+     "evidence": "저장: test_what_is_in_the_cart_and_where_it_stands_is_saved(standing/restore, 가던 중이면 끝으로) · test_the_island_save_carries_the_cart(IslandState.STANDING 「mine_cart」 행, 진짜 드워프 섬 IslandState.of 로 담고 새 드워프 섬에 IslandState.apply → 철광석 7 · 끝 자리 복귀 — 앞 단계 QA 지적 반영). 같이 하는 판: test_mine_cart_on_server.gd 가 진짜 ENet 두 기계로 참가자 열기 · 칸 옮김 서버 반영 · 「보낸다」 바람 → 서버 · 참가자 둘 다 끝 도착, 참가자 탄 채 서버장이 보내기, 늦게 들어온 참가자가 끝 자리 · 안의 것을 받음, 광차 곁 데스 상자가 광차에 가로채이지 않음(앞 단계 QA). 이 마지막 테스트는 QA 가 _chest_at 의 광차 검사를 다시 맨 앞으로 옮겨 돌려 보니 4개 중 1개가 떨어졌다(되돌림 확인) — 진짜로 지킨다. 배: 배 짐칸이 코드에 없음을 확인 — 끝이 선착장에서 Dock.REACH+Aim.REACH 안임을 test_the_track_runs_from_the_gate_down_the_canyon_to_the_dock 가 단언. spec: dwarf-island.md 광차 선로 줄(배 짐칸 없어 광차에서 꺼냄 · 저장 · 서버가 굴림) · 「아직 없는 것」에서 광차 선로 지움 · save.md 「안 담는다」(굴러가는 중) · netcode.md 표 줄. 사람 결정 줄 지워진 것 없음 · md 모두 150줄 안"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "shots.gd 에 광차 선로 찍을 자리를 더했다 — current.md 가 시킨 것이라 덤은 아니다",
+    "설명서 목차(manual_toc.json)에 「광차 선로」 항목 · MANUAL_mine_cart 번역 키(ko · en)를 더했다"
+   ]
+  },
+  "test": "ion/water/test_water_pump.gd\nok      3s  res://tests/build/test_placers_file_end.gd\nok      3s  res://tests/build/test_spec_readme_building_kinds.gd\nok      3s  res://tests/build/test_water_rule_at_sea_level.gd\nok      3s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      3s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      2s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/core/input/test_pointer.gd\nok      3s  res://tests/core/net/test_guild.gd\nok      2s  res://tests/core/test_grid.gd\nok      3s  res://tests/core/test_project_setup.gd\nok      3s  res://tests/core/test_spec_small_drifts.gd\nok      3s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/stations/test_apothecary_bench.gd\nok      3s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      3s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      3s  res://tests/craft/stations/test_smoker.gd\nok      3s  res://tests/craft/stations/test_station_names_title_case.gd\nok      3s  res://tests/craft/stations/test_still_alcohol.gd\nok      3s  res://tests/export/test_windows_build.gd\nok      3s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      3s  res://tests/life/gathering/test_herb_kinds.gd\nok      3s  res://tests/life/harvest/test_rare_drops.gd\nok      3s  res://tests/life/hunting/test_captive_fed.gd\nok      3s  res://tests/life/hunting/test_summon.gd\nok      4s  res://tests/life/medicine/test_medicine.gd\nok      3s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      3s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      3s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     33s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           713\nTests            5039\nPassing Tests    5039\nFailing Tests       0\nRisky/Pending       0\nAsserts        247907\nTime           1114s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-28 14:18:21",
+  "epoch": 1793164701,
+  "type": "pass",
+  "title": "합치기 풀기 — 3d-start (spec/03_world/dwarf-island.md )",
+  "report": {
+   "problem": "광차 선로 · 광차(상자 12칸 · 보낸다/돌려보낸다 · 초속 4m · 탄다 · 저장 · 같이 하는 판 · 선착장 곁 끝) — 앞 단계 QA 두 흠(광차가 곁 데스 상자를 가로챔 · 진짜 섬 되돌리기 미검사)을 고쳤다. 바뀐 곳 테스트 531개 파일 · 3808개 통과",
+   "approach": "QA 1: NetWorld._chest_at 이 광차를 NET_SLACK(4m) 안이면 맨 먼저 돌려주어, 광차 곁 데스 상자를 참가자가 열면 서버 · 참가자 모두 광차를 짚었다. 서버 Death 에 광차 1.6m 곁 데스 상자를 두고 참가자가 여는 테스트를 먼저 짜 떨어지는 것(MineCart 를 열었다)을 본 뒤, 광차 검사를 함수 맨 끝(놓은 상자 thing_at · 데스 상자 0.01 일치 뒤)으로 옮겨 정확히 맞는 상자가 먼저 이기게 했다. QA 2: before_all 에서 진짜 드워프 섬의 광차에 철광석 7 을 넣고 보낸 뒤 IslandState.of 로 담고, 새 드워프 섬을 세워 IslandState.apply 해 안의 것 7 · 끝 자리가 돌아오는지 단언을 더했다. 배 짐칸은 아직 없어 끝을 선착장 곁(배에 오르는 거리 + 손 닿는 거리 안)에 두고 광차에서 곧장 꺼낸다 — spec 줄에 적었다. 바뀐 곳 그물(changed_tests.py, 531개 파일) 3808개 통과.",
+   "why": "광차 칸 12 · 초속 4m (기준의 임시값); 선로가 협곡 가운데 줄에서 비키는 거리 9m · 시작 갱도 머리에서 12m · 끝 선착장 4m 안쪽 · 침목 · 레일 치수 — 꼴과 자리, Claude 가 정함; NET_SLACK 4m — 같이 하는 판에서 서버 · 참가자 광차를 같은 것으로 치는 거리",
+   "files": [
+    "game/core/net/net_world.gd",
+    "game/tests/multiplayer/test_mine_cart_on_server.gd",
+    "game/tests/world/frontier_islands/test_mine_track.gd",
+    "game/world/frontier_islands/mine_track.gd",
+    "game/world/frontier_islands/mine_cart.gd",
+    "game/tests/multiplayer/cart_island.gd",
+    "game/core/game_root.gd",
+    "game/core/debug/shots.gd",
+    "game/ui/hud/chest_window.gd",
+    "game/world/terrain/test_island.gd",
+    "game/world/frontier_islands/island_state.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/ui/manual/manual_toc.json",
+    "spec/03_world/dwarf-island.md",
+    "spec/01_settings/save.md",
+    "spec/11_multiplayer/netcode.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "구덩이 바닥(광산 대문 앞)에서 협곡을 따라 협곡 어귀 선착장 곁까지 **광차 선로**(침목 · 레일) · 광차 하나 — 우클릭으로 상자처럼 넣고 빼고(임시 칸 12) · 「보낸다」 누르면 선로 끝으로 굴러간다(임시 초속 4m) · 사람도 탈 수 있다 · 끝에서 「돌려보낸다」 (테스트)",
+     "evidence": "test_mine_track.gd — 진짜 드워프 섬에 선로 · 광차가 서고 본섬엔 없음(before_all 에서 진짜 섬 띄움), MineTrack.path 가 대문 갱도 머리 20m 안 · 구덩이 바닥 높이에서 시작해 200m 넘게 땅을 따라 선착장 곁(Dock.REACH+Aim.REACH 안) · 바다 위에서 끝남, 침목 · 레일 두 토막 수, 광차가 Chest · 12칸 · Placeable 아님, Death.aimed_chest/interact 로 진짜 조준 우클릭 열기 · 가방↔광차 넣고 빼기 · 다시 우클릭 닫기, press_go 로 1초 4m · 끝 도착 · 「돌려보낸다」 키 · 시작 복귀, 물리 틀에서 실제로 굴러감, 탄 사람이 4m · 40m 같이 가고 밖의 사람은 그대로, 창 단추(보낸다/가는 중 비활성/돌려보낸다 · 보관 상자엔 안 보임). 전체 실행(713 파일 5039 테스트) 모두 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "광차 안의 것은 저장 · 같이 하는 판 · 광차가 끝에 서 있으면 선착장 배에서 바로 꺼낼 수 있다(배 짐칸이 있으면 — 없으면 그냥 광차에서) · spec 줄 (테스트)",
+     "evidence": "저장: test_what_is_in_the_cart_and_where_it_stands_is_saved(standing/restore, 가던 중이면 끝으로) · test_the_island_save_carries_the_cart(IslandState.STANDING 「mine_cart」 행, 진짜 드워프 섬 IslandState.of 로 담고 새 드워프 섬에 IslandState.apply → 철광석 7 · 끝 자리 복귀 — 앞 단계 QA 지적 반영). 같이 하는 판: test_mine_cart_on_server.gd 가 진짜 ENet 두 기계로 참가자 열기 · 칸 옮김 서버 반영 · 「보낸다」 바람 → 서버 · 참가자 둘 다 끝 도착, 참가자 탄 채 서버장이 보내기, 늦게 들어온 참가자가 끝 자리 · 안의 것을 받음, 광차 곁 데스 상자가 광차에 가로채이지 않음(앞 단계 QA). 이 마지막 테스트는 QA 가 _chest_at 의 광차 검사를 다시 맨 앞으로 옮겨 돌려 보니 4개 중 1개가 떨어졌다(되돌림 확인) — 진짜로 지킨다. 배: 배 짐칸이 코드에 없음을 확인 — 끝이 선착장에서 Dock.REACH+Aim.REACH 안임을 test_the_track_runs_from_the_gate_down_the_canyon_to_the_dock 가 단언. spec: dwarf-island.md 광차 선로 줄(배 짐칸 없어 광차에서 꺼냄 · 저장 · 서버가 굴림) · 「아직 없는 것」에서 광차 선로 지움 · save.md 「안 담는다」(굴러가는 중) · netcode.md 표 줄. 사람 결정 줄 지워진 것 없음 · md 모두 150줄 안"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "shots.gd 에 광차 선로 찍을 자리를 더했다 — current.md 가 시킨 것이라 덤은 아니다",
+    "설명서 목차(manual_toc.json)에 「광차 선로」 항목 · MANUAL_mine_cart 번역 키(ko · en)를 더했다"
+   ]
+  },
+  "test": "ion/water/test_water_pump.gd\nok      3s  res://tests/build/test_placers_file_end.gd\nok      3s  res://tests/build/test_spec_readme_building_kinds.gd\nok      3s  res://tests/build/test_water_rule_at_sea_level.gd\nok      3s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      3s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      2s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/core/input/test_pointer.gd\nok      3s  res://tests/core/net/test_guild.gd\nok      2s  res://tests/core/test_grid.gd\nok      3s  res://tests/core/test_project_setup.gd\nok      3s  res://tests/core/test_spec_small_drifts.gd\nok      3s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/stations/test_apothecary_bench.gd\nok      3s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      3s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      3s  res://tests/craft/stations/test_smoker.gd\nok      3s  res://tests/craft/stations/test_station_names_title_case.gd\nok      3s  res://tests/craft/stations/test_still_alcohol.gd\nok      3s  res://tests/export/test_windows_build.gd\nok      3s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      3s  res://tests/life/gathering/test_herb_kinds.gd\nok      3s  res://tests/life/harvest/test_rare_drops.gd\nok      3s  res://tests/life/hunting/test_captive_fed.gd\nok      3s  res://tests/life/hunting/test_summon.gd\nok      4s  res://tests/life/medicine/test_medicine.gd\nok      3s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      3s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      3s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     33s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           713\nTests            5039\nPassing Tests    5039\nFailing Tests       0\nRisky/Pending       0\nAsserts        247907\nTime           1114s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "c1ce8658"
+ },
+ {
+  "time": "2026-10-28 14:18:21",
+  "epoch": 1793164701,
+  "type": "pass",
+  "title": "차선 합치기 — 3d-start(e1a9d335) → 3d-lane2",
+  "report": {
+   "problem": "광차 선로 · 광차(상자 12칸 · 보낸다/돌려보낸다 · 초속 4m · 탄다 · 저장 · 같이 하는 판 · 선착장 곁 끝) — 앞 단계 QA 두 흠(광차가 곁 데스 상자를 가로챔 · 진짜 섬 되돌리기 미검사)을 고쳤다. 바뀐 곳 테스트 531개 파일 · 3808개 통과",
+   "approach": "QA 1: NetWorld._chest_at 이 광차를 NET_SLACK(4m) 안이면 맨 먼저 돌려주어, 광차 곁 데스 상자를 참가자가 열면 서버 · 참가자 모두 광차를 짚었다. 서버 Death 에 광차 1.6m 곁 데스 상자를 두고 참가자가 여는 테스트를 먼저 짜 떨어지는 것(MineCart 를 열었다)을 본 뒤, 광차 검사를 함수 맨 끝(놓은 상자 thing_at · 데스 상자 0.01 일치 뒤)으로 옮겨 정확히 맞는 상자가 먼저 이기게 했다. QA 2: before_all 에서 진짜 드워프 섬의 광차에 철광석 7 을 넣고 보낸 뒤 IslandState.of 로 담고, 새 드워프 섬을 세워 IslandState.apply 해 안의 것 7 · 끝 자리가 돌아오는지 단언을 더했다. 배 짐칸은 아직 없어 끝을 선착장 곁(배에 오르는 거리 + 손 닿는 거리 안)에 두고 광차에서 곧장 꺼낸다 — spec 줄에 적었다. 바뀐 곳 그물(changed_tests.py, 531개 파일) 3808개 통과.",
+   "why": "광차 칸 12 · 초속 4m (기준의 임시값); 선로가 협곡 가운데 줄에서 비키는 거리 9m · 시작 갱도 머리에서 12m · 끝 선착장 4m 안쪽 · 침목 · 레일 치수 — 꼴과 자리, Claude 가 정함; NET_SLACK 4m — 같이 하는 판에서 서버 · 참가자 광차를 같은 것으로 치는 거리",
+   "files": [
+    "game/core/net/net_world.gd",
+    "game/tests/multiplayer/test_mine_cart_on_server.gd",
+    "game/tests/world/frontier_islands/test_mine_track.gd",
+    "game/world/frontier_islands/mine_track.gd",
+    "game/world/frontier_islands/mine_cart.gd",
+    "game/tests/multiplayer/cart_island.gd",
+    "game/core/game_root.gd",
+    "game/core/debug/shots.gd",
+    "game/ui/hud/chest_window.gd",
+    "game/world/terrain/test_island.gd",
+    "game/world/frontier_islands/island_state.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/ui/manual/manual_toc.json",
+    "spec/03_world/dwarf-island.md",
+    "spec/01_settings/save.md",
+    "spec/11_multiplayer/netcode.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "구덩이 바닥(광산 대문 앞)에서 협곡을 따라 협곡 어귀 선착장 곁까지 **광차 선로**(침목 · 레일) · 광차 하나 — 우클릭으로 상자처럼 넣고 빼고(임시 칸 12) · 「보낸다」 누르면 선로 끝으로 굴러간다(임시 초속 4m) · 사람도 탈 수 있다 · 끝에서 「돌려보낸다」 (테스트)",
+     "evidence": "test_mine_track.gd — 진짜 드워프 섬에 선로 · 광차가 서고 본섬엔 없음(before_all 에서 진짜 섬 띄움), MineTrack.path 가 대문 갱도 머리 20m 안 · 구덩이 바닥 높이에서 시작해 200m 넘게 땅을 따라 선착장 곁(Dock.REACH+Aim.REACH 안) · 바다 위에서 끝남, 침목 · 레일 두 토막 수, 광차가 Chest · 12칸 · Placeable 아님, Death.aimed_chest/interact 로 진짜 조준 우클릭 열기 · 가방↔광차 넣고 빼기 · 다시 우클릭 닫기, press_go 로 1초 4m · 끝 도착 · 「돌려보낸다」 키 · 시작 복귀, 물리 틀에서 실제로 굴러감, 탄 사람이 4m · 40m 같이 가고 밖의 사람은 그대로, 창 단추(보낸다/가는 중 비활성/돌려보낸다 · 보관 상자엔 안 보임). 전체 실행(713 파일 5039 테스트) 모두 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "광차 안의 것은 저장 · 같이 하는 판 · 광차가 끝에 서 있으면 선착장 배에서 바로 꺼낼 수 있다(배 짐칸이 있으면 — 없으면 그냥 광차에서) · spec 줄 (테스트)",
+     "evidence": "저장: test_what_is_in_the_cart_and_where_it_stands_is_saved(standing/restore, 가던 중이면 끝으로) · test_the_island_save_carries_the_cart(IslandState.STANDING 「mine_cart」 행, 진짜 드워프 섬 IslandState.of 로 담고 새 드워프 섬에 IslandState.apply → 철광석 7 · 끝 자리 복귀 — 앞 단계 QA 지적 반영). 같이 하는 판: test_mine_cart_on_server.gd 가 진짜 ENet 두 기계로 참가자 열기 · 칸 옮김 서버 반영 · 「보낸다」 바람 → 서버 · 참가자 둘 다 끝 도착, 참가자 탄 채 서버장이 보내기, 늦게 들어온 참가자가 끝 자리 · 안의 것을 받음, 광차 곁 데스 상자가 광차에 가로채이지 않음(앞 단계 QA). 이 마지막 테스트는 QA 가 _chest_at 의 광차 검사를 다시 맨 앞으로 옮겨 돌려 보니 4개 중 1개가 떨어졌다(되돌림 확인) — 진짜로 지킨다. 배: 배 짐칸이 코드에 없음을 확인 — 끝이 선착장에서 Dock.REACH+Aim.REACH 안임을 test_the_track_runs_from_the_gate_down_the_canyon_to_the_dock 가 단언. spec: dwarf-island.md 광차 선로 줄(배 짐칸 없어 광차에서 꺼냄 · 저장 · 서버가 굴림) · 「아직 없는 것」에서 광차 선로 지움 · save.md 「안 담는다」(굴러가는 중) · netcode.md 표 줄. 사람 결정 줄 지워진 것 없음 · md 모두 150줄 안"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "shots.gd 에 광차 선로 찍을 자리를 더했다 — current.md 가 시킨 것이라 덤은 아니다",
+    "설명서 목차(manual_toc.json)에 「광차 선로」 항목 · MANUAL_mine_cart 번역 키(ko · en)를 더했다"
+   ]
+  },
+  "test": "ion/water/test_water_pump.gd\nok      3s  res://tests/build/test_placers_file_end.gd\nok      3s  res://tests/build/test_spec_readme_building_kinds.gd\nok      3s  res://tests/build/test_water_rule_at_sea_level.gd\nok      3s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      3s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      2s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/core/input/test_pointer.gd\nok      3s  res://tests/core/net/test_guild.gd\nok      2s  res://tests/core/test_grid.gd\nok      3s  res://tests/core/test_project_setup.gd\nok      3s  res://tests/core/test_spec_small_drifts.gd\nok      3s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/stations/test_apothecary_bench.gd\nok      3s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      3s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      3s  res://tests/craft/stations/test_smoker.gd\nok      3s  res://tests/craft/stations/test_station_names_title_case.gd\nok      3s  res://tests/craft/stations/test_still_alcohol.gd\nok      3s  res://tests/export/test_windows_build.gd\nok      3s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      3s  res://tests/life/gathering/test_herb_kinds.gd\nok      3s  res://tests/life/harvest/test_rare_drops.gd\nok      3s  res://tests/life/hunting/test_captive_fed.gd\nok      3s  res://tests/life/hunting/test_summon.gd\nok      4s  res://tests/life/medicine/test_medicine.gd\nok      3s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      3s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      3s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     33s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           713\nTests            5039\nPassing Tests    5039\nFailing Tests       0\nRisky/Pending       0\nAsserts        247907\nTime           1114s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "c1ce8658"
  }
 ]
