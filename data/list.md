@@ -6045,7 +6045,7 @@
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
-- [ ] 1. en.po 의 중간 오크가 그냥 「Orc」다 (G-341 단계 1)
+- [x] 1. en.po 의 중간 오크가 그냥 「Orc」다 (G-341 단계 1)
   - 기준: en.po 의 중간 오크가 그냥 「Orc」다 — 한국어는 「중간 오크」인데 영어 LIVESTOCK_orc_medium 은 "Orc" 다. 보스 오크(다음 단계)가 오면 「Orc」 와 「Boss orc」 사이가 흐리다 — 「Orc」 로 둘 것이면 그대로, 맞추려면 "Medium orc" 로 고치고 test_orcs.gd WANT 의 en 도 같이 바꿔라
 - [ ] 2. 약초 자리 doc 주석이 오크 상수 위로 떨어졌다 (G-341 단계 3)
   - 기준: 약초 자리 doc 주석이 오크 상수 위로 떨어졌다 — game/core/debug/shots.gd 에서 const ORC_SHOT_BOSS_LEFT · ORC_SHOT_ASIDE · orc_lineup 이 _herb_view 의 「## 약초 한 포기 …」 「## 땅이 시선을 …」 두 줄과 static func _herb_view 사이에 끼어, 그 두 줄이 이제 ORC_SHOT_BOSS_LEFT 의 설명이 됐다. 오크 상수 · orc_lineup 묶음을 그 두 줄 위(return views 뒤)로 옮겨 두 줄이 _herb_view 바로 위에 붙게 하라
