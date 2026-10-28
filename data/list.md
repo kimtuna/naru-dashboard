@@ -6052,7 +6052,7 @@
 - [x] 3. ORC_SHOT_ASIDE 에 「임시」 표시가 없다 (G-341 단계 3)
   - 기준: ORC_SHOT_ASIDE 에 「임시」 표시가 없다 — report 의 temporary 에는 올렸는데 shots.gd 의 주석에는 **임시** 가 없다. ORC_SHOT_BOSS_LEFT 처럼 「**임시** (찍기용)」을 붙여라
   - 기준: (앞 단계 QA) ORC_SHOT_BOSS_LEFT 단언이 조용히 빠질 수 있다 — test_herb_doc_sits_right_above_herb_view 의 마지막 for 는 const ORC_SHOT_BOSS_LEFT 줄을 못 찾으면 단언을 하나도 안 한다. 찾은 줄 번호를 변수에 담아 assert_gt(orc_at, 0, "ORC_SHOT_BOSS_LEFT 가 없다") 를 먼저 걸어라 (막는 것은 아니다)
-- [ ] 4. 주석 낱말 겹침 (G-341 단계 3)
+- [x] 4. 주석 낱말 겹침 (G-341 단계 3)
   - 기준: 주석 낱말 겹침 — shots.gd 의 mine_orcs 주석 「오크를 세워 세운다」를 「오크를 세운다」로 고쳐라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
