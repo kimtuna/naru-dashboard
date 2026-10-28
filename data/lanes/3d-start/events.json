@@ -1,56 +1,5 @@
 [
  {
-  "time": "2026-10-21 11:16:57",
-  "epoch": 1792549017,
-  "type": "pass",
-  "title": "차선 합치기 — 3d-lane2(8e713305) → 3d-start",
-  "group": "G-273",
-  "step": "6",
-  "attempt": "1",
-  "report": {
-   "problem": "망치 해체(Placeable.take)로 돌아오는 것이 해체한 사람 가방에 곧장 든다 — 가방이 차면 그 사람 발밑. 시설 · 상자 · 횃불 · 침대 · 가구 · 밭 · 건축물 같은 길, 멀티는 사본 가방 · 참가자 자리",
-   "approach": "까닭: 해체는 마지막 한 대(hit_all → _vanish_dropping)라 돌아오는 것이 제자리에 떨어졌다 — 바다 위 염전은 물 위라 손이 안 닿았다. 풀이: Placeable.take 가 해체하는 동안(_taking) 부서져 떨어진 덩어리만 모아(_taken — 무너진 것 fall 은 빼고) 끝나면 해체한 사람 가방(bag)에 넣고, 못 넣은 몫만 그 사람 발밑(feet)으로 옮긴다. 놓는 곳마다 따로 고치지 않고 take 한 곳에서 하므로 시설 · 상자 · 횃불 · 침대 · 가구 · 밭 · 건축물이 같은 길이다(건축물은 hit_piece 가 이미 가방에 넣고 남은 몫만 발밑으로). Placer.take_thing · Buildings.take_target/take_piece 가 bag · feet 를 받고, 없으면 이 섬 캐릭터의 가방 · 자리. 서버는 참가자의 사본 가방과 where(id) 자리를 넘긴다(net_world). 새장째 싣기(_pack_cage)는 그대로. 「제자리에 떨어진다」를 보던 옛 테스트 넷(test_build_mode_take · test_chest_break · test_build_on_server · test_pickup)을 새 규칙으로 고쳤다 — test_pickup 은 걸어서 줍기를 보는 것이라 해체 대신 대수를 채운 치기로 떨어뜨린다. spec/06_build/building.md 해체 줄에 바뀐 규칙을 적었다. 바뀐 곳 그물(changed_tests 290 파일, 2341개) 첫 판: 2339 통과 · test_build_mode_take 2개 실패(옛 「그 자리에 떨어졌다」 단언) → 고친 뒤 그 파일 포함 4 파일 다시 돌려 28개 모두 통과.",
-   "why": "",
-   "files": [
-    "game/build/placeable.gd",
-    "game/build/placer.gd",
-    "game/build/buildings.gd",
-    "game/life/farming/farmland.gd",
-    "game/core/net/net_world.gd",
-    "game/craft/stations/stations.gd",
-    "game/world/storage/chests.gd",
-    "spec/06_build/building.md",
-    "game/tests/build/test_take_into_bag.gd",
-    "game/tests/build/test_build_mode_take.gd",
-    "game/tests/world/storage/test_chest_break.gd",
-    "game/tests/multiplayer/test_build_on_server.gd",
-    "game/tests/player/pickup/test_pickup.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "망치 해체(마지막 한 대 = take)로 돌아오는 것은 해체한 사람의 가방에 곧장 든다 — 가방이 차서 못 넣은 몫만 그 사람 발밑에 떨어진다(제자리 말고). 시설 · 상자 · 횃불 · 건축물(재료) 모두 같은 길. 새장은 지금처럼 새를 싣고(G-266.3) 가방으로.",
-     "evidence": "Placeable.take 한 곳에서 _taken 을 모아 _hand_over 로 가방 → 남은 몫은 feet 로 옮긴다(무너진 것 land!=null 은 뺀다). test_take_into_bag: 염전(SEA 자리) 해체 → 가방 1 · 떨어진 것 0, 가방 꽉 → 발밑 NEAR 0.6 안 · 바다 자리에서 3m 넘게. 건축물 토대 재료 가방행 · 가방 꽉이면 발밑. test_build_mode_take 가 우클릭으로 작업대·상자·횃불·침대·의자·밭이 가방에 들고 바닥 0 을 본다, test_chest_break 상자. 대수 채운 치기는 제자리(대조 테스트). 새장(_pack_cage)은 손대지 않았고 전체 4107 통과. 일부러 _hand_over 를 pass 로 바꾸자 test_take_into_bag 4개가 실패 — 껍데기 아님(본 뒤 되돌림)."
-    },
-    {
-     "ok": true,
-     "criterion": "멀티 — 참가자가 해체하면 그 사람 사본 가방으로(hit_thing_for 의 bag) (테스트: 바다 위 염전을 해체하면 가방에 염전이 든다 · 가방이 차면 발밑)",
-     "evidence": "net_world._build_for 가 take_thing/take_piece 에 사본 가방과 where.call(id) 자리를 넘긴다. test_take_into_bag.test_a_guest_take_goes_into_their_copy_bag_or_at_their_feet: 사본 가방에 염전 · 서버장 가방엔 0 · 사본이 차면 참가자 자리 발밑. test_build_on_server 의 실제 서버 경로에서 참가자가 의자 · 침대를 해체하면 바닥 0 · 사본 가방 +1."
-    }
-   ],
-   "issues": [
-    "참가자 가방이 찼을 때 발밑 — 실제 서버 경로 테스트가 없다 — 가방이 찼을 때 발밑으로 가는 것은 Stations.take_thing(copy, there) 을 바로 불러서만 본다. net_world 가 where.call(id) 를 제대로 넘기는지는 tests/multiplayer/test_build_on_server.gd 에서 확인하지 않는다. 그 파일에 참가자 사본 가방(kit)을 채운 뒤 gi.beds.ask.call(&\"take\", …) 를 보내고, 침대 하나가 참가자 자리(_walk_guest 로 옮긴 곳) 근처에 떨어지는지 보는 단언을 하나 더해라"
-   ],
-   "good": []
-  },
-  "test": "settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      3s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      1s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/food/test_drinks.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           544\nTests            4107\nPassing Tests    4107\nFailing Tests       0\nRisky/Pending       0\nAsserts        196805\nTime           782s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "ffe98374"
- },
- {
   "time": "2026-10-21 11:33:16",
   "epoch": 1792549996,
   "type": "pass",
@@ -8189,5 +8138,40 @@
   },
   "test": "ts/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      3s  res://tests/build/test_rooms.gd\nok      3s  res://tests/build/test_room_overlay.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      2s  res://tests/core/debug/test_play_island_pick.gd\nok      2s  res://tests/core/test_docs_match_code_g275.gd\nok      2s  res://tests/core/test_guard.gd\nok      2s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_geothermal_spec.gd\nok      2s  res://tests/craft/stations/test_fried_food.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_station_names_title_case.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/items/test_item_names_title_case.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      3s  res://tests/life/hunting/test_burrows.gd\nok      3s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/multiplayer/test_visitor_interp.gd\nok      2s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      3s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      2s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      1s  res://tests/world/mine/test_mine_net_gaps_note.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     33s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           541\nTests            3994\nPassing Tests    3994\nFailing Tests       0\nRisky/Pending       0\nAsserts        129273\nTime           818s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "be3f486f"
+ },
+ {
+  "time": "2026-10-28 20:14:16",
+  "epoch": 1793186056,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-343 단계 2 (시도 1)",
+  "group": "G-343",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "시추 단계 2 — 오크 셋에 하나(임시)가 메인 시추기·배관을 친다 · 배관 칸 체력(끊기면 빨갛고 흐름 멈춤 · 스패너 우클릭으로 잇기) · 시추기 0 이면 임무 실패 · 깨면 감독이 원유 통 20 개 · spec 줄(dwarf-island · water-pipes · save). 바뀐 곳만 돌린 그물: 304 파일 2418개 통과",
+   "approach": "오크가 물건을 치게 하려고 짐승 쪽의 박힌 노림(Animal.aggro)을 그대로 썼다. 다만 시추기·배관 몸에 체력(Health)을 달면 사람의 총·평타도 제 시설을 부수게 되고, 무는 거리 판정(_in_reach)은 눈 광선이 과녁 몸에 막혀 닿지 않았다. 그래서 몸 없는 과녁 노드 OrcBait(체력만 쥠 · Quarry.BITE_REACH 메타)를 시추기와 땅굴 배관 토막마다 달고, Animal._in_reach 가 그 메타가 있으면 수평 거리만 보게 했다. MineHorde 에 spawned 신호를 두고 MineDrill.enlist 가 셋째마다 시추 오크로 삼는다. aim 이 노림 없는 시추 오크에게 가장 가까운 과녁을 박는다. 배관 과녁이 0 이 되면 Pipes.cut → PipeSegment.broken(빨강) → _reach_from 이 그 토막을 안 지나가 그 구멍이 linked 에서 빠진다. 스패너 우클릭(Wiring.mend_on → Pipes.mend)은 잇고 mended 로 체력을 다시 채운다. 시추기 과녁이 0 이 되면 시추기가 사라지고 wrecked → MineShaft 가 임무를 풀어(보상 없음 · 가방 그대로) 승강기가 그냥 올라간다. 깨고 올라오면 원유 통(새 아이템 crude_oil_can · 번역 · 떨어진 상자 검은색 = 임시 아이콘) 20 개를 가방에 넣고, 넘친 몫은 발치에 떨군다. 그 뒤 cleared(drilling)을 낸다. 처음 돌린 내 테스트에서 걸린 것: 사라진 오크가 든 typed 배열을 filter 람다가 못 읽어 루프로 바꿨고, 물리 프레임 한 번에 탱크가 조금 차서 비교를 앞뒤 값으로 바꿨다. QA 두 줄: water-pipes.md 물 종류 줄을 원유·섞임·시추 배관 길로 고쳤고, save.md 광산 임무 줄에 시추 안 담는 것을 더했다. 그림은 찍지 않았다(빨간 토막은 색 값으로만 확인).",
+   "why": "시추 오크 몫 RAID_EVERY 3 (셋에 하나 — spec 「임시 1/3」); 메인 시추기 체력 800 · 배관 토막 체력 60 — 작은 오크 하나가 배관을 10초, 시추기를 2분 넘게 친다(지키러 갈 틈); 과녁에 닿는 거리 — 시추기 몸 반 너비+1.0m · 배관 토막 가운데에서 1.5m; 원유 통 아이콘 = 떨어진 상자 색 (0.12, 0.1, 0.08) — 아이콘 체계가 없다",
+   "files": [
+    "game/world/mine/mine_drill.gd",
+    "game/world/mine/orc_bait.gd",
+    "game/world/mine/mine_shaft.gd",
+    "game/world/terrain/mine_horde.gd",
+    "game/life/hunting/animal.gd",
+    "game/life/hunting/quarry.gd",
+    "game/automation/water/pipe_segment.gd",
+    "game/automation/water/pipes.gd",
+    "game/automation/power/wiring.gd",
+    "game/player/pickup/dropped_item.gd",
+    "game/player/inventory_hotbar/items.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "spec/03_world/dwarf-island.md",
+    "spec/07_automation/water-pipes.md",
+    "spec/01_settings/save.md",
+    "game/tests/world/mine/test_mine_drill_raid.gd"
+   ],
+   "decision": null
+  },
+  "test": "es://tests/world/frontier_islands/test_mine_headframe.gd\nok      3s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      3s  res://tests/world/terrain/test_same_seed_same_island.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      9s  res://tests/perf/test_lava_melt_load.gd\n\n================ 떨어진 파일: res://tests/multiplayer/test_progress_on_server.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/multiplayer/test_progress_on_server.gd\n* test_the_guest_gets_the_score_the_server_counted\n    [Failed]:  Expected [<null>] to be anything but NULL:  미르가 들어왔다\n      at line -1\nSCRIPT ERROR: Invalid call. Nonexistent function 'island' in base 'Nil'.\n          at: _progress (res://tests/multiplayer/test_progress_on_server.gd:79)\n          GDScript backtrace (most recent call first):\n              [0] _progress (res://tests/multiplayer/test_progress_on_server.gd:79)\n              [1] test_the_guest_gets_the_score_the_server_counted (res://tests/multiplayer/test_progress_on_server.gd:93)\n              [2] _pair (res://tests/multiplayer/test_progress_on_server.gd:75)\n              [3] wait_until (res://tests/core/net/net_sides.gd:43)\nSCRIPT ERROR: Invalid access to property or key 'remote' on a base object of type 'Nil'.\n          at: test_the_guest_gets_the_score_the_server_counted (res://tests/multiplayer/test_progress_on_server.gd:95)\n          GDScript backtrace (most recent call first):\n              [0] test_the_guest_gets_the_score_the_server_counted (res://tests/multiplayer/test_progress_on_server.gd:95)\n              [1] _pair (res://tests/multiplayer/test_progress_on_server.gd:75)\n              [2] wait_until (res://tests/core/net/net_sides.gd:43)\n    [Failed]:  Unexpected Errors:\n    [1] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2] <engine-2>Invalid access to property or key 'remote' on a base object of type 'Nil'.\n      at line 95\n* test_a_guest_who_joins_later_gets_the_score_at_once\n1/2 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/multiplayer/test_progress_on_server.gd\n- test_the_guest_gets_the_score_the_server_counted\n    [Failed]:  Expected [<null>] to be anything but NULL:  미르가 들어왔다\n          at line -1\n    [Failed]:  Unexpected Errors:\n    [1] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [2] <engine-2>Invalid access to property or key 'remote' on a base object of type 'Nil'.\n          at line 95\n\nTotals\n------\nScripts               1\nTests                 2\nPassing Tests         1\nFailing Tests         1\nAsserts            8/10\nTime              10.983s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           734\nTests            5198\nPassing Tests    5197\nFailing Tests       1\nRisky/Pending       0\nAsserts        265090\nTime           1098s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/multiplayer/test_progress_on_server.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\ntest.sh: 스크립트 오류가 있다\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
