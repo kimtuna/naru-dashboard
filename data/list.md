@@ -6002,7 +6002,7 @@
   - 기준: spec dwarf-island.md 「지금 지은 것」 줄 (테스트)
   - 기준: (앞 단계 QA) water-pipes.md 물 종류 줄이 낡았다 — spec/07_automation/water-pipes.md 84줄 「지금은 온천수(hot_spring) 하나뿐이라 실제로는 안 섞인다」는 G-343.1 로 원유(crude_oil, stations.json drill_rig)가 생겨 틀렸다. 그 절에 「원유 — 시추 설비(G-343.1, world/mine/mine_drill.gd)」 한 줄을 더하고, 원유 망과 온천수 망이 섞이면 멈춘다는 것(땅굴은 다른 섬 좌표 밑이라 실제로는 안 만난다)을 적어라. 시추가 배관 길을 탄다는 것도 그 문서에 한 줄 걸어 두면 좋다
   - 기준: (앞 단계 QA) save.md 안 담는다 목록에 시추가 없다 — spec/01_settings/save.md 61줄 「광산 임무」 줄에 시추 탱크(MineDrill.oil · full) · 기름 구멍 · 놓인 임무 설비(drill_rig · main_drill) · 시추 배관(drill_pipe) · 가방의 임무 몫을 안 담는다(섬 저장본에서 MineDrill.drop_kit 으로 빼고 · 켤 때 GameRoot 가 MineDrill.strip_kit 으로 걷는다)를 G-343.1 로 더해라. 코드 주석(mine_drill.gd 머리)에는 있으나 save.md 목록이 정본이다
-- [ ] 3. (앞 단계 QA) 스패너 우클릭 경로를 소스 글자로만 본다
+- [x] 3. (앞 단계 QA) 스패너 우클릭 경로를 소스 글자로만 본다
   - 기준: 스패너 우클릭 경로를 소스 글자로만 본다 — test_a_cut_pipe_stops_its_hole_turns_red_and_the_spanner_mends_it 끝의 FileAccess…contains("if mend_on(what):") 는 코드 글자 검사라 순서가 바뀌어도(예: 스위치 분기 뒤로) 통과할 수 있다. 실제로 Wiring.touch_on(seg) 을 불러 true · seg.broken==false 를 보는 단언으로 바꿔라 (지금 동작은 맞다 — Wiring._input → Aim collider → touch_on → mend_on)
 
 ## [x] G-344 드워프 광산 — 모듈 열넷 (효과)
