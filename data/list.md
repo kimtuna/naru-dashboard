@@ -5962,7 +5962,7 @@
   - 기준: 같이 하는 판 — 지금 무리처럼 혼자 판만이면 그 까닭을 report 에 · spec dwarf-island.md 「지금 지은 것」 줄 (사람 원문 · 임시)
 
 ## [ ] G-342 드워프 광산 — 임무 고르기 · 채굴 임무 · 귀환 버티기
-- 차선: 3d-start
+- 차선: 3d-start · 시작 2026-10-28 13:36
 - spec: spec/03_world/dwarf-island.md 「임무 · 오크 · 의뢰」, spec/09_expedition/common.md
 - **사람 결정 2026-10-28** (원문 그대로): 「채굴, 시추 그리고 두가지중 하나를 클리어 하고 1%확률로 보스잡는 퀘스트가 나와서 잡는걸로 하자.」
 - 광산 감독은 지휘 세션이 세웠다 — `TestIsland.pit_dwarves.foreman`(PitDwarves.Dwarf · 부딪힘 몸 있음). 값(20 개 · 60 초)은 spec 그대로 (Claude 가 정함 — 임시)
