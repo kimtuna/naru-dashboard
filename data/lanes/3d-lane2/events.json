@@ -1,53 +1,5 @@
 [
  {
-  "time": "2026-10-21 00:36:47",
-  "epoch": 1792510607,
-  "type": "fail",
-  "title": "차선 합치기 실패 — 3d-start(ee2782bb) → 3d-lane2",
-  "group": "G-269",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "곰 놓기의 「풀어 줬다」를 참가자 기계가 먼저 띄우지 않고 서버가 푼 뒤 서버 답(acts().give)으로 보낸다 · hunting.md 곰 줄과 save.md 안 담는 목록을 한 뜻으로 고쳤다",
-   "approach": "captives.gd place_slot 의 remote 길이 ask_place 앞에서 _say_set_free 를 불러, 서버가 권한 없음으로 거절해도 참가자는 「풀어 줬다」와 「권한이 없다」를 함께 봤다. remote 길에서는 알림을 빼고, 서버 _place_captive 가 place_for 성공 뒤 Captives.set_free_note(entry)로 곰이었는지 보고 acts().give(id, RANCH_SET_FREE, [StringName 짐승 이름 키]) 로 보낸다. 「곰」을 받는 기계의 언어로 옮기려고 NetActs.give · _given · given 신호에 note_args 를 더했고 GameRoot._on_given 이 Notice.show_key(note, note_args) 로 띄운다(given 을 잇는 테스트 람다 하나도 인자를 맞췄다). 새 테스트: 사냥 권한을 끈 참가자가 곰을 놓으면 그 자리에서도 · 「권한이 없다」가 온 뒤에도 「풀어 줬다」가 안 뜨고 사본 가방에 곰이 남는다. 권한을 켜면 서버가 푼 뒤에 그 한 줄이 온다. hunting.md:16 은 「놓아 기르지 못한다 — 놓으면 들판에 풀린다 (G-269.3)」로 고치고(사람 원문은 둠), save.md 괄호에 Ranch.set_free 로 풀린 곰도 같은 까닭으로 안 담는다고 더했다. 바뀐 곳 그물(305 파일)에서 test_villager_watering.gd 하나가 떨어졌는데(물뿌리개 · 비료 수 — 이번 변경과 무관, game_root.gd 를 고쳐 같이 걸렸다) 혼자 다시 돌리니 466/466 통과 — 부하 속 시간 흔들림이다.",
-   "why": "",
-   "files": [
-    "game/life/hunting/captives.gd",
-    "game/core/net/net_world.gd",
-    "game/core/net/net_acts.gd",
-    "game/core/game_root.gd",
-    "game/tests/multiplayer/test_hunt_on_server.gd",
-    "game/tests/multiplayer/test_harvest_on_server.gd",
-    "spec/04_life/hunting.md",
-    "spec/01_settings/save.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "hunting.md 곰 줄이 스스로 어긋난다 — spec/04_life/hunting.md:16 이 「잡은 곰은 땅에 놓지 못한다 … 놓으면 들판에 풀린다 (G-269.3)」로 한 줄 안에서 서로 반대말을 한다. 사람 결정 원문(「곰: 그냥 큼 기를 수 없음」)은 두고, 「땅에 놓지 못한다」를 「놓아 기르지 못한다 — 놓으면 들판에 풀린다 (G-269.3)」처럼 고쳐 한 뜻으로 맞춰라",
-     "evidence": "hunting.md:16 이 「잡은 곰은 놓아 기르지 못한다 — 놓으면 들판에 풀린다 (G-269.3 …)」로 바뀌어 한 뜻이다. 15줄의 사람 원문 「곰: 그냥 큼 기를 수 없음」은 그대로 남았다. 파일은 145줄로 150 안쪽이다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 참가자 기계가 서버 답 전에 「풀어 줬다」를 띄운다 — captives.gd place_slot 의 remote 길에서 ask_place 앞에 _say_set_free 를 부른다. 서버가 권한 없음 · 사본 가방 불일치로 거절해도 참가자는 「곰은(는) 기를 수 없어 들판에 풀어 줬다」와 「권한이 없다」를 함께 본다. 알림을 서버 place_for 성공 뒤 그 사람에게 보내는(acts().give) 쪽으로 옮기고, test_hunt_on_server 에 권한을 끈 참가자가 곰을 놓을 때 그 한 줄이 안 뜨는지 단언하라",
-     "evidence": "captives.gd remote 길에서 _say_set_free 가 빠졌고, net_world._place_captive 가 place_for 가 null 이 아닐 때만 Captives.set_free_note 로 키를 골라 acts().give(id, note, args) 로 보낸다(NetActs.give/_given/given 에 note_args 추가, 기존 호출은 기본값으로 맞는다). test_hunt_on_server::test_the_guest_hears_a_bear_set_free_only_after_the_server_frees_it 가 HUNT 권한을 끈 참가자의 곰 놓기에서 즉시 · 「권한이 없다」 뒤 0.3초 모두 그 한 줄이 없음을 단언하고 사본 가방에 곰이 남는지, 권한을 켜면 서버가 푼 뒤 그 줄이 오는지까지 본다. 일부러 깨 봤다 — remote 길에 _say_set_free(entry) 를 되살리니 「서버 답 전에 「풀어 줬다」를 띄우지 않는다」 단언이 떨어졌다(되돌림 확인, cmp 일치). 전체 test.log 4009/4009 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 풀어 준 곰이 저장 안 담는 목록에 이름이 없다 — spec/01_settings/save.md:42 의 「한 번 잡았다 가방에서 깨어 나간 들판 짐승 … 담지 않는다」가 뜻으로는 덮지만, Ranch.set_free 로 풀린 곰(G-269.3)도 같은 까닭으로 안 담는다고 그 괄호에 한 마디 더하라",
-     "evidence": "save.md:42 괄호 안에 「놓았다가 들판에 풀린 곰(Ranch.set_free, G-269.3)도 같은 까닭으로 담지 않는다」가 더해졌다. 96줄"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "ry.gd\nok      1s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/automation/villagers/test_villager_body.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_placer.gd\nok      0s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      0s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_room_code.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      0s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/save/test_old_barn.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      0s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           532\nTests            4009\nPassing Tests    4009\nFailing Tests       0\nRisky/Pending       0\nAsserts        190630\nTime           776s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-21 01:03:42",
   "epoch": 1792512222,
   "type": "pass",
@@ -8343,5 +8295,71 @@
    "decision": null
   },
   "test": "nting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_food_shown.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      3s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/player/hunger_thirst/test_starving.gd\nok      3s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/test_world_settings.gd\nok      3s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     35s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nFAIL   11s  res://tests/perf/test_lava_melt_load.gd\n\n================ 떨어진 파일: res://tests/perf/test_lava_melt_load.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/perf/test_lava_melt_load.gd\n* test_a_crowded_island_stays_under_the_frame_limit_while_lava_flows\n    LAVA_MELT 분출 0 · 놓은 것 3000 (건축물 1777): tick 평균 0.144 ms · 흐르는 동안 최대 1.582 ms (첫 프레임 뺌) · 태우기 몫 최대 1.579 ms · 분출 첫 프레임 0.73 ms · 흐름 뒤 tick 최대 0.64 ms (몸통 도는 40 프레임 포함) · 흐름 뒤 마저 한 프레임 1 · 태운 수 2461 · 남은 것 539\n    LAVA_MELT 분출 1 · 놓은 것 3000 (건축물 1777): tick 평균 0.148 ms · 흐르는 동안 최대 0.991 ms (첫 프레임 뺌) · 태우기 몫 최대 0.989 ms · 분출 첫 프레임 0.68 ms · 흐름 뒤 tick 최대 0.70 ms (몸통 도는 40 프레임 포함) · 흐름 뒤 마저 한 프레임 1 · 태운 수 2461 · 남은 것 539\n    LAVA_MELT 분출 2 · 놓은 것 3000 (건축물 1777): tick 평균 0.147 ms · 흐르는 동안 최대 1.132 ms (첫 프레임 뺌) · 태우기 몫 최대 1.104 ms · 분출 첫 프레임 0.68 ms · 흐름 뒤 tick 최대 0.68 ms (몸통 도는 40 프레임 포함) · 흐름 뒤 마저 한 프레임 1 · 태운 수 2461 · 남은 것 539\n    LAVA_MELT 세 번 가운데 값: 흐르는 동안(첫 프레임 포함) 최대 1.132 ms · 흐름 뒤 0.678 ms · 태우기 몫 1.104 ms\n    [Failed]:  [1.132] expected to be < than [1.0]:  흐르는 동안(분출 첫 프레임 포함) tick 한 번이 1.0 ms 안 (받침 재기 포함, 세 번 가운데 값)\n      at line 135\n    [Failed]:  [1.104] expected to be < than [1.0]:  흐름 끝 · 마저 하기까지 태우기 몫이 한 프레임 1.0 ms 안 (세 번 가운데 값)\n      at line 137\n* test_the_support_job_really_melts_things_and_how_long_it_takes\n    LAVA_MELT 받침 재기: 받침 잃어 녹은 것 194 · 한 번에 가장 오래 389 프레임 (6.48 초)\n    LAVA_MELT 지우기 24 개 0.109 ms\n1/2 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/perf/test_lava_melt_load.gd\n- test_a_crowded_island_stays_under_the_frame_limit_while_lava_flows\n    [Failed]:  [1.132] expected to be < than [1.0]:  흐르는 동안(분출 첫 프레임 포함) tick 한 번이 1.0 ms 안 (받침 재기 포함, 세 번 가운데 값)\n          at line 135\n    [Failed]:  [1.104] expected to be < than [1.0]:  흐름 끝 · 마저 하기까지 태우기 몫이 한 프레임 1.0 ms 안 (세 번 가운데 값)\n          at line 137\n\nTotals\n------\nScripts               1\nTests                 2\nPassing Tests         1\nFailing Tests         1\nAsserts           16/18\nTime              8.789s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           729\nTests            5179\nPassing Tests    5178\nFailing Tests       1\nRisky/Pending       0\nAsserts        263463\nTime           1107s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/perf/test_lava_melt_load.gd\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-28 18:37:55",
+  "epoch": 1793180275,
+  "type": "fail",
+  "title": "QA 불합격 — G-345 단계 1 (시도 2)",
+  "group": "G-345",
+  "step": "1",
+  "attempt": "2",
+  "report": {
+   "problem": "드워프 대장장이 의뢰 창 — 모듈마다 드는 것 · 맡긴다 · 게임 하루 뒤 찾아간다 · 한 번에 3 · 저장 · 같이 하는 판은 서버가 쥔다 (바뀐 곳만: 파일 454 개 · 테스트 3188 개 통과)",
+   "approach": "앞 회차가 기준을 다 지었는데 전체 검사에서 test_lava_melt_load 하나가 1.13ms > 1.0ms 로 떨어졌다. 이 테스트는 TestIsland · 의뢰소를 쓰지 않고(용암 녹임 부하만 잰다), 따로 돌리면 통과한다 — godot 6 개를 한꺼번에 돌린 부하에서 흔들린 것이다(G-942 가 같은 흔들림을 다룬 적 있다). 의뢰 코드는 매 프레임 일을 하지 않는다(창만 열렸을 때 _process). 코드는 그대로 두고 바뀐 곳에 걸리는 그물(파일 454 · 테스트 3188)을 다시 돌려 모두 통과를 확인했다.",
+   "why": "한 사람이 한 번에 맡길 수 있는 수 3 — 기준에 적힌 임시 값; 의뢰 레시피(일반: 색 광물 8 + 철괴 2 · 상급: 운철 3 + 색 광물 6)와 걸리는 시간 게임 24시간 — spec 그대로, Claude 가 정한 임시 값; 대장장이 곁 3m 안에서만 우클릭 — 손이 닿는 거리 임시",
+   "files": [
+    "game/world/frontier_islands/smith_orders.gd",
+    "game/ui/hud/smith_window.gd",
+    "game/world/terrain/test_island.gd",
+    "game/world/frontier_islands/island_state.gd",
+    "game/core/game_root.gd",
+    "game/core/net/net_world.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "game/i18n/en.po",
+    "game/i18n/ko.po",
+    "game/ui/manual/manual_toc.json",
+    "game/tests/ui/layout/test_window_layout.gd",
+    "game/tests/ui/menu/test_manual_screen.gd",
+    "game/tests/world/frontier_islands/test_smith_orders.gd",
+    "game/tests/multiplayer/smith_island.gd",
+    "game/tests/multiplayer/test_smith_orders_on_server.gd",
+    "spec/03_world/dwarf-island.md",
+    "spec/01_settings/save.md",
+    "spec/02_player/equipment-modules.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "ok": false,
+     "criterion": "대장장이 우클릭 → **의뢰 창** — 모듈 열넷(일반 열 · 상급 넷 — 있는 둘 포함)과 드는 것(색 광물 8 + 철괴 2 · 운철 3 + 색 광물 6) · 가방에 있으면 「맡긴다」 — 재료가 빠진다 · 번역 (테스트)",
+     "evidence": "레시피 · 모듈 목록(spec 표대로 일반 15 · 상급 4 — 기준의 「일반 열」은 spec 표를 잘못 센 것이고 코드는 spec 을 따랐다) · 맡기면 재료가 빠짐 · 번역은 test_smith_orders.gd 가 확인한다. 그러나 「우클릭 → 의뢰 창」 길(SmithOrders._unhandled_input → opened → GameRoot.open_smith_window)을 지키는 테스트가 없다 — 모든 테스트가 open_smith_window() 를 바로 부른다. smith_orders.gd:231 의 opened.emit() 을 pass 로 바꾸고 test_smith_orders · test_smith_orders_on_server · test_window_layout 을 돌려도 41 개가 모두 통과했다(되돌렸다)"
+    },
+    {
+     "ok": true,
+     "criterion": "맡긴 것은 **게임 하루 뒤** 「찾아간다」 — 남은 시간 · 맡긴 것 줄은 저장된다 · 한 번에 맡길 수 있는 수(임시 3) · 찾으면 가방으로(차 있으면 못 찾는다) (테스트)",
+     "evidence": "test_placing_takes_the_materials_and_is_ready_a_game_day_later(23시간 뒤도 못 찾음 · 24시간 뒤 찾음) · test_window_places_then_collects_a_day_later(남은 시간 24:00 · 다 됐다) · test_three_at_a_time · test_window_locks_placing_when_three_are_waiting · test_a_full_bag_cannot_collect_and_the_order_stays · test_rows_survive_standing_and_restore · test_the_dwarf_island_keeps_orders_in_its_save(진짜 드워프 섬 IslandState.of → apply 왕복)"
+    },
+    {
+     "ok": true,
+     "criterion": "같이 하는 판 — 서버가 의뢰를 쥔다 · 누가 맡긴 것은 그 사람만 찾는다 (테스트)",
+     "evidence": "test_smith_orders_on_server.gd — 진짜 ENet 두 기계: 참가자 「맡긴다」는 참가자 장부에 줄을 세우지 않고 서버 줄이 선 뒤 받는다 · 재료는 서버가 뺀다 · 서버장 창에 미르 것이 안 뜨고 서버장은 못 찾는다 · 미르만 찾는다 · 먼 참가자는 SAY_FAR. test_only_the_one_who_placed_collects 가 캐릭터를 모르는 참가자도 막는지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "spec dwarf-island.md 「지금 지은 것」 줄 · save.md (테스트)",
+     "evidence": "test_spec_writes_down_what_was_built 가 「지금 지은 것」의 의뢰 창 줄 · 24시간 · 3(임시) · smith_orders · 「아직 없는 것」에서 의뢰 창이 빠졌는지 · 레시피 숫자 · save.md 월드 줄 · IslandState.STANDING 칸 이름을 코드 상수와 맞춰 본다. md 셋 모두 150줄 안(139 · 118 · 127), 사람 결정 줄은 지워지지 않았다"
+    }
+   ],
+   "issues": [
+    "우클릭으로 창이 뜨는 테스트가 없다 — 기준 1의 「대장장이 우클릭 → 의뢰 창」을 지키는 테스트가 없다. SmithOrders._unhandled_input(smith_orders.gd:224) → opened → GameRoot._join_smith 가 이은 open_smith_window 길을 어느 테스트도 지나지 않는다(opened.emit() 을 지워도 41개 통과). test_smith_orders.gd 에 진짜 드워프 섬(또는 smith_island.gd) 위에서 InputEventAction(action=InputActions.INTERACT, pressed=true)을 SmithOrders 에 넣어 (1) 대장장이 곁 REACH 안 · controls_enabled 이면 opened 가 나고 GameRoot 라면 smith_open() 이 참이 되는지, (2) REACH(3m) 밖 · 높이 차 3m 넘음 · controls_enabled=false 이면 열리지 않는지 단언하라 (test_villager_gear_window.gd:123 이 INTERACT 이벤트를 만드는 꼴을 참고). 멀티 테스트(test_smith_orders_on_server.gd)의 guest.open_smith_window() 도 우클릭 이벤트로 바꾸면 GameRoot 연결까지 지킨다"
+   ],
+   "good": []
+  },
+  "test": "\nok      4s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      3s  res://tests/life/ranching/test_bond.gd\nok      3s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_food_shown.gd\nok      4s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      3s  res://tests/life/ranching/test_troughs.gd\nok      3s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/multiplayer/test_owl_trees_on_server.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      3s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      2s  res://tests/multiplayer/test_vitals_copy_wears_modules.gd\nok      3s  res://tests/player/equipment/test_armor_health.gd\nok      3s  res://tests/player/equipment/test_armor_modules.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_future_wear.gd\nok      3s  res://tests/player/equipment/test_gun_modules.gd\nok      3s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      3s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      4s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      3s  res://tests/settings/save/test_old_vehicle_module.gd\nok      3s  res://tests/settings/save/test_world_data_keys_note.gd\nok      3s  res://tests/settings/test_translation.gd\nok      4s  res://tests/settings/test_world_settings_in_game.gd\nok      4s  res://tests/ui/hud/test_compass_top.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      3s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/world/day_night/test_game_clock.gd\nok      3s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           729\nTests            5179\nPassing Tests    5179\nFailing Tests       0\nRisky/Pending       0\nAsserts        263482\nTime           1147s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
