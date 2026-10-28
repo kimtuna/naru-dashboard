@@ -1,55 +1,5 @@
 [
  {
-  "time": "2026-10-21 09:23:06",
-  "epoch": 1792542186,
-  "type": "pass",
-  "title": "통과 — G-273 단계 1 (피처펌프 — 연못 가에도 선다)",
-  "group": "G-273",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "피처펌프가 개울만이 아니라 민물(개울 · 연못) 가 어디든 서고 바다는 안 된다 · 안 될 때 한 줄도 「민물(개울 · 연못) 가에만」 · 제작대 창 「시설」 분류에서 보이고 만들어지는 것을 테스트로 지킨다 (바뀐 곳만: 242 파일 2047 개 통과)",
-   "approach": "섬이 Stations 에 넣는 물음이 island_shape.river_level_at(개울 물길 점만)이라 연못 가는 늘 「강가가 아니다」였다. 마시기 · 밭 · 낚시가 쓰는 fresh_water_level_at(연못 + 개울, 바다 뺌)을 넣게 바꾸고, 이름도 뜻에 맞게 바꿨다 — Stations.river_level → fresh_water_level, is_riverside → is_freshwater_side, WHY_RIVER → WHY_FRESH, stations.json near \"river\" → \"fresh\", 번역 키 STATION_PLACE_NEEDS_RIVER → STATION_PLACE_NEEDS_FRESH_WATER(ko 「피처펌프는 민물(개울 · 연못) 가에만 놓을 수 있다 — 바다는 안 된다」 · en 같이). spec/05_craft/facilities.md 의 표 · 자리 규칙 줄도 민물가로 고쳤다. 진짜 섬에서 연못 물가 선 바로 밖(개울 물길 아님)에 놓이는지 · 개울 둑에 놓이는지 · 바닷가에 안 놓이는지 테스트한다. 제작대는 이미 workbench.json facility 분류에 있었다 — 제작대 창에서 「시설」을 골라도 줄이 보이고, 목재 6 + 돌 4 로 만들면 출력 칸에 하나 드는 것을 새 테스트로 지킨다 (고칠 것은 없었다).",
-   "why": "",
-   "files": [
-    "game/craft/stations/stations.gd",
-    "game/craft/stations/station_catalog.gd",
-    "game/craft/stations/pitcher_pump.gd",
-    "game/craft/stations/stations.json",
-    "game/world/terrain/test_island.gd",
-    "game/world/terrain/island_shape.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "spec/05_craft/facilities.md",
-    "game/tests/craft/stations/test_pitcher_pump.gd",
-    "game/tests/craft/stations/test_pitcher_pump_island.gd",
-    "game/tests/craft/stations/test_pitcher_pump_g273.gd",
-    "game/tests/craft/stations/test_stations.gd",
-    "game/tests/build/test_placeable_previews.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "피처펌프는 **민물(개울 · 연못) 가**에 선다 — 바다는 안 된다. 안 될 때 한 줄도 「민물(개울 · 연못) 가에만」으로 (테스트: 연못 가 · 개울 가 된다 · 바닷가 안 된다)",
-     "evidence": "test_island.gd:474 가 Stations.fresh_water_level 에 shape.fresh_water_level_at(연못 + 개울)을 넣는다. test_pitcher_pump_island.gd 의 test_a_pond_bank_is_fresh_water_side_and_the_pump_stands_there 는 진짜 섬에서 연못 rim 바로 밖(river_level_at == -INF 인 곳)에 _why_not_at 이 \"\"인지 보고, test_a_stream_bank_… 는 개울 둑, test_the_sea_shore_is_not_fresh_water_side 는 바닷가에서 WHY_FRESH 가 나오는지 본다. 일부러 깨 봤다: test_island.gd:474 를 river_level_at 로 되돌리니 test_pitcher_pump_island.gd 가 떨어졌다(되돌려 놓았다). 안내 한 줄은 STATION_PLACE_NEEDS_FRESH_WATER — ko 「피처펌프는 민물(개울 · 연못) 가에만 놓을 수 있다 — 바다는 안 된다」 · en 도 있다. 옛 키 · riverside · near=river 는 남은 곳이 없다(grep)"
-    },
-    {
-     "ok": true,
-     "criterion": "「제작대에 추가」 — 이미 제작대(workbench.json 「시설」 분류, 목재 6 + 돌 4 임시)에 있다. 제작대 창의 시설 분류에서 실제로 보이고 만들어지는지 테스트로 지킨다. 안 보이면 까닭을 고친다",
-     "evidence": "새 test_pitcher_pump_g273.gd: 제작대 창을 열고 pick_category(\"facility\") 뒤 피처펌프 줄이 matched_rows 에 있고 is_visible_in_tree 인지 보며, 목재 6 + 돌 4 로 set_wanted → craft_tick 뒤 출력 칸에 1개 · 재료가 0 인지 본다. 일부러 깨 봤다: workbench.json 의 피처펌프 category 를 tool 로 바꾸니 이 파일이 떨어졌다(되돌려 놓았다). test.log 에서 ok"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "_comment.gd\nok      2s  res://tests/build/test_placers_file_end.gd\nok      3s  res://tests/build/test_room_chests.gd\nok      3s  res://tests/build/test_room_kinds.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      3s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      3s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      1s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/craft/stations/test_brewing.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/hunting/test_bird_hunt.gd\nok      2s  res://tests/life/hunting/test_cage_reuse.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      1s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      1s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shearing.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      3s  res://tests/multiplayer/test_guard_pen_on_server.gd\nok      3s  res://tests/multiplayer/test_modules_on_server.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      1s  res://tests/settings/save/test_old_stove.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok    440s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           242\nTests            2047\nPassing Tests    2047\nFailing Tests       0\nRisky/Pending       0\nAsserts        138580\nTime           440s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "1dd2b292"
- },
- {
   "time": "2026-10-21 09:42:19",
   "epoch": 1792543339,
   "type": "pass",
@@ -8169,5 +8119,77 @@
   },
   "test": "source.gd\nok      4s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      4s  res://tests/world/terrain/test_obsidian.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\nok      4s  res://tests/world/terrain/test_volcano_carve.gd\nok      4s  res://tests/world/terrain/test_volcano_cycle.gd\nok      3s  res://tests/automation/power/test_gates.gd\nok      2s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      3s  res://tests/automation/power/test_sensors.gd\nok      3s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      3s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/automation/villagers/test_villager_skills.gd\nok      3s  res://tests/build/test_take_spec_lines.gd\nok      3s  res://tests/automation/water/test_water_pump.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      3s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/core/test_docs_match_code_g275.gd\nok      3s  res://tests/core/test_path_walk.gd\nok      3s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      3s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      3s  res://tests/craft/stations/test_oil_press.gd\nok      3s  res://tests/life/harvest/test_rock_cracks.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      3s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      3s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/player/hunger_thirst/test_starving.gd\nok      3s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     34s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           520\nTests            3684\nPassing Tests    3684\nFailing Tests       0\nRisky/Pending       0\nAsserts        218309\nTime           872s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "2238857f"
+ },
+ {
+  "time": "2026-10-28 17:10:36",
+  "epoch": 1793175036,
+  "type": "pass",
+  "title": "통과 — G-342 단계 3 (귀환 버티기 · 깨기 · 실패)",
+  "group": "G-342",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "G-342.3 귀환 버티기 · 깨기 · 실패 — 채굴을 채우면 승강장 우클릭 「승강기 부르기」 → 60 초 세기(화면 가운데 위 · 무리 intensify) → 문이 열려 탄 사람만 올라오면 「임무를 깼다」 · cleared 신호 · 임무가 풀린다 / 땅굴에서 죽으면 그 판에 얻은 것만 잃고 임무가 풀린다 / 임무 중 저장은 위 승강기 앞 · 임무 안 담음. 바뀐 곳 그물 493 파일 3596 개 통과",
+   "approach": "귀환은 MineShaft 가 쥔다. 채굴 임무 중(must_call) 승강장 승강기 우클릭은 올라가는 대신 — 목표 전이면 「목표를 채워야 승강기를 부를 수 있다」, 채웠으면 call_lift: 우리 안에 선 사람을 문 앞으로 내놓고(닫힌 우리 안에서 버티지 못하게) 문을 닫고 call_left=60 을 센다. 무리가 없으면 켜고 MineHorde.intensify(true) — intensify 는 아직 없어 표(intense)만 세우는 빈 함수로 두었다(빠르기 2 배 · 오크는 G-341 몫). _process 가 0 까지 세면 lift_ready · 문이 열리고 「승강기가 왔다」. 그 승강기로 올라오면(예전 ascend 그대로 — 탄 사람만) take_mission(\"\") · 「임무를 깼다」 · cleared(kind) 신호(G-346 이 1 % 를 굴린다). 세기는 새 HUD 라벨 LiftCountdown(나침반 · 안내 줄 밑 가운데 위 84px)을 GameRoot HUD 와 tools/island.sh dwarf 에 달았다. 죽음: Death 에 rule 자리(() -> bool)를 내 MineShaft.lose_run 을 건다 — 땅굴 안이면 내려설 때 가방(tally)보다 는 아이템만 덜고 데스 상자는 놓지 않는다(들고 온 것 · 쓴 것은 그대로). 데스 페널티가 꺼진 월드면 아무것도 잃지 않는다. 되살면(_on_respawned) 임무가 풀리고 「땅굴에서 쓰러졌다」. 저장: 땅굴 자리는 이미 위 승강기 앞으로 담겼고 임무 · 세기 · 내려설 때 가방은 안 담는다(save.md 「안 담는다」에 더함). 승강기 · 판 · 계수를 보는 앞 테스트(test_mine_shaft · test_mine_mission · test_mine_mining · test_mine_cage_on_server)는 hold_return=false 로 예전처럼 곧바로 올라가게 했고, test_mine_shaft 는 되살아 임무가 풀리므로 before_each 에서 다시 쥔다. test_mine_mining 의 줍기 고리가 같이 주워 사라진 덩이를 다시 잡아 떨어져(freed instance) 사라진 것을 건너뛰게 고쳤다. QA 둘: spec 57줄을 「F9 시험은 혼자 판에서만」으로 밝히고 61줄에 「같이 하는 판은 기계마다 제 판에 무리가 선다 — 맞추기는 판 맞추기 뒤」를 적었다 · mission_tracker.gd 자리 상수 주석 끝에 「— 임시」. 같이 하는 판: 세기 · 깨기 · 잃기도 기계마다다(참가자 죽음은 서버가 가방을 비우는 길이라 땅굴 규칙이 안 걸린다 — 판 맞추기 뒤). 그림: harness/shot.sh --ui <폴더> lift_countdown (ko · en 겹침 · 잘림 없음). 바뀐 곳 그물: 493 파일 · 3596 개 모두 통과.",
+   "why": "MineShaft.CALL_SECONDS 60 초 — spec 「귀환」 값(Claude 가 정함, 나중에 밸런싱); MineShaft.STEP_OUT 1.0 m — 부를 때 우리 안 사람을 문 앞으로 내놓는 거리; LiftCountdown TOP 84 · TALL 32 · WIDTH 360 px — 나침반 · 안내 줄 밑 자리; 데스 페널티가 꺼진 월드는 땅굴에서 죽어도 잃지 않는다 — 월드 설정을 따르게 정함",
+   "files": [
+    "game/world/mine/mine_shaft.gd",
+    "game/world/terrain/mine_horde.gd",
+    "game/combat/damage_death/death.gd",
+    "game/ui/hud/lift_countdown.gd",
+    "game/ui/hud/mission_tracker.gd",
+    "game/core/game_root.gd",
+    "game/core/debug/play_island.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/world/mine/test_mine_return.gd",
+    "game/tests/world/mine/test_mine_shaft.gd",
+    "game/tests/world/mine/test_mine_mission.gd",
+    "game/tests/world/mine/test_mine_mining.gd",
+    "game/tests/multiplayer/test_mine_cage_on_server.gd",
+    "spec/03_world/dwarf-island.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "승강장 우클릭 「승강기 부르기」(목표를 채웠을 때만) → 60 초 세기(화면 가운데 위) · 그동안 무리 intensify(true) → 0 이 되면 승강기가 열리고 탄 사람만 올라간다 · 깼다는 알림 (테스트)",
+     "evidence": "test_mine_return.test_call_the_lift_hold_sixty_seconds_then_ride_up_and_clear — 목표 전 눌러도 call_left 0 · 아래 그대로 · MISSION_LIFT_NOT_YET, 채우고 누르면 call_left=CALL_SECONDS(=60 단언) · 문 닫힘 · horde.intense, LiftCountdown 이 anchor 0.5 · offset_top<120 · ko/en 글자, 줄어듦, 0 이면 lift_ready · 문 열림 · LIFT_HERE, 타고 올라오면 cleared(MINING) · CLEARED_KEY · 임무 풀림. test_only_riders_go_up_when_the_lift_comes — 우리 밖 사람이 눌러도 남는다. 일부러 intensify 를 빈 함수로 바꾸니 「무리가 몰린다」 단언이 실패했다(되돌림 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "깨면 「깼다」 신호(G-346 이 1 % 를 굴린다) · 땅굴에서 죽으면 그 판에 얻은 것을 잃는다(common.md — 땅굴 안에서 주운 것 · 캔 것) · 임무가 풀린다 (테스트)",
+     "evidence": "cleared 신호는 위 테스트가 kind 까지 본다. test_dying_below_loses_what_the_run_found_and_frees_the_mission — 들고 온 루비 2 · 나무는 남고(쓴 만큼만 줄고) 캔 루비 6 · 주운 코발트 3 은 사라지며 데스 상자 수 그대로 · 임무 풀림 · FAILED 알림. test_dying_on_the_island_still_drops_the_death_chest — 섬 위면 lose_run false. lose_run 의 bag.remove 를 지우니 8≠2 · 3≠0 으로 실패했다(되돌림 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "spec dwarf-island.md 「지금 지은 것」 줄 · 저장(임무 중 저장하면? — 땅굴은 저장하지 않으니 섬 위 승강기 앞에서 다시 시작, 임무는 풀린다) (테스트)",
+     "evidence": "dwarf-island.md 에 G-342.3 줄이 섰다. save.md 「안 담는다」에 call_left · lift_ready · 내려설 때 가방과 까닭. test_saved_during_a_mission_restarts_at_the_cage_front_without_the_mission — 세는 중 PlayerState.remember 의 자리가 surface_spot · 저장본에 mission/mining 없음 · 새 MineShaft 는 임무 없음"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 같이 하는 판의 임무 무리가 spec 과 어긋난다 — … spec 61줄 「채굴 임무는 G-342.2」 줄에 「같이 하는 판은 기계마다 제 판에 무리가 선다 — 맞추기는 판 맞추기 뒤」를 적고, 57줄의 「혼자 판에서만」이 F9 시험에 대한 것임을 밝혀 둬라",
+     "evidence": "spec/03_world/dwarf-island.md 58줄 「F9 시험은 혼자 판에서만 (임무 무리는 아래 G-342.2 줄)」 · 61줄 끝에 그 문장이 그대로 붙었다. 사람 결정 줄 수 4 → 4 그대로"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 계수판 자리 값에 「임시」 표시가 없다 — game/ui/hud/mission_tracker.gd 의 RIGHT -232 · WIDTH 200 상수 주석에 … 주석 끝에 「— 임시」를 붙여라",
+     "evidence": "mission_tracker.gd 9줄 주석 끝 「— 임시.」"
+    }
+   ],
+   "issues": [
+    "참가자가 땅굴에서 죽으면 땅굴 규칙이 안 걸린다 — Death._on_died 의 remote 길은 rule 을 보지 않고 서버가 가방을 비워 데스 상자를 놓는다(report 도 「판 맞추기 뒤」라 함). 같이 하는 판 참가자는 땅굴에서 죽어도 「그 판에 얻은 것만 잃기」가 아니라 데스 상자가 된다. spec/03_world/dwarf-island.md G-342.3 줄의 「같이 하는 판은 세기 · 깨기도 기계마다」에 「죽음(잃기)도 참가자는 아직 데스 상자 — 판 맞추기 뒤」를 적어 어긋남을 드러내 두거나, 서버가 참가자 죽음 때 MineShaft.lose_run 에 해당하는 규칙을 쓰게 하라",
+    "같이 하는 판에서 함께 탄 사람은 깨지 못할 수 있다 — ascend 의 won 은 각 기계의 제 lift_ready 다(ride 는 기계마다 제 캐릭터만 태운다). 한 사람이 불러 60 초를 버텨 탔을 때 서버가 pick 으로 함께 태운 다른 사람의 기계는 lift_ready 가 거짓이라 cleared · 임무 풀림 없이 그냥 올라온다(그 기계에서는 승강기 문이 닫힌 채 세지도 않았다). spec 은 「세기 · 깨기도 기계마다 — 판 맞추기 뒤」라고만 적었다. 판 맞추기 묶음에서 call_left · lift_ready 를 서버장이 쥐어 보내게 하고, 그 전까지는 dwarf-island.md G-342.3 줄에 「함께 탄 사람은 제 기계에서 부르지 않았으면 깨지 않는다」를 적어 두라"
+   ],
+   "good": []
+  },
+  "test": "stations/test_oil_press.gd\nok      3s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      3s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      3s  res://tests/life/farming/test_crop_kinds.gd\nok      3s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      3s  res://tests/life/fishing/test_bait_grades.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      3s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/hunting/test_nav_weld.gd\nok      3s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      3s  res://tests/life/hunting/test_summon.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_bond.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_food_shown.gd\nok      3s  res://tests/life/ranching/test_troughs.gd\nok      3s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/life/ranching/test_wild_stand_ins.gd\nok      3s  res://tests/player/equipment/test_armor_modules.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      3s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/save/test_old_barn.gd\nok      3s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      3s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      3s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      3s  res://tests/test_temp_dirs_are_cleaned.gd\nok      3s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      3s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     34s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      9s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           723\nTests            5119\nPassing Tests    5119\nFailing Tests       0\nRisky/Pending       0\nAsserts        256936\nTime           1125s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "28a1c907"
  }
 ]
