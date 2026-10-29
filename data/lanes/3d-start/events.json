@@ -1,34 +1,5 @@
 [
  {
-  "time": "2026-10-22 20:15:50",
-  "epoch": 1792667750,
-  "type": "pass",
-  "title": "차선 합치기 — 3d-lane2(a3f3d137) → 3d-start",
-  "report": {
-   "problem": "멀티 건축 테스트가 부하에서 접속을 늦게 마쳐도 Nil 을 집지 않게 — 접속 기다림 30초 · 서버 사본 가방까지 기다림 · 기다림이 실패하면 멈춘다. 전체 실행(파일마다, godot 6개) 563 파일 · 4226 테스트 모두 통과",
-   "approach": "전체(엔진 6개 동시)에서 _join 의 기다림(5초)이 지나도 assert 만 실패하고 그대로 진행해, 서버가 참가자 사본 가방을 아직 안 쥔 채 _hold 가 kit.slot 을 Nil 에서 부르고(net_acts.kit 은 member_character 가 없으면 null) 이어 349줄 대기가 실패한 뒤 350줄이 빈 배열 [0] 을 집었다. 고친 것: (1) _join 의 접속 · 몸 · 자리 기다림을 JOIN_WAIT 30초로 — 붙으면 곧 넘어가므로 평소 시간은 그대로 (2) 서버가 그 참가자 사본 가방을 쥘 때까지 기다린다 (3) 기다림이 실패하면 _join 은 null, _pair 는 빈 배열을 돌려주고, 이 파일의 모든 테스트가 그때 return — 뒤 줄이 Nil 을 집는 연쇄 오류 대신 실패 한 줄만 남는다 (4) 해당 테스트의 토대 · 벽 대기도 실패하면 return. 확인: tests/multiplayer 폴더 전부 통과, 이어 전체 실행 563 파일 4226 테스트 0 실패.",
-   "why": "",
-   "files": [
-    "game/tests/multiplayer/test_build_on_server.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "멀티 건축 테스트가 전체 실행에서 떨어진다 — tests/multiplayer/test_build_on_server.gd 의 test_breaking_a_foundation_collapses_what_stood_on_it_for_both 가 전체(엔진 6개 동시)에서 'slot' on Nil · 'buildings' on Nil · _pieces(hi)[0] Out of bounds(350줄)로 떨어졌고, 따로 돌리면 13/13 통과한다. … _pair() 접속을 기다리는 시간을 늘리거나, wait_until 이 거짓이면 return 해 뒤 줄이 Nil 을 안 집게 하라. 부하에서 떨어지지 않는지 전체 실행으로 확인하라",
-     "evidence": "test.log 맨 윗줄이 「전체」 — 563 파일 · 4226 테스트 · 0 실패 (엔진 6개 동시), test_build_on_server.gd 는 13/13 통과하고 파일별 로그에 error · Nil 이 한 줄도 없다. diff 에서 두 처방을 모두 했다: (1) _join 의 접속 · 몸 · 자리 기다림을 JOIN_WAIT 30초로 늘렸고(Sides.wait_until 의 세 번째 인자 seconds — net_sides.gd:37), 'slot' on Nil 의 원인인 서버 사본 가방(net_acts.kit 은 member_character 가 없으면 null)이 생길 때까지 더 기다린다 (2) 기다림이 거짓이면 assert_waited 로 실패를 적은 뒤 _join 은 null, _pair 는 [] 를 돌려주고 모든 테스트가 return, 해당 테스트의 토대 · 벽 기다림도 거짓이면 return 해서 350줄 [0] 이 빈 배열을 집지 않는다. return 앞에 assert 가 실패로 남으니 조용히 통과하는 길이 아니다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/player/inventory_hotbar/test_no_item_load.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      3s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           563\nTests            4226\nPassing Tests    4226\nFailing Tests       0\nRisky/Pending       0\nAsserts        203724\nTime           811s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "a3f3d137"
- },
- {
   "time": "2026-10-22 20:48:24",
   "epoch": 1792669704,
   "type": "fail",
@@ -8265,6 +8236,34 @@
   "group": "G-946",
   "step": "1",
   "attempt": "1",
+  "report": {
+   "problem": "dwarf-mine-missions.md 30줄의 낡은 가리킴 「(아래 「미정」)」을 「(dwarf-island.md 「미정」)」로 고쳤다 — 바뀐 곳만: 3개 파일 20개 테스트 통과",
+   "approach": "G-346 단계 2 가 광산 임무 줄들을 dwarf-island.md 에서 새 문서로 떼어 낼 때 「아래 「미정」」 가리킴이 그대로 따라왔다. 새 문서에는 「미정」 절이 없고 dwarf-island.md 124줄에 있으므로 가리킴을 그 문서 이름으로 바꿨다. 문서 한 줄 고침이라 새 테스트는 없다.",
+   "why": "",
+   "files": [
+    "spec/03_world/dwarf-mine-missions.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "새 문서의 「아래 「미정」」 가리킴이 낡았다 — spec/03_world/dwarf-mine-missions.md 30줄 G-343.2 줄의 「원유 통은 쓸 곳이 아직 없다(아래 「미정」)」는 dwarf-island.md 에 있을 때의 말이다. 새 문서에는 「미정」 절이 없다(dwarf-island.md 124줄에 있다). 「(dwarf-island.md 「미정」)」로 바꿔라. 막는 것은 아니다",
+     "evidence": "git diff 로 확인 — 30줄의 「(아래 「미정」)」이 「(dwarf-island.md 「미정」)」로 바뀌었고 다른 글자는 그대로다. dwarf-island.md 124줄 「## 미정 (사람이 정한다)」 절에 「원유 쓸 곳」이 실제로 있어 가리킴이 맞다. dwarf-mine-missions.md 에는 다른 「미정」 줄이 없다. 문서 한 줄 고침이라 테스트 대상이 아니며, 기준에 (테스트) 표시도 없다. 전체 테스트 737 파일 5228 개 통과 · guard 통과(test.log)"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "/test_bag_temporary_note.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_compass.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_obsidian.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      9s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           737\nTests            5228\nPassing Tests    5228\nFailing Tests       0\nRisky/Pending       0\nAsserts        266906\nTime           1066s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-29 19:01:16",
+  "epoch": 1793268076,
+  "type": "start",
+  "title": "루프 시작",
   "report": {
    "problem": "dwarf-mine-missions.md 30줄의 낡은 가리킴 「(아래 「미정」)」을 「(dwarf-island.md 「미정」)」로 고쳤다 — 바뀐 곳만: 3개 파일 20개 테스트 통과",
    "approach": "G-346 단계 2 가 광산 임무 줄들을 dwarf-island.md 에서 새 문서로 떼어 낼 때 「아래 「미정」」 가리킴이 그대로 따라왔다. 새 문서에는 「미정」 절이 없고 dwarf-island.md 124줄에 있으므로 가리킴을 그 문서 이름으로 바꿨다. 문서 한 줄 고침이라 새 테스트는 없다.",
