@@ -6062,7 +6062,7 @@
   - 기준: spec dwarf-mine-missions.md 「길 찾기」 줄 · 조작 안내(키 도움말) 줄 · 그림 자리(스캐너 켠 화면) (테스트)
   - 기준: (앞 단계 QA) performance.md 스캐너 숫자가 로그와 어긋난다 — spec/00_core/performance.md 「지형 스캐너 (G-347.1)」 줄은 「칸 7 · 점 66300 · 처음 다 짓기 0.39 ms · 평균 0.05 · 최대 0.07 ms」인데 이번 루프 로그(.loop/out/test_files 의 test_mine_scanner SCANNER 줄)는 「칸 8 · 점 70896 · 145 µs · 평균 33 · 최대 38 µs」다(처음 방을 넓힌 a3a6c9de 뒤의 판). 최근 잰 값으로 고치고 잰 날을 적어라. 또 tests REBUILD_LIMIT_USEC 주석의 「잰 값의 열 배 남짓」도 새 값에 맞춰 다시 써라
   - 기준: (앞 단계 QA) 늘 참인 단언이 하나 있다 — game/tests/world/mine/test_mine_scanner.gd test_mouse_turns_the_hologram 의 assert_lt(scanner.camera.basis.z.y, 0.0 + 1.0, "위에서 내려다본다") 는 단위 벡터 성분이라 늘 참이다. assert_gt(scanner.camera.basis.z.y, 0.0) (카메라 뒤쪽이 위를 향한다 = 내려다본다)로 바꾸거나 지워라 (바로 아래 카메라 높이 단언이 이미 같은 것을 본다)
-- [ ] 3. (앞 단계 QA) 목표 색이 두 곳에 따로 있다
+- [x] 3. (앞 단계 QA) 목표 색이 두 곳에 따로 있다
   - 기준: 목표 색이 두 곳에 따로 있다 — MineShaft.GOAL_COLOR(1, 0.3, 0.85) 상수와 naru_theme.tres Palette compass_goal 이 같은 값을 따로 들고 있다. 하나를 바꾸면 스캐너 공 · 범례와 나침반 ◆ 색이 갈린다. MineShaft.GOAL_COLOR 를 UiTheme.color(&"compass_goal") 에서 읽게 하거나(static var), 테스트에 둘이 같다는 단언을 넣어라
   - 기준: (앞 단계 QA) performance.md 가 딱 150줄이다 — spec/00_core/performance.md 가 한도에 닿아 다음 숫자 한 줄이면 넘는다. 땅굴 무리 · 스캐너 같은 갈래를 따로 떼어(예: spec/00_core/performance-mine.md) 가리킴만 남겨 두어라
   - 기준: (앞 단계 QA) 보스 목표 테스트가 지어낸 큰 방만 본다 — test_boss_goal_is_the_big_room 은 board.room_center 를 손으로 넣는다. 실제 보스 사냥 판(MineBoard.boss_room 으로 지은 판)에서 goals() 가 큰 방 가운데를 내는지 test_mine_boss_hunt 쪽에 단언 하나(shaft.goals()[0].kind == GOAL_ROOM · room_center 와 수평 거리 < 0.01)를 더해 두면 좋다
