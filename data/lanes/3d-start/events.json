@@ -1,61 +1,5 @@
 [
  {
-  "time": "2026-10-22 22:07:15",
-  "epoch": 1792674435,
-  "type": "pass",
-  "title": "통과 — G-285 단계 3 (보이는 것 · spec)",
-  "group": "G-285",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "드릴을 들면 손에 금빛 몸통 + 은빛 원뿔 날이 보이고 누르는 동안 날이 돌며 판 자리에서 부스러기가 튄다 · 찍는 자리 drill · spec 「드릴」 · 「드릴의 칸」 절 · 짐승 길 굽기의 겹친 변을 지도 눈금으로 꼭짓점을 합쳐 풀었다 (바뀐 곳만: 185 파일 · 1572 테스트 모두 통과)",
-   "approach": "손 모양: HeldItem 이 드릴(tools.json 의 drills)을 들면 몸통 상자(hand 를 앞으로 긴 [0.14, 0.16, 0.42] 로) 앞 끝에 원뿔 날(모 여섯 + 홈 띠, 도는 것이 보이게)을 붙인다. Shovel 이 프레임마다 누름(_drill_down)을 set_drilling 으로 알려 날이 제 앞 축으로 돌고, 판 것이 거절되지 않았으면 drill_bite(판 자리, 파는 이 쪽)로 top_level CPUParticles3D 부스러기를 그 자리에서 튀긴다 — 0.3초 이어 튀어 0.15초 간격 동안 안 끊기고, 떼거나 · 다른 칸을 들면 멎는다. 찍는 자리 drill(harness/shot.sh <폴더> island=sulfur drill): 구덩이를 파고 그 바닥 벽 앞에서 옆으로 누르게 하고 0.5초마다 0.3m 밀어 준다 — 찍은 그림(.loop/out/shots/drill.png)에서 몸통 · 날 · 부스러기 · 어두운 굴 입구가 다 보인다. (앞 단계 QA) 길 굽기 경고: GRID 를 1cm 로 바꿔 test_shovel 비탈 도랑에서 「4 edge errors」를 재현했다. 구운 메시를 재 보니 정확한 자리 · 2.5mm · 2.5cm 칸으로는 겹친 변이 없고, 0.25m 칸(지도 칸, merge 비율 안 곱함)으로 끊으면 넷이 나눠 쓰는 변이 둘 — 경고 4 개와 꼭 맞았다. 0.1m 떨어진 두 꼭짓점 사이에 실 같은 조각이 끼어 있었다. _drop_crowded 가 꼭짓점을 정확한 자리로 비교해 놓쳤던 것이다. 지도 칸으로 끊어 셋째 조각을 빼니 경고는 사라졌지만 도랑 바닥 길이 끊겨, 같은 칸 꼭짓점을 하나로 합치고 납작해진 조각만 버리게 했다 — 1cm 눈금으로도 test_shovel 이 경고 없이 통과했다. GRID 는 기준에 없어 1mm 그대로 두고 주석만 고쳤다. 가르는 테스트는 test_nav_weld(만든 메시: 옛 코드면 넷이 나눠 쓴 채 남는다)다. test_drill_nav(드릴 수평 굴 6 개)는 다른 모양을 지키는 그물인데, 옛 코드 + 1cm 눈금으로도 지난다 — 이 모양은 원래 경고를 안 낸다는 뜻이다. 지역이 섬 좌표 그대로 놓인다고 본다(옮겨 놓으면 칸 경계가 어긋날 수 있다 — 주석에 적었다).",
-   "why": "드릴 날 길이 0.3m · 밑 반지름 0.07m · 초당 6바퀴 (HeldItem.BIT_*) — 눈으로 보이게만 정했다; 부스러기 이어 튀는 시간 0.3초 · 빛깔 8a8073 · 24 알 (HeldItem.DEBRIS_*) — 드릴 간격 0.15초보다 길게; 드릴 손 몸통 [0.14, 0.16, 0.42] (tools.json) — 날이 앞으로 뻗게 앞뒤로 길게 바꿨다",
-   "files": [
-    "game/player/inventory_hotbar/held_item.gd",
-    "game/world/terrain/shovel.gd",
-    "game/combat/tools_as_weapons/tools.json",
-    "game/core/debug/shots.gd",
-    "game/life/hunting/animal_nav.gd",
-    "game/world/terrain/volcano_dig.gd",
-    "spec/03_world/frontier-islands.md",
-    "spec/02_player/equipment-modules.md",
-    "spec/01_settings/save.md",
-    "game/tests/world/terrain/test_drill_look.gd",
-    "game/tests/world/terrain/test_drill_nav.gd",
-    "game/tests/life/hunting/test_nav_weld.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "드릴을 들면 손에 드릴 모양이 보이고, 파는 동안 돈다 · 부스러기 (찍는 자리 하나 — 옆으로 뚫은 굴 입구, harness/shot.sh)",
-     "evidence": "test_drill_look.gd 넷 — 드릴엔 몸통 앞(facing 쪽 0.1m 넘게)에 원뿔 날이 보이고 삽 · 곡괭이엔 없다 · 누르는 동안 basis 가 앞 축으로만 바뀌고 부스러기가 판 자리(바닥 y≈0, 손에서 0.5m 넘게)에서 파는 이 쪽으로 튀며 0.6초 뒤에도 안 끊긴다 · 떼거나 다른 칸을 들면 날 · 부스러기 멎음 · 거절(현무암)이면 부스러기 없음. 찍는 자리 drill(shots.gd _set_up_drill) — .loop/out/shots/drill.png 에 금빛 몸통 · 은빛 날 · 부스러기 · 어두운 옆굴 입구가 다 보인다. 전체 테스트 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "spec frontier-islands.md 「삽」 곁에 「드릴」 절 · equipment-modules.md 에 「드릴의 칸」 절 (사람 원문 · Claude 가 정한 것 · 임시 값 · 미정: 레시피 · 얻는 길 · 모듈 종류 · 등급 · 나오는 것)",
-     "evidence": "frontier-islands.md 「드릴」 하위 절에 사람 원문 세 마디 · Claude 가 정함(값 임시) · 보이는 것(임시) · 미정 다섯 가지 모두. equipment-modules.md 「드릴의 칸」에 사람 결정 · Claude 가 정함(칸 1 임시) · 미정. 옛 줄의 사람 결정은 원문으로 넓혀 옮겼고 지워진 것 없음. 117 · 97 · 99줄로 150 밑"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 드릴 기록 1mm 눈금이 길 굽기 경고에 기댄다 — … 짐승 길 굽기(navmesh bake)가 왜 겹친 모서리를 내는지 살펴, 눈금과 상관없이 경고가 안 나게 하거나 경고가 나면 떨어지는 테스트를 다른 모양(드릴 수평 굴 여러 개)으로 하나 더 둬라",
-     "evidence": "까닭을 찾았다 — 지도가 꼭짓점을 0.25m 칸으로 합쳐 0.1m 떨어진 실 조각이 한 변을 넷이 나눠 쓰게 했다. AnimalNav._drop_crowded 가 같은 칸 꼭짓점을 합치고 납작해진 조각만 버린다(눈금과 상관없는 풀이). test_nav_weld.gd 가 만든 메시로 지키는데, 합치기를 끄자(same.append(i)) 2개가 떨어졌다 — 껍데기 아님(되돌림 확인). 더해 test_drill_nav.gd(진짜 sulfur 섬 · 수평 굴 6개 · 지도에 올려 경고 시 GUT 실패)도 두었다"
-    }
-   ],
-   "issues": [
-    "test_drill_nav 는 옛 코드로도 지난다 — 구현 세션이 스스로 적었듯 수평 굴 6개 모양은 원래 겹친 변을 안 낸다. 가르는 몫은 test_nav_weld 가 지니 막는 것은 아니다. 이 테스트를 그물로 남기려면 머리 주석에 「옛 코드로도 지난다 — 회귀 그물일 뿐, 가르는 것은 test_nav_weld」를 적어 읽는 이가 이것을 지킴으로 오해하지 않게 하라",
-    "길 꼭짓점 합치기가 지역 제자리에 기댄다 — AnimalNav._drop_crowded 는 섬 좌표 그대로 칸을 끊는다(주석에 적힘). NavigationRegion3D 를 옮겨 놓는 쓰임이 생기면 엔진 칸 경계와 어긋난다. animal_nav.gd 에서 지역 transform 이 단위행렬인지 확인하는 assert 나 테스트 하나를 두면 그 전제가 지켜진다"
-   ],
-   "good": []
-  },
-  "test": "eaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_guard_pen_window.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_queue_window.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      2s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      1s  res://tests/core/test_grid.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           574\nTests            4270\nPassing Tests    4270\nFailing Tests       0\nRisky/Pending       0\nAsserts        205599\nTime           818s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "1e26d0dc"
- },
- {
   "time": "2026-10-22 22:32:18",
   "epoch": 1792675938,
   "type": "pass",
@@ -8227,5 +8171,74 @@
    "decision": null
   },
   "test": "and.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      9s  res://tests/perf/test_lava_melt_load.gd\n\n================ 떨어진 파일: res://tests/world/mine/test_mine_boss_hunt.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/world/mine/test_mine_boss_hunt.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:604)\n         [1] _ready (res://world/terrain/test_island.gd:172)\n         [2] _ready (res://core/debug/play_island.gd:34)\n         [3] before_all (res://tests/world/mine/test_mine_boss_hunt.gd:19)\n         [4] _call_before_all (res://addons/gut/gut.gd:684)\n         [5] _test_the_scripts (res://addons/gut/gut.gd:813)\n         [6] test_scripts (res://addons/gut/gut.gd:1047)\n         [7] run_tests (res://addons/gut/gui/GutRunner.gd:198)\n         [8] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n         [9] main (res://addons/gut/cli/gut_cli.gd:297)\n         [10] _init (res://addons/gut/gut_cmdln.gd:39)\n* test_the_one_percent_edge\n* test_clearing_mining_at_the_edge_brings_a_boss_request_with_a_notice\n    --- Awaiting signal arrived or 15.0s  ---\n    --- Awaiting signal arrived or 15.0s  ---\n    --- Awaiting signal arrived or 15.0s  ---\n    --- Awaiting signal arrived or 15.0s  ---\n* test_drilling_also_rolls_and_participants_do_not\n* test_dev_key_posts_a_boss_request_at_once\n* test_boss_hunt_big_room_boss_and_small_orcs_then_lift_opens_without_holding\n    --- Awaiting signal arrived or 15.0s  ---\n    [Failed]:  [0.12207403033972] expected to be < than [0.0]:  방 밖은 바위\n      at line 152\n    --- Awaiting signal arrived or 15.0s  ---\n* test_dying_in_the_boss_hunt_keeps_the_request\n    --- Awaiting signal arrived or 15.0s  ---\n* test_ordinary_boards_have_no_big_room\n    --- Awaiting signal arrived or 15.0s  ---\n    --- Awaiting signal arrived or 15.0s  ---\n* test_the_boss_request_is_saved_and_restored_quietly\n* test_clearing_drilling_at_the_edge_brings_a_boss_request\n    --- Awaiting signal arrived or 15.0s  ---\n    --- Awaiting signal arrived or 15.0s  ---\n* test_spec_lines\n* test_dwarf_island_split_under_150\n10/11 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/world/mine/test_mine_boss_hunt.gd\n- test_boss_hunt_big_room_boss_and_small_orcs_then_lift_opens_without_holding\n    [Failed]:  [0.12207403033972] expected to be < than [0.0]:  방 밖은 바위\n          at line 152\n\nTotals\n------\nScripts               1\nTests                11\nPassing Tests        10\nFailing Tests         1\nAsserts           147/148\nTime              11.45s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           739\nTests            5251\nPassing Tests    5250\nFailing Tests       1\nRisky/Pending       0\nAsserts        267969\nTime           1073s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/world/mine/test_mine_boss_hunt.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-29 20:37:22",
+  "epoch": 1793273842,
+  "type": "pass",
+  "title": "통과 — G-347 단계 2 (목표 표시)",
+  "group": "G-347",
+  "step": "2",
+  "attempt": "3",
+  "report": {
+   "problem": "땅굴 길 찾기 — 스캐너에 남은 임무 목표가 빛나는 공으로 · 화면 위 나침반에 가장 가까운 목표 쪽 ◆ 와 거리(파야 한다) · spec · 키 도움말 · 그림 자리 mine_goal. 앞 단계 QA 두 건 · 기계 검사에서 떨어진 두 건(나침반 색 값 · 보스 방 밖 바위) 고침. 바뀐 곳만: 124개 파일 945개 테스트 통과",
+   "approach": "MineShaft.goals() 가 임무마다 남은 목표를 [{at, kind, color}] 로 낸다 — 채굴은 board.ores.veins 중 목표 광물(캐면 빠진다) · 시추는 MineDrill.goals()(메인 시추기 또는 놓을 자리 + 아직 배관으로 안 이어진 구멍) · 보스는 큰 방 가운데 · 목표를 채웠거나 부르는 중이거나 임무가 없으면 승강기 하나. 스캐너는 이것을 깊이 시험 없는 깜빡이는 공으로 얹고(반경 밖이면 그 쪽 끝에 작게), 나침반(CompassStrip.goal 콜백)은 nearest_goal() 을 매 프레임 읽어 ◆ · 「%d m」, 눈 높이에서 곧게 쏜 광선이 바위에 막히면 「· 파야 한다」. 섬 위에선 콜백을 떼어 안 뜬다. 기계 검사에서 떨어진 것: ① 나침반 목표 색을 코드 상수로 적어 테마 검사에 걸림 → 테마 Palette compass_goal 로 옮김 ② test_mine_boss_hunt 「방 밖은 바위」 — 처음 방을 넓힌(a3a6c9de) 뒤 +x 쪽 점이 시드에 따라 처음 방 · 그 굴 갈래 근처에 떨어졌다 → 처음 방에서 먼 바깥 쪽(방 가운데 + 바깥 방향 × (반지름+3))에서 보게 고침. 그림 mine_goal 을 찍어 열어 봤다(루비 덩이 12개 빨간 공 · 나침반 ◆ 18 m · 파야 한다).",
+   "why": "목표 공 반지름 1.1 m · 반경 밖 0.6 배 · 깜빡임 1.5 Hz (MineScanner); 목표 점 높이 1.5 m · 눈 높이 1.5 m · 닿은 것으로 치는 둘레 1.5 m (MineShaft) · 시추 목표 띄움 1 m (MineDrill); 목표 빛깔 분홍 (1, 0.3, 0.85) · 나침반 ◆ 7 px — 처음 보이는 색으로 고름",
+   "files": [
+    "game/world/mine/mine_shaft.gd",
+    "game/world/mine/mine_scanner.gd",
+    "game/world/mine/mine_drill.gd",
+    "game/ui/hud/compass.gd",
+    "game/ui/theme/naru_theme.tres",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/core/debug/shots.gd",
+    "game/tests/world/mine/test_mine_goals.gd",
+    "game/tests/world/mine/test_mine_scanner.gd",
+    "game/tests/world/mine/test_mine_boss_hunt.gd",
+    "game/tests/world/terrain/test_drill_view.gd",
+    "spec/03_world/dwarf-mine-missions.md",
+    "spec/00_core/performance.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "스캐너에 **임무 목표**가 빛나는 점으로 — 채굴은 그 색 광물 덩이(벽 속도) · 시추는 기름 구멍 셋과 시추기 · 보스 사냥은 큰 방 · 귀환 때는 승강기 · 남은 것만 (테스트)",
+     "evidence": "test_mine_goals: test_mining_goals_are_the_goal_ore(목표 = 루비 덩이 전부 · 그 광물 색 · 바위 속 덩이 포함 · 캐면 하나 빠진다) · test_scanner_shows_goal_points(목표마다 공 · no_depth_test · 반경 안은 그 자리 · 밖은 반경 끝에 작게 · 범례 색) · test_drilling_goals_are_holes_and_drill(구멍 3 + 시추기 놓을 자리, why_not 으로 정말 놓이는 자리, 이어진 구멍은 빠진다) · test_boss_goal_is_the_big_room · test_return_points_at_the_lift(goal_done · call_left 때 승강기 하나). 파일 로그 9/9 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "스캐너를 안 켜도 **화면 위 나침반에 가장 가까운 목표 쪽 표시와 거리(m)** — 벽 속이면 「파야 한다」 표시(그 쪽으로 파면 닿는다) · 목표가 바뀌면 따라 바뀐다 · 섬 위에서는 안 뜬다 (테스트)",
+     "evidence": "test_compass_points_at_nearest_goal(승강기 북쪽 deg 0 · 거리 글 · 보는 쪽에 따라 가운데/왼쪽 끝/폭 밖 끝 · goal_done 을 풀면 가장 가까운 루비 쪽으로 바뀌고 글도 바뀐다) · test_compass_says_dig_when_rock_between(바위 속 루비 하나 → dig true · HUD_GOAL_DIG 글 · 그 쪽 각) · test_gone_above(올라오면 goal Callable 비고 표 안 뜸). 일부러 깨 봄: MineShaft.walled 를 return false 로 바꾸니 test_compass_says_dig_when_rock_between 이 떨어졌다(되돌림 · 다시 9/9)"
+    },
+    {
+     "ok": true,
+     "criterion": "spec dwarf-mine-missions.md 「길 찾기」 줄 · 조작 안내(키 도움말) 줄 · 그림 자리(스캐너 켠 화면) (테스트)",
+     "evidence": "spec 에 **길 찾기** 세 줄 · 키 도움말 KEYBIND_drill_drill_view · KEYBIND_drill_view 에 「땅굴에선 꾹: 지형 스캐너」(ko · en) · shots.gd 에 mine_goal(루비 채굴 · 스캐너 켬). test_translated_and_written_down 이 셋 다 단언, test_drill_view 의 라벨 단언도 새 글로 고침. spec 35줄"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) performance.md 스캐너 숫자가 로그와 어긋난다 — … 최근 잰 값으로 고치고 잰 날을 적어라. 또 tests REBUILD_LIMIT_USEC 주석의 「잰 값의 열 배 남짓」도 새 값에 맞춰 다시 써라",
+     "evidence": "performance.md 줄을 「a3a6c9de 뒤 판 · 2026-10-29 네 번 — 시드마다 다르다: 칸 6~9 · 점 62484~83340 · 처음 0.15~0.53 ms · 평균 0.03~0.07 · 최대 0.04~0.12 ms」로 고침. 이번 로그 SCANNER 「칸 7 · 66192 · 159 µs · 35 · 41 µs」가 그 범위 안. REBUILD_LIMIT_USEC 주석도 「최대 0.04~0.12 ms 의 여덟 배 남짓」으로 다시 씀"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 늘 참인 단언이 하나 있다 — test_mouse_turns_the_hologram 의 assert_lt(scanner.camera.basis.z.y, 0.0 + 1.0, …) …",
+     "evidence": "assert_gt(scanner.camera.basis.z.y, 0.0, \"위에서 내려다본다 — 카메라 뒤쪽이 위를 향한다\") 로 바뀜. 전체 테스트(test.log 마지막 전체 돌림 5251/5251) 통과"
+    }
+   ],
+   "issues": [
+    "목표 색이 두 곳에 따로 있다 — MineShaft.GOAL_COLOR(1, 0.3, 0.85) 상수와 naru_theme.tres Palette compass_goal 이 같은 값을 따로 들고 있다. 하나를 바꾸면 스캐너 공 · 범례와 나침반 ◆ 색이 갈린다. MineShaft.GOAL_COLOR 를 UiTheme.color(&\"compass_goal\") 에서 읽게 하거나(static var), 테스트에 둘이 같다는 단언을 넣어라",
+    "performance.md 가 딱 150줄이다 — spec/00_core/performance.md 가 한도에 닿아 다음 숫자 한 줄이면 넘는다. 땅굴 무리 · 스캐너 같은 갈래를 따로 떼어(예: spec/00_core/performance-mine.md) 가리킴만 남겨 두어라",
+    "보스 목표 테스트가 지어낸 큰 방만 본다 — test_boss_goal_is_the_big_room 은 board.room_center 를 손으로 넣는다. 실제 보스 사냥 판(MineBoard.boss_room 으로 지은 판)에서 goals() 가 큰 방 가운데를 내는지 test_mine_boss_hunt 쪽에 단언 하나(shaft.goals()[0].kind == GOAL_ROOM · room_center 와 수평 거리 < 0.01)를 더해 두면 좋다"
+   ],
+   "good": []
+  },
+  "test": "s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      3s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      2s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      2s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/build/test_take_spec_lines.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      9s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           739\nTests            5251\nPassing Tests    5251\nFailing Tests       0\nRisky/Pending       0\nAsserts        268055\nTime           1071s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "3fe039ac"
  }
 ]

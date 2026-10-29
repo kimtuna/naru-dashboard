@@ -6056,12 +6056,16 @@
 - [x] 1. 지형 스캐너 (Tab 꾹)
   - 기준: 땅굴 안에서 Tab 을 누르고 있는 동안 화면 가운데에 **둘레 굴 꼴의 3D 홀로그램**(임시 반경 40 m — 판 복셀의 빈 곳 · 벽 면을 점이나 선으로) · 내 자리와 보는 쪽 · 승강기(승강장) · 같이 하는 사람 · 마우스로 돌려 본다 · 떼면 닫힌다 · 내가 판 굴도 바로 들어간다 · 스캐너가 떠 있는 동안 걷기는 된다(조작을 막지 않는다) · 번역 (테스트)
   - 기준: 홀로그램을 만드는 값이 프레임을 오래 붙잡지 않는다 — 판 바뀐 칸만 다시 읽거나 뒤 실에서 · performance.md 한 줄 · 숫자로 잰다 (테스트)
-- [ ] 2. 목표 표시
+- [x] 2. 목표 표시
   - 기준: 스캐너에 **임무 목표**가 빛나는 점으로 — 채굴은 그 색 광물 덩이(벽 속도) · 시추는 기름 구멍 셋과 시추기 · 보스 사냥은 큰 방 · 귀환 때는 승강기 · 남은 것만 (테스트)
   - 기준: 스캐너를 안 켜도 **화면 위 나침반에 가장 가까운 목표 쪽 표시와 거리(m)** — 벽 속이면 「파야 한다」 표시(그 쪽으로 파면 닿는다) · 목표가 바뀌면 따라 바뀐다 · 섬 위에서는 안 뜬다 (테스트)
   - 기준: spec dwarf-mine-missions.md 「길 찾기」 줄 · 조작 안내(키 도움말) 줄 · 그림 자리(스캐너 켠 화면) (테스트)
   - 기준: (앞 단계 QA) performance.md 스캐너 숫자가 로그와 어긋난다 — spec/00_core/performance.md 「지형 스캐너 (G-347.1)」 줄은 「칸 7 · 점 66300 · 처음 다 짓기 0.39 ms · 평균 0.05 · 최대 0.07 ms」인데 이번 루프 로그(.loop/out/test_files 의 test_mine_scanner SCANNER 줄)는 「칸 8 · 점 70896 · 145 µs · 평균 33 · 최대 38 µs」다(처음 방을 넓힌 a3a6c9de 뒤의 판). 최근 잰 값으로 고치고 잰 날을 적어라. 또 tests REBUILD_LIMIT_USEC 주석의 「잰 값의 열 배 남짓」도 새 값에 맞춰 다시 써라
   - 기준: (앞 단계 QA) 늘 참인 단언이 하나 있다 — game/tests/world/mine/test_mine_scanner.gd test_mouse_turns_the_hologram 의 assert_lt(scanner.camera.basis.z.y, 0.0 + 1.0, "위에서 내려다본다") 는 단위 벡터 성분이라 늘 참이다. assert_gt(scanner.camera.basis.z.y, 0.0) (카메라 뒤쪽이 위를 향한다 = 내려다본다)로 바꾸거나 지워라 (바로 아래 카메라 높이 단언이 이미 같은 것을 본다)
+- [ ] 3. (앞 단계 QA) 목표 색이 두 곳에 따로 있다
+  - 기준: 목표 색이 두 곳에 따로 있다 — MineShaft.GOAL_COLOR(1, 0.3, 0.85) 상수와 naru_theme.tres Palette compass_goal 이 같은 값을 따로 들고 있다. 하나를 바꾸면 스캐너 공 · 범례와 나침반 ◆ 색이 갈린다. MineShaft.GOAL_COLOR 를 UiTheme.color(&"compass_goal") 에서 읽게 하거나(static var), 테스트에 둘이 같다는 단언을 넣어라
+  - 기준: (앞 단계 QA) performance.md 가 딱 150줄이다 — spec/00_core/performance.md 가 한도에 닿아 다음 숫자 한 줄이면 넘는다. 땅굴 무리 · 스캐너 같은 갈래를 따로 떼어(예: spec/00_core/performance-mine.md) 가리킴만 남겨 두어라
+  - 기준: (앞 단계 QA) 보스 목표 테스트가 지어낸 큰 방만 본다 — test_boss_goal_is_the_big_room 은 board.room_center 를 손으로 넣는다. 실제 보스 사냥 판(MineBoard.boss_room 으로 지은 판)에서 goals() 가 큰 방 가운데를 내는지 test_mine_boss_hunt 쪽에 단언 하나(shaft.goals()[0].kind == GOAL_ROOM · room_center 와 수평 거리 < 0.01)를 더해 두면 좋다
 
 ## [x] G-945 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-lane3 · 시작 2026-10-28 17:13
