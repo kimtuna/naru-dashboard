@@ -6067,7 +6067,7 @@
   - 기준: (앞 단계 QA) performance.md 가 딱 150줄이다 — spec/00_core/performance.md 가 한도에 닿아 다음 숫자 한 줄이면 넘는다. 땅굴 무리 · 스캐너 같은 갈래를 따로 떼어(예: spec/00_core/performance-mine.md) 가리킴만 남겨 두어라
   - 기준: (앞 단계 QA) 보스 목표 테스트가 지어낸 큰 방만 본다 — test_boss_goal_is_the_big_room 은 board.room_center 를 손으로 넣는다. 실제 보스 사냥 판(MineBoard.boss_room 으로 지은 판)에서 goals() 가 큰 방 가운데를 내는지 test_mine_boss_hunt 쪽에 단언 하나(shaft.goals()[0].kind == GOAL_ROOM · room_center 와 수평 거리 < 0.01)를 더해 두면 좋다
 
-## [ ] G-348 드워프 광산 — 오크 유예 시간 · 스캐너에 흙 길
+## [x] G-348 드워프 광산 — 오크 유예 시간 · 스캐너에 흙 길
 - 차선: 3d-start · 시작 2026-10-31 03:29
 - 순서: G-347 뒤
 - spec: spec/03_world/dwarf-mine-missions.md
