@@ -1,64 +1,5 @@
 [
  {
-  "time": "2026-10-23 02:20:44",
-  "epoch": 1792689644,
-  "type": "pass",
-  "title": "통과 — G-287 단계 1 (드릴을 들면 Tab 으로 1인칭 ↔ 3인칭)",
-  "group": "G-287",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "드릴을 들면 1인칭으로 시작 · 든 동안 Tab 으로 1인칭 ↔ 3인칭 · 내려놓으면 3인칭 — 1인칭에서도 조준점 · 손 닿는 거리 · 파는 자리가 같고, 몸은 숨고, 화면 오른쪽 아래에 드릴이 보인다. 키 설정에 드릴 묶음 「시점 바꾸기」(Tab) 줄",
-   "approach": "Tab 은 도면의 지을 것 바꾸기(build_pick)라, 드릴에 새 동작 drill_view(기본 Tab)를 두고 키 묶음 「drill」을 새로 만들었다(전에는 삽 묶음) — 든 것 묶음마다 키를 InputMap 에 얹으므로 도면을 든 Tab 은 그대로 지을 것 바꾸기, 드릴을 든 Tab 은 시점 바꾸기로 갈린다. Shovel 이 프레임마다 드릴을 들었나를 보고 막 들면 1인칭 · 막 내려놓으면 3인칭으로 돌리고, Tab 을 받으면 뒤집는다(창이 떠 있으면 안 받는다). Player.set_first_person 에 cross 를 더해 드릴의 1인칭은 조준점(+)을 숨기지 않는다(가늠쇠가 없다). 1인칭 조준은 눈 자리 · 보는 쪽 그대로라(드릴엔 흔들림이 없다) Aim.at 의 손 닿는 거리(몸에서 4m)와 Shovel._bore(몸에서 보는 쪽)가 3인칭과 같은 잣대다 — 같은 각을 보면 같은 자리를 판다. IronSight 에 드릴 그림(손 드릴과 같은 몸통 · 원뿔 날을 0.4 배)을 화면 오른쪽 아래에 두었다. 1인칭은 Body 를 숨기는데 판 자리 부스러기(top_level)가 손 밑이라 같이 숨어, 부스러기를 Player 로 옮겼다. 남의 화면은 몸 소식(VisitorBody)으로 따로 그려 그대로다. 찍는 자리 drill_fp(1인칭으로 굴 안)를 더하고 harness/shot.sh island=sulfur drill drill_fp 로 찍어 봤다 — 처음엔 드릴이 화면 아래를 다 덮어 줄였고, drill 다음에 찍으면 구덩이를 다시 파 물이 차고 3인칭 그대로라 구덩이를 재사용 · 시점을 맞추게 고쳤다. 바뀐 곳 그물(383 파일): 3151 통과 · 1 실패(test_drill_look — 들면 1인칭이 되어 손의 드릴이 숨음) → 그 테스트가 Tab 으로 3인칭에 돌린 뒤 보게 고치고 test_drill_look · test_drill_view · test_drill 세 파일을 다시 돌려 16 통과. 383 전체를 다시 돌리지는 않았다(17분).",
-   "why": "1인칭 드릴 자리 IronSight.DRILL_AT (0.2, -0.17, -0.42)m · 돌림 8° · 크기 0.4 배 — 기본 시야 70°에서 화면 오른쪽 아래에 걸리게 찍어 보고 정함; 드릴 시점 키 기본 Tab — 사람 요청대로, 다시 잡을 수 있다",
-   "files": [
-    "game/core/input/input_actions.gd",
-    "game/project.godot",
-    "game/settings/user/key_binds.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/player/movement_controls/player.gd",
-    "game/combat/tools_as_weapons/iron_sight.gd",
-    "game/world/terrain/shovel.gd",
-    "game/core/debug/shots.gd",
-    "game/tests/world/terrain/test_drill_view.gd",
-    "game/tests/world/terrain/test_drill.gd",
-    "game/tests/world/terrain/test_drill_look.gd",
-    "spec/02_player/movement-controls.md",
-    "spec/01_settings/input.md",
-    "spec/03_world/frontier-islands.md",
-    "spec/01_settings/save.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "드릴을 든 동안 Tab 을 누르면 1인칭 ↔ 3인칭이 바뀐다 · 처음 들면 1인칭(사람 「1인칭이 더 좋은것 같음」) · 드릴을 내려놓으면 3인칭으로 돌아온다 · 도면을 든 동안 Tab 은 그대로 지을 것 바꾸기 (테스트)",
-     "evidence": "test_drill_view.gd test_picking_up_the_drill_starts_in_first_person_and_tab_switches — 실제 Tab 키 입력(Input.parse_input_event)으로 들면 1인칭 · Tab 두 번 왕복 · 내려놓으면 3인칭 · 다시 들면 1인칭 · 삽의 Tab 은 안 바꿈. test_tab_with_the_blueprint_still_switches_the_piece — 도면 묶음에서 Tab 이 BUILD_PICK 에만 걸리고 DRILL_VIEW 에는 안 걸림, 드릴 묶음은 반대. 창이 뜨면 안 바뀜도 본다. 일부러 깨 봄: Shovel._follow_view 를 늘 3인칭으로 바꾸자 이 파일 테스트가 줄줄이 떨어졌다(되돌림 확인)"
-    },
-    {
-     "ok": true,
-     "criterion": "1인칭에서도 파는 방향 · 손 닿는 거리 · 조준점이 3인칭과 같다 (눈 자리에서 보는 쪽으로 판다) · 1인칭에서 내 몸이 카메라를 가리지 않는다 · 드릴 모양이 화면 오른쪽 아래에 보인다 (테스트 + 찍는 자리 하나 — 1인칭 드릴로 굴 안)",
-     "evidence": "test_first_person_aims_reaches_and_digs_like_third_person — Tab 으로 바꾼 뒤 Aim.at 자리가 0.2m 안, 같은 각이면 판 자리 0.05m 안, aim_direction 이 카메라 -Z 와 같음, 두 시점 모두 먼 땅(-0.1rad)은 안 닿고 발 앞(-1.2rad)은 닿음. test_first_person_hides_my_body_and_shows_the_drill_bottom_right — Body 숨김, unproject 로 드릴이 화면 오른쪽 아래 사분면 안, 3인칭 · 삽이면 눈앞 드릴 없음. 찍는 자리 drill_fp(core/debug/shots.gd) 추가 — .loop/out/shots_g287_1/drill_fp.png 에 굴 안 · 가운데 + · 오른쪽 아래 금빛 드릴이 보이고 몸이 안 가린다"
-    },
-    {
-     "ok": true,
-     "criterion": "키 설정 창에 「드릴 시점 바꾸기」(Tab) 가 뜨고 바꿀 수 있다 · 같이 하는 판에서 남이 보는 내 몸은 그대로 (테스트)",
-     "evidence": "test_the_keys_tab_has_a_drill_view_row_that_can_be_changed — SettingsScreen 을 띄워 drill/drill_view 단추(Tab)를 누르고 Y 를 넣어 바꾼 뒤, Tab 은 더는 안 바꾸고 Y 로 바뀜 · 도면 Tab 은 그대로 · ko/en 번역 키 둘 다. test_others_still_see_my_body_while_i_am_in_first_person — 1인칭인 채 VisitorBody.state_of → apply 로 남의 화면 몸 · 손 · 드릴 · 날이 보임"
-    }
-   ],
-   "issues": [
-    "drill_fp 찍는 자리 주석과 그림이 어긋난다 — core/debug/shots.gd 의 drill_fp 주석은 「판 자리 부스러기가 보이는지」 본다고 하는데 .loop/out/shots_g287_1/drill_fp.png 에는 부스러기가 안 보인다(막는 것은 아니다 — 기준은 드릴 · 굴 안만 요구). 찍기 전에 몇 프레임 더 누르게 하거나 주석에서 부스러기를 빼라"
-   ],
-   "good": []
-  },
-  "test": "d\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      3s  res://tests/ui/hud/test_villager_hands_window.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      4s  res://tests/ui/hud/test_villager_gear_window.gd\nok      3s  res://tests/ui/menu/test_world_settings_screen.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      3s  res://tests/automation/villagers/test_villager_door.gd\nok      2s  res://tests/build/test_placer.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/build/test_take_spec_lines.gd\nok      4s  res://tests/world/terrain/test_foundation_hides_grass.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      3s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      3s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           383\nTests            3152\nPassing Tests    3152\nFailing Tests       0\nRisky/Pending       0\nAsserts        170619\nTime           664s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "c12c60a9"
- },
- {
   "time": "2026-10-23 03:01:42",
   "epoch": 1792692102,
   "type": "fail",
@@ -8263,5 +8204,32 @@
    "decision": null
   },
   "test": "roperty or key 'net' on a base object of type 'Nil'.\n    [1423] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1424] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1425] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1426] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1427] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1428] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1429] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1430] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1431] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1432] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1433] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1434] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1435] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1436] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1437] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1438] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1439] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1440] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1441] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1442] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1443] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1444] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1445] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1446] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1447] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1448] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1449] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1450] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1451] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1452] <engine-2>Invalid access to property or key 'net' on a base object of type 'Nil'.\n    [1453] <engine-2>Invalid access to property or key 'character' on a base object of type 'Nil'.\n    [1454] <engine-2>Invalid call. Nonexistent function 'island' in base 'Nil'.\n    [1455] <engine-2>Invalid access to property or key 'animals' on a base object of type 'Nil'.\n          at line 159\n\nTotals\n------\nScripts               1\nTests                18\nPassing Tests        17\nFailing Tests         1\nAsserts           252/255\nOrphans              39\nTime              42.879s\n\n\n---- 1 failing tests ----\n\nWARNING: 39 ObjectDB instances were leaked at exit (run with `--verbose` for details).\n   at: cleanup (core/object/object.cpp:2536)\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           742\nTests            5270\nPassing Tests    5269\nFailing Tests       1\nRisky/Pending       0\nAsserts        268741\nTime           1077s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/multiplayer/test_hunt_on_server.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\ntest.sh: 스크립트 오류가 있다\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-31 04:49:06",
+  "epoch": 1793389746,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-348 단계 2 (시도 2)",
+  "group": "G-348",
+  "step": "2",
+  "attempt": "2",
+  "report": {
+   "problem": "스캐너에 흙 마개를 흙빛 반투명 덩어리로 · 범례 「흙 — 파면 길」 · 나침반이 흙만 파면 닿는 목표에 「흙을 파라」 · spec 길 찾기 줄 (바뀐 곳만: 131 파일 930 개 통과)",
+   "approach": "구현은 앞 시도에 이미 들어 있었다. 앞 회차를 떨어뜨린 것은 전체 검사의 tests/multiplayer/test_hunt_on_server.gd 하나 — 손님 접속을 기다리다 시간이 넘어(엔진 6 개 동시 부하) 그 뒤가 Nil 로 줄줄이 깨졌다. 땅굴 코드와 닿는 곳이 없고, 그 파일만 다시 돌리니 18/18 통과 — 부하 탓에 들쭉날쭉한 것으로 본다. 바뀐 곳 그물(changed_tests.py 131 파일)은 930/930 통과. 스캐너 그림(mine_goal 자리)으로 흙 마개가 갈색 반투명 덩어리 · 너머 굴 점이 보이고 범례가 붙은 것을 눈으로 확인했다 (.loop/out/g348_2_shot/mine_goal.png).",
+   "why": "흙 덩어리 빛깔 MineScanner.DIRT_COLOR(반투명 흙빛) — 임시, 굴 벽 점과 갈리게만 골랐다",
+   "files": [
+    "game/world/mine/mine_scanner.gd",
+    "game/world/mine/mine_shaft.gd",
+    "game/world/terrain/mine_board.gd",
+    "game/world/terrain/mine_layout.gd",
+    "game/ui/hud/compass.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "spec/03_world/dwarf-mine-missions.md",
+    "game/tests/world/mine/test_mine_dirt_path.gd"
+   ],
+   "decision": null
+  },
+  "test": "      2s  res://tests/core/test_spec_small_drifts.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     31s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n================ 떨어진 파일: res://tests/world/mine/test_mine_scanner.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/world/mine/test_mine_scanner.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:604)\n         [1] _ready (res://world/terrain/test_island.gd:172)\n         [2] _ready (res://core/debug/play_island.gd:34)\n         [3] before_all (res://tests/world/mine/test_mine_scanner.gd:21)\n         [4] _call_before_all (res://addons/gut/gut.gd:684)\n         [5] _test_the_scripts (res://addons/gut/gut.gd:813)\n         [6] test_scripts (res://addons/gut/gut.gd:1047)\n         [7] run_tests (res://addons/gut/gui/GutRunner.gd:198)\n         [8] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n         [9] main (res://addons/gut/cli/gut_cli.gd:297)\n         [10] _init (res://addons/gut/gut_cmdln.gd:39)\n* before_all\n    --- Awaiting signal arrived or 15.0s  ---\n* test_lives_under_the_mine_board\n* test_hold_opens_release_closes\n* test_short_tap_keeps_drill_view\n* test_hologram_shows_tunnels_within_radius\nSCRIPT ERROR: Out of bounds get index '6' (on base: 'PackedVector3Array')\n          at: test_hologram_shows_tunnels_within_radius (res://tests/world/mine/test_mine_scanner.gd:149)\n          GDScript backtrace (most recent call first):\n              [0] test_hologram_shows_tunnels_within_radius (res://tests/world/mine/test_mine_scanner.gd:149)\n              [1] _run_test (res://addons/gut/gut.gd:622)\n              [2] _test_the_scripts (res://addons/gut/gut.gd:835)\n    [Failed]:  Unexpected Errors:\n    [1] <engine-2>Out of bounds get index '6' (on base: 'PackedVector3Array')\n      at line -1\n* test_marks_me_lift_and_facing\n* test_marks_mates_within_radius\n* test_mouse_turns_the_hologram\n* test_my_digging_shows_at_once\n* test_walking_while_open\n* test_window_closes_scanner\n* test_rebuild_cost_is_small\n    SCANNER 칸 13 · 점 138276 · 처음 다 짓기 246 µs · 판 짓 뒤 다시 짓기 평균 36 · 최대 44 µs\nSCANNER 칸 13 · 점 138276 · 처음 다 짓기 246 µs · 판 짓 뒤 다시 짓기 평균 36 · 최대 44 µs\n* test_translated\n* test_gone_above\n    --- Awaiting signal arrived or 15.0s  ---\n* test_goal_color_is_one\n13/14 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/world/mine/test_mine_scanner.gd\n- test_hologram_shows_tunnels_within_radius\n    [Failed]:  Unexpected Errors:\n    [1] <engine-2>Out of bounds get index '6' (on base: 'PackedVector3Array')\n          at line -1\n\nTotals\n------\nScripts               1\nTests                14\nPassing Tests        13\nFailing Tests         1\nAsserts           73/74\nTime              3.433s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           742\nTests            5270\nPassing Tests    5269\nFailing Tests       1\nRisky/Pending       0\nAsserts        268791\nTime           1073s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/world/mine/test_mine_scanner.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\ntest.sh: 스크립트 오류가 있다\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
