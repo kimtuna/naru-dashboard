@@ -1,38 +1,5 @@
 [
  {
-  "time": "2026-10-23 00:43:01",
-  "epoch": 1792683781,
-  "type": "stop",
-  "title": "루프 끝 — 목록을 모두 처리했다",
-  "group": "G-931",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "AnimalNav 제자리 assert 를 붙는 순간뿐 아니라 다시 굽기(rebake_wild) · 조각 메시 끼우기(FolkGround._apply) 때도 본다 — 바뀐 곳만 103개 파일 768개 통과",
-   "approach": "_enter_tree 의 assert 는 트리에 들어갈 때 한 번만 봐서, 붙인 뒤 지역이나 부모를 옮기면 놓쳤다. 확인을 assert_in_place() 하나로 뽑아(트리 밖이면 세계 좌표가 없으므로 붙을 때 보도록 넘긴다) _enter_tree · rebake_wild(메시를 갈기 직전) · FolkGround._apply(조각 메시를 끼우기 직전)에서 부른다. 테스트는 두 진입점이 메시를 갈기 전에 확인을 부르는지와, 트리 밖 · 제자리 지역이 확인을 지나는지 본다.",
-   "why": "",
-   "files": [
-    "game/life/hunting/animal_nav.gd",
-    "game/automation/villagers/folk_ground.gd",
-    "game/tests/life/hunting/test_nav_weld.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "제자리 assert 는 붙는 순간만 본다 — AnimalNav._enter_tree 의 assert 는 트리에 들어갈 때 한 번만 보므로, 붙인 뒤 지역이나 부모를 옮기면 잡지 못한다. 막는 것은 아니다(지금 그런 쓰임이 없다). 고치려면 bake 를 걸 때(rebake_wild · 굽는 쪽 진입점)에도 assert(in_place(self)) 를 한 줄 더 두어라",
-     "evidence": "animal_nav.gd 에 assert_in_place() 를 뽑아 _enter_tree · rebake_wild(메시 갈기 직전) · FolkGround._apply(조각 메시 끼우기 직전)에서 부른다. 트리 안 지역의 navigation_mesh 를 가는 곳은 grep 으로 이 둘뿐이다 (around · folk · wild 는 새로 만든, 트리 밖 지역이라 붙을 때 _enter_tree 가 본다). test_nav_weld.gd::test_rebaking_checks_in_place_again 이 두 함수 몸에서 assert_in_place() 가 'navigation_mesh = ' 보다 앞에 있는지 단언한다 — 줄을 빼거나 뒤로 옮기면 assert_gt/assert_lt 가 떨어진다. GDScript assert 는 GUT 안에서 잡을 수 없으니 글자 검사가 할 수 있는 확인이다. 트리 밖 · 제자리 지역이 확인을 지나는 것도 돌려 본다. 마지막 단계라 전체 575 파일 4278 테스트 통과 · guard 통과 (test.log)."
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "ests/ui/hud/test_no_output_slots.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/build/test_placeable_tidy.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/test_docs_match_code_g275.gd\nok      2s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/ranching/test_food_shown.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           575\nTests            4278\nPassing Tests    4278\nFailing Tests       0\nRisky/Pending       0\nAsserts        205740\nTime           816s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-23 01:34:54",
   "epoch": 1792686894,
   "type": "start",
@@ -8255,5 +8222,49 @@
    ]
   },
   "test": "_label_by_gun.gd\nok      8s  res://tests/life/gathering/test_wild_herbs.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      3s  res://tests/ui/hud/test_chest_window_search.gd\nok      3s  res://tests/ui/hud/test_compass.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      3s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      3s  res://tests/ui/hud/test_trough_window.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/theme/test_korean_font.gd\nok      3s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      4s  res://tests/world/frontier_islands/test_pit_dwarves.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      3s  res://tests/world/terrain/test_obsidian.gd\nok      3s  res://tests/world/terrain/test_mine_rebake.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\nok      3s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/automation/villagers/test_villager_gear.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      3s  res://tests/world/terrain/test_volcano_cycle.gd\nok      2s  res://tests/core/debug/test_play_island_pick.gd\nok      2s  res://tests/core/debug/test_orc_shot.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      3s  res://tests/core/net/test_room_code.gd\nok      3s  res://tests/core/net/test_acts_alone.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/multiplayer/test_smith_orders_on_server.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           217\nTests            1553\nPassing Tests    1553\nFailing Tests       0\nRisky/Pending       0\nAsserts         47826\nTime           260s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-31 03:59:55",
+  "epoch": 1793386795,
+  "type": "pass",
+  "title": "통과 — G-348 단계 1 (오크 유예 시간)",
+  "group": "G-348",
+  "step": "1",
+  "attempt": "2",
+  "report": {
+   "problem": "오크 유예 60 초(임시) · 화면 위 「오크가 온다 0:45」 · 0 이면 알림 한 번 · 귀환 버티기/F9 는 곧바로 · 보스는 처음부터 · 같이 하는 판은 서버 시계 — 바뀐 곳 그물 199 파일 1387 테스트 모두 통과(test.log)",
+   "approach": "MineHorde 에 grace(유예 초)와 GRACE_SECONDS(임시 60, 난이도가 바꿀 곳 하나)를 두고, 유예 동안은 낳지 않고 elapsed 도 안 간다. 끝나면 grace_over 를 한 번 내고 MineShaft 가 「오크가 몰려온다!」를 알린다. intensify(귀환 버티기)는 grace 를 곧바로 0 으로 · F9 는 grace 0 으로 켠다 · 보스 판의 보스는 run 에서 곧바로 선다. LiftCountdown 이 같은 자리에 「오크가 온다 0:45」를 띄운다. 같이 하는 판은 서버(서버장 기계)가 임무의 첫 내려섬에 끝을 찍고(stamp_grace) _mine_ride rpc 에 남은 초를 실어 보낸다. QA 지적대로 진짜 ENet 두 기계 테스트를 더했다: 서버장 clock 을 갈아 끼워 미르를 태우면 미르 기계 유예 ≈60, 서버 시계로 20 초 흘린 뒤 다온을 태우면 ≈40(같은 끝). net_world 의 grace 를 -1.0 으로 바꾸면 이 테스트가 「60 expected 40」으로 떨어지는 것을 확인했다.",
+   "why": "MineHorde.GRACE_SECONDS = 60 초 — 사람이 「몇 초 뒤부터」라고만 했다. 난이도가 정해지면 이 상수를 바꾼다",
+   "files": [
+    "game/world/terrain/mine_horde.gd",
+    "game/world/mine/mine_shaft.gd",
+    "game/core/net/net_world.gd",
+    "game/ui/hud/lift_countdown.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "spec/03_world/dwarf-mine-missions.md",
+    "game/tests/world/mine/test_mine_grace.gd",
+    "game/tests/multiplayer/test_mine_mission_on_server.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "임무 땅굴에 내려서면 무리가 **곧바로 안 나오고 임시 60 초 뒤부터** — 화면 위에 「오크가 온다 0:45」 카운트다운 · 0 이 되면 알림 한 번 · 귀환 버티기(승강기를 부른 뒤)는 유예 없이 그대로 · 보스 사냥은 보스는 큰 방에 처음부터 · 작은 오크 무리만 유예 · F9 시험은 유예 없이 곧바로 · 같이 하는 판은 서버 시계 (테스트)",
+     "evidence": "tests/world/mine/test_mine_grace.gd: GRACE_SECONDS=60(임시 주석 · 한 곳) · 내려서면 grace≈60, 20 프레임 동안 alive 0 · elapsed 0 · LiftCountdown 이 「오크가 온다 0:45」/「Orcs in 0:45」 · 위쪽(offset_top<120) · grace 끝나면 ORCS_COMING_KEY 한 번만(0.6 초 더 기다려도 1) · 나오기 시작 · call_lift 하면 grace 0 · 곧바로 나오고 알림 없음 · 보스 판은 boss() 처음부터, alive==1(작은 오크 대기) · F9 toggle_horde 는 grace 0 · 곧바로 나옴 · stamp_grace 가 임무당 한 번 찍고 늦은 사람은 남은 것만 · 새 임무면 새로 찍음 · ride(a_grace) 가 받은 초를 씀. 앞 QA 지적대로 tests/multiplayer/test_mine_mission_on_server.gd::test_the_orc_grace_runs_on_the_server_clock 이 진짜 ENet 세 기계에서 미르 ≈60 · 서버 시계 20 초 뒤 다온 ≈40 을 단언한다. QA 가 net_world.gd 2328 의 grace 를 -1.0 으로 바꿔 그 파일만 돌리니 1 개 떨어졌고(40/41) 되돌렸다. test.log: 바뀐 곳 199 파일 1387 테스트 모두 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "ui_shots 에 orc_grace 찍는 자리를 더했다 (화면 확인용 — 기준 밖이지만 바뀐 화면을 보이는 관례대로)"
+   ]
+  },
+  "test": "r_welcome_on_server.gd\nok      2s  res://tests/multiplayer/test_smith_orders_on_server.gd\nok      3s  res://tests/multiplayer/test_traces_on_server.gd\nok      3s  res://tests/multiplayer/test_wild_kinds_on_server.gd\nok      3s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      3s  res://tests/player/equipment/test_drill_effect_modules.gd\nok      3s  res://tests/ui/hud/test_bag_gear.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_compass.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_drink_cup_names.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_hive_window.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      4s  res://tests/ui/hud/test_station_doing_line.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      3s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      3s  res://tests/ui/hud/test_trough_window.gd\nok      3s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      3s  res://tests/world/terrain/test_mine_rebake.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      2s  res://tests/world/terrain/test_volcano_cycle.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      2s  res://tests/core/debug/test_play_island_pick.gd\nok      2s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      2s  res://tests/ui/theme/test_korean_font.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           199\nTests            1387\nPassing Tests    1387\nFailing Tests       0\nRisky/Pending       0\nAsserts         45371\nTime           225s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "32b05548"
  }
 ]
