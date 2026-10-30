@@ -6068,7 +6068,7 @@
   - 기준: (앞 단계 QA) 보스 목표 테스트가 지어낸 큰 방만 본다 — test_boss_goal_is_the_big_room 은 board.room_center 를 손으로 넣는다. 실제 보스 사냥 판(MineBoard.boss_room 으로 지은 판)에서 goals() 가 큰 방 가운데를 내는지 test_mine_boss_hunt 쪽에 단언 하나(shaft.goals()[0].kind == GOAL_ROOM · room_center 와 수평 거리 < 0.01)를 더해 두면 좋다
 
 ## [ ] G-348 드워프 광산 — 오크 유예 시간 · 스캐너에 흙 길
-- 차선: 3d-start
+- 차선: 3d-start · 시작 2026-10-31 03:29
 - 순서: G-347 뒤
 - spec: spec/03_world/dwarf-mine-missions.md
 - **사람 2026-10-31** (원문 그대로): 「몬스터는 바로 나오는게 아니라 타이머로 몇초뒤부터 나온다던가 나중엔 난이도를 지정하게 해서 만들어야 겠지만 바로 나오면 조금 힘든거 같아」 · 「지형 스캐너 보면 다른 길이 있으면 보여야 하는데 없는건지 안보이고」
