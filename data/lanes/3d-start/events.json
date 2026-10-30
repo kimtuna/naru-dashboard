@@ -1,53 +1,5 @@
 [
  {
-  "time": "2026-10-23 03:29:33",
-  "epoch": 1792693773,
-  "type": "pass",
-  "title": "통과 — G-287 단계 2 (기울기(pitch) 표시 — 드릴을 든 동안)",
-  "group": "G-287",
-  "step": "2",
-  "attempt": "2",
-  "report": {
-   "problem": "드릴을 든 동안 화면 가운데에 기울기(pitch) 숫자 「−12°」와 10°마다의 수평선 눈금을 띄운다 (1인칭 · 3인칭 모두, 내려놓거나 창이 뜨면 숨는다). drill_fp 찍는 자리는 8° 내려다봐 부스러기와 「−8°」가 보인다. 전체(파일 577개 · 테스트 4289개) 통과",
-   "approach": "앞 시도는 기울기 표시(PitchGauge — 가운데 숫자 + 미끄러지는 눈금줄, Shovel 이 프레임마다 조준 방향의 위아래 각을 넣는다)를 다 만들었으나 test_ui_theme 의 「HUD 코드에 색 값을 적지 않는다」에 걸렸다 — pitch_gauge.gd 가 Color(...) 를 상수로 적었다. 두 색을 테마 Palette(pitch_line · pitch_mark)로 옮기고 다른 HUD 처럼 UiTheme.color 로 꺼낸다. 앞 단계 QA 흠(drill_fp 주석과 그림의 부스러기)은 찍는 자리가 8° 내려다보게 해 풀었다 — .loop/out/shots_g287_2/drill_fp.png 에 굴 바닥의 부스러기 · 오른쪽 아래 드릴 · 가운데 「−8°」와 눈금이 보인다. 바뀐 곳 그물을 반으로 나누려던 split 이 맥에서 실패해 목록이 비었고, 그래서 전체가 돌았다: test.log 「파일 577 개」 · Tests 4289 · 떨어짐 0 (.loop/out/g287_2_changed_a.log).",
-   "why": "기울기 표시 모양 · 크기 — 1°=2px · 눈금 10° 마다 · 위아래 반 높이 70px · 수평 줄 반 너비 60px · 나머지 34px · 시선 표시 70~90px (pitch_gauge.gd) — 조준점 둘레만 쓰게 작게 고른 값; pitch_line · pitch_mark 색 (naru_theme.tres) — 흰 반투명 · 금빛, 눈에 띄게 고른 값",
-   "files": [
-    "game/ui/hud/pitch_gauge.gd",
-    "game/ui/theme/naru_theme.tres",
-    "game/world/terrain/shovel.gd",
-    "game/player/movement_controls/player.tscn",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/core/debug/shots.gd",
-    "spec/03_world/frontier-islands.md",
-    "game/tests/world/terrain/test_drill_pitch.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "드릴을 든 동안 화면에 지금 보는 위아래 각도가 보인다 — 숫자(예: 「−12°」, 수평 0 · 위 + · 아래 −) 와 가운데의 수평선 눈금 (딥락 드릴러처럼) · 1인칭 · 3인칭 모두 · 드릴을 내리면 사라진다 (테스트 + 찍는 자리)",
-     "evidence": "tests/world/terrain/test_drill_pitch.gd — 실제 플레이어 HUD/Pitch 를 Shovel 이 움직이는 길 그대로 본다: 맨손 숨김 → 드릴 1인칭에서 set_look −12°/+20°/0° 에 「−12°」「+20°」「0°」 · horizon_offset 부호, switch_view 로 3인칭에서 「−30°」, 삽·빈손으로 바꾸면 숨고 다시 들면 보임, 창 잠금 때 숨음. format 의 부호·반올림·수학 빼기표도 따로 본다. test.log 에서 통과(3233/3233). 찍는 자리 .loop/out/shots_g287_2/drill_fp.png 에 「−8°」와 조준점 위로 비켜선 수평 줄 · 10° 눈금이, drill.png(3인칭)에 「0°」와 조준점 높이의 수평 줄이 보인다. 색은 테마 Palette(pitch_line · pitch_mark)로 옮겨 test_ui_theme 도 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) drill_fp 찍는 자리 주석과 그림이 어긋난다 — core/debug/shots.gd 의 drill_fp 주석은 「판 자리 부스러기가 보이는지」 본다고 하는데 .loop/out/shots_g287_1/drill_fp.png 에는 부스러기가 안 보인다(막는 것은 아니다 — 기준은 드릴 · 굴 안만 요구). 찍기 전에 몇 프레임 더 누르게 하거나 주석에서 부스러기를 빼라",
-     "evidence": "shots.gd 가 drill_fp 에서 DRILL_FP_PITCH −8° 로 내려다보게 했고, 주석도 그렇게 고쳤다. 새 drill_fp.png 에서 굴 바닥과 조준점 둘레에 회색 부스러기 조각이 여럿 보인다"
-    }
-   ],
-   "issues": [
-    "수평선 그림을 테스트가 지키지 않는다 — pitch_gauge.gd 의 horizon_offset() 은 _deg*PX_PER_DEG 를 따로 셈할 뿐이고 _draw() 는 그것을 쓰지 않고 (_deg - k)*PX_PER_DEG 를 다시 셈한다. 그래서 _draw 의 눈금줄을 지워도 test_drill_pitch 가 통과한다(이번 기준은 찍는 자리 그림으로 확인했다). _draw 가 그릴 줄의 y 목록을 내는 함수(예: rung_offsets() → {각: y})를 만들어 _draw 가 그것으로 그리게 하고, 테스트에서 −12° 일 때 0° 줄이 y=−24 · 10° 줄이 y=−44 에 있고 보이는 반 높이(70px) 밖의 줄은 없는지 단언하라",
-    "테마의 기울기 색에 「임시」 표시가 없다 — naru_theme.tres 의 pitch_line · pitch_mark 는 report 에서 임시라 했지만 pitch_gauge.gd 의 색 상수 주석(「테마의 Palette 에서 꺼낸다」)이나 spec 드릴 줄(「모양 · 크기 임시」)에는 색이 임시라는 말이 없다. spec/03_world/frontier-islands.md 기울기 줄을 「모양 · 크기 · 색 임시」로 고쳐라"
-   ],
-   "good": []
-  },
-  "test": "recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_pitcher_pump_g273.gd\nok      3s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      2s  res://tests/life/hunting/test_summon.gd\nok      3s  res://tests/life/hunting/test_captive_age.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      1s  res://tests/life/ranching/test_animal_stats.gd\nok      3s  res://tests/life/medicine/test_medicine.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      3s  res://tests/life/ranching/test_bird_cage_five.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/life/ranching/test_shearing.gd\nok      1s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/equipment/test_armor_health.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/test_translation.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           400\nTests            3233\nPassing Tests    3233\nFailing Tests       0\nRisky/Pending       0\nAsserts        172218\nTime           668s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "001855a6"
- },
- {
   "time": "2026-10-23 03:59:12",
   "epoch": 1792695552,
   "type": "pass",
@@ -8256,5 +8208,55 @@
   },
   "test": "  2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/ui/theme/test_korean_font.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      2s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      3s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_obsidian.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      9s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           742\nTests            5270\nPassing Tests    5270\nFailing Tests       0\nRisky/Pending       0\nAsserts        268820\nTime           1074s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "b4d0050b"
+ },
+ {
+  "time": "2026-10-31 05:16:34",
+  "epoch": 1793391394,
+  "type": "stop",
+  "title": "루프 끝 — 목록을 모두 처리했다",
+  "group": "G-348",
+  "step": "2",
+  "attempt": "3",
+  "report": {
+   "problem": "스캐너에 흙 마개를 흙빛 반투명 덩어리로(뚫리면 사라짐 · 범례 「흙 — 파면 길」) · 나침반이 흙 마개만 파면 닿으면 「흙을 파라」 · spec 흙 길 줄. 바뀐 곳만: 131개 파일 930개 테스트 통과",
+   "approach": "앞 시도의 구현(MineLayout.plugs 에 마개 양 끝 a·b 와 막은 잇기 link · MineLayout.reach_from · MineBoard.plug_open/region_of/dirt_only · 스캐너 흙 캡슐 · 나침반 HUD_GOAL_DIRT)은 그대로 두었다. 전체 검사에서 떨어진 것은 test_mine_scanner 의 test_hologram_shows_tunnels_within_radius 였다 — 굴 짜임을 동굴 방 · 잇는 굴로 갈아엎은 커밋(e9420b57) 뒤로 tunnels[0] 의 점이 7개가 안 되어 points[6] 이 범위 밖이었다. 고정 번호 대신 처음 방 밖(START_RADIUS+3 m 넘게) · 반경 안 굴 가운데 줄 점을 찾아 보도록 바꿨다. 앞서 떨어졌던 test_hunt_on_server 는 마지막 파일 로그에서 18/18 통과(이번 변경과 무관). 그림 g348_2_shot/mine_goal.png 에서 흙 덩어리가 갈색으로 굴 점과 다르게 보이고 너머 굴 점도 보이는 것을 확인했다.",
+   "why": "MineScanner.DIRT_COLOR (0.85,0.55,0.25,0.6) — 흙빛 덩어리 빛깔; MineBoard.PLUG_PROBE 0.5 m — 마개가 뚫렸나 짚는 간격; MineBoard.REGION_PAD 1.5 m — 자리가 방·굴에 딸렸다고 치는 거리",
+   "files": [
+    "game/world/mine/mine_scanner.gd",
+    "game/world/terrain/mine_board.gd",
+    "game/world/terrain/mine_layout.gd",
+    "game/world/mine/mine_shaft.gd",
+    "game/ui/hud/compass.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "spec/03_world/dwarf-mine-missions.md",
+    "game/tests/world/mine/test_mine_dirt_path.gd",
+    "game/tests/world/mine/test_mine_scanner.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "스캐너 홀로그램에 흙 마개가 흙빛 덩어리로 보인다(굴 벽 색과 다르게) · 마개 너머 굴도 반경 안이면 보인다 · 파서 뚫리면 그 자리 흙 표시가 사라진다 · 범례 「흙 — 파면 길」 · 번역 (테스트)",
+     "evidence": "test_mine_dirt_path.gd test_scanner_shows_dirt_as_dirt_colored_lumps — 반경 안 마개 덩어리가 DIRT_COLOR · WALL_COLOR 와 다른 빛 · 반투명 · 마개 자리 · 너머 굴 점(points_near > 0) · 반경 밖 마개는 안 보임. test_compass_says_dig_dirt_beyond_a_plug_then_plain_after 가 드릴로 마개를 뚫은 뒤 plug_open 참 · dirt_marks 에서 빠짐을 본다 — _follow_dirt 의 뚫림 거르기를 지워 보니 「뚫린 자리 흙 표시가 사라진다」로 떨어졌다(되돌림). test_legend_translated_and_written_down 이 범례 노드 MINE_SCAN_DIRT · ko 「흙 — 파면 길」 · en 비지 않음을 본다. ko.po · en.po 둘 다 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "나침반 목표가 흙 마개 너머면(걸어서는 못 닿고 흙만 파면 닿으면) 「흙을 파라」 · 바위를 파야 하면 그대로 「파야 한다」 (테스트)",
+     "evidence": "test_compass_says_dig_dirt_beyond_a_plug_then_plain_after — 처음 방에서 걸어서는 못 닿고 마개 하나로 닿는 방에 루비를 두면 g.dig · g.dirt 참, 나침반 글 tr(HUD_GOAL_DIRT), 뚫은 뒤 dirt 거짓. test_compass_keeps_dig_for_rock — 바위 깊은 자리면 dirt 거짓 · 「파야 한다」. mine_shaft 에서 best.dirt = best.dig 로 깨 보니 두 테스트 + 기존 test_compass_says_dig_when_rock_between 이 떨어졌다(되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "spec dwarf-mine-missions.md 「길 찾기」 줄 (테스트)",
+     "evidence": "spec 「길 찾기」 아래 **흙 길** (G-348.2 …) 두 줄 — 사람 원문 인용 · 임시 표시 · 사람 줄 지운 것 없음(diff 에 - 줄 없음) · 39줄. test_legend_translated_and_written_down 이 spec 파일을 읽어 「**흙 길** (G-348.2」 · 「흙을 파라」 · 「흙 — 파면 길」을 본다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "  2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/ui/theme/test_korean_font.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      2s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      3s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_obsidian.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      9s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           742\nTests            5270\nPassing Tests    5270\nFailing Tests       0\nRisky/Pending       0\nAsserts        268820\nTime           1074s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
