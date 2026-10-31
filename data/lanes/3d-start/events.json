@@ -1,64 +1,5 @@
 [
  {
-  "time": "2026-10-23 08:01:27",
-  "epoch": 1792710087,
-  "type": "pass",
-  "title": "통과 — G-292 단계 1 (차량 드릴 모듈)",
-  "group": "G-292",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "차량 드릴 모듈(vehicle_drill) — 차 칸에만 들고, 끼운 차 앞에 드릴 뿔이 보인다. 나아가면 차 앞 폭 2.5m 의 굳은 용암 판을 Volcano.carve 로 걷어 낸다. 땅은 파지 않고 나오는 것도 없다. 서버만 깬다 (바뀐 곳 그물: 107 파일 · 939 테스트 통과)",
-   "approach": "차 칸에만 들도록 ArmorModules.MODULES 에 vehicle_drill 을 갈래 KIND_VEHICLE 로 넣었다. 그래서 손 드릴 · 옷 · 신발 칸에는 칸 규칙(fits)이 막는다. 걷는 폭은 clear 2.5 로 데이터에 적었다. 아이템 목록 · 번역 · ESC 목차에 한 줄씩 넣었고, 개발용 상자는 MODULES 에서 저절로 나온다. Vehicle 은 물리 걸음마다 차 칸을 보고 앞 범퍼의 드릴 뿔(기본 도형)을 켜고 끈다. 밖에 선 차가 1m 앞으로 나아갈 때마다 조상 섬의 volcano 를 찾아 범퍼 앞 원(반지름 = 폭의 반)을 carve 한다. 처음 움직일 때는 0.05m 만 가도 깬다 — 처음엔 1m 뒤에야 깨서 범퍼 바로 앞 한 줄이 남았다(테스트가 잡았다). 서 있거나 뒤로 가면 안 깬다. 깨기를 모는 사람(pilot) 검사 앞에 두어, 서버에서 남이 모는 차(Stations.drive_seen 으로 자리만 옮겨진다)도 같은 길로 깬다. 참가자 기계는 Volcano.remote 라 carve 가 아무것도 안 한다. 화산 없는 섬 · 판 없는 곳은 carve 가 거절해 아무 일도 없다. 기운 복셀 시험 섬에서는 지나간 줄의 그림 · 몸통이 비고 줄 옆 · 차 뒤는 판 그대로, 복셀 기록 0 임을 단언했다. 진짜 유황 섬에서 2초 몰며 잰 것: 15.0m · 판 깨기 8번 · 평균 16.75ms · 가장 긴 22.5ms(드릴 없이 몰 때와 같다). 섬 그림 자리 car_drill 을 더해 찍어 보니 처음 두 장은 카메라가 산비탈 속에 묻히거나 오르막에서 차가 거의 못 나아갔다. 산허리를 가로질러 몰게 바꾸니 빨간 차 앞 회색 드릴 뿔과 깬 판 구멍이 보였다. 깬 자리 기록용 _drilled_at 은 걸음 수라 save.md 「안 담는다」에 적었다. guard 통과.",
-   "why": "차량 드릴 걷는 폭 2.5m (ArmorModules.MODULES 의 clear) — 차 폭 1.4m 보다 넉넉히, 사람이 안 정했다; 1m 나아갈 때마다 한 번 깬다 (Vehicle.DRILL_STEP) — 깰 때마다 덮인 칸 그림을 새로 넣으니 걸음마다는 안 깬다; 처음 깨기까지 0.05m (Vehicle.DRILL_START) — 이보다 덜 움직이면 서 있는 것으로 본다; 드릴 뿔 반지름 0.35 · 길이 0.8m · 색 (Vehicle.DRILL_SIZE · DRILL_COLOR) — 기본 도형",
-   "files": [
-    "game/player/equipment/armor_modules.gd",
-    "game/player/inventory_hotbar/items.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/ui/manual/manual_toc.json",
-    "game/life/vehicles/vehicle.gd",
-    "game/core/debug/shots.gd",
-    "game/tests/life/vehicles/test_car_drill.gd",
-    "game/tests/life/vehicles/test_car_drill_sulfur.gd",
-    "spec/04_life/vehicles.md",
-    "spec/02_player/equipment-modules.md",
-    "spec/01_settings/save.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "「차량 드릴」 모듈 아이템 (번역 · 개발용 상자에만) — 차의 모듈 칸에만 들고 손 드릴 · 옷 칸에는 안 든다 · 끼운 차 앞에 드릴 모양이 보인다 (테스트)",
-     "evidence": "test_car_drill.gd test_the_vehicle_drill_fits_only_the_car_slot — fits 로 차 칸 참 · 손 드릴 칸 · 옷 세트/일반 칸 · 신발 칸 거짓, ItemCatalog · DevBox.contents 에 있고 레시피 output 에 없음, ko/en.po 둘 다 msgid ITEM_vehicle_drill. test_a_car_with_the_drill_shows_a_drill_in_front — 드릴 없으면 안 보임 → 끼우면 보이고 Drill 노드 끝이 범퍼(SIZE.z/2) 앞 → vehicle_module 로 바꾸면 사라짐"
-    },
-    {
-     "ok": true,
-     "criterion": "드릴을 끼운 차가 나아가면 **차 앞의 굳은 용암 판(위에 덮인 것)을 걷어 낸다** — Volcano.carve 를 차 앞 폭(임시 2.5m)으로 · 땅(복셀)은 파지 않는다 · 같이 하는 판은 서버가 걷는다 · 나오는 것 없음 (테스트: 굳은 판 위를 몰면 지나간 줄이 비어 있다)",
-     "evidence": "test_driving_with_the_drill_clears_the_hardened_sheet_along_the_way — 굳힌 판 위 2초 몰고 carved 신호 반지름 1.25, 지나간 줄 2m 간격 그림(lava_image) · 몸통(ray) 둘 다 판 없음, 줄 옆 ±6m · 차 뒤 6m 는 판 그대로, voxel_ground.records 0. test_the_guest_machine_does_not_carve… — remote 화산은 carves 0, 서버에서 driver=7 · drive_seen 소식만으로 움직인 차가 carves>5. 깨 보기: 뒤로 가기 막는 줄을 지우고 carve 를 차 뒤로 돌리자 test_car_drill.gd 2개가 떨어졌다(되돌림 cmp 확인). 나오는 것: carve 만 부르고 아이템을 내지 않음(코드 확인)"
-    },
-    {
-     "ok": true,
-     "criterion": "덮인 것이 없는 곳 · 화산 섬이 아닌 섬에서는 아무 일도 안 한다 (지금 덮이는 것은 화산 섬 용암뿐 — 사람 「현재는 화산맵 밖에 없어서」) · 걷어 내는 동안 프레임을 재서 적는다",
-     "evidence": "test_bare_ground_and_an_island_without_a_volcano_are_left_alone — 분출 전 화산 섬에서 나아가도 carves 0 · carved_points 0 · records 0, 화산 없는 섬에서 나아가도 records 0(_volcano() 가 null 이라 carve 를 안 부름). 프레임: test_car_drill_sulfur.gd 가 진짜 유황 섬에서 2초 몰며 가장 긴 프레임 < 0.1초 단언, spec/04_life/vehicles.md 「잰 것」에 15.0m · 8번 · 평균 16.75ms · 최장 22.5ms 적힘. test.log 바뀐 곳 107파일 939 통과 · guard 통과"
-    }
-   ],
-   "issues": [
-    "차량 드릴이 목차의 「시설」 갈래에 들었다 — game/ui/manual/manual_toc.json 에서 vehicle_drill 줄이 facilities(MANUAL_CAT_facilities) 아래 vehicle_garage 다음에 있다. 모듈이지 시설이 아니다. 모듈을 다루는 갈래(예: 장비 · 모듈 쪽)로 옮기거나, 다른 모듈(vehicle_module · scope_*)처럼 목차에 안 넣는 쪽으로 맞춰라. 옮기면 test_car_drill.gd 의 목차 단언은 그대로 통과한다",
-    "화산 없는 섬 테스트가 조금 약하다 — test_bare_ground_and_an_island_without_a_volcano_are_left_alone 의 두 번째 절은 voxel_ground.records 0 만 본다(화산이 없으니 carved 신호도 못 단다). Vehicle._volcano() 가 null 을 내는지 단언을 한 줄 더해라 (예: assert_null(car._volcano()))",
-    "흐르는 용암 위에서 안 깬다는 테스트가 없다 — spec/04_life/vehicles.md 는 「흐르는 용암 … 에서는 아무 일도 없다」고 적었고 Volcano.carve 의 flowing() 검사가 막지만, 차 드릴로 확인하는 테스트는 없다. 분출이 흐르는 때로 시계를 맞추고 드릴 차를 몰아 carves 0 을 보는 테스트를 test_car_drill.gd 에 더해라"
-   ],
-   "good": [
-    "shots.gd 에 섬 그림 자리 car_drill 을 더했다 (확인용 찍기 — 해롭지 않다)"
-   ]
-  },
-  "test": "s://tests/combat/damage_death/test_death_chest_owner.gd\nok      4s  res://tests/ui/hud/test_room_names.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      3s  res://tests/life/hunting/test_captive_age.gd\nok      3s  res://tests/life/vehicles/test_car_modules.gd\nok      2s  res://tests/player/equipment/test_armor_health.gd\nok      2s  res://tests/life/vehicles/test_garage.gd\nok      3s  res://tests/player/equipment/test_future_wear_modules.gd\nok      4s  res://tests/life/hunting/test_wild_kinds.gd\nok      3s  res://tests/player/inventory_hotbar/test_bag_twenty_island.gd\nok      2s  res://tests/player/inventory_hotbar/test_no_item_load.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      3s  res://tests/settings/test_item_key_groups.gd\nok      3s  res://tests/ui/hud/test_chest_window_search.gd\nok      3s  res://tests/ui/hud/test_room_window.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      3s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      1s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      3s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/automation/villagers/test_villager_gear.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/multiplayer/test_modules_on_server.gd\nok      3s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           107\nTests             939\nPassing Tests     939\nFailing Tests       0\nRisky/Pending       0\nAsserts         22578\nTime           113s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "fc80ebd1"
- },
- {
   "time": "2026-10-23 08:18:50",
   "epoch": 1792711130,
   "type": "pass",
@@ -8205,6 +8146,35 @@
   "group": "G-948",
   "step": "2",
   "attempt": "1",
+  "report": {
+   "problem": "서버 판 테스트의 고아 셋을 없앴다 — 테스트 도우미 Sides.side 가 제 세계 기계를 세울 때 빈 Node 를 버리고 있었다",
+   "approach": "after_each 정리는 다른 테스트와 같았다 — 고아는 정리가 아니라 세울 때 생겼다. Node.get_orphan_node_ids 로 짚어 보니 스크립트도 자식도 없는 빈 Node 셋(기계 하나에 하나)이었고, tests/core/net/net_sides.gd 의 side() 가 먼저 Node.new() 를 만든 뒤 own_world 면 SubViewport 로 갈아 끼우며 앞의 것을 그대로 버리고 있었다. 제 세계가 아닐 때만 Node 를 만들게 고쳤다. 같은 도우미를 쓰는 own_world 테스트(광산 승강기 · 건축 등) 모두에서 같은 고아가 사라진다. 지키는 테스트: 두 갈래 모두 세우고 거둬도 고아 수가 그대로인가. 돌린 것: 바뀐 곳만 1개 통과 · 따로 test_mine_mission_on_server(3) · test_mine_cage_on_server · test_bodies_seen · test_build_on_server 통과, 로그에 Orphans 줄 없음.",
+   "why": "",
+   "files": [
+    "game/tests/core/net/net_sides.gd",
+    "game/tests/core/net/test_net_sides_orphans.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "서버 판 테스트가 고아 노드 셋을 남긴다 — test_mine_mission_on_server.gd test_the_server_holds_what_is_seen_below 로그에 Orphans 3 (파일 전체 9). 다른 테스트와 같은 정리(after_each free)를 확인해 고아를 없애라",
+     "evidence": "원인은 after_each 가 아니라 도우미 tests/core/net/net_sides.gd 의 side() 가 Node.new() 를 먼저 만든 뒤 own_world 면 SubViewport 로 갈아 끼우며 버린 것이었다 — else 갈래에서만 Node 를 만들게 고쳤다. 전체 실행(745 파일 · 5285 통과 · 실패 0)의 tests__multiplayer__test_mine_mission_on_server.gd.log 에 Orphans 줄이 없다(3/3 통과). 지키는 테스트 test_net_sides_orphans.gd 는 두 갈래 모두 세울 때 · 거둔 뒤 Node.get_orphan_node_ids() 수가 그대로인지 본다. 일부러 옛 코드(먼저 Node.new())로 되돌려 TEST_DIR=res://tests/core/net 로 돌리니 '세울 때 버린 것이 없다' 단언 2개가 실패하고 Orphans 2 가 떴다 — 껍데기가 아니다. 본 뒤 되돌렸고 diff 가 구현 상태와 같음을 확인했다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "ests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_compass.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      3s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      3s  res://tests/world/terrain/test_obsidian.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      9s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           745\nTests            5285\nPassing Tests    5285\nFailing Tests       0\nRisky/Pending       0\nAsserts        269840\nTime           1083s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-31 23:03:12",
+  "epoch": 1793455392,
+  "type": "start",
+  "title": "루프 시작",
   "report": {
    "problem": "서버 판 테스트의 고아 셋을 없앴다 — 테스트 도우미 Sides.side 가 제 세계 기계를 세울 때 빈 Node 를 버리고 있었다",
    "approach": "after_each 정리는 다른 테스트와 같았다 — 고아는 정리가 아니라 세울 때 생겼다. Node.get_orphan_node_ids 로 짚어 보니 스크립트도 자식도 없는 빈 Node 셋(기계 하나에 하나)이었고, tests/core/net/net_sides.gd 의 side() 가 먼저 Node.new() 를 만든 뒤 own_world 면 SubViewport 로 갈아 끼우며 앞의 것을 그대로 버리고 있었다. 제 세계가 아닐 때만 Node 를 만들게 고쳤다. 같은 도우미를 쓰는 own_world 테스트(광산 승강기 · 건축 등) 모두에서 같은 고아가 사라진다. 지키는 테스트: 두 갈래 모두 세우고 거둬도 고아 수가 그대로인가. 돌린 것: 바뀐 곳만 1개 통과 · 따로 test_mine_mission_on_server(3) · test_mine_cage_on_server · test_bodies_seen · test_build_on_server 통과, 로그에 Orphans 줄 없음.",
