@@ -1,74 +1,5 @@
 [
  {
-  "time": "2026-10-23 05:55:12",
-  "epoch": 1792702512,
-  "type": "pass",
-  "title": "통과 — G-291 단계 2 (타고 몬다)",
-  "group": "G-291",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "차에 우클릭으로 타고 내리고 W/S · A/D 로 몬다 · 카메라가 따른다 · 본섬(하이트맵) · 유황 섬(복셀) 비탈을 오른다 · 같이 하는 판에서 서버가 모는 사람(한 차에 한 명)을 정하고 차 자리는 모는 사람 몸 소식으로 모두에게 · 탄 채 나가면 그 자리에 선다 · 프레임 잼 · (앞 단계 QA) 땅 없는 쪽은 빈 자리가 아니다",
-   "approach": "차 몸(Vehicle)을 StaticBody3D 에서 CharacterBody3D 로 바꿔, 이 기계의 사람(pilot)이 탔을 때만 W/S 앞뒤 · A/D 돌기(바퀴로 돌아 서 있으면 안 돈다)로 move_and_slide 하고, 오르막은 캐릭터 걷기와 같이 비탈면에 눕혀 오른다. 간 자리 · 쪽을 정비소(Garage.at · yaw)에 적어 저장 · 참가자 화면이 출고 때와 같은 길로 간다. 탄 사람(Player._ride)은 걷기를 멈추고 차 지붕(Vehicle.SEAT)에 붙어 가며, 차가 돈 만큼 카메라 yaw 도 같이 돌아 3인칭 카메라가 차 뒤를 따른다 — 지붕에 앉힌 까닭은 탄 채 저장해 다시 켜면 차 몸 안에 끼지 않게 하려는 것이다. 타기 · 내리기는 Driving(_input 우클릭, 정비소 창보다 먼저)이 시설 일 GARAGE_BOARD · GARAGE_LEAVE 로 바라고, 서버(혼자면 이 기계)가 Garage.driver 에 모는 사람 id 를 적는다(한 차에 한 명 · 참가자가 보낸 id 는 서버가 보낸 사람 id 로 갈아 끼우고 타는 거리는 차에서 잰다). 각 기계의 Driving 은 driver 가 제 id 인 차에 몸을 태운다. driver 는 저장본에 없고 참가자에게 가는 목록(shared)에만 얹는다. 차 자리는 모는 사람 몸 소식의 「v」로 실려 서버 → 다른 이로 가고(Stations.drive_seen — 그 차의 driver 가 보낸 사람일 때만), 모는 사람 기계에서는 늦게 온 서버 목록이 차를 뒤로 끌지 않게 _fill 이 제 자리를 지킨다. 몰리는 차 자리는 목록 지문에서 빼(Stations.unmoved) 시설 목록이 0.1초마다 통째로 가지 않게 했다. 판에서 나가면 서버장이 그 사람이 몰던 차의 driver 를 비워 차가 마지막 자리에 선다. 비탈은 진짜 섬에서 스폰 둘레를 훑어 14m 내리 오르고 나무 · 바위가 없는 길을 골라 2초 몰아 봤다 — 본섬(하이트맵) 15.1m 앞 · 2.3m 오름 · 가장 긴 프레임 22.6ms, 유황 섬(복셀) 14.7m · 4.5m · 23.2ms (headless 물리 60/초, spec/04_life/vehicles.md 에 적음). (앞 단계 QA) spot_beside 는 땅을 못 짚은 쪽을 continue 로 건너뛰고, 바닥 없는 정비소에서 SAY_GARAGE_NO_ROOM 이 되는 단언을 더했다. 같이 하는 판 테스트는 처음에 차가 아직 미끄러지는 중에 자리를 잡아 떨어졌다 — 서기를 기다리고 빠르기 0 을 단언하게 고쳤다. 바뀐 곳 그물(476 파일)에서 test_no_item_load 가 주석의 「무게」(옛 짐 수치 말)를 잡아 「중력」으로 바꿨고, 그 파일만 다시 돌려 통과했다. 그물 결과: 3647 중 3646 통과 · 1 실패(그 낱말 — 고친 뒤 그 파일 7/7 통과).",
-   "why": "Vehicle.SPEED 12 · REVERSE 4 m/s — 사람이 속도를 안 정했다, 걷기(6)보다 빠르게; Vehicle.ACCEL 8 · BRAKE 10 m/s² · TURN 1.8 rad/s — 몰아 보기 좋게 잡은 값; Vehicle.GRAVITY 30 m/s² · CLIMB_DEG 45° — 캐릭터와 같게; Vehicle.REACH 3.5m — 차 반 길이 + 손 닿는 거리쯤; Vehicle.SEAT 지붕 위 · EXIT_GAP 0.6m — 탄 채 저장해도 차에 끼지 않게; 한 차에 한 명 (Garage.driver) — 몇 명 타나는 사람이 안 정했다",
-   "files": [
-    "game/life/vehicles/vehicle.gd",
-    "game/life/vehicles/garage.gd",
-    "game/life/vehicles/driving.gd",
-    "game/player/movement_controls/player.gd",
-    "game/craft/stations/stations.gd",
-    "game/core/net/net_world.gd",
-    "game/core/game_root.gd",
-    "game/multiplayer/visitor_body.gd",
-    "game/world/terrain/test_island.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/life/vehicles/test_garage.gd",
-    "game/tests/life/vehicles/test_driving.gd",
-    "game/tests/life/vehicles/test_driving_slopes.gd",
-    "game/tests/life/vehicles/test_driving_slopes_voxel.gd",
-    "game/tests/multiplayer/test_driving_on_server.gd",
-    "spec/04_life/vehicles.md",
-    "spec/01_settings/save.md",
-    "spec/11_multiplayer/netcode.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "차에 다가가 상호작용 키로 타고 내린다 · W/S 앞뒤 · A/D 돌기 · 3인칭 카메라가 차를 따른다 · 땅(복셀 · 하이트맵 둘 다) 위를 굴러 비탈을 오른다 (속도 · 무게 임시) (테스트: 몰아서 몇 m 나아간다)",
-     "evidence": "test_driving.gd — test_interact_key_boards_and_leaves_the_car(우클릭 InputEventAction 을 Driving._input 에 줘 타고 · 다시 눌러 차 옆 땅에 내림 · 멀면 안 탐), test_w_drives_forward_and_the_camera_follows(W 2초 8m 넘게 앞 · 돌지 않음 · 카메라 원점이 차 곁), test_s_backs_up_and_a_d_turn(S 로 1m 넘게 뒤 · W+A 0.3rad 넘게 왼쪽 · 카메라 yaw 가 같이 돎 · W+D 오른쪽). test_driving_slopes.gd(본섬 Terrain3D) · test_driving_slopes_voxel.gd(유황 섬 복셀, voxel_ground 단언) — 진짜 섬에서 14m 오르막을 골라 2초 몰아 8m 넘게 앞 · 1m 넘게 오름 · 80% 넘게 땅에 붙음. 수치는 vehicle.gd 상수에 「임시」, spec 수치 절에 적힘. 전부 test.log 에서 ok"
-    },
-    {
-     "ok": true,
-     "criterion": "같이 하는 판 — 탄 사람이 몰고 서버가 받아 모두에게 보인다 · 한 차에 한 명 (임시) · 탄 채 나가면 차는 그 자리에 선다 (테스트)",
-     "evidence": "tests/multiplayer/test_driving_on_server.gd — 서버장 · 미르 · 솔 세 기계. 미르가 타면 서버가 driver 로 정하고, 서버장이 눌러도 안 탐(한 차에 한 명), 미르가 W 로 4m 넘게 몰면 서버장 · 솔 화면의 차가 같은 자리로 감 · 서버 garage.at 이 그 자리, 미르 기계를 끄면 driver 가 0 이 되고 차는 마지막 자리 그대로 · 솔 화면도. 일부러 Stations.drive_seen 을 곧바로 return 하게 깨 보니 이 테스트가 떨어졌다(되돌림). test_driving.gd test_one_driver_per_car 도 혼자 판에서 seat 거부를 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "몰고 다니는 동안 프레임을 재서 적는다",
-     "evidence": "test_driving_slopes*.gd 가 몰기 120 물리 프레임 동안 가장 긴 프레임을 재 0.1초 밑을 단언하고 gut.p 로 찍음. spec/04_life/vehicles.md 「잰 것」 절에 본섬 22.6ms · 유황 섬 23.2ms(headless · 물리 60/초) 로 적힘"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 땅이 없는 쪽에도 차가 선다 — game/life/vehicles/garage.gd 의 spot_beside 는 아래로 쏜 광선이 아무것도 못 짚어도(바다 위 · 섬 끝 낭떠러지) 그 자리를 정비소 높이 그대로 빈 자리로 친다. 땅을 못 짚은 쪽은 continue 로 건너뛰고, 땅(바닥) 없이 정비소만 세운 테스트에서 넷 다 비면 SAY_GARAGE_NO_ROOM 이 되는지 단언을 더하라 (막는 것은 아니다 — 지금 기준은 놓인 것만 말한다)",
-     "evidence": "garage.gd spot_beside 가 ground.is_empty() 면 continue. test_garage.gd test_with_no_ground_on_any_side_there_is_no_room — 바닥 없이 정비소만 세워 spot_beside 가 {} · dispatch 가 SAY_GARAGE_NO_ROOM · 차는 안. 일부러 continue 를 끄니 이 테스트가 떨어졌다(되돌림). spec 빈 자리 줄도 고쳐짐"
-    }
-   ],
-   "issues": [
-    "서버장이 몰 때 참가자 화면을 보는 테스트가 없다 — test_driving_on_server.gd 는 참가자(미르)가 모는 길만 본다. 서버장이 몰면 시설 목록 지문(Stations.unmoved)이 차 자리를 빼므로 참가자는 서버장 몸 소식의 「v」(game_root._drive_seen)로만 차를 본다. 서버장이 타고 W 로 몰아 미르 · 솔 화면의 차가 서버장 차 자리로 가는지 단언하는 테스트를 같은 파일에 더하라",
-    "차 자리 소식에 거리 검사가 없다 — Stations.drive_seen 은 driver 가 보낸 「v」면 어디든 차를 옮긴다(한 소식에 수백 m 도). 직전 자리에서 한 소식 사이 갈 수 있는 거리(SPEED × 간격 + 여유) 밖이면 버리거나 직전 자리를 지키게 하고, 먼 자리를 보낸 소식이 거부되는 단언을 test_driving_on_server.gd 에 더하라",
-    "테스트에 뜻 없는 식이 남았다 — game/tests/life/vehicles/test_driving_slopes.gd 의 정비소 자리 `... * 8.0 + Vector3.UP * 0.0` 의 `+ Vector3.UP * 0.0` 을 지워라"
-   ],
-   "good": []
-  },
-  "test": "ver.gd\nok      2s  res://tests/multiplayer/test_server_from_game.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/player/equipment/test_armor_health.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      3s  res://tests/player/equipment/test_gun_modules.gd\nok      3s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      3s  res://tests/player/equipment/test_future_wear_modules.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      3s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      3s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_compass.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      3s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      3s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      4s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/world/map/test_map_memory.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/world/storage/test_chest.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           505\nTests            3883\nPassing Tests    3883\nFailing Tests       0\nRisky/Pending       0\nAsserts        190162\nTime           801s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "069cce18"
- },
- {
   "time": "2026-10-23 06:24:38",
   "epoch": 1792704278,
   "type": "pass",
@@ -8216,5 +8147,60 @@
    "decision": null
   },
   "test": "boss_orc_in_a_boss_horde\n    --- Awaiting signal arrived or 15.0s  ---\n    --- Awaiting 2.0 seconds  ---\n    --- Awaiting signal arrived or 15.0s  ---\n* test_f9_on_a_host_with_a_joiner_is_solo_only\n    --- Awaiting signal arrived or 15.0s  ---\n    --- Awaiting signal arrived or 15.0s  ---\n* test_going_up_with_the_horde_on_takes_it_away\n    --- Awaiting signal arrived or 15.0s  ---\n    --- Awaiting signal arrived or 15.0s  ---\n* test_dying_below_respawns_on_the_island_and_clears_the_tunnel\n    --- Awaiting signal arrived or 15.0s  ---\n24/25 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/world/mine/test_mine_shaft.gd\n- test_f9_below_spawns_an_endless_horde_at_the_dark_tunnel_ends_and_off_clears_it\n    [Failed]:  사람을 쫓는다\n          at line 490\n\nTotals\n------\nScripts               1\nTests                25\nPassing Tests        24\nFailing Tests         1\nAsserts           252/253\nTime              63.234s\n\n\n---- 1 failing tests ----\n\n\n================ 떨어진 파일: res://tests/world/mine/test_mine_scanner.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/world/mine/test_mine_scanner.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:604)\n         [1] _ready (res://world/terrain/test_island.gd:172)\n         [2] _ready (res://core/debug/play_island.gd:34)\n         [3] before_all (res://tests/world/mine/test_mine_scanner.gd:21)\n         [4] _call_before_all (res://addons/gut/gut.gd:684)\n         [5] _test_the_scripts (res://addons/gut/gut.gd:813)\n         [6] test_scripts (res://addons/gut/gut.gd:1047)\n         [7] run_tests (res://addons/gut/gui/GutRunner.gd:198)\n         [8] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n         [9] main (res://addons/gut/cli/gut_cli.gd:297)\n         [10] _init (res://addons/gut/gut_cmdln.gd:39)\n* before_all\n    --- Awaiting signal arrived or 15.0s  ---\n* test_lives_under_the_mine_board\n* test_hold_opens_release_closes\n* test_short_tap_keeps_drill_view\n* test_hologram_shows_tunnels_within_radius\n    [Failed]:  반경 안은 보인다\n      at line 160\n* test_marks_me_lift_and_facing\n* test_marks_mates_within_radius\n* test_mouse_turns_the_hologram\n* test_my_digging_shows_at_once\n* test_walking_while_open\n* test_window_closes_scanner\n* test_rebuild_cost_is_small\n    SCANNER 칸 23 · 점 252180 · 처음 다 짓기 545 µs · 판 짓 뒤 다시 짓기 평균 36 · 최대 42 µs\nSCANNER 칸 23 · 점 252180 · 처음 다 짓기 545 µs · 판 짓 뒤 다시 짓기 평균 36 · 최대 42 µs\n* test_translated\n* test_gone_above\n    --- Awaiting signal arrived or 15.0s  ---\n* test_goal_color_is_one\n13/14 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/world/mine/test_mine_scanner.gd\n- test_hologram_shows_tunnels_within_radius\n    [Failed]:  반경 안은 보인다\n          at line 160\n\nTotals\n------\nScripts               1\nTests                14\nPassing Tests        13\nFailing Tests         1\nAsserts           82/83\nTime              3.684s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            75\nTests             491\nPassing Tests     489\nFailing Tests       2\nRisky/Pending       0\nAsserts         10211\nTime           95s  (godot 6 개)\n\n떨어진 파일 2 개:\n  res://tests/world/mine/test_mine_shaft.gd\n  res://tests/world/mine/test_mine_scanner.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-31 12:40:09",
+  "epoch": 1793418009,
+  "type": "pass",
+  "title": "통과 — G-349 단계 1 (밝혀진 곳 · 안 밝혀진 곳)",
+  "group": "G-349",
+  "step": "1",
+  "attempt": "5",
+  "report": {
+   "problem": "스캐너는 지금 걸어서 이어진 방 · 굴만 그린다(MineSight 판 칸 그림 + 밝은 방 비트를 셰이더가 거름) · 흙 마개 원통 · 범례 걷음 · 뚫거나 파서 이으면 밝아짐 · 판 동안 남고 새로 내려서면 새로 · 같이 하는 판은 서버가 판 시드와 밝은 방을 쥐고 보낸다",
+   "approach": "앞 시도는 동작은 다 됐지만 스캐너 테스트의 「반경 안은 보인다」가 오른쪽 39 m 한 점만 보았는데, 그 점이 숨은 방 칸에 들어 이제 안 그려지는 것이 맞아 떨어졌다. 16 쪽 가운데 밝은(또는 어느 방에도 안 딸린) 쪽 하나를 골라 반경 안 · 밖을 보게 바꿨다. 짜임: MineSight 가 판(2 m 칸 80×32×80)마다 칸이 딸린 방 번호를 3D 텍스처로 짓고, 셰이더가 밝지 않은 방 비트의 점을 버린다 — 밝아지면 비트만 바꾼다. 같이 하는 판은 서버장이 임무마다 판 시드를 굴려(stamp_seed) 「탄다」에 실어 보내 모두 같은 MineLayout 을 짓고, 밝힌 방은 서버가 seen_rooms 로 모아 보낸다(QA 지적 1). 서버 시드가 아닌 내려섬은 seen_rooms 를 지워 앞 판 자리가 새 판을 밝히지 않는다(QA 지적 2, test_06). 옛 test_mine_fog 는 없다(QA 지적 3 해당 없음). 바뀐 곳 그물(test.log 「75 파일 491 개」): 490 통과 · test_world_on_server.gd 하나가 「미르가 들어왔다」 접속 시간에서 떨어졌는데 그 파일만 다시 돌리니 7/7 통과 — 이번 변경과 무관한 접속 흔들림으로 본다.",
+   "why": "MineSight.CELL 2 m · ORIGIN (-80,-62,-80) · DIMS 80×32×80 — 판을 덮는 칸 그림 크기; MineSight.ROOM_PAD 6 m · TUNNEL_PAD 4.5 m — 칸이 방 · 굴에 딸리는 넉넉함(벽 노이즈 · 굵어짐 몫); MineSight.TOUCH 0.5 m — 판 짓이 숨은 벽에 닿았다고 치는 거리; MineSight.LOOK_EVERY 0.25 초 — 숨은 방에 들어섰나 보는 틈",
+   "files": [
+    "game/world/mine/mine_sight.gd",
+    "game/world/mine/mine_scanner.gd",
+    "game/world/mine/mine_shaft.gd",
+    "game/core/net/net_world.gd",
+    "game/tests/world/mine/test_mine_sight.gd",
+    "game/tests/world/mine/test_mine_scanner.gd",
+    "game/tests/world/mine/test_mine_dirt_path.gd",
+    "game/tests/world/mine/test_mine_goals.gd",
+    "game/tests/world/mine/test_mine_shaft.gd",
+    "game/tests/multiplayer/test_mine_mission_on_server.gd",
+    "spec/03_world/dwarf-mine-missions.md",
+    "spec/00_core/performance-mine.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "스캐너 홀로그램은 **지금 걸어서 이어진 곳만** 그린다 — 처음 방에서 열린 굴 · 뚫린 흙 마개(plugs_open) · 사람이 판 굴로 이어진 방 · 굴. 흙 마개 너머 방 · 굴은 **점 하나도 안 그린다** · 흙 마개 원통(G-348.2 의 흙빛 기둥)도 안 그린다 (테스트)",
+     "evidence": "test_mine_sight.gd test_01 이 처음 밝은 방 = layout.reach_from(0) 임을, test_02 가 마개 너머 방의 판 칸 면 꼭짓점(반경 안 20 개 넘게 — MineBoard.region_of 로 따로 셈) 중 shows 가 0 개 · 숨은 방 모두 0 개 · 마개 바로 너머 points_near 0 · 이어진 굴 · 방은 그린다 · Dirt* 원통 0 · 흙 범례 없음 · 셰이더 regions/seen/cells 값 = MineSight 값을 본다. QA 가 임시 탐침(판 전체 꼭짓점 50712 개 가운데 shows 참인 것이 숨은 방 · 굴에 더 가까운지)을 돌려 보니 숨은 방 쪽 점은 모두 밝은 곳에서도 17~22 m 떨어진 갱도 둘레(2,-3,-2 근처 · 어느 방에도 안 딸린 곳)뿐 — 숨은 방 · 굴 벽 점은 하나도 안 샜다. 탐침은 지우고 되돌렸다(diff 없음)"
+    },
+    {
+     "ok": true,
+     "criterion": "흙 마개를 뚫거나 바위를 파서 이어지면 **그때 그 너머가 그려진다** · 한 번 그려진 곳은 그 판 동안 남는다 · 같이 하는 판은 서버가 쥐고 모두 같다 (테스트)",
+     "evidence": "test_03 — 마개 반쯤 파면 아직 숨음 · 다 뚫으면 그 방 밝음 · changed 알림 · 셰이더 비트 갱신 · 그 방 점이 그려진다. test_04 — 숨은 굴에서 먼 바위를 파면 안 밝고 굴 벽 옆 바위를 파면 밝다. test_05 — 숨은 방에 들어서면 밝다. test_06 — 처음 방으로 돌아와도 그대로 · 올라오면 판째 걷히고 다시 내려서면 reach_from(0) 부터. test_mine_mission_on_server.gd test_the_server_holds_what_is_seen_below — 서버 시드 = 판 시드 · 미르 · 다온 판 시드와 방 자리 같음 · 미르가 밝힌 방을 서버가 쥐고 늦게 온 다온도 받음 · 다온이 밝힌 방이 미르에게도 감 · 둘의 밝힌 곳 같음. test.log 바뀐 곳 75 파일 491 개 모두 통과 · 7/7 · 3/3"
+    }
+   ],
+   "issues": [
+    "방 수 단언을 ROOMS_MIN 에서 2 로 낮췄다 — test_mine_shaft.gd:353 test_each_descent_… 가 시드마다 방이 MineLayout.ROOMS_MIN 밑으로 나와 흔들리자 하한을 2 로 내렸다. 이제 ROOMS_MIN 을 지키는 테스트가 없다. 놓을 자리를 못 찾아 덜 놓는 것이 맞다면 MineLayout 의 ROOMS_MIN 주석과 spec 「땅굴 판」 줄에 「자리를 못 찾으면 덜 놓는다」를 적고, 아니면 테스트를 정한 시드(shaft.next_seed)로 돌려 ROOMS_MIN 단언을 되살려라 (판 꼴은 지휘 세션 몫이니 MineLayout 코드는 건드리지 말고 테스트 · 주석만)",
+    "쓰지 않는 번역 키 MINE_SCAN_DIRT 가 남았다 — 스캐너 흙 범례를 걷었는데 번역 파일의 MINE_SCAN_DIRT(「흙 — 파면 길」)와 test_mine_dirt_path.gd test_legend_translated_and_written_down 의 그 키 번역 단언이 그대로다. 키를 번역 파일 ko · en 에서 지우고 그 단언을 걷어라(남길 까닭이 있으면 주석에 적어라)",
+    "같은 임무로 다시 내려가면 혼자 · 같이가 다르다 — 같이 하는 판은 stamp_seed 로 같은 굴에 다시 내려서며 seen_rooms 가 남고(판 짓은 새로라 마개는 다시 막혔는데 너머가 밝다), 혼자 판은 새 시드 · 새 밝힘이다. spec dwarf-mine-missions.md 「밝힌 곳」 줄에 「같이 하는 판은 같은 임무 동안 같은 굴 · 밝힘이 남는다, 혼자는 내려설 때마다 새로」를 한 줄로 분명히 적어 두어라",
+    "서버 판 테스트가 고아 노드 셋을 남긴다 — test_mine_mission_on_server.gd test_the_server_holds_what_is_seen_below 로그에 Orphans 3 (파일 전체 9). 다른 테스트와 같은 정리(after_each free)를 확인해 고아를 없애라"
+   ],
+   "good": [
+    "test_mine_goals.gd test_mining_goals_are_the_goal_ore 단언을 「남은 루비 덩이 수와 같다」로 바꿨다 (앞 시도 전체 돌림 흔들림 대응 — 기준 밖이지만 뜻은 그대로다)"
+   ]
+  },
+  "test": "ok      8s  res://tests/multiplayer/test_chest_on_server.gd\nok      9s  res://tests/multiplayer/test_harvest_on_server.gd\nok      9s  res://tests/automation/villagers/test_villager_smooth_motion.gd\nok      9s  res://tests/multiplayer/test_wiring_on_server.gd\nok      8s  res://tests/multiplayer/test_battering_on_server.gd\nok      8s  res://tests/multiplayer/test_bird_cage_on_server.gd\nok     64s  res://tests/world/mine/test_mine_shaft.gd\nok      7s  res://tests/multiplayer/test_station_on_server.gd\nok      7s  res://tests/multiplayer/test_death_on_server.gd\nok      8s  res://tests/multiplayer/test_build_on_server.gd\nok      7s  res://tests/build/test_hammer.gd\nok      6s  res://tests/multiplayer/test_fish_on_server.gd\nok      6s  res://tests/multiplayer/test_mine_cage_on_server.gd\nok      6s  res://tests/multiplayer/test_dock_crew.gd\nok      6s  res://tests/core/net/test_net_two_processes.gd\nok      5s  res://tests/multiplayer/test_farm_on_server.gd\nok      7s  res://tests/multiplayer/test_world_on_server.gd\nok      7s  res://tests/multiplayer/test_send_less.gd\nok      5s  res://tests/multiplayer/test_dev_keys_on_server.gd\nok      5s  res://tests/world/mine/test_mine_scanner.gd\nok      5s  res://tests/multiplayer/test_folk_on_server.gd\nok      5s  res://tests/multiplayer/test_dig_on_server.gd\nok      5s  res://tests/multiplayer/test_islands_split.gd\nok      4s  res://tests/world/mine/test_mine_dirt_path.gd\nok      3s  res://tests/life/ranching/test_cage_take_keeps_birds.gd\nok      4s  res://tests/automation/power/test_switch_window.gd\nok      5s  res://tests/core/net/test_net_version.gd\nok      5s  res://tests/world/mine/test_mine_mission.gd\nok      5s  res://tests/world/mine/test_mine_goals.gd\nok      3s  res://tests/multiplayer/test_raider_welcome_on_server.gd\nok      3s  res://tests/multiplayer/test_cement_on_server.gd\nok      3s  res://tests/multiplayer/test_kept_names_on_server.gd\nok      3s  res://tests/world/frontier_islands/test_pit_dwarves.gd\nok      4s  res://tests/world/mine/test_orc_boss.gd\nok      2s  res://tests/build/test_take_into_bag.gd\nok      4s  res://tests/world/terrain/test_mine_board.gd\nok      2s  res://tests/core/net/test_acts_alone.gd\nok      3s  res://tests/core/net/test_net_session.gd\nok      3s  res://tests/core/net/test_steam_game.gd\nok      2s  res://tests/core/test_mine_perf_spec_split.gd\nok      3s  res://tests/core/net/test_steam_room.gd\nok      3s  res://tests/life/harvest/test_rock_cracks.gd\nok      3s  res://tests/core/net/test_steam_quit.gd\nok      2s  res://tests/multiplayer/test_guard_pen_on_server.gd\nok      4s  res://tests/multiplayer/test_burrows_on_server.gd\nok      2s  res://tests/multiplayer/test_progress_on_server.gd\nok      3s  res://tests/multiplayer/test_traces_on_server.gd\nok      4s  res://tests/multiplayer/test_invasion_on_server.gd\nok      3s  res://tests/player/equipment/test_drill_effect_modules.gd\nok      2s  res://tests/automation/villagers/test_villager_gear.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      2s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/core/net/test_net_link_one_place.gd\nok      2s  res://tests/core/net/test_room_code.gd\nok      3s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/net/test_steam_server_gone.gd\nok      3s  res://tests/multiplayer/test_smith_orders_on_server.gd\nok      2s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      2s  res://tests/multiplayer/test_wild_kinds_on_server.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            75\nTests             491\nPassing Tests     491\nFailing Tests       0\nRisky/Pending       0\nAsserts         10156\nTime           94s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "5d7357b4"
  }
 ]
