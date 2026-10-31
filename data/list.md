@@ -6239,7 +6239,7 @@
   - 기준: enhancement.md 를 「뺐다 — 모듈로 대신한다(사람 2026-10-31)」로 · professions.md 「지금은 직업이 없다」 · equipment.md 포인트 예산제 줄을 「단계마다 모듈 칸 · 기본 스펙」으로 · 「모듈을 구하는 데 더 집중」(사람 원문)을 equipment-modules.md 에 적는다 — 얻는 길은 사람이 정한다 (테스트)
   - 기준: (앞 단계 QA) tools.json _temporary 의 평타 줄이 낡았다 — game/combat/tools_as_weapons/tools.json 의 _temporary 에 「금속 무기 … 든 손으로 치는 평타(Attack.HIT)는 무엇을 들었든 같다」가 남았다. G-356.1 부터 근접 무기는 ToolTiers.MELEE_HIT 를 따르니 「맨손 · 도구는 Attack.HIT, 근접 무기는 금속 단계(ToolTiers.MELEE_HIT, 임시)」로 고쳐 적어라
   - 기준: (앞 단계 QA) 스패너 단 레시피 설명이 실제와 다르다 — game/craft/recipes/workbench.json _temporary 에 「도끼 · … · 스패너의 청동 · 강철 단(손잡이 1 + 청동괴 · 강철괴 1)」이라 적혔지만 bronze_spanner · steel_spanner 는 손잡이 없이 주괴 2 다(철 스패너와 같은 꼴). 그 줄을 「스패너는 주괴 2」로 고쳐라
-- [ ] 3. (앞 단계 QA) 다른 곳에 포인트 예산제가 남았다
+- [x] 3. (앞 단계 QA) 다른 곳에 포인트 예산제가 남았다
   - 기준: 다른 곳에 포인트 예산제가 남았다 — equipment.md 에서는 「단계마다 모듈 칸 · 기본 스펙」으로 바꿨지만 spec/README.md:18 「equipment.md — 장비 스탯 · 포인트 예산제 · 세트」, spec/08_combat/tools-as-weapons.md:20 「도구 등급 사다리 · 포인트 예산제 · 세트 효과」, spec/10_economy/item-lineage.md:10 「(포인트 예산제, 02_player/equipment.md)」, spec/00_core/glossary.md:29 용어 줄이 아직 옛 규칙을 가리킨다. README · tools-as-weapons 는 「단계마다 모듈 칸 · 기본 스펙」으로 고치고, item-lineage 는 「단계 · 재료로 기본 스펙을 다시 계산」 꼴로, glossary 줄은 지우거나 「(뺐다 — 단계마다 기본 스펙)」으로. test_spec_growth_axis_g356.gd 에 이 네 파일에 「포인트 예산제」가 없음을 보는 단언을 더하라
 
 ## [ ] G-357 장신구 — 금 · 은으로 귀걸이 · 목걸이 · 반지
@@ -6361,6 +6361,10 @@
   - 기준: 찍기 테스트가 소스 글자만 본다 — test_language_settings.gd 의 test_ui_shots_sets_the_language_with_the_locale 는 ui_shots.gd 에 줄이 있는지만 본다. 동작은 그림과 화면 쪽 테스트가 받치니 막는 것은 아니지만, 가능하면 _shoot 을 짧은 출력 폴더로 실제 불러 UserPrefs.language 가 말마다 바뀌고 끝나면 되돌아오는지 보는 테스트로 바꿔라
 - [ ] 2. 설정 화면 탭 줄 맞춤 (G-351 — 지휘 세션 QA 가 그림으로 찾음)
   - 기준: ESC → 설정 → 화면 탭에서 「나침반 보이기」 줄이 다른 줄(창 모드 · 해상도 · 수직 동기화 · 그래픽 품질)보다 글자가 한 칸 들여 있고 켜기 단추 자리도 다르다 — 모든 줄의 이름 왼쪽 끝 · 단추 자리를 같게 (그림 settings_display ko · en 로 확인) (테스트)
+- [ ] 3. 코드 주석에 포인트 예산제가 남았다 (G-356 단계 3)
+  - 기준: 코드 주석에 포인트 예산제가 남았다 — game/player/equipment/armor.gd:10 주석 「같은 등급의 스탯 총합이 같다 (포인트 예산제, spec/02_player/equipment.md)」와 game/tests/player/equipment/test_armor.gd:200 단언 메시지가 뺀 규칙을 spec 근거로 가리킨다. 「단계마다 기본 스펙 (임시 값)」 꼴로 고쳐라 (기준 밖 — 이번 기준은 spec 네 파일)
+- [ ] 4. glossary 에 뺀 강화 · 직업 용어가 남았다 (G-356 단계 3)
+  - 기준: glossary 에 뺀 강화 · 직업 용어가 남았다 — spec/00_core/glossary.md:30 「천장 — 강화가 일정 횟수 실패하면…」, :32 「전설 직업」, :24 도감 「전설 직업 승급 조건」이 사람 2026-10-31 「강화는 빼고 · 직업은 일단 없다」와 어긋난다. 지우거나 「(뺐다 — 모듈이 그 자리)」로 고치고, glossary 에 「천장」「전설 직업」이 없음을 보는 단언을 더하라
 
 ## [ ] G-951 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-lane3
