@@ -6223,7 +6223,7 @@
 - [x] 2. (앞 단계 QA) 남이 모는 차에 넣은 원유가 모는 기계에 안 닿는다
   - 기준: 남이 모는 차에 넣은 원유가 모는 기계에 안 닿는다 — game/craft/stations/stations.gd _fill 의 `g.fuel = minf(fuel, g.fuel)` 는 주석(「서버가 넣은 것이 없으면 덜 남은 쪽」)과 달리 늘 덜 남은 쪽을 쥔다. 같이 하는 판에서 A 가 몰고 있는 차에 B 가 정비소 창으로 원유를 넣으면 서버 값은 오르지만 A 기계는 옛 낮은 값을 쥐어 0 에서 서 버린다(서버엔 연료가 있는데). 고치는 길: 서버 목록의 fuel 이 지난번 받은 값보다 올랐으면(넣었다) 서버 값을 따르고, 아니면 min 을 쥔다 — 받은 값을 Garage 에 하나 더 쥐어 비교. 테스트: driver 가 이 기계인 차에 대해 서버 목록 fuel 이 +20 오른 줄을 _fill 로 넣었을 때 g.fuel 이 따라 오르는지
 
-## [ ] G-356 단계가 오르면 모듈 칸 · 기본 스펙이 는다
+## [x] G-356 단계가 오르면 모듈 칸 · 기본 스펙이 는다
 - 차선: 3d-lane2 · 시작 2026-11-01 05:06
 - 순서: G-353 뒤
 - spec: spec/02_player/equipment.md · equipment-modules.md · spec/05_craft/facilities.md · spec/05_craft/enhancement.md · professions.md
