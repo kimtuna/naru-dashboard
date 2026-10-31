@@ -1,76 +1,5 @@
 [
  {
-  "time": "2026-10-23 03:59:12",
-  "epoch": 1792695552,
-  "type": "pass",
-  "title": "통과 — G-287 단계 3 (나침반 — 화면 위)",
-  "group": "G-287",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "G-287.3 화면 위 가운데 나침반 띠(늘 보임 · 창이 뜨면 숨음 · 설정 「화면」 탭에서 켜고 끔, 사용자 설정에 남음) + 기울기 눈금줄을 rung_offsets() 로 그리고 테스트가 지킴 + spec 기울기 색 임시 표시",
-   "approach": "나침반은 player.tscn HUD/Compass(ui/hud/compass.gd, CompassStrip) — 프레임마다 카메라 yaw 에서 보는 쪽(북 0 · 동 90, 북 = −Z)을 읽고, ±90° 안의 15° 눈금(ticks())과 동 · 서 · 남 · 북 글자(번역 키 HUD_COMPASS_*, letters())를 흘려 그린다. 보이기는 UserPrefs.show_compass(기본 켬, settings.cfg [display] compass) 이고 창 잠금(LOCK_WINDOW) 동안 숨는다. 설정 화면에 「화면」 탭(Display)과 나침반 보이기 CheckButton 을 짝으로 더했다. 처음 찍은 그림(compass_en)에서 왼쪽 위 영어 안내 줄이 가운데를 넘어와 띠와 겹쳐, 띠를 안내 줄 밑(y 48)으로 내리고 테스트로 지켰다. 앞 단계 QA: pitch_gauge 의 _draw 가 눈금줄 y 를 따로 셈하던 것을 rung_offsets() 하나로 모아 _draw 가 그것만 그리게 했다. spec 기울기 줄은 「모양 · 크기 · 색 임시」. 찍는 자리 compass · settings_display 를 더했고 .loop/out/shots_g287_3 에서 눈으로 확인(bag 사진에서는 숨음). 바뀐 곳 그물(365 파일)에서 test_main_menu(설정 화면 단추 목록)와 test_round_trip(Compass:_heading 「안 담는다」 누락)이 떨어져 고쳤고, 그 둘과 바뀐 테스트 5 파일을 다시 돌려 46개 모두 통과했다. ESC 데이터베이스 목차 life 에 「나침반」 한 줄.",
-   "why": "북 = 섬 좌표 −Z · 동 = +X (사람이 정한 방위가 없어 임시); 나침반 기본 켬 (UserPrefs.COMPASS_DEFAULT); 나침반 크기 — 1° 당 2px · 좌우 ±90° · 눈금 15° · 위에서 48px (안내 줄 밑) · 띠 높이 36px; 테마 색 compass_line · compass_mark (pitch 와 같은 흰색 · 주황)",
-   "files": [
-    "game/ui/hud/compass.gd",
-    "game/player/movement_controls/player.tscn",
-    "game/settings/user/user_prefs.gd",
-    "game/ui/menu/settings_screen.gd",
-    "game/ui/menu/settings_screen.tscn",
-    "game/ui/hud/pitch_gauge.gd",
-    "game/ui/theme/naru_theme.tres",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/ui/manual/manual_toc.json",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/tests/ui/hud/test_compass.gd",
-    "game/tests/world/terrain/test_drill_pitch.gd",
-    "game/tests/ui/menu/test_settings_screen.gd",
-    "game/tests/ui/menu/test_main_menu.gd",
-    "game/tests/settings/save/test_round_trip.gd",
-    "spec/01_settings/display.md",
-    "spec/01_settings/save.md",
-    "spec/12_ui/hud.md",
-    "spec/03_world/frontier-islands.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "화면 위 가운데에 나침반 띠 — 보는 쪽에 따라 동 · 서 · 남 · 북(번역) 과 눈금이 흐른다 · 늘 보인다 (드릴과 상관없이 — 사람 「위에 나침반도」) · 창이 뜨면 가린다 (테스트 + 찍는 자리)",
-     "evidence": "test_compass.gd — 위 가운데(가운데 x · 화면 위 10% · 안내 줄 밑) · 맨손에서도 보임 · 북/동을 볼 때 글자 · 15° 눈금 자리(±30px, 등 뒤 없음) · ko 「북」/en 「N」 · LOCK_WINDOW 동안 숨고 풀면 돌아옴. heading_of 부호를 뒤집고 창 잠금 검사를 지워 돌리니 6개 단언이 떨어졌다(되돌림). _draw 는 ticks() 만 그린다. 찍는 자리 compass · settings_display 를 shots_g287_3 에서 봤다 — 60° 를 볼 때 북 −120px · 동 +60px 로 맞고, 설정 창 사진에서는 숨어 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "북쪽은 섬 좌표의 −Z (임시) · 화면 설정(display.md)에 나침반 보이기 켜기 · 끄기 (임시 · 기본 켬)",
-     "evidence": "test_north_is_minus_z_and_east_is_plus_x 가 yaw 0 = 북, 동을 볼 때 aim_direction.x>0.9, 북일 때 z<−0.9 를 본다. test_display_setting_turns_it_off_and_survives_restart 가 기본 켬 · 화면 탭 단추를 끄면 곧바로 사라짐 · 파일에서 다시 읽어도 꺼진 채 · 다시 켜면 보임을 본다. display.md · UserPrefs.COMPASS_DEFAULT · compass.gd 에 임시 표시. test_settings_screen/test_main_menu 탭 목록도 고쳤다. _heading 은 round_trip 의 DONT_SAVE 와 save.md 에 까닭이 적혀 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 수평선 그림을 테스트가 지키지 않는다 — rung_offsets() 를 만들어 _draw 가 그것으로 그리게 하고, −12° 일 때 0° 줄 y=−24 · 10° 줄 y=−44 · 반 높이(70px) 밖 줄 없음을 단언하라",
-     "evidence": "pitch_gauge.gd 의 _draw 가 rung_offsets() 만 돌며 그린다(따로 셈하던 루프는 지웠다). test_drill_pitch 가 −12° 에서 rungs[0]=−24 · rungs[10]=−44 · 모든 줄 |y|≤HALF_TALL · 30°/−50° 줄 없음을 단언한다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 테마의 기울기 색에 「임시」 표시가 없다 — spec/03_world/frontier-islands.md 기울기 줄을 「모양 · 크기 · 색 임시」로 고쳐라",
-     "evidence": "frontier-islands.md 기울기 줄이 「모양 · 크기 · 색 임시」로 바뀌었고 pitch_gauge.gd 색 상수 주석에도 「색 임시」가 붙었다"
-    }
-   ],
-   "issues": [
-    "save.md 스트레스 문단이 둘로 갈렸다 — spec/01_settings/save.md 의 「HUD 나침반이 그리는 쪽」 줄이 「HUD 스트레스 표시」 줄과 그 이어짐 줄(「주민마다 · 문턱마다 남던 스트레스 경고 줄 …」) 사이에 끼어, 스트레스 이야기가 나침반 줄 밑에 붙어 읽힌다. 나침반 줄을 그 이어짐 줄 뒤로 옮겨라"
-   ],
-   "good": [
-    "ESC 데이터베이스 목차 life 에 「나침반」 항목(manual_toc.json · MANUAL_compass 번역) — 기준에는 없지만 작고 번역 키도 둘 다 있다"
-   ]
-  },
-  "test": "t_climbing_temporary_notes.gd\nok      3s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/fishing/test_bobbers.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/hunting/test_summon.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/multiplayer/test_looks_seen.gd\nok      3s  res://tests/multiplayer/test_islands_afar.gd\nok      2s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_armor_health.gd\nok      3s  res://tests/player/equipment/test_future_wear_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/test_translation.gd\nok      3s  res://tests/settings/test_item_key_groups.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      3s  res://tests/test_temp_dirs_are_cleaned.gd\nok      3s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/hud/test_trough_window.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           410\nTests            3304\nPassing Tests    3304\nFailing Tests       0\nRisky/Pending       0\nAsserts        173928\nTime           686s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "19855869"
- },
- {
   "time": "2026-10-23 04:15:19",
   "epoch": 1792696519,
   "type": "pass",
@@ -8217,6 +8146,53 @@
   "group": "G-348",
   "step": "2",
   "attempt": "3",
+  "report": {
+   "problem": "스캐너에 흙 마개를 흙빛 반투명 덩어리로(뚫리면 사라짐 · 범례 「흙 — 파면 길」) · 나침반이 흙 마개만 파면 닿으면 「흙을 파라」 · spec 흙 길 줄. 바뀐 곳만: 131개 파일 930개 테스트 통과",
+   "approach": "앞 시도의 구현(MineLayout.plugs 에 마개 양 끝 a·b 와 막은 잇기 link · MineLayout.reach_from · MineBoard.plug_open/region_of/dirt_only · 스캐너 흙 캡슐 · 나침반 HUD_GOAL_DIRT)은 그대로 두었다. 전체 검사에서 떨어진 것은 test_mine_scanner 의 test_hologram_shows_tunnels_within_radius 였다 — 굴 짜임을 동굴 방 · 잇는 굴로 갈아엎은 커밋(e9420b57) 뒤로 tunnels[0] 의 점이 7개가 안 되어 points[6] 이 범위 밖이었다. 고정 번호 대신 처음 방 밖(START_RADIUS+3 m 넘게) · 반경 안 굴 가운데 줄 점을 찾아 보도록 바꿨다. 앞서 떨어졌던 test_hunt_on_server 는 마지막 파일 로그에서 18/18 통과(이번 변경과 무관). 그림 g348_2_shot/mine_goal.png 에서 흙 덩어리가 갈색으로 굴 점과 다르게 보이고 너머 굴 점도 보이는 것을 확인했다.",
+   "why": "MineScanner.DIRT_COLOR (0.85,0.55,0.25,0.6) — 흙빛 덩어리 빛깔; MineBoard.PLUG_PROBE 0.5 m — 마개가 뚫렸나 짚는 간격; MineBoard.REGION_PAD 1.5 m — 자리가 방·굴에 딸렸다고 치는 거리",
+   "files": [
+    "game/world/mine/mine_scanner.gd",
+    "game/world/terrain/mine_board.gd",
+    "game/world/terrain/mine_layout.gd",
+    "game/world/mine/mine_shaft.gd",
+    "game/ui/hud/compass.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "spec/03_world/dwarf-mine-missions.md",
+    "game/tests/world/mine/test_mine_dirt_path.gd",
+    "game/tests/world/mine/test_mine_scanner.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "스캐너 홀로그램에 흙 마개가 흙빛 덩어리로 보인다(굴 벽 색과 다르게) · 마개 너머 굴도 반경 안이면 보인다 · 파서 뚫리면 그 자리 흙 표시가 사라진다 · 범례 「흙 — 파면 길」 · 번역 (테스트)",
+     "evidence": "test_mine_dirt_path.gd test_scanner_shows_dirt_as_dirt_colored_lumps — 반경 안 마개 덩어리가 DIRT_COLOR · WALL_COLOR 와 다른 빛 · 반투명 · 마개 자리 · 너머 굴 점(points_near > 0) · 반경 밖 마개는 안 보임. test_compass_says_dig_dirt_beyond_a_plug_then_plain_after 가 드릴로 마개를 뚫은 뒤 plug_open 참 · dirt_marks 에서 빠짐을 본다 — _follow_dirt 의 뚫림 거르기를 지워 보니 「뚫린 자리 흙 표시가 사라진다」로 떨어졌다(되돌림). test_legend_translated_and_written_down 이 범례 노드 MINE_SCAN_DIRT · ko 「흙 — 파면 길」 · en 비지 않음을 본다. ko.po · en.po 둘 다 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "나침반 목표가 흙 마개 너머면(걸어서는 못 닿고 흙만 파면 닿으면) 「흙을 파라」 · 바위를 파야 하면 그대로 「파야 한다」 (테스트)",
+     "evidence": "test_compass_says_dig_dirt_beyond_a_plug_then_plain_after — 처음 방에서 걸어서는 못 닿고 마개 하나로 닿는 방에 루비를 두면 g.dig · g.dirt 참, 나침반 글 tr(HUD_GOAL_DIRT), 뚫은 뒤 dirt 거짓. test_compass_keeps_dig_for_rock — 바위 깊은 자리면 dirt 거짓 · 「파야 한다」. mine_shaft 에서 best.dirt = best.dig 로 깨 보니 두 테스트 + 기존 test_compass_says_dig_when_rock_between 이 떨어졌다(되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "spec dwarf-mine-missions.md 「길 찾기」 줄 (테스트)",
+     "evidence": "spec 「길 찾기」 아래 **흙 길** (G-348.2 …) 두 줄 — 사람 원문 인용 · 임시 표시 · 사람 줄 지운 것 없음(diff 에 - 줄 없음) · 39줄. test_legend_translated_and_written_down 이 spec 파일을 읽어 「**흙 길** (G-348.2」 · 「흙을 파라」 · 「흙 — 파면 길」을 본다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "  2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/ui/theme/test_korean_font.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      2s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      3s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_obsidian.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      9s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           742\nTests            5270\nPassing Tests    5270\nFailing Tests       0\nRisky/Pending       0\nAsserts        268820\nTime           1074s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-31 11:23:29",
+  "epoch": 1793413409,
+  "type": "start",
+  "title": "루프 시작",
   "report": {
    "problem": "스캐너에 흙 마개를 흙빛 반투명 덩어리로(뚫리면 사라짐 · 범례 「흙 — 파면 길」) · 나침반이 흙 마개만 파면 닿으면 「흙을 파라」 · spec 흙 길 줄. 바뀐 곳만: 131개 파일 930개 테스트 통과",
    "approach": "앞 시도의 구현(MineLayout.plugs 에 마개 양 끝 a·b 와 막은 잇기 link · MineLayout.reach_from · MineBoard.plug_open/region_of/dirt_only · 스캐너 흙 캡슐 · 나침반 HUD_GOAL_DIRT)은 그대로 두었다. 전체 검사에서 떨어진 것은 test_mine_scanner 의 test_hologram_shows_tunnels_within_radius 였다 — 굴 짜임을 동굴 방 · 잇는 굴로 갈아엎은 커밋(e9420b57) 뒤로 tunnels[0] 의 점이 7개가 안 되어 points[6] 이 범위 밖이었다. 고정 번호 대신 처음 방 밖(START_RADIUS+3 m 넘게) · 반경 안 굴 가운데 줄 점을 찾아 보도록 바꿨다. 앞서 떨어졌던 test_hunt_on_server 는 마지막 파일 로그에서 18/18 통과(이번 변경과 무관). 그림 g348_2_shot/mine_goal.png 에서 흙 덩어리가 갈색으로 굴 점과 다르게 보이고 너머 굴 점도 보이는 것을 확인했다.",
