@@ -1,45 +1,5 @@
 [
  {
-  "time": "2026-10-22 19:28:34",
-  "epoch": 1792664914,
-  "type": "pass",
-  "title": "통과 — G-283 단계 3 ((앞 단계 QA) 깬 구멍 안에 덤불이 남았다)",
-  "group": "G-283",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "용암이 덮은 자리의 장식(풀 · 꽃 · 덤불 · 조약돌)도 앞머리가 닿으면 타고 돌아오지 않는다 — 깬 판 구멍 바닥이 비었다. 바뀐 곳만 97개 파일 798개 통과",
-   "approach": "찍는 자리 탓이 아니라 규칙 탓이었다 — _set_up_eruption 은 done=-1 로 catch_up 을 거쳐 태우기를 한다. 그런데 덤불은 VegetationView 의 장식(보이기만 하는 MultiMesh)이라 태울 것(things · resources) 밖이어서 실제 판에서도 덮여도 남았다. Volcano 에 decor(VegetationView)를 붙여 ① 흐를 때 덮인 칸 장식을 닿는 차례순 줄(burn_order)로 세워 앞머리를 따라 태우고(참가자 기계도 — 그림뿐) ② 지나간 분출(catch_up)은 한꺼번에 태우며 ③ 탄 자리를 높이 맵 점 마스크(_scorched)로 섬 저장 volcano.scorched 에 deflate+base64 로 남겨 다시 세운 섬 · 들어온 참가자도 같은 장식을 걷게 했다. 탄 장식은 토대가 빠져 uncover 해도 되살리지 않는다. 유황 섬에서 장식 차례 세기 117ms(덮인 장식 88568개, 분출 시작 때 한 번 · 흐름 계산 포함 352ms). harness/shot.sh island=sulfur lava_carved 로 다시 찍어 구멍 바닥의 덤불 · 풀 · 조약돌이 사라진 것을 그림으로 봤다(.loop/out/lava_carved.png 갈아 끼움).",
-   "why": "",
-   "files": [
-    "game/world/terrain/volcano.gd",
-    "game/world/terrain/vegetation_view.gd",
-    "game/world/terrain/test_island.gd",
-    "game/tests/world/terrain/test_volcano_decor.gd",
-    "spec/03_world/frontier-islands.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "깬 구멍 안에 덤불이 남았다 — .loop/out/lava_carved.png 에서 구멍 바닥에 초록 덤불이 서 있다. 용암이 덮은 자리라 burn_things 가 지웠어야 한다. shots.gd 의 lava_carved 가 shift 로 시계를 당겨 분출(태우기)을 건너뛴 탓인지, 실제 판에서도 남는지 보고 — 찍는 자리 탓이면 _set_up_eruption 이 태우기를 거치게, 규칙 탓이면 volcano.gd burn_things 를 고치고 덮인 자리 풀숲이 사라지는지 단언하는 테스트를 더하라 (이번 기준 밖 · 태우기는 G-279 몫)",
-     "evidence": "규칙 탓으로 진단 — 장식(VegetationView)이 태울 것 밖이었다. volcano.gd 에 decor 를 붙여 앞머리를 따라(_burn_decor_reached) · 한꺼번에(burn→_scorch) 태우고, 탄 자리를 standing 의 scorched 로 저장 · restore 에서 다시 걷는다. test_volcano_decor.gd 가 진짜 유황 섬에서 덮인 자리 장식이 0 이 되고 판이 걷힌 뒤에도 0 · 안 덮인 자리는 그대로 · scorched 가 JSON 왕복 뒤 같은 장식을 태우는지(decor 먼저/나중 둘 다) · 토대가 빠져도 안 돌아오는지 단언한다. 일부러 test_island.gd 의 volcano.decor = vegetation 을 빼 보니 2개가 떨어졌다(되돌림). 다시 찍은 lava_carved.png 의 구멍 바닥에 초록 덤불이 없다. 마지막 단계 전체 565 파일 4227 통과 · guard 통과"
-    }
-   ],
-   "issues": [
-    "앞머리를 따라 태우는 차례는 테스트가 안 가른다 — test_volcano_decor.gd 첫 테스트는 SPREAD_HOURS+0.05 에 한 번만 보므로 _burn_decor_reached 를 비워도 burn(f)→_scorch 가 한꺼번에 태워 통과할 수 있다. 흐름 중간(front≈0.5)에 가까운 덮인 자리는 탔고 먼(_spot far) 자리는 아직 서 있다는 단언을 더하라"
-   ],
-   "good": [
-    "탄 장식 자리를 섬 저장(volcano.scorched, deflate+base64)에 남기고 다시 세운 섬 · 참가자 화면에서 걷는 일 — 저장은 담는 것이 기본이라 맞는 덧붙임이다"
-   ]
-  },
-  "test": "es://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/automation/villagers/test_villager_gear.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/build/test_placer.gd\nok      2s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      2s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      2s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/life/ranching/test_food_shown.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      1s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           565\nTests            4227\nPassing Tests    4227\nFailing Tests       0\nRisky/Pending       0\nAsserts        203933\nTime           802s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "c65a0bb0"
- },
- {
   "time": "2026-10-22 19:42:06",
   "epoch": 1792665726,
   "type": "pass",
@@ -8186,5 +8146,64 @@
   },
   "test": "res://tests/combat/tools_as_weapons/test_tool_tiers.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      2s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/core/net/test_net_link_one_place.gd\nok      2s  res://tests/core/net/test_net_sides_orphans.gd\nok      2s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      2s  res://tests/core/test_spec_stale_lines_g310.gd\nok      2s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      3s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      3s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_wears_modules.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      3s  res://tests/player/equipment/test_gun_effect_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      9s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           477\nTests            3587\nPassing Tests    3587\nFailing Tests       0\nRisky/Pending       0\nAsserts        126199\nTime           854s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "eaabf619"
+ },
+ {
+  "time": "2026-11-01 08:03:33",
+  "epoch": 1793487813,
+  "type": "pass",
+  "title": "통과 — G-356 단계 2 (spec 정리)",
+  "group": "G-356",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "성장 축 spec 정리 — 로드맵 두 줄 · 강화 뺐다 · 직업 지금 없다 · 장비 「단계마다 모듈 칸 · 기본 스펙」 · 모듈 「구하는 데 더 집중」, tools.json · workbench.json _temporary 낡은 줄 고침. 바뀐 곳 그물 233 파일 1867 테스트 통과",
+   "approach": "G-353 이 로드맵에 「성장 축(강화 · 직업 · 캐릭터 레벨 · 장신구)」를 적은 뒤 사람이 강화 · 직업을 뺐다(2026-10-31). 로드맵 표 3 단계와 얼리억세스 범위 두 곳을 새 성장 축 줄로 바꾸고, enhancement.md · professions.md 머리에 「뺐다 — 모듈로 대신한다」 · 「지금은 직업이 없다」와 사람 원문을 얹었다(옛 설계는 되살릴 때를 위해 아래에 남김). equipment.md 의 포인트 예산제 줄을 「단계마다 모듈 칸 · 기본 스펙」으로, 강화 가리킴 줄도 「뺐다」로 바꿨다. equipment-modules.md 머리에 「모듈을 구하는 데 더 집중」 원문과 「얻는 길은 사람이 정한다」를 적었다. 앞 단계 QA 두 줄 — tools.json 평타 줄을 「맨손 · 도구는 Attack.HIT, 근접 무기는 금속 단계(ToolTiers.MELEE_HIT, 임시)」로, workbench.json 의 스패너를 손잡이 줄에서 빼고 「스패너는 주괴 2」로 고쳤다(테스트가 실제 레시피도 주괴 하나 갈래 × 2 인지 본다). spec/README.md 목차 줄도 맞췄다.",
+   "why": "",
+   "files": [
+    "spec/00_core/roadmap.md",
+    "spec/05_craft/enhancement.md",
+    "spec/05_craft/professions.md",
+    "spec/02_player/equipment.md",
+    "spec/02_player/equipment-modules.md",
+    "spec/README.md",
+    "game/combat/tools_as_weapons/tools.json",
+    "game/craft/recipes/workbench.json",
+    "game/tests/core/test_spec_growth_axis_g356.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "roadmap.md 「얼리억세스 범위」 줄 · 로드맵 표 3 단계의 「성장 축(강화 · 직업 · 캐릭터 레벨 · 장신구)」을 「성장 축(숙련도 → 스킬 · 단계마다 모듈 칸 · 장신구) — 강화는 뺐다(모듈이 대신) · 직업은 지금 없다」로 고친다",
+     "evidence": "diff 에서 표 3 단계 · 얼리억세스 범위 두 줄이 바뀌었다. test_roadmap_growth_axis 가 옛 문구가 없고 새 문구가 정확히 2번 나오는지(count==2) 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "enhancement.md 「뺐다 — 모듈로 대신한다(사람 2026-10-31)」 · professions.md 「지금은 직업이 없다」 · equipment.md 포인트 예산제 줄을 「단계마다 모듈 칸 · 기본 스펙」으로 · 「모듈을 구하는 데 더 집중」(사람 원문)을 equipment-modules.md 에 · 얻는 길은 사람이 정한다 (테스트)",
+     "evidence": "네 파일 diff 확인. test_enhancement_removed · test_no_professions_now · test_equipment_tier_slots_not_point_budget(포인트 예산제 없음 + 새 줄 있음 + 옛 강화 가리킴 없음) · test_modules_focus_on_getting(사람 원문 + 「얻는 길은 사람이 정한다」). 옛 설계는 「되살릴 때만 본다」로 아래에 남겨 사람 줄을 지우지 않았다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) tools.json _temporary 평타 줄을 「맨손 · 도구는 Attack.HIT, 근접 무기는 금속 단계(ToolTiers.MELEE_HIT, 임시)」로",
+     "evidence": "word-diff 로 「무엇을 들었든 같다」 문장이 빠지고 새 문장이 들어간 것을 확인. test_tools_temporary_melee_hit 가 옛 문구 부재 · 새 문구 존재 · MELEE_HIT 표 비지 않음을 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) workbench.json _temporary 스패너 줄을 「스패너는 주괴 2」로",
+     "evidence": "손잡이 줄에서 스패너가 빠지고 「스패너는 주괴 2 다(청동괴 · 강철괴 2, 손잡이 없이)」가 붙었다. 실제 레시피 bronze_spanner {bronze_ingot:2} · steel_spanner {steel_ingot:2} 확인. test_workbench_temporary_spanner_two_ingots 가 문구와 실제 레시피(입력 1종 × 2, 두 개 다 보았는지 seen==2)를 함께 본다"
+    }
+   ],
+   "issues": [
+    "다른 곳에 포인트 예산제가 남았다 — equipment.md 에서는 「단계마다 모듈 칸 · 기본 스펙」으로 바꿨지만 spec/README.md:18 「equipment.md — 장비 스탯 · 포인트 예산제 · 세트」, spec/08_combat/tools-as-weapons.md:20 「도구 등급 사다리 · 포인트 예산제 · 세트 효과」, spec/10_economy/item-lineage.md:10 「(포인트 예산제, 02_player/equipment.md)」, spec/00_core/glossary.md:29 용어 줄이 아직 옛 규칙을 가리킨다. README · tools-as-weapons 는 「단계마다 모듈 칸 · 기본 스펙」으로 고치고, item-lineage 는 「단계 · 재료로 기본 스펙을 다시 계산」 꼴로, glossary 줄은 지우거나 「(뺐다 — 단계마다 기본 스펙)」으로. test_spec_growth_axis_g356.gd 에 이 네 파일에 「포인트 예산제」가 없음을 보는 단언을 더하라"
+   ],
+   "good": [
+    "spec/README.md 목차의 enhancement · professions 줄을 맞춘 것 — 기준 밖이지만 같은 정리의 짝이라 해가 없다"
+   ]
+  },
+  "test": "er.gd\nok      3s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/settings/save/test_old_barn.gd\nok      3s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      3s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      3s  res://tests/settings/save/test_old_vehicle_module.gd\nok      3s  res://tests/settings/save/test_save_migration.gd\nok      3s  res://tests/settings/save/test_world_data_keys_note.gd\nok      3s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      3s  res://tests/settings/test_language_settings.gd\nok      3s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      3s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/test_temp_dirs_are_cleaned.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      4s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      3s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      3s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      3s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      3s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      3s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      3s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      3s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      3s  res://tests/world/terrain/test_same_seed_same_island.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     33s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           758\nTests            5393\nPassing Tests    5393\nFailing Tests       0\nRisky/Pending       0\nAsserts        276809\nTime           1153s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "22095be5"
  }
 ]
