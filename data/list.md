@@ -6141,7 +6141,7 @@
 - [x] 2. 서버 판 테스트가 고아 노드 셋을 남긴다 (G-349 단계 1)
   - 기준: 서버 판 테스트가 고아 노드 셋을 남긴다 — test_mine_mission_on_server.gd test_the_server_holds_what_is_seen_below 로그에 Orphans 3 (파일 전체 9). 다른 테스트와 같은 정리(after_each free)를 확인해 고아를 없애라
 
-## [ ] G-350 드워프 광산 — 시추 임무가 무엇을 어디에 할지 보인다
+## [x] G-350 드워프 광산 — 시추 임무가 무엇을 어디에 할지 보인다
 - 차선: 3d-start · 시작 2026-10-31 23:03
 - 순서: G-349 뒤
 - spec: spec/03_world/dwarf-mine-missions.md
