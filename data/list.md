@@ -6159,7 +6159,7 @@
 - [x] 3. (앞 단계 QA) HOLE_FROM 주석이 낡았다
   - 기준: HOLE_FROM 주석이 낡았다 — game/world/mine/mine_drill.gd 의 HOLE_FROM · HOLE_TO 위 주석이 아직 「굴 갈래 길」이라 한다. 이제 닿는 굴(near_rooms · pipe_paths 로 거른 굴)의 길이다 — 「닿는 굴 길(가운데 길 점)의 이 몫 사이」로 고쳐라 (막는 것은 아니다)
 
-## [ ] G-351 출시 준비 — 설정 화면 (소리 · 화면 · 언어)
+## [x] G-351 출시 준비 — 설정 화면 (소리 · 화면 · 언어)
 - 차선: 3d-lane2 · 시작 2026-10-31 23:13
 - spec: spec/01_settings/audio.md · display.md · language.md · spec/12_ui/menu.md
 - **사람 2026-10-31** (원문 그대로): 「전체적으로 이제 게임을 완성하고 싶은데」 — 지휘 세션이 spec 전부를 코드와 맞춰 보니 설정 화면이 키보드 · 마우스 · 화면(나침반 하나) 셋뿐이다
