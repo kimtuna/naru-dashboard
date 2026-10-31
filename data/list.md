@@ -6307,7 +6307,7 @@
   - 기준: 보스 사냥(G-346)을 깨면 보상에 모듈 하나(상급 쪽 표 · 임시)를 더한다 · 채굴 · 시추 임무를 깨면 낮은 확률(임시 15 %)로 모듈 하나 · spec equipment-modules.md 「얻는 길」에 대장장이 의뢰 · 땅굴 보물 · 보스 · 임무 보상을 적는다 (테스트)
   - 기준: (앞 단계 QA) 서버가 상자 바람을 덜 가린다 — NetWorld._mine_chest_ask 는 섬에 있는지(_here)만 보고, 그 참가자가 땅굴에 내려가 있는지 · 번호 i 가 판 상자 수 안인지는 안 본다. MineShaft.claim_chest 도 i < 0 만 거른다(서버장이 위에 있으면 chests 가 null 이라 수를 모른다). 잘못된 번호면 opened_chests 에 없는 번호가 쌓인다. claim_chest 에서 chests 가 있으면 i >= chests.spots.size() 를 거르고(없으면 MineChests.pick(stamp 시드, 짜임) 수로), _mine_chest_ask 에서 내려가 있는 사람인지 보게 하고 test_mine_mission_on_server 에 범위 밖 번호를 바라면 false 인 단언을 더해라
   - 기준: (앞 단계 QA) 상자 방이 파도 못 닿는 곳일 수 있다 — MineChests.candidates 는 reach_from(0) 밖만 보고 reach_from(0, {}, true)(흙만 파면 닿는 곳) 안인지는 안 본다. 흙 마개 너머이되 흙을 파면 닿는 방만 후보로 하고, test_chests_sit_beyond_dirt_plugs… 에 assert_true(l.reach_from(0, {}, true).has(i)) 를 더해라
-- [ ] 3. (앞 단계 QA) 상자 바위 너머 거름을 깨도 테스트가 통과
+- [x] 3. (앞 단계 QA) 상자 바위 너머 거름을 깨도 테스트가 통과
   - 기준: 상자 바위 너머 거름을 깨도 테스트가 통과 — MineChests.candidates 의 `not dig.has(i)` 거름을 빼도 test_mine_chests 가 다 통과한다. MineLayout.plan 이 시드 0~399 에서 흙을 파도 못 닿는 방을 한 번도 안 만들기 때문(링크 그래프가 늘 이어져 있다). test_mine_chests 에 손으로 짠 MineLayout(방 0 · 마개로 이은 곁방 1 · 아무 링크 없는 곁방 2)을 넣어 MineChests.candidates 가 방 1 은 내고 방 2 는 안 내는지 단언하는 테스트를 더해라 — 그래야 이 거름이 정말 지켜진다
   - 기준: (앞 단계 QA) spec 「만들지 않는 것」의 낡은 줄 — spec/02_player/equipment-modules.md 129 줄 「이번 묶음에서 만들지 않는 것」에 아직 「얻는 길 (사람이 정한다)」이 남아 있는데 같은 파일에 「얻는 길」 절(넷)이 섰다. 그 줄에서 「얻는 길 (사람이 정한다)」을 빼거나 「얻는 길의 다섯째 갈래(사막 유물 등)」처럼 남은 것만 적어라
 
@@ -6377,6 +6377,14 @@
   - 기준: 벌목 쪽 참가자 덤 테스트가 없다 — test_harvest_on_server 는 채광(바위)만 본다. _strike 가 Harvest.skill_of(kind) 로 갈래를 고르므로 나무를 친 참가자에게 벌목 단 수 덤이 붙는지(채광 단만 알렸을 때 나무에는 안 붙는지) 단언을 하나 더하라
 - [ ] 3. butchery.gd 주석 자리가 어긋났다 (G-358 단계 3)
   - 기준: butchery.gd 주석 자리가 어긋났다 — game/life/hunting/butchery.gd 의 '## 가방에 못 넣은 몫 — 주검 자리에 떨어뜨린다.' 줄이 새 extra_for 문서 주석 맨 위에 붙어 extra_for 설명이 되었다. 그 줄을 _drop 바로 위로 옮겨라
+
+## [ ] G-952 루프가 찾은 것 — 스스로 갚는다
+- 차선: 3d-start
+- QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
+  루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
+- 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
+- [ ] 1. 끝막이 굴(stub) 쪽 바위 너머 거름도 테스트가 없다 (G-361 단계 3)
+  - 기준: 끝막이 굴(stub) 쪽 바위 너머 거름도 테스트가 없다 — mine_chests.gd 106 줄의 `not dig.has(int(t.room))` 는 이번 새 테스트가 곁방만 넣어서 지켜지지 않는다. test_chests_skip_rooms_no_digging_reaches 처럼 손으로 짠 판에 링크 없는 방에 붙은 stub 굴(points 3 개 넘게)을 넣고 그 room 이 candidates 에 안 나오는지 단언하는 테스트를 더해라 (기준 밖 — 이번 기준은 곁방 거름만 짚었다)
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
