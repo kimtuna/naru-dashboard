@@ -1,45 +1,5 @@
 [
  {
-  "time": "2026-10-23 08:18:50",
-  "epoch": 1792711130,
-  "type": "pass",
-  "title": "통과 — G-292 단계 2 (보이는 것 · spec — 걷는 동안 드릴이 돌고 부스러기 (찍는 자리) · vehicles.md 에 차량 드릴 절)",
-  "group": "G-292",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "차량 드릴을 목차 「시설」에서 「제작」 갈래(설비 모듈 옆)로 옮기고, 화산 없는 섬 테스트에 _volcano() null 단언을 더했다 — 바뀐 곳만 2파일 18개 통과",
-   "approach": "vehicle_drill 줄이 facilities 아래 vehicle_garage 다음에 있었다. 모듈을 다루는 줄은 crafting 갈래의 station_modules(설비 모듈)뿐이라 그 다음으로 옮겼다. 테스트는 목차 JSON 을 읽어 facilities 갈래에 vehicle_drill 이 없음을 단언한다. 화산 없는 섬 절에는 Vehicle._volcano() 가 null 임을 단언했다. vehicles 폴더 8파일 41개, changed_tests 그물(test_car_drill · test_manual_screen) 18개 통과.",
-   "why": "",
-   "files": [
-    "game/ui/manual/manual_toc.json",
-    "game/tests/life/vehicles/test_car_drill.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 차량 드릴이 목차의 「시설」 갈래에 들었다 — game/ui/manual/manual_toc.json 에서 vehicle_drill 줄이 facilities(MANUAL_CAT_facilities) 아래 vehicle_garage 다음에 있다. 모듈이지 시설이 아니다. 모듈을 다루는 갈래(예: 장비 · 모듈 쪽)로 옮기거나, 다른 모듈(vehicle_module · scope_*)처럼 목차에 안 넣는 쪽으로 맞춰라. 옮기면 test_car_drill.gd 의 목차 단언은 그대로 통과한다",
-     "evidence": "manual_toc.json 에서 vehicle_drill 줄이 facilities 에서 빠지고 crafting 갈래의 station_modules(설비 모듈) 다음으로 옮겨졌다(한 줄뿐). test_the_vehicle_drill_fits_only_the_car_slot 가 목차 JSON 을 읽어 facilities 갈래 항목에 vehicle_drill 이 없음을 assert_ne 로 본다. 일부러 vehicle_drill 줄을 facilities 의 vehicle_garage 다음에 되돌려 넣고 tests/life/vehicles 를 돌리니 이 단언이 깨졌다(40 통과 · 1 실패) — 되돌려 놓았다. 기존 「목차에 한 줄」 단언도 그대로 통과. 전체 596파일 4386개 통과 · guard 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 화산 없는 섬 테스트가 조금 약하다 — test_bare_ground_and_an_island_without_a_volcano_are_left_alone 의 두 번째 절은 voxel_ground.records 0 만 본다(화산이 없으니 carved 신호도 못 단다). Vehicle._volcano() 가 null 을 내는지 단언을 한 줄 더해라 (예: assert_null(car._volcano()))",
-     "evidence": "두 번째 절(화산 없는 섬에서 60프레임 몬 뒤)에 assert_null(car._volcano(), ...) 가 더해졌다. vehicle.gd:229 _volcano() 는 부모를 거슬러 volcano 를 찾고 없으면 null 을 낸다 — 화산 섬이면 Volcano 가 나와 단언이 깨지므로 뜻 있는 단언이다. 전체 통과"
-    }
-   ],
-   "issues": [
-    "[결정] 단계 2 제목의 일에 기준이 없다 — plan/list.md G-292 단계 2 제목은 「보이는 것 · spec — 걷는 동안 드릴이 돌고 부스러기 (찍는 자리) · vehicles.md 에 차량 드릴 절」인데 기준 줄은 앞 단계 QA 두 줄뿐이다. vehicles.md 의 차량 드릴 절은 단계 1 에서 이미 들어갔지만, 걷는 동안 드릴이 도는 모습 · 부스러기 · 찍는 자리는 기준이 없어 이번에 만들지 않은 채 단계가 끝난다. 하네스가 원래 기준을 QA 줄로 덮었는지 보고, 그 일이 필요하면 기준을 단 단계로 다시 올려야 한다 (목차는 세션 손 밖)"
-   ],
-   "good": []
-  },
-  "test": "     3s  res://tests/ui/hud/test_no_output_slots.gd\nok      2s  res://tests/ui/hud/test_station_keep_window.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/automation/villagers/test_hands_chest_one_rule.gd\nok      2s  res://tests/automation/villagers/test_job_work_shared.gd\nok      2s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      1s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      2s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      2s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      1s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      1s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           596\nTests            4386\nPassing Tests    4386\nFailing Tests       0\nRisky/Pending       0\nAsserts        211839\nTime           844s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "c7fcc8e1"
- },
- {
   "time": "2026-10-23 08:36:26",
   "epoch": 1792712186,
   "type": "pass",
@@ -8198,5 +8158,56 @@
    "good": []
   },
   "test": "ests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_compass.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      3s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      3s  res://tests/world/terrain/test_obsidian.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      9s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           745\nTests            5285\nPassing Tests    5285\nFailing Tests       0\nRisky/Pending       0\nAsserts        269840\nTime           1083s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-31 23:18:16",
+  "epoch": 1793456296,
+  "type": "pass",
+  "title": "통과 — G-350 단계 1 (지금 할 일 한 줄 · 놓을 자리 표시)",
+  "group": "G-350",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "시추 임무 땅굴의 임무 창에 지금 할 일 한 줄(원유 막대 위) · 손에 든 임무 몫에 따라 놓을 자리 표시(시추기 고리 · 구멍 빛기둥 · 안 이은 끝 공) — 바뀐 곳만 골라 돈 125 개 파일 963 개 통과",
+   "approach": "시추는 다 있었지만 무엇을 할지 말해 주는 곳이 없었다. MineDrill.step() 이 놓인 것 · 이어진 구멍 · 끊긴 토막을 보고 할 일 한 줄을 고른다(시추기 → 끊긴 배관 → 꽂은 설비 잇기 → 남은 구멍에 꽂기 · 다 이었거나 탱크가 차면 없음). 임무 창(MissionTracker)에 Step 줄을 맨 위에 두고 원유 줄 · 막대를 그 높이만큼 내린다 — 오른쪽 위는 나침반 끝까지 너비가 200px 뿐이라 긴 줄(배관 잇기)은 두 줄로 바뀐다. 기존 원유 줄 글은 그대로라 G-343 테스트가 안 바뀐다. 손에 든 것은 승강기가 넣어 준 player 로 읽는다(MineDrill._show_hints): 시추기 → 승강장 둘레 고리 둘(우리 밖 LIFT_CLEAR · 8 m) · 설비 → 빈 구멍마다 빛을 안 받는 3 m 빛기둥 + 발치 고리(꽂은 구멍은 꺼짐) · 배관 → 안 이은 설비의 출력 끝들 · 이을 설비가 남은 동안 시추기의 빈 입구에 작은 공. 그림: harness/shot.sh <폴더> island=dwarf mine_oil_step mine_oil_beacon (3D 그림엔 HUD 가 없어 할 일 줄은 harness/shot.sh --ui <폴더> mission_oil_step) — 셋 다 찍어 열어 봤다. 표시 · 할 일 줄은 보는 방식이라 저장하지 않는다(임무 자체가 안 담긴다).",
+   "why": "할 일 줄 글 크기 14px (MissionTracker.STEP_FONT) — 원유 줄보다 작게, 그림 보고 정함; 시추기 자리 고리 굵기 0.07 m · 빛 (1, 0.85, 0.4, 0.35) · 바닥에서 0.08 m (MineDrill.ZONE_*); 구멍 빛기둥 반지름 0.12 m · 높이 3 m · 빛 (1, 0.7, 0.2, 0.55) (MineDrill.BEACON_*); 안 이은 끝 공 반지름 0.12 m · 빛 하늘색 · 시추기 입구에서 0.5 m 안에 토막 끝이 있으면 이은 입구 (MineDrill.END_*)",
+   "files": [
+    "game/world/mine/mine_drill.gd",
+    "game/world/mine/mine_shaft.gd",
+    "game/ui/hud/mission_tracker.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/core/debug/shots.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "spec/03_world/dwarf-mine-missions.md",
+    "game/tests/world/mine/test_mine_drill_guide.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "시추 임무 땅굴에서 오른쪽 위 임무 창(원유 막대 위)에 지금 할 일 한 줄 — 메인 시추기를 안 놓았으면 「메인 시추기를 승강장 곁에 놓아라」, 놓았으면 「기름 구멍에 시추 설비를 꽂아라 (1/3)」, 꽂은 설비가 시추기에 안 이어졌으면 「배관으로 설비와 메인 시추기를 이어라 (이어진 구멍 1/3)」, 다 이어졌으면 원유 막대만 · 배관이 끊기면 「끊긴 배관을 스패너로 이어라」 (테스트)",
+     "evidence": "test_mine_drill_guide.gd::test_the_mission_window_says_what_to_do_now — 진짜 시추 땅굴에 내려가 MissionTracker 로 차례마다 글(시추기 → 0/3 → 잇기 0/3 → 1/3 → 잇기 1/3 → 다 이음 빈 줄 · 막대 보임 → cut 하면 스패너 줄 → mend 하면 빈 줄 → 탱크 차면 빈 줄)을 단언하고, 할 일 줄이 막대 위에 있는지 · 두 줄 안인지 위치도 본다. step() 의 broken_pipe 검사를 끄자 이 테스트가 떨어졌다(되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "메인 시추기를 손에 들면 승강장 곁 놓을 수 있는 자리(8 m 안 · 우리 밖)가 바닥에 흐린 테두리로 보인다 · 시추 설비를 들면 기름 구멍마다 바닥에 빛 표시(멀리서도 보이는 짧은 빛기둥) · 배관을 들면 시추기와 설비의 아직 안 이은 끝에 작은 표시 (테스트)",
+     "evidence": "test_held_kit_shows_where_it_goes — 곡괭이면 표시 없음 · 시추기면 고리 둘 반지름이 LIFT_CLEAR · NEAR_LIFT 이고 승강장 가운데 · 고리 사이가 why_not 빈 줄(놓이는 자리) · 설비면 구멍 0,1,2 빛기둥(빛 안 받음 · 높이 >2 m · 구멍 자리) · 꽂은 구멍은 꺼짐 · 배관이면 설비 출력 끝 + 시추기 빈 입구 · 이으면 빠지고 · 내려놓으면 숨음. 빛기둥이 꽂은 구멍에서도 켜지게 바꾸자 이 테스트가 떨어졌다(되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "spec 시추 줄 · 그림 자리(할 일 줄 · 설비를 든 화면의 구멍 빛기둥) (테스트)",
+     "evidence": "test_spec_and_shots — spec 「**시추 안내**」 줄 · mine_oil_step / mine_oil_beacon / mission_oil_step 그림 자리가 spec · shots.gd · UiShots.PLACES 에 있는지, 네 번역 키가 ko · en 둘 다 있는지 본다. spec 줄에 값 임시 · 사람 원문이 적혀 있고 md 53줄"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "/ui/hud/test_station_doing_line.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      4s  res://tests/ui/hud/test_station_row_columns.gd\nok      5s  res://tests/ui/hud/test_station_search.gd\nok      5s  res://tests/ui/hud/test_station_tabs.gd\nok      4s  res://tests/ui/hud/test_station_window_frame_cost.gd\nok      4s  res://tests/ui/hud/test_villager_window.gd\nok      4s  res://tests/world/frontier_islands/test_pit_dwarves.gd\nok      3s  res://tests/build/test_size_4x4.gd\nok      3s  res://tests/core/debug/test_orc_shot.gd\nok      5s  res://tests/world/mine/test_mine_dirt_path.gd\nok      5s  res://tests/world/mine/test_mine_entry.gd\nok      3s  res://tests/core/test_open_chest_window.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      3s  res://tests/ui/hud/test_alert_log_place.gd\nok      4s  res://tests/ui/hud/test_ammo_label.gd\nok      3s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      3s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      4s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      4s  res://tests/ui/hud/test_hive_window.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      4s  res://tests/ui/hud/test_map_coords.gd\nok      3s  res://tests/ui/hud/test_map_death_marks.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      4s  res://tests/ui/hud/test_station_queue_window.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      3s  res://tests/ui/hud/test_trough_window.gd\nok      3s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      3s  res://tests/ui/hud/test_villager_hands_window.gd\nok      4s  res://tests/ui/hud/test_villager_gear_window.gd\nok      4s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      3s  res://tests/core/debug/test_play_island_pick.gd\nok      3s  res://tests/craft/stations/test_oil_press.gd\nok      2s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      3s  res://tests/life/vehicles/test_car_modules.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      4s  res://tests/ui/hud/test_compass.gd\nok      4s  res://tests/ui/hud/test_clock_label.gd\nok      3s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      3s  res://tests/ui/theme/test_korean_font.gd\nok    204s  res://tests/build/test_placeable_previews.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           125\nTests             963\nPassing Tests     963\nFailing Tests       0\nRisky/Pending       0\nAsserts         25717\nTime           204s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "ee93cde9"
  }
 ]
