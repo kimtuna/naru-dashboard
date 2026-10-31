@@ -6198,7 +6198,7 @@
   - 기준: 아래 줄을 지금 코드에 맞게 고친다 — crafting-stations.md 「전기는 아직 없고」 · 분류 일곱(지금 여섯) · facilities.md 시설 표 밖 목록(stations.json 38 줄) · 활 재료(가죽끈) · 약제대 줄 · 방직기 앙고라 · 「망치의 몫(도면)」 · recipes.md 「열둘」 · inventory-hotbar.md 맨손 제작(도면 빠짐) · equipment.md 배낭 레시피 자리(armor_bench) · equipment-modules.md 시험용 모듈 「얻는 길 없다」(지금 의뢰) · hunting.md 「뼈 · 가죽끈 쓰임 없음」 · mining.md 「지형을 파지 않는다」 · 석회 줄 · farming.md 똥 비료 · fishing.md 찌 줄 · power.md 드론 체인 · drones.md 「배관이 아니라 드론」 · water-pipes.md 출력 끝 · npc-villagers.md gather_work · 「습격이 어떻게 도나」 · villager-persona.md 「습격은 아직 없다」 · dwarf-island.md 「밖에서 n L」 · 「광차를 부르고」 · dwarf-mine-missions.md F9 줄(시드는 서버가 준다) · tech.md THIRD_PARTY(GodotSteam) · menu.md 탭 · save.md 캐릭터 저장의 「직업 · 도감 · 탐험 기록」(아직 없다고) · islands.json 주석 둘(온탕 · 「둘뿐」) · sunken-village.md · volcano.md 「둘 다 다시 고른다」(하나는 드워프 광산) (테스트 없음 — 줄마다 근거 파일)
   - 기준: **얼리억세스 범위 — 사람 결정 2026-10-31** 을 roadmap.md 에 적는다(로드맵 표 · 「미정」 F-17 · 「빼는 것」 줄을 이에 맞춘다): 넣는다 — **성장 축(강화 · 직업 · 캐릭터 레벨 · 장신구)** · **펫 · 도감 · 이로치**. 출시 뒤 업데이트로 — **원정섬 2번째 · 경매장 · 중앙 원장(관문 서버) · 티켓 · 보험**. 사람이 고른 원문: 「성장 축, 펫 · 도감 · 이로치」 (테스트 없음)
 
-## [ ] G-354 드워프 섬을 연구로 연다
+## [x] G-354 드워프 섬을 연구로 연다
 - 차선: 3d-start · 시작 2026-11-01 00:42
 - 순서: G-350 뒤
 - spec: spec/03_world/dwarf-island.md · frontier-islands.md
