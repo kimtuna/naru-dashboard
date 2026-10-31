@@ -1,69 +1,5 @@
 [
  {
-  "time": "2026-10-21 09:51:18",
-  "epoch": 1792543878,
-  "type": "fail",
-  "title": "QA 불합격 — G-274 단계 2 (시도 1)",
-  "group": "G-274",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "데스 상자 창에서 찾기 · 정렬 · 빠른 채우기를 빼고 「모두 가져오기」(앞 칸부터 하나씩, 가방이 차면 멈춤)를 넣었다. 상자가 비면 곧바로 없어지고 지도 표 · 연 창도 같이 사라진다. 같이 하는 판에서는 서버가 지운다. 바뀐 곳만 돌린 테스트(208개 파일 · 1624개)에서 옛 기준을 쓰던 2개가 떨어졌고, 그 둘을 고쳐 다시 돌려 16개 다 통과",
-   "approach": "「모두 가져오기」는 Chest.take_all 이다. 앞 칸부터 칸마다 Shift+클릭과 같은 자리 찾기(quick_into_bag)로 옮기고, 한 칸이 다 들어가지 못하면 가방이 찬 것이니 거기서 멈춘다. 그 칸의 남은 몫과 뒤 칸은 상자에 남는다. 이 일은 Acts.C_TAKE_ALL 로 상자 일 문을 지나므로 참가자 기계에서는 서버가 한다. 서버는 데스 상자에 오는 정렬 · 빠른 채우기를 단추가 없어도 하지 않는다. 비면 사라지는 것은 DeathChest 가 제 changed 소식을 보고 정한다. 그래서 단추로 비우든, 끌거나 Shift+클릭으로 비우든, 손으로 집어 비우든 한 길로 같다. vanish 가 무리에서 바로 빼므로 지도 표(death_marks)와 저장(standing)에서 곧바로 빠지고, 연 창은 Death 가 tree_exiting 에 닫는다. 참가자 기계의 그림 상자(remote)는 스스로 사라지지 않고 서버 목록을 따른다. 마지막 것을 손에 집은 채 상자가 비면, 창이 닫히며 그것이 가방으로 간다(사라지지 않는다, 테스트로 확인). 빈손으로 죽어 빈 채 놓인 상자는 놓일 때 안이 바뀐 것이 아니어서 그대로 선다 — 기준이 「비우면」이라 손대지 않았다. 창은 데스 상자일 때 검색 · 정렬 · 빠른 채우기를 숨기고 TakeAll 단추를 띄운다. harness/shot.sh --ui 로 death_chest · chest 를 찍어 둘 다 맞게 그려지는 것을 봤다. (앞 단계 QA) map_window.death_marks() 의 쓸데없는 is_queued_for_deletion 거르기는 지웠다. 옛 테스트 둘은 새 기준에 맞췄다: 데스 상자 창에 검색 칸이 있다고 본 test_chest_window_search 는 보관 · 개발용 상자만 보게 바꿨고, 데스 상자 첫 칸을 꺼낸 뒤 닫아 보는 test_chest_break 는 상자에 두 칸을 담아 꺼낸 뒤에도 상자가 남게 했다.",
-   "why": "",
-   "files": [
-    "game/world/storage/chest.gd",
-    "game/combat/damage_death/death_chest.gd",
-    "game/core/net/acts.gd",
-    "game/ui/hud/chest_window.gd",
-    "game/ui/hud/chest_window.tscn",
-    "game/ui/hud/map_window.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "spec/06_build/storage.md",
-    "spec/08_combat/damage-death.md",
-    "game/tests/ui/hud/test_death_chest_take_all.gd",
-    "game/tests/multiplayer/test_death_on_server.gd",
-    "game/tests/ui/hud/test_chest_window_search.gd",
-    "game/tests/world/storage/test_chest_break.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "데스 상자 창에서 **찾기 · 정렬 · 빠른 채우기를 뺀다**(여느 상자 창은 그대로)",
-     "evidence": "test_death_chest_take_all.gd test_the_death_chest_window_has_only_take_all 이 진짜로 죽어 떨어진 상자를 열어 search/sort/fill 이 안 보이고 TakeAll 이 보이는지, test_a_storage_chest_window_keeps_its_tools 가 보관 상자에선 셋이 보이고 TakeAll 이 안 보이는지 본다. 번역 키 CHEST_TAKE_ALL 이 ko/en 둘 다 있다"
-    },
-    {
-     "ok": false,
-     "criterion": "**「모두 가져오기」 버튼** — 상자의 **앞 칸부터 하나씩** 가방으로 옮기고, 가방이 차면 거기서 멈춘다(남은 것은 상자에 그대로) (테스트: 가방 빈 칸이 셋이면 앞 셋만)",
-     "evidence": "test_three_free_slots_take_the_first_three 가 「빈 칸 셋이면 앞 셋만」을 본다. 그러나 「가방이 차면 거기서 멈춘다」를 지키는 Chest.take_all 의 break 를 지워도(game/world/storage/chest.gd:259-260) test_death_chest_take_all.gd 가 다 통과했다 — 멈춤을 지키는 테스트가 없다. test_a_half_fitting_slot_stops_there 는 주석으로 「뒤 칸은 건너뛰어 가져오지 않는다」고 하지만 뒤 칸(stone)이 가방에 어차피 들어갈 자리가 없어 건너뛰어도 결과가 같다"
-    },
-    {
-     "ok": true,
-     "criterion": "상자가 **비면 데스 상자가 곧바로 없어진다** — 버튼으로 비우든 손으로 빼든. 지도 표시도 같이 (테스트) · 멀티 — 서버가 지킨다",
-     "evidence": "test_emptying_with_the_button_removes_the_chest_its_mark_and_the_window(단추 → 상자 · death_marks · standing · 창), test_emptying_by_hand_removes_the_chest_too(Shift+클릭 · 끌어 놓기), test_picking_the_last_into_the_hand_keeps_it(손에 집기), multiplayer/test_death_on_server.gd test_taking_all_on_a_guest_empties_and_removes_the_chest_everywhere(참가자가 비우면 서버가 지우고 두 참가자 그림 · 지도 표 · 창이 사라진다). 전체 테스트 0 실패"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 죽은 자리 표에 쓸데없는 거르기가 있다 — game/ui/hud/map_window.gd death_marks() 의 `or chest.is_queued_for_deletion()` 은 DeathChest.vanish() 가 이미 remove_from_group 하므로 아무것도 거르지 않는다(빼도 테스트가 다 통과했다). 지워도 되고, 남기려면 「vanish 가 무리에서 빼므로 덧붙인 받침」이라고 주석을 달아라",
-     "evidence": "git diff 에서 map_window.gd:139 의 is_queued_for_deletion 거르기가 지워졌다"
-    }
-   ],
-   "issues": [
-    "「가방이 차면 멈춘다」를 지키는 테스트가 없다 — Chest.take_all(game/world/storage/chest.gd:259-260)의 `if not slot(i).is_empty(): break` 를 지워도 test_death_chest_take_all.gd 가 다 통과했다. 뒤 칸이 실제로 가방에 들어갈 수 있는 경우를 넣어라: 예) 상자 [stone 5, wood 2] · 가방은 clay 로 꽉 채우되 한 칸을 wood 99-1(=STACK_MAX-1)로 두고 stone 칸은 들어갈 자리가 없게 → take_all 뒤 stone 이 상자에 5 그대로 · wood 도 상자에 2 그대로(가방 wood 는 STACK_MAX-1 그대로) 를 단언. 즉 앞 칸이 막히면 뒤 칸이 들어갈 수 있어도 가져오지 않는다는 것을 본다. test_a_half_fitting_slot_stops_there 의 「뒤 칸은 건너뛰어 가져오지 않는다」 주석도 이 테스트에 맞게 고쳐라",
-    "서버의 데스 상자 정렬 · 빠른 채우기 거부 단언이 비었다 — test_death_on_server.gd test_taking_all_on_a_guest_… 에서 C_SORT · C_FILL 을 보내고 hc.items() 가 그대로인지 보지만, 상자가 [stone, plank] 라 tr 이름(돌 < 판자)으로 이미 정렬돼 있고 미르 가방은 죽어서 비어 빠른 채우기로 넣을 것이 없다. acts.gd 의 DeathChest 거르기를 지워도 통과한다. 상자 순서를 정렬과 다르게(예: plank 를 앞에) 하고 미르 가방에 상자에 든 종류(핫바 밖 칸, 예: 12번 칸 stone 1)를 넣은 뒤 보내야 거부를 본다"
-   ],
-   "good": [
-    "서버가 데스 상자에 오는 C_SORT · C_FILL 을 거부한다(acts.gd run_chest) — 기준은 창에서 빼는 것까지이지만 같은 요청의 연장이라 해롭지는 않다"
-   ]
-  },
-  "test": "  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/automation/villagers/test_crafter_spec.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/automation/villagers/test_keeper_particle.gd\nok      2s  res://tests/automation/villagers/test_villager_body.gd\nok      2s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      2s  res://tests/automation/villagers/test_villager_gear.gd\nok      2s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/automation/villagers/test_villager_rooms_doc_line.gd\nok      2s  res://tests/build/test_build_piece_shared_shapes.gd\nok      2s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/build/test_placeable_tidy.gd\nok      2s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/build/test_placers_file_end.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/core/tools/test_no_move_to_trash.gd\nok      2s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      1s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      3s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/hunting/test_captive_names.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/player/inventory_hotbar/test_weights_captive_order.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/test_temp_dir.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           543\nTests            4103\nPassing Tests    4103\nFailing Tests       0\nRisky/Pending       0\nAsserts        196869\nTime           794s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-21 10:23:26",
   "epoch": 1792545806,
   "type": "pass",
@@ -8451,5 +8387,36 @@
   },
   "test": "ds/test_locked_island.gd\nok      4s  res://tests/ui/hud/test_kept_window.gd\nok      3s  res://tests/ui/menu/test_pause_menu_kill.gd\nok      4s  res://tests/ui/hud/test_room_names.gd\nok      5s  res://tests/ui/hud/test_villager_gear_window.gd\nok      5s  res://tests/ui/hud/test_room_window.gd\nok      4s  res://tests/world/frontier_islands/test_pit_dwarves.gd\nok      3s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      3s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/debug/test_play_island_pick.gd\nok      4s  res://tests/world/terrain/test_drill_view.gd\nok      3s  res://tests/core/debug/test_orc_shot.gd\nok      2s  res://tests/core/test_spec_stale_lines_g310.gd\nok      3s  res://tests/craft/stations/test_oil_press.gd\nok      3s  res://tests/life/harvest/test_rock_cracks.gd\nok      3s  res://tests/core/test_open_chest_window.gd\nok      3s  res://tests/life/hunting/test_burrows.gd\nok      3s  res://tests/life/vehicles/test_car_modules.gd\nok      3s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/test_audio_settings.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      3s  res://tests/ui/hud/test_compass.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      4s  res://tests/ui/menu/test_key_rebind.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      3s  res://tests/ui/theme/test_korean_font.gd\nok      4s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      3s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      3s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      3s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/settings/save/test_old_tea_coffee.gd\nok      3s  res://tests/settings/save/test_world_data_keys_note.gd\nok      4s  res://tests/settings/test_display_settings.gd\nok      3s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     34s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           100\nTests             872\nPassing Tests     872\nFailing Tests       0\nRisky/Pending       0\nAsserts         48136\nTime           154s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "166e1d4e"
+ },
+ {
+  "time": "2026-11-01 00:09:13",
+  "epoch": 1793459353,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-351 단계 3 (시도 1)",
+  "group": "G-351",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "설정 「언어」 탭(한국어 · English) — 고르면 곧바로 바뀌고 user_prefs [general] language 에 담겨 켤 때 되살아난다 · 처음엔 OS 말(한국어가 아니면 English) · 찍기에서 수직 동기화를 진짜 창 값으로 확인. 바뀐 곳만: 71 파일 633개 통과",
+   "approach": "말을 고르는 길이 없어 고도가 OS 말을 그냥 따랐다. UserPrefs 에 language(ko · en)를 두고 [general] language 로 읽고 쓴다. 파일에 없거나 번역이 없는 말이면 language_for_os(OS.get_locale()) — 「ko」로 시작하면 한국어, 아니면 English. 고르면 set_language → TranslationServer.set_locale 로 곧바로 든다. 켤 때는 _ready 가 load_from 뒤 apply_language 를 불러 처음 켤 때도 OS 말이 든다. load_from 은 파일에 말이 적혀 있을 때만 locale 을 건드린다 — 테스트 수십 개가 임시 폴더로 load_from 을 부르는데 그때마다 OS 말로 되돌리면 en 으로 놓고 보는 테스트가 흔들린다. 설정 화면에 「언어」 탭(이름표 · 고르기)을 더했고 말 이름은 두 po 모두 「한국어」 · 「English」(못 읽는 말로 적히면 되돌아갈 수 없다). 앞 단계 QA: headless 테스트는 수직 동기화를 다시 읽을 길이 없어, 진짜 창으로 도는 찍기(ui_shots 의 settings_display)에서 UserPrefs._apply_vsync 로 끄고 켜며 DisplayServer.window_get_vsync_mode(id) 를 단언하는 _vsync_probe 를 더했다 — 결과를 settings_display_vsync.txt 에 남기고 어긋나면 push_error. 돌려 보니 macOS 에서 「set 0 got 0 · set 1 got 1」로 ok. settings_language 찍기 자리를 더해 ko · en 두 장을 열어 봤다(탭 다섯이 잘리지 않음). 탭 목록을 단언하던 test_settings_screen · test_main_menu 를 새 탭에 맞췄다. 해 그림자 지도는 RenderingServer 에 다시 읽는 길이 없어 여전히 applied 기록으로만 본다.",
+   "why": "",
+   "files": [
+    "game/settings/user/user_prefs.gd",
+    "game/ui/menu/settings_screen.gd",
+    "game/ui/menu/settings_screen.tscn",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "game/tests/settings/test_language_settings.gd",
+    "game/tests/ui/menu/test_main_menu.gd",
+    "game/tests/ui/menu/test_settings_screen.gd",
+    "spec/01_settings/language.md",
+    "spec/01_settings/save.md",
+    "spec/12_ui/menu.md"
+   ],
+   "decision": null
+  },
+  "test": "tier_islands/test_mine_gate.gd\nok      3s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      3s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      3s  res://tests/world/invasion/test_island_progress.gd\nok      3s  res://tests/world/map/test_map_memory.gd\nok      3s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      3s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      4s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      3s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      3s  res://tests/world/terrain/test_dig_save.gd\nok      4s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_mine_rebake.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/automation/villagers/test_job_work_shared.gd\nok      3s  res://tests/world/terrain/test_volcano_cycle.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     36s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nFAIL   11s  res://tests/perf/test_lava_melt_load.gd\n\n================ 떨어진 파일: res://tests/perf/test_lava_melt_load.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/perf/test_lava_melt_load.gd\n* test_a_crowded_island_stays_under_the_frame_limit_while_lava_flows\n    LAVA_MELT 분출 0 · 놓은 것 3000 (건축물 1777): tick 평균 0.148 ms · 흐르는 동안 최대 1.422 ms (첫 프레임 뺌) · 태우기 몫 최대 1.416 ms · 분출 첫 프레임 0.60 ms · 흐름 뒤 tick 최대 0.62 ms (몸통 도는 40 프레임 포함) · 흐름 뒤 마저 한 프레임 1 · 태운 수 2461 · 남은 것 539\n    LAVA_MELT 분출 1 · 놓은 것 3000 (건축물 1777): tick 평균 0.143 ms · 흐르는 동안 최대 0.634 ms (첫 프레임 뺌) · 태우기 몫 최대 0.632 ms · 분출 첫 프레임 0.59 ms · 흐름 뒤 tick 최대 0.62 ms (몸통 도는 40 프레임 포함) · 흐름 뒤 마저 한 프레임 1 · 태운 수 2461 · 남은 것 539\n    LAVA_MELT 분출 2 · 놓은 것 3000 (건축물 1777): tick 평균 0.151 ms · 흐르는 동안 최대 1.115 ms (첫 프레임 뺌) · 태우기 몫 최대 1.113 ms · 분출 첫 프레임 0.59 ms · 흐름 뒤 tick 최대 0.66 ms (몸통 도는 40 프레임 포함) · 흐름 뒤 마저 한 프레임 1 · 태운 수 2461 · 남은 것 539\n    LAVA_MELT 세 번 가운데 값: 흐르는 동안(첫 프레임 포함) 최대 1.115 ms · 흐름 뒤 0.623 ms · 태우기 몫 1.113 ms\n    [Failed]:  [1.115] expected to be < than [1.0]:  흐르는 동안(분출 첫 프레임 포함) tick 한 번이 1.0 ms 안 (받침 재기 포함, 세 번 가운데 값)\n      at line 135\n    [Failed]:  [1.113] expected to be < than [1.0]:  흐름 끝 · 마저 하기까지 태우기 몫이 한 프레임 1.0 ms 안 (세 번 가운데 값)\n      at line 137\n* test_the_support_job_really_melts_things_and_how_long_it_takes\n    LAVA_MELT 받침 재기: 받침 잃어 녹은 것 169 · 한 번에 가장 오래 458 프레임 (7.63 초)\n    LAVA_MELT 지우기 24 개 0.112 ms\n1/2 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/perf/test_lava_melt_load.gd\n- test_a_crowded_island_stays_under_the_frame_limit_while_lava_flows\n    [Failed]:  [1.115] expected to be < than [1.0]:  흐르는 동안(분출 첫 프레임 포함) tick 한 번이 1.0 ms 안 (받침 재기 포함, 세 번 가운데 값)\n          at line 135\n    [Failed]:  [1.113] expected to be < than [1.0]:  흐름 끝 · 마저 하기까지 태우기 몫이 한 프레임 1.0 ms 안 (세 번 가운데 값)\n          at line 137\n\nTotals\n------\nScripts               1\nTests                 2\nPassing Tests         1\nFailing Tests         1\nAsserts           16/18\nTime              8.82s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           748\nTests            5305\nPassing Tests    5304\nFailing Tests       1\nRisky/Pending       0\nAsserts        271218\nTime           1161s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/perf/test_lava_melt_load.gd\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
