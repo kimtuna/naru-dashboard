@@ -6299,10 +6299,12 @@
 - spec: spec/02_player/equipment-modules.md · spec/03_world/dwarf-mine-missions.md
 - **사람 2026-10-31** (원문 그대로): 「강화는 빼고 대신 모듈을 넣었으니 이걸로 대체. 모듈을 구하는 데에 더 집중을 하는걸로」
 - 지금 모듈은 드워프 대장장이 의뢰로만 얻는다 · 값 · 표는 **임시** (Claude 가 정함)
-- [ ] 1. 땅굴 보물 상자
+- [x] 1. 땅굴 보물 상자
   - 기준: 임무 땅굴 판(MineLayout)의 곁방 · 막다른 굴 끝 몇 곳(임시 판마다 2~3)에 **드워프 보물 상자** — 흙 마개 너머 · 깊은 곳일수록 좋은 것 · 열면 모듈 하나(등급 표 임시 — 깊을수록 상급) 또는 광물 묶음 · 스캐너에는 밝힌 곳에서만 작은 상자 표시 · 같이 하는 판은 서버가 쥐고 한 사람만 연다 · 판째 사라진다(안 담는다) (테스트)
 - [ ] 2. 보스가 모듈을
   - 기준: 보스 사냥(G-346)을 깨면 보상에 모듈 하나(상급 쪽 표 · 임시)를 더한다 · 채굴 · 시추 임무를 깨면 낮은 확률(임시 15 %)로 모듈 하나 · spec equipment-modules.md 「얻는 길」에 대장장이 의뢰 · 땅굴 보물 · 보스 · 임무 보상을 적는다 (테스트)
+  - 기준: (앞 단계 QA) 서버가 상자 바람을 덜 가린다 — NetWorld._mine_chest_ask 는 섬에 있는지(_here)만 보고, 그 참가자가 땅굴에 내려가 있는지 · 번호 i 가 판 상자 수 안인지는 안 본다. MineShaft.claim_chest 도 i < 0 만 거른다(서버장이 위에 있으면 chests 가 null 이라 수를 모른다). 잘못된 번호면 opened_chests 에 없는 번호가 쌓인다. claim_chest 에서 chests 가 있으면 i >= chests.spots.size() 를 거르고(없으면 MineChests.pick(stamp 시드, 짜임) 수로), _mine_chest_ask 에서 내려가 있는 사람인지 보게 하고 test_mine_mission_on_server 에 범위 밖 번호를 바라면 false 인 단언을 더해라
+  - 기준: (앞 단계 QA) 상자 방이 파도 못 닿는 곳일 수 있다 — MineChests.candidates 는 reach_from(0) 밖만 보고 reach_from(0, {}, true)(흙만 파면 닿는 곳) 안인지는 안 본다. 흙 마개 너머이되 흙을 파면 닿는 방만 후보로 하고, test_chests_sit_beyond_dirt_plugs… 에 assert_true(l.reach_from(0, {}, true).has(i)) 를 더해라
 
 ## [ ] G-362 치는 손맛 — 흔들림 · 소리 · 균열
 - 차선: 3d-start
