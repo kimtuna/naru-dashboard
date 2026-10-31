@@ -1,82 +1,5 @@
 [
  {
-  "time": "2026-10-23 11:34:41",
-  "epoch": 1792722881,
-  "type": "stop",
-  "title": "루프 끝 — 목록을 모두 처리했다",
-  "group": "G-932",
-  "step": "1",
-  "attempt": "2",
-  "report": {
-   "problem": "바뀐 뒤 무기 작업대 그림을 .loop/out 에 덮고, 전체 검사를 떨어뜨린 F5 소환의 「edge error」(같은 자리 짐승의 땅이 소환마다 겹침)를 고쳤다 — 바뀐 곳만: 41 파일 382 테스트 통과",
-   "approach": "기준: harness/shot.sh --ui 로 weapon_bench 를 새로 찍어(빈 칸이 'Drill module' 로 칸 안에 들어간 것을 그림으로 확인) .loop/out/weapon_bench*.png 8 장을 덮었다. 기계 검사: test_dev_animals 의 test_esc_closes_the_list 가 「Navigation map synchronization had 737 edge error(s)」로 떨어졌다. 혼자 돌리면 통과했지만 로그를 보니 경고는 매번 났고, 앞 테스트(test_every_kind_can_be_summoned)에서 난 것이 지도 동기화 때를 타 어느 테스트에 떨어지느냐만 달랐다. 까닭은 IslandAnimals.summon · spawn_family 가 부를 때마다 같은 자리 · 같은 크기의 짐승의 땅(AnimalNav.wild)을 한 겹씩 더 깐 것 — 셋째 겹부터 한 변을 셋이 나눠 써 지도가 edge error 를 낸다. _lay_wild 로 같은 네모가 이미 있으면 깔지 않게 했다. 고친 뒤 test_dev_animals 로그에 edge error 가 0 번, 바뀐 곳 그물(41 파일) 로그 어디에도 없다. 전체는 돌리지 않았다.",
-   "why": "",
-   "files": [
-    "game/life/hunting/island_animals.gd",
-    "game/tests/core/debug/test_dev_animals.gd",
-    ".loop/out/weapon_bench_drill_en.png (외 weapon_bench*.png 8 장)"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": ".loop/out 그림이 낡은 채 남았다 — .loop/out/weapon_bench_drill_en.png 는 10:19 에 찍힌 바뀌기 전 그림(빈 칸이 \"Drill\")이다. 바뀐 뒤 그림은 /private/tmp/g932s3/ 에만 있다. 다음에 그림을 근거로 남길 때는 바뀐 뒤 찍은 것을 .loop/out 에 덮어 두어라 (기준과는 상관없다 — 확인은 tmp 그림으로 했다)",
-     "evidence": ".loop/out/weapon_bench*.png 8 장이 모두 11:11 에 새로 찍혔다. weapon_bench_drill_en.png 를 열어 보니 드릴 옆 빈 칸이 'Drill module' 두 줄로 칸 안에 들어가 있다(en.po:1837 msgstr \"Drill module\"). 그림 덮기라 테스트 대상이 아니다"
-    },
-    {
-     "ok": true,
-     "criterion": "기계 검사가 떨어졌다 — test_dev_animals.gd 의 Navigation map edge error(737)",
-     "evidence": "IslandAnimals._lay_wild 가 같은 중심·같은 크기 AnimalNav 가 있으면 다시 깔지 않는다. 새 테스트 test_summoning_at_one_spot_lays_one_ground 가 F5 목록으로 사슴을 같은 자리에 세 번 불러 그 자리 AnimalNav 가 1 겹인지 본다. TEST_DIR=res://tests/core/debug 로 6 파일 48 테스트 통과. 일부러 _lay_wild 의 return 을 pass 로 바꿔 돌리니 '16 겹' 으로 떨어지고 edge error 737 경고도 다시 났다 — 껍데기가 아니다. 되돌린 뒤 diff 가 원래와 같은 것을 확인했다"
-    }
-   ],
-   "issues": [],
-   "good": [
-    "F5 소환 짐승의 땅 겹침 수정(island_animals.gd _lay_wild)은 기준 문장 밖이지만, 전체 기계 검사를 떨어뜨린 것을 고친 것이라 이 단계가 통과하려면 필요했다"
-   ]
-  },
-  "test": "  2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/automation/villagers/test_job_work_shared.gd\nok      1s  res://tests/automation/villagers/test_villager_gear.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_take_spec_lines.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           596\nTests            4392\nPassing Tests    4392\nFailing Tests       0\nRisky/Pending       0\nAsserts        212078\nTime           847s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
-  "time": "2026-10-23 13:47:12",
-  "epoch": 1792730832,
-  "type": "start",
-  "title": "루프 시작",
-  "report": {
-   "problem": "바뀐 뒤 무기 작업대 그림을 .loop/out 에 덮고, 전체 검사를 떨어뜨린 F5 소환의 「edge error」(같은 자리 짐승의 땅이 소환마다 겹침)를 고쳤다 — 바뀐 곳만: 41 파일 382 테스트 통과",
-   "approach": "기준: harness/shot.sh --ui 로 weapon_bench 를 새로 찍어(빈 칸이 'Drill module' 로 칸 안에 들어간 것을 그림으로 확인) .loop/out/weapon_bench*.png 8 장을 덮었다. 기계 검사: test_dev_animals 의 test_esc_closes_the_list 가 「Navigation map synchronization had 737 edge error(s)」로 떨어졌다. 혼자 돌리면 통과했지만 로그를 보니 경고는 매번 났고, 앞 테스트(test_every_kind_can_be_summoned)에서 난 것이 지도 동기화 때를 타 어느 테스트에 떨어지느냐만 달랐다. 까닭은 IslandAnimals.summon · spawn_family 가 부를 때마다 같은 자리 · 같은 크기의 짐승의 땅(AnimalNav.wild)을 한 겹씩 더 깐 것 — 셋째 겹부터 한 변을 셋이 나눠 써 지도가 edge error 를 낸다. _lay_wild 로 같은 네모가 이미 있으면 깔지 않게 했다. 고친 뒤 test_dev_animals 로그에 edge error 가 0 번, 바뀐 곳 그물(41 파일) 로그 어디에도 없다. 전체는 돌리지 않았다.",
-   "why": "",
-   "files": [
-    "game/life/hunting/island_animals.gd",
-    "game/tests/core/debug/test_dev_animals.gd",
-    ".loop/out/weapon_bench_drill_en.png (외 weapon_bench*.png 8 장)"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": ".loop/out 그림이 낡은 채 남았다 — .loop/out/weapon_bench_drill_en.png 는 10:19 에 찍힌 바뀌기 전 그림(빈 칸이 \"Drill\")이다. 바뀐 뒤 그림은 /private/tmp/g932s3/ 에만 있다. 다음에 그림을 근거로 남길 때는 바뀐 뒤 찍은 것을 .loop/out 에 덮어 두어라 (기준과는 상관없다 — 확인은 tmp 그림으로 했다)",
-     "evidence": ".loop/out/weapon_bench*.png 8 장이 모두 11:11 에 새로 찍혔다. weapon_bench_drill_en.png 를 열어 보니 드릴 옆 빈 칸이 'Drill module' 두 줄로 칸 안에 들어가 있다(en.po:1837 msgstr \"Drill module\"). 그림 덮기라 테스트 대상이 아니다"
-    },
-    {
-     "ok": true,
-     "criterion": "기계 검사가 떨어졌다 — test_dev_animals.gd 의 Navigation map edge error(737)",
-     "evidence": "IslandAnimals._lay_wild 가 같은 중심·같은 크기 AnimalNav 가 있으면 다시 깔지 않는다. 새 테스트 test_summoning_at_one_spot_lays_one_ground 가 F5 목록으로 사슴을 같은 자리에 세 번 불러 그 자리 AnimalNav 가 1 겹인지 본다. TEST_DIR=res://tests/core/debug 로 6 파일 48 테스트 통과. 일부러 _lay_wild 의 return 을 pass 로 바꿔 돌리니 '16 겹' 으로 떨어지고 edge error 737 경고도 다시 났다 — 껍데기가 아니다. 되돌린 뒤 diff 가 원래와 같은 것을 확인했다"
-    }
-   ],
-   "issues": [],
-   "good": [
-    "F5 소환 짐승의 땅 겹침 수정(island_animals.gd _lay_wild)은 기준 문장 밖이지만, 전체 기계 검사를 떨어뜨린 것을 고친 것이라 이 단계가 통과하려면 필요했다"
-   ]
-  },
-  "test": "  2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      3s  res://tests/world/storage/test_chest_move_inside.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/automation/villagers/test_job_work_shared.gd\nok      1s  res://tests/automation/villagers/test_villager_gear.gd\nok      2s  res://tests/automation/villagers/test_villager_hand_close.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\nok      1s  res://tests/automation/villagers/test_villager_hands_temporary_note.gd\nok      2s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_take_spec_lines.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           596\nTests            4392\nPassing Tests    4392\nFailing Tests       0\nRisky/Pending       0\nAsserts        212078\nTime           847s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-10-23 13:54:44",
   "epoch": 1792731284,
   "type": "pass",
@@ -8367,5 +8290,77 @@
   },
   "test": "rkbench_gear.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      3s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/stations/test_oil_press.gd\nok      3s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      3s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      3s  res://tests/craft/stations/test_station_names_title_case.gd\nok      3s  res://tests/craft/stations/test_still_alcohol.gd\nok      2s  res://tests/items/test_item_names_title_case.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      3s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      3s  res://tests/life/fishing/test_fish_kinds.gd\nok      3s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      3s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      3s  res://tests/life/hunting/test_captive_fed.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      3s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      3s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      3s  res://tests/life/ranching/test_food_shown.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      3s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      3s  res://tests/settings/save/test_old_stove.gd\nok      3s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      3s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     34s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     11s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           756\nTests            5368\nPassing Tests    5368\nFailing Tests       0\nRisky/Pending       0\nAsserts        274271\nTime           1166s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "b3090dd0"
+ },
+ {
+  "time": "2026-11-01 05:21:55",
+  "epoch": 1793478115,
+  "type": "pass",
+  "title": "합치기 풀기 — 3d-lane2 (game/world/frontier_islands/islands.json spec/01_settings/save.md )",
+  "group": "G-355",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "남이 모는 차에 넣은 원유가 모는 기계에 닿는다 — 서버 값이 지난번 받은 값보다 오르면 따르고, 지문에 원유 통 눈금을 실어 넣은 것이 목록으로 간다",
+   "approach": "Stations._fill 이 모는 차의 연료를 늘 minf(이 기계 값, 서버 값)로 쥐어, 남이 정비소 창으로 넣은 원유가 모는 기계에 안 닿았다. Garage 에 heard_fuel(지난번 서버 목록에서 받은 연료, 저장 안 함)을 두고, 서버 값이 그보다 올랐으면 서버 값을 따르고 아니면 덜 남은 쪽을 쥔다. 더 찾은 구멍: 서버의 바뀜 재기(Stations.unmoved → NetWorld._fingerprint)가 몰리는 차의 fuel 을 통째로 빼서, 넣어도 목록이 가지 않았다 — fuel 대신 원유 통 눈금(floor(fuel/20), fuel_step)을 실어 통 하나를 넣으면 지문이 바뀌게 했다(태우는 동안엔 20 L 마다 한 번만 바뀐다). 바뀐 곳 그물: 232개 파일 1764개 테스트 통과.",
+   "why": "",
+   "files": [
+    "game/craft/stations/stations.gd",
+    "game/life/vehicles/garage.gd",
+    "game/tests/life/vehicles/test_car_fuel.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "남이 모는 차에 넣은 원유가 모는 기계에 안 닿는다 — game/craft/stations/stations.gd _fill 의 `g.fuel = minf(fuel, g.fuel)` 는 주석(「서버가 넣은 것이 없으면 덜 남은 쪽」)과 달리 늘 덜 남은 쪽을 쥔다. … 테스트: driver 가 이 기계인 차에 대해 서버 목록 fuel 이 +20 오른 줄을 _fill 로 넣었을 때 g.fuel 이 따라 오르는지",
+     "evidence": "stations.gd _fill 이 Garage.heard_fuel(지난번 받은 서버 값, 저장 안 함 — 주석에 까닭)과 비교해 서버 값이 올랐으면 따르고 아니면 minf. test_car_fuel.gd::test_fuel_poured_by_another_reaches_the_driving_machine 이 이 기계가 모는 차에 _fill 로 30→29.5(18 쥠)→49.5(+20, 따라 오름)→49.0(47 쥠)을 넣어 오름·안 오름 둘 다 단언하고, 통을 넣으면 unmoved 지문이 바뀌는 것도 본다. 일부러 깨 봄: 고친 줄을 minf(fuel, told) 로 되돌리자 이 테스트만 실패(vehicles 폴더 106 통과 1 실패), 되돌린 뒤 diff 원상. 전체 5368 테스트 통과 · guard 통과 (test.log)"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "Stations.unmoved(지문)에서 몰리는 차의 fuel 을 통째로 빼던 것을 원유 통 눈금 fuel_step(floor(fuel/20))으로 바꿨다 — 기준 밖이지만 이것 없이는 넣은 원유가 목록으로 안 가 기준이 게임 안에서 이뤄지지 않으므로 같은 고침의 일부로 본다. test_the_server_burns_fuel_from_the_drivers_position_news 에 눈금 단언을 더했다"
+   ]
+  },
+  "test": "rkbench_gear.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      3s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/stations/test_oil_press.gd\nok      3s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      3s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      3s  res://tests/craft/stations/test_station_names_title_case.gd\nok      3s  res://tests/craft/stations/test_still_alcohol.gd\nok      2s  res://tests/items/test_item_names_title_case.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      3s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      3s  res://tests/life/fishing/test_fish_kinds.gd\nok      3s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      3s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      3s  res://tests/life/hunting/test_captive_fed.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      3s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      3s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      3s  res://tests/life/ranching/test_food_shown.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      3s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      3s  res://tests/settings/save/test_old_stove.gd\nok      3s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      3s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     34s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     11s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           756\nTests            5368\nPassing Tests    5368\nFailing Tests       0\nRisky/Pending       0\nAsserts        274271\nTime           1166s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "d7172a28"
+ },
+ {
+  "time": "2026-11-01 05:21:55",
+  "epoch": 1793478115,
+  "type": "pass",
+  "title": "차선 합치기 — 3d-lane2(f27e15e3) → 3d-start",
+  "group": "G-355",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "남이 모는 차에 넣은 원유가 모는 기계에 닿는다 — 서버 값이 지난번 받은 값보다 오르면 따르고, 지문에 원유 통 눈금을 실어 넣은 것이 목록으로 간다",
+   "approach": "Stations._fill 이 모는 차의 연료를 늘 minf(이 기계 값, 서버 값)로 쥐어, 남이 정비소 창으로 넣은 원유가 모는 기계에 안 닿았다. Garage 에 heard_fuel(지난번 서버 목록에서 받은 연료, 저장 안 함)을 두고, 서버 값이 그보다 올랐으면 서버 값을 따르고 아니면 덜 남은 쪽을 쥔다. 더 찾은 구멍: 서버의 바뀜 재기(Stations.unmoved → NetWorld._fingerprint)가 몰리는 차의 fuel 을 통째로 빼서, 넣어도 목록이 가지 않았다 — fuel 대신 원유 통 눈금(floor(fuel/20), fuel_step)을 실어 통 하나를 넣으면 지문이 바뀌게 했다(태우는 동안엔 20 L 마다 한 번만 바뀐다). 바뀐 곳 그물: 232개 파일 1764개 테스트 통과.",
+   "why": "",
+   "files": [
+    "game/craft/stations/stations.gd",
+    "game/life/vehicles/garage.gd",
+    "game/tests/life/vehicles/test_car_fuel.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "남이 모는 차에 넣은 원유가 모는 기계에 안 닿는다 — game/craft/stations/stations.gd _fill 의 `g.fuel = minf(fuel, g.fuel)` 는 주석(「서버가 넣은 것이 없으면 덜 남은 쪽」)과 달리 늘 덜 남은 쪽을 쥔다. … 테스트: driver 가 이 기계인 차에 대해 서버 목록 fuel 이 +20 오른 줄을 _fill 로 넣었을 때 g.fuel 이 따라 오르는지",
+     "evidence": "stations.gd _fill 이 Garage.heard_fuel(지난번 받은 서버 값, 저장 안 함 — 주석에 까닭)과 비교해 서버 값이 올랐으면 따르고 아니면 minf. test_car_fuel.gd::test_fuel_poured_by_another_reaches_the_driving_machine 이 이 기계가 모는 차에 _fill 로 30→29.5(18 쥠)→49.5(+20, 따라 오름)→49.0(47 쥠)을 넣어 오름·안 오름 둘 다 단언하고, 통을 넣으면 unmoved 지문이 바뀌는 것도 본다. 일부러 깨 봄: 고친 줄을 minf(fuel, told) 로 되돌리자 이 테스트만 실패(vehicles 폴더 106 통과 1 실패), 되돌린 뒤 diff 원상. 전체 5368 테스트 통과 · guard 통과 (test.log)"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "Stations.unmoved(지문)에서 몰리는 차의 fuel 을 통째로 빼던 것을 원유 통 눈금 fuel_step(floor(fuel/20))으로 바꿨다 — 기준 밖이지만 이것 없이는 넣은 원유가 목록으로 안 가 기준이 게임 안에서 이뤄지지 않으므로 같은 고침의 일부로 본다. test_the_server_burns_fuel_from_the_drivers_position_news 에 눈금 단언을 더했다"
+   ]
+  },
+  "test": "rkbench_gear.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      3s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/stations/test_oil_press.gd\nok      3s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      3s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      3s  res://tests/craft/stations/test_station_names_title_case.gd\nok      3s  res://tests/craft/stations/test_still_alcohol.gd\nok      2s  res://tests/items/test_item_names_title_case.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      3s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      3s  res://tests/life/fishing/test_fish_kinds.gd\nok      3s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      3s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      3s  res://tests/life/hunting/test_captive_fed.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      3s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      3s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      3s  res://tests/life/ranching/test_food_shown.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      3s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      3s  res://tests/settings/save/test_old_stove.gd\nok      3s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      3s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      2s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     34s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     11s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           756\nTests            5368\nPassing Tests    5368\nFailing Tests       0\nRisky/Pending       0\nAsserts        274271\nTime           1166s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "d7172a28"
  }
 ]
