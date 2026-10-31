@@ -1,62 +1,5 @@
 [
  {
-  "time": "2026-10-22 19:00:05",
-  "epoch": 1792663205,
-  "type": "pass",
-  "title": "통과 — G-283 단계 2 (굳은 판을 깬다 — `Volcano.carve(at, r)`)",
-  "group": "G-283",
-  "step": "2",
-  "attempt": "2",
-  "report": {
-   "problem": "굳은 판 깨기 Volcano.carve(자리, 반지름) — 그림 · 몸통에 구멍 · 줄어 사라질 때까지 그대로 · 서버가 깨고 참가자 화면에도 구멍 · 섬 저장. 바뀐 곳만(163 파일) 1227 통과 · 0 실패",
-   "approach": "QA 지적대로 구멍 그림 테스트를 땅에 실제로 넣은 텍스처에서 읽게 바꿨다 (VoxelGround.lava_image() — _lava_tex.get_image()). 바꾸자 테스트 3개가 떨어졌다 — redraw_lava 가 ImageTexture.update 로 그림을 고쳤는데 렌더러의 텍스처에는 구멍이 안 들어갔다(headless). 깰 때마다 새 텍스처를 만들어 전역 값에 넣게 고쳐 통과. redraw_lava 호출을 빼 보면 5개 중 3개가 깨지는 것을 확인했다. 참가자 테스트 두 개는 참가자 기계의 땅 그림 깬 자리 r == 0 · 둘레 밖 r > 0 과 참가자 rock_body() 가 SPOT 에서 안 맞고 FAR 에서 맞는지를 단언한다 (두 기계가 한 물리 공간이라 서버 판에 맞으면 빼고 다시 쏜다). 참가자 take_carve 가 구멍을 안 내게 바꿔 보면 깨진다. 찍는 자리 lava_carved 를 다시 찍어 구멍을 눈으로 봤다 (.loop/out/lava_carved.png). 칸 갱신 잰 값은 BODY_BUDGET_MS 주석과 spec G-283 줄에 적었다. 구멍 안 덤불은 태우기(G-279) 몫이라 손대지 않았다",
-   "why": "",
-   "files": [
-    "game/world/terrain/volcano.gd",
-    "game/world/terrain/voxel_ground.gd",
-    "game/core/net/net_world.gd",
-    "game/core/debug/shots.gd",
-    "game/settings/save/world_data.gd",
-    "spec/03_world/frontier-islands.md",
-    "game/tests/world/terrain/test_volcano_carve.gd",
-    "game/tests/multiplayer/test_lava_rock_on_server.gd",
-    "game/tests/multiplayer/lava_island.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "carve(자리, 반지름) 가 그 둘레 판을 없앤다 — 그림(구멍이 보인다)과 몸통이 같이. 깬 자리는 판이 줄어 사라질 때까지 그대로 · 서버가 깨고 참가자에게 간다 (같이 하는 판 — 참가자 화면에도 구멍) (테스트)",
-     "evidence": "test_volcano_carve.gd 5개 — 땅에 넣은 텍스처(VoxelGround.lava_image)의 깬 자리 r==0 · 둘레 밖 r>0, rock_body 레이가 SPOT 에서 안 맞고 FAR 에서 맞는다, 얇아지는 동안 구멍 유지 · 다 줄면 carved 사라짐, 흐르는 용암 · 바다는 못 깸, 저장 · 복원. test_lava_rock_on_server.gd 2개 — 진짜 ENet 두 기계에서 참가자(곧장 · 나중에 들어옴)의 땅 그림 r==0 과 참가자 몸통 구멍을 단언. QA 가 일부러 깨 봤다: _hole 의 redraw_lava 호출을 빼면 7개 중 4개 실패, _fit_tile 의 깬 자리 DRY 처리를 빼면 6개 실패 — 둘 다 되돌렸다. 전체 4224 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "깨서 나오는 것은 **아직 없다** (사람이 안 정했다 — 지어내지 않는다). spec 에 「굳은 용암 — 밟고 깬다 · 나오는 것 미정」",
-     "evidence": "carve 는 아무것도 내지 않는다(bool 만). spec/03_world/frontier-islands.md 「분출과 용암」에 「굳은 용암 — 밟고 깬다 · 나오는 것 미정」 줄이 들어갔다. 지운 사람 줄 없음"
-    },
-    {
-     "ok": true,
-     "criterion": "찍는 자리 하나 — 깬 구멍이 보이는 굳은 판 (harness/shot.sh)",
-     "evidence": "core/debug/shots.gd 에 lava_carved 를 더했고 .loop/out/lava_carved.png 에 검은 굳은 판 가운데 밝은 땅이 드러난 구멍이 보인다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 잰 칸 갱신 ms 가 저장소에 안 남았다 — BODY_BUDGET_MS 주석이나 spec G-283 줄에 「잰 것 2026-10-22 — 칸 한 번 ~0.05ms」로 한 줄 적어 두라",
-     "evidence": "volcano.gd BODY_BUDGET_MS 주석과 spec G-283 줄 두 곳 모두에 「잰 것 2026-10-22 — 칸 한 번 ~0.05ms」가 적혔다"
-    }
-   ],
-   "issues": [
-    "깬 구멍 안에 덤불이 남았다 — .loop/out/lava_carved.png 에서 구멍 바닥에 초록 덤불이 서 있다. 용암이 덮은 자리라 burn_things 가 지웠어야 한다. shots.gd 의 lava_carved 가 shift 로 시계를 당겨 분출(태우기)을 건너뛴 탓인지, 실제 판에서도 남는지 보고 — 찍는 자리 탓이면 _set_up_eruption 이 태우기를 거치게, 규칙 탓이면 volcano.gd burn_things 를 고치고 덮인 자리 풀숲이 사라지는지 단언하는 테스트를 더하라 (이번 기준 밖 · 태우기는 G-279 몫)"
-   ],
-   "good": []
-  },
-  "test": "s_broken.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_keep_window.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      3s  res://tests/ui/hud/test_villager_hands_window.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      1s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      1s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           564\nTests            4224\nPassing Tests    4224\nFailing Tests       0\nRisky/Pending       0\nAsserts        203807\nTime           804s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "f7d39692"
- },
- {
   "time": "2026-10-22 19:28:34",
   "epoch": 1792664914,
   "type": "pass",
@@ -8185,5 +8128,63 @@
    "good": []
   },
   "test": "ew_materials.gd\nok      2s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      3s  res://tests/export/test_windows_build.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      3s  res://tests/life/farming/test_farm_save.gd\nok      3s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      3s  res://tests/life/fishing/test_bait_grades.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      3s  res://tests/life/hunting/test_burrows.gd\nok      3s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/multiplayer/test_vitals_copy_wears_modules.gd\nok      2s  res://tests/player/equipment/test_armor_health.gd\nok      3s  res://tests/life/ranching/test_shearing.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      3s  res://tests/player/equipment/test_gun_effect_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      3s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tool_tiers.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      9s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           396\nTests            3090\nPassing Tests    3090\nFailing Tests       0\nRisky/Pending       0\nAsserts        112912\nTime           770s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-11-01 07:33:31",
+  "epoch": 1793486011,
+  "type": "pass",
+  "title": "통과 — G-356 단계 1 (도구에 단계)",
+  "group": "G-356",
+  "step": "1",
+  "attempt": "2",
+  "report": {
+   "problem": "도끼 · 곡괭이 · 삽에 더해 망치 · 톱 · 칼 · 스패너도 청동 · 철 · 강철 세 단으로 나눴다 — 단이 오르면 캐는 힘 · 휘두르기 간격 · 모듈 칸(빈 칸)이 표 한 곳(ToolTiers)을 따라 좋아지고, 근접 무기 피해도 단마다 다르다. 바뀐 곳 477개 파일 중 1개(test_ore_spread — mining.md 줄 누락)가 떨어져 고친 뒤 그 파일 통과",
+   "approach": "QA 지적대로 그 밖의 도구가 철 한 단뿐이었다. tools.json 에 bronze/steel × hammer · saw · knife · spanner 를 metal 과 함께 더하고(손 모양 그대로 · 색만 금속색) 제작대 레시피(철 단과 같은 재료에 주괴만 바꿈) · items.json · ko/en ITEM_ 키를 붙였다. 이름으로 가리던 곳(Buildings.holding_hammer · Wiring.holding · Driving 의 망치 우클릭 · KeyBinds 망치 묶음)은 ToolTiers.kind_of(단 이름을 뗀다)로 세 단이 같이 통하게 했다. 드릴(모듈은 ArmorModules.DRILL_SLOTS 쪽) · 낚싯대(Fishing.RODS 의 따로 된 세 단) · 물뿌리개(금속 없음)를 사다리에서 뺀 까닭과 삽 · 망치 등은 캐는 것이 없어 POWER 가 안 쓰인다는 것을 tool_tiers.gd 주석과 equipment.md 에 적었다. 바뀐 곳 그물(477개 파일, 3587개 중 3586개 통과)에서 test_ore_spread 가 mining.md 의 「석탄 없이 못 만드는 것」 목록에 강철 망치 · 톱 · 칼 · 스패너가 없다고 떨어져 그 줄에 더했고, 그 파일을 다시 돌려 통과했다.",
+   "why": "청동 · 강철 망치 · 톱 · 칼 · 스패너 레시피(손잡이 1 + 그 주괴 1, 스패너는 주괴 2) — 철 단 줄에 주괴만 바꿈, Claude 가 정함; ToolTiers 의 POWER(0.8/1.0/1.4) · SWING(1.15/1.0/0.85) · SLOTS(1/2/3) · MELEE_HIT(10/13/17/22) — Claude 가 정함, 밸런싱 전",
+   "files": [
+    "game/combat/tools_as_weapons/tool_tiers.gd",
+    "game/combat/tools_as_weapons/tool_catalog.gd",
+    "game/combat/tools_as_weapons/tools.json",
+    "game/combat/tools_as_weapons/attack.gd",
+    "game/craft/recipes/workbench.json",
+    "game/player/inventory_hotbar/items.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/build/buildings.gd",
+    "game/automation/power/wiring.gd",
+    "game/life/vehicles/driving.gd",
+    "game/settings/user/key_binds.gd",
+    "game/life/harvest/harvest.gd",
+    "game/automation/villagers/fight.gd",
+    "game/core/net/net_vitals.gd",
+    "game/player/player_stats.gd",
+    "spec/02_player/equipment.md",
+    "spec/04_life/mining.md",
+    "spec/08_combat/tools-as-weapons.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "도끼 · 곡괭이 · 삽(그 밖의 도구도 같은 꼴)이 금속 단계(청동 · 철 · 강철 — 방어구 NORMAL_SLOTS 와 같은 사다리)로 나뉜다 · 단계가 오르면 기본 스펙(캐는 힘 · 휘두르는 빠르기)이 좋아지고 모듈 칸이 는다(방어구처럼 표 한 곳) · 도구 모듈은 지금 없으니 칸만(빈 칸 — 낄 것이 생기면 든다) · 옛 저장본의 도끼 · 곡괭이는 철 단계로 읽힌다 · 레시피 임시 (테스트)",
+     "evidence": "test_tool_tiers.gd — KINDS 가 axe · pickaxe · shovel · hammer · saw · knife · spanner 일곱이고 세 단이 tools.json 에 metal 과 함께 있고(test_axe_pickaxe_shovel_come_in_bronze_iron_steel) 사다리가 ArmorModules.NORMAL_SLOTS 와 같고(test_the_ladder_is_the_armor_ladder), 단이 오르면 harvest_power↑ · swing_every↓ · module_slots↑(test_higher_tiers_…), 칸 수가 ToolTiers.SLOTS 한 곳에서 나오고 빈 칸(test_module_slots_come_from_one_table_and_start_empty), 실제 Harvest 로 강철 도끼가 청동보다 덜 쳐 나무를 벤다, 옛 저장본 axe · pickaxe 가 OldItems.slots 를 지나 철 단 · 철 칸 수로 읽힌다, 제작대 레시피가 단마다 그 주괴를 든다. 망치 · 스패너 세 단이 해체 · 전선 · 키 묶음에 통하는 것도 test_hammer · test_wiring · test_every_hammer_tier_takes_the_hammer_keys 가 본다. 드릴 · 낚싯대 · 물뿌리개를 사다리에서 뺀 까닭이 tool_tiers.gd 주석 · equipment.md 에 있고 test_drill_rod_and_can_stay_off_the_ladder 가 본다. 강철 SLOTS 3→2 · SWING 0.85→1.0 으로 바꿔 돌리니 test_tool_tiers 가 떨어졌다(되돌림 확인). 바뀐 곳 477 파일 3587 테스트 전부 통과 · guard 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "근접 무기 · 총도 단계마다 기본 피해가 다르다 — 지금 근접은 모두 10(attack.gd HIT) · 단계별 표 한 곳(임시 값) (테스트)",
+     "evidence": "ToolTiers.MELEE_HIT(구리 10 · 청동 13 · 철 17 · 강철 22, 임시)가 표 한 곳이고 Attack.hit_of 를 평타 strike · 서버 _swing(net_vitals) · 주민 fight._strike · 스탯 창이 같이 쓴다. test_melee_weapons_hit_harder_with_each_metal 이 단검 · 창 · 검 · 전투 도끼 × 네 금속을 표 값과 오름으로 단언하고, 강철 22→17 로 바꾸니 떨어졌다. test_guns_have_their_own_damage_per_tier 가 총 계통마다 단별 damage 가 둘 이상 다른지 본다. 맨손 · 도구는 HIT 그대로(test_bare_hands_and_tools_keep_the_plain_hit)"
+    }
+   ],
+   "issues": [
+    "tools.json _temporary 의 평타 줄이 낡았다 — game/combat/tools_as_weapons/tools.json 의 _temporary 에 「금속 무기 … 든 손으로 치는 평타(Attack.HIT)는 무엇을 들었든 같다」가 남았다. G-356.1 부터 근접 무기는 ToolTiers.MELEE_HIT 를 따르니 「맨손 · 도구는 Attack.HIT, 근접 무기는 금속 단계(ToolTiers.MELEE_HIT, 임시)」로 고쳐 적어라",
+    "스패너 단 레시피 설명이 실제와 다르다 — game/craft/recipes/workbench.json _temporary 에 「도끼 · … · 스패너의 청동 · 강철 단(손잡이 1 + 청동괴 · 강철괴 1)」이라 적혔지만 bronze_spanner · steel_spanner 는 손잡이 없이 주괴 2 다(철 스패너와 같은 꼴). 그 줄을 「스패너는 주괴 2」로 고쳐라"
+   ],
+   "good": []
+  },
+  "test": "res://tests/combat/tools_as_weapons/test_tool_tiers.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      2s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/core/net/test_net_link_one_place.gd\nok      2s  res://tests/core/net/test_net_sides_orphans.gd\nok      2s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      2s  res://tests/core/test_spec_stale_lines_g310.gd\nok      2s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/recipes/test_handle_name.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      3s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      2s  res://tests/life/hunting/test_burrows.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      3s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_wears_modules.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      3s  res://tests/player/equipment/test_gun_effect_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     32s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      9s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           477\nTests            3587\nPassing Tests    3587\nFailing Tests       0\nRisky/Pending       0\nAsserts        126199\nTime           854s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "eaabf619"
  }
 ]
