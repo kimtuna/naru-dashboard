@@ -6259,9 +6259,12 @@
 - 값 · 재료는 **임시** (Claude 가 정함 — 사람 2026-10-25 「레시피는 대충 아무거나 … 어차피 재료들은 다시 다 밸런싱 해야돼」)
 - [x] 1. 사람 숙련도
   - 기준: 사람에게 숙련도(주민 숙련도 persona.gd SKILLS 와 같은 갈래 — 농사 · 벌목 · 채광 · 낚시 · 사냥 · 요리 · 제작 …) — 그 일을 할 때마다 오른다(임시 경험치 표) · 레벨 오르면 알림 · 캐릭터 저장본에 담는다(저장 형식 G-352.3 틀로) · 「숙련도」 창(키 임시)에 갈래마다 레벨 · 막대 (테스트)
-- [ ] 2. 스킬이 저절로
+- [x] 2. 스킬이 저절로
   - 기준: 갈래마다 레벨 몇에 스킬이 저절로 열린다(임시 — 5 레벨마다 하나: 캐는 빠르기 +% · 드롭 덤 · 기력 덜 씀 같은 작은 것) · 열리면 알림 · 숙련도 창에 열린 · 다음 스킬 · 지금 덤 0 이던 곳(harvest · 낚시 · 농사 씨앗 확률)에 사람 숙련도가 붙는다 · spec level-skills.md 에 적는다 (테스트)
   - 기준: (앞 단계 QA) 없는 테스트 파일을 또 가리킨다 — game/tests/player/skills/test_player_skills.gd 머리말 9째 줄 '참가자의 손(서버가 대신 한 일)은 tests/multiplayer/test_skills_for_guest.gd 가 본다' 의 test_skills_for_guest.gd 는 없다. 실제로는 tests/multiplayer 의 test_harvest_on_server · test_farm_on_server · test_fish_on_server · test_station_on_server · test_bag_on_server 에 붙은 'G-358.1' 단언이다 — 그 이름들로 고쳐라
+- [ ] 3. (앞 단계 QA) 참가자 손에는 스킬 덤이 없다
+  - 기준: 참가자 손에는 스킬 덤이 없다 — spec 에 「서버는 참가자의 숙련도를 모른다 — 지금은 덤 없이 굴린다」로 적혀 있다(막는 것은 아니다). 멀티에서 참가자도 덤을 받게 하려면 참가자가 제 숙련 단 수(또는 덤)를 서버에 알리고 NetActs 의 서버 길(harvest strike bonus · seed_back · fishing land · butcher_for · station collect)이 그 값을 쓰게 하는 단계를 두고, tests/multiplayer 에 참가자 끝 레벨로 덤이 붙는 단언을 넣어라
+  - 기준: (앞 단계 QA) 기준의 예시 갈래(캐는 빠르기 · 기력 덜 씀)는 안 만들었다 — 지금 스킬은 모두 '확률 덤' 한 종류다. 기준은 예시라 통과지만, 단마다 다른 종류(예: 5단마다 캐는 빠르기 +%)를 섞으려면 PERK_STEP 를 갈래×단 표로 넓히고 spec 수치 줄에 임시로 적어라
 
 ## [ ] G-359 이로치 · 도감
 - 차선: 3d-lane3
