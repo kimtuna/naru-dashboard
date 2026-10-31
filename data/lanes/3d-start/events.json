@@ -1,49 +1,5 @@
 [
  {
-  "time": "2026-10-23 09:41:47",
-  "epoch": 1792716107,
-  "type": "pass",
-  "title": "통과 — G-292 단계 3 (걷는 동안 보이는 것)",
-  "group": "G-292",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "차량 드릴이 굳은 판을 걷는 동안 돌고 판 부스러기(기본 입자)가 튄다 · 서면 그 각에 멈춘다 · 참가자 화면에서도 돈다 · 찍는 자리 car_drill_line (바뀐 곳 그물 70파일 506개 통과)",
-   "approach": "「걷는 중」을 서버가 깬 것(carve)으로 재면 참가자 화면에서는 돌지 않는다 — 참가자 화산은 remote 라 깨지 않는다. 그래서 차 자리의 바뀜(앞으로 나아갔나)과 드릴 앞(범퍼에서 폭 + 1m, 폭 안 세 줄)에 아직 안 깬 굳은 판이 있나만 본다. 판 질의 Volcano.rock_at 을 새로 만들었다 — 판 그림(cover) · 깬 자리(_holes, 참가자는 take_carve 로 같다) · 판이 다 줄었나(left)를 읽어 서버와 참가자가 같은 답을 낸다. 서버는 1m 마다 범퍼 앞 폭만큼 깨니 그 너머 한 걸음 안에 판이 남아 있으면 걷는 중이다. 걸을 때 드릴 뿔을 제 축으로 돌리고(drill_turn 각) 끝의 CPUParticles3D(held_item 부스러기와 같은 꼴)를 켠다. 참가자 테스트를 짜 보니 자리 소식이 걸음마다 오지 않아 한 걸음 걸러 켜졌다 꺼졌다 깜빡였다 — 몸 소식이 0.1초(NetBodies.PERIOD)마다 오니 걷기를 그친 뒤 0.25초(DRILL_HOLD) 더 돌게 했다(뒤로 가거나 드릴을 빼면 곧장 멈춘다). 처음 회전 빠르기를 TAU×3 으로 했더니 정수 바퀴에서 각이 정확히 0 으로 돌아와 「회전값이 바뀌었다」가 떨어졌다 — 17 rad/s 로 바꿨다. 찍는 자리 car_drill_line 은 car_drill 보다 15m 위 산허리에서 1초 몰고, 찍는 동안에도 throttle 0.15 로 천천히 몰게 두었다(서면 드릴이 멈추니). 첫 장은 카메라가 산비탈 속이었다 — 산 아래 쪽 위로 옮기니 걷힌 줄 · 빨간 차 앞 회색 드릴 · 검은 부스러기가 보였다. 돈 각 등은 보이는 것뿐이라 save.md 「안 담는다」에 적었다.",
-   "why": "드릴 도는 빠르기 17 rad/s (Vehicle.DRILL_SPIN) — 눈으로 도는 것이 보일 만큼; 걷기를 그친 뒤 더 도는 때 0.25초 (Vehicle.DRILL_HOLD) — 몸 소식 0.1초 간격 두어 번; 걷지 않는 것으로 보는 한 걸음 이동 0.002m (Vehicle.DRILL_MOVING); 부스러기 32알 · 0.7초 · 0.12m 조각 · 빛 (0.16,0.15,0.15) — 기본 입자",
-   "files": [
-    "game/life/vehicles/vehicle.gd",
-    "game/world/terrain/volcano.gd",
-    "game/core/debug/shots.gd",
-    "game/tests/life/vehicles/test_car_drill.gd",
-    "spec/04_life/vehicles.md",
-    "spec/01_settings/save.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "차량 드릴을 끼운 차가 굳은 판을 걷는 동안 차 앞 드릴이 돌고(걷지 않을 때는 멈춘다) 부스러기(기본 입자 · 임시)가 튄다 · 참가자 화면에서도 돈다 (테스트: 걷는 동안 드릴 회전값이 바뀌고 멈추면 그대로)",
-     "evidence": "test_car_drill.gd — test_the_drill_spins_and_throws_debris_only_while_clearing: 판 위를 30걸음 몰면 drill_turn 이 바뀌고 debris.emitting, 선 뒤 30걸음 동안 drill_turn 그대로 · 부스러기 그침, 뒤로 가도 그대로. test_the_drill_does_not_spin_over_bare_ground: 판 없는 땅에서 나아가도 회전값 그대로. test_the_drill_spins_on_the_guest_screen_too: 화산 remote · 자리 소식(drive_seen)으로만 옮겨진 차가 54걸음 내내 돌고 소식이 그치면 멈춘다. 일부러 깨 봄 — _drill_spin 에서 _rock_ahead() 조건을 빼자 bare_ground 테스트가 「걷을 판이 없으면 안 돈다」로 떨어졌다(되돌림 확인 cmp). 부스러기는 CPUParticles3D 기본 입자, 수치는 vehicles.md · report 에 임시로 적혀 있다. 전체 596파일 4390개 통과 · guard 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "찍는 자리 하나 — 굳은 판 위에 걷어 낸 줄이 보이는 차 (harness/shot.sh, shots.gd 에 자리 이름을 더한다) · 찍은 그림을 열어 드릴 · 걷힌 줄이 보이는지 본다",
-     "evidence": "shots.gd 에 car_drill_line 이 더해졌다. QA 가 harness/shot.sh /tmp/qa_g292_3 island=sulfur car_drill_line 으로 직접 찍어 열어 봤다 — 검은 굳은 판 위로 밝게 걷힌 줄, 빨간 차 앞 회색 드릴 뿔, 그 곁에 튀는 검은 부스러기 조각들이 보인다. 로그 「깬 점 5 · 드릴 돈다 true」"
-    }
-   ],
-   "issues": [],
-   "good": [
-    "Volcano.rock_at 판 질의 함수 — 참가자 화면에서 돌게 하려고 필요해서 만든 것이라 기준 범위 안이다"
-   ]
-  },
-  "test": "gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/hud/test_villager_hands_window.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/automation/villagers/test_job_work_shared.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\nok      1s  res://tests/automation/villagers/test_villager_body.gd\nok      2s  res://tests/automation/villagers/test_villager_skills.gd\nok      2s  res://tests/build/test_build_piece_tidy.gd\nok      1s  res://tests/build/test_placeable_tidy.gd\nok      2s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      2s  res://tests/core/net/test_net_link_one_place.gd\nok      1s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/test_guard.gd\nok      2s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_nav_weld.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           596\nTests            4390\nPassing Tests    4390\nFailing Tests       0\nRisky/Pending       0\nAsserts        212065\nTime           844s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "af864961"
- },
- {
   "time": "2026-10-23 09:59:56",
   "epoch": 1792717196,
   "type": "start",
@@ -8220,5 +8176,60 @@
   },
   "test": "test_farming_temporary_notes.gd\nok      3s  res://tests/life/farming/test_seed_sources.gd\nok      3s  res://tests/life/farming/test_seed_back.gd\nok      3s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      3s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/hunting/test_captive_names.gd\nok      3s  res://tests/life/harvest/test_rock_cracks.gd\nok      3s  res://tests/life/hunting/test_food_chain.gd\nok      3s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      3s  res://tests/life/hunting/test_nav_weld.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      3s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/life/ranching/test_food_shown.gd\nok      3s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_wears_modules.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      3s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      3s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      3s  res://tests/settings/save/test_broken_stays_broken.gd\nok      3s  res://tests/settings/save/test_old_tea_coffee.gd\nok      3s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/test_temp_dirs_are_cleaned.gd\nok      3s  res://tests/ui/hud/test_compass_top.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/menu/test_character_preview.gd\nok      3s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      3s  res://tests/world/invasion/test_island_invasion.gd\nok      3s  res://tests/world/mine/test_mine_drill_reach.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      3s  res://tests/world/terrain/test_obsidian.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     33s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok      9s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           748\nTests            5295\nPassing Tests    5295\nFailing Tests       0\nRisky/Pending       0\nAsserts        272159\nTime           1168s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "a121a35c"
+ },
+ {
+  "time": "2026-11-01 01:26:41",
+  "epoch": 1793464001,
+  "type": "pass",
+  "title": "통과 — G-354 단계 1 (내 섬 선착장에서 두 섬)",
+  "group": "G-354",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "내 섬 선착장이 유황 섬 · 드워프 섬 둘로 가고 선착장 창에서 고른다 · 드워프 섬은 연구대 열쇠(dwarf_dock_key)로 연다",
+   "approach": "선착장은 섬 하나(sails_to 글자)만 알았다. islands.json 의 sails_to 를 글자 · 목록 둘 다 읽게 하고(Islands.destinations — 옛 꼴 글자 하나도 그대로, sails_to() 는 맨 앞을 돌려줘 옛 길이 안 깨진다) 내 섬을 [sulfur, dwarf] 로. Dock 에 destinations · 섬마다 열쇠/잠김(key_for · locked)을 두고, 손에 든 열쇠가 여는 잠긴 섬에 넣는다(유황 열쇠는 유황 섬만). GameRoot.open_dock_window 가 갈 섬 목록을 창에 넘기고 — 연 섬이 하나도 없으면 예전처럼 「부서져 있다」 알림, 있으면 창 위에 섬 단추 줄(둘 넘을 때만): 연 섬만 눌리고 안 연 섬은 「드워프 광산 · 연구로 연다」로 잠긴다. 고르면 그 배 명단으로 다시 그린다. 서버의 near_dock 도 갈 섬 여럿을 본다. 드워프 섬은 dock_starts_open false · unlock_item dwarf_dock_key — 연구대 레시피 강철괴 10 · 유황 10(임시). 열면 opened_islands 로 저장된다. F8 은 sail_to(unlocked) 로 잠긴 섬에도 그대로 건너가되 열지는 않는다(드워프 섬이 잠기면 F8 로 못 가게 되는 것을 막았다). 화면: 선착장 창 맨 위 「선착장」 제목 아래에 「유황 섬 | 드워프 광산 · 연구로 연다」 단추 줄이 새로 섰다 (harness/shot.sh --ui … dock 로 ko · en 확인 — 잘림 없음). spec dwarf-island.md 의 「섬 여는 길」 미정을 지우고 정한 내용을 적었다. 바뀐 곳 그물(517 파일 · 3666 테스트)을 돌려 test_ore_spread 하나가 떨어졌다 — 강철이 든 열쇠가 「석탄 없이 못 만드는 것」 목록(mining.md)에 없어서. mining.md 에 적고 그 파일 · 새 파일 · test_island_key 를 다시 돌려 33/33 통과.",
+   "why": "dwarf_dock_key 레시피 — 강철괴 10 · 유황 10, 5초 (Claude 가 정함: 화산섬 재료가 들어 유황 섬 다음에 열리게. 사람 2026-10-25 「재료는 다시 밸런싱」); F8 개발용 길이 잠긴 섬에도 건너간다(섬은 안 연다) — 드워프 섬이 잠긴 뒤에도 F8 로 보게",
+   "files": [
+    "game/world/frontier_islands/islands.gd",
+    "game/world/frontier_islands/islands.json",
+    "game/world/frontier_islands/dock.gd",
+    "game/world/terrain/test_island.gd",
+    "game/ui/hud/dock_window.gd",
+    "game/core/game_root.gd",
+    "game/core/net/net_world.gd",
+    "game/core/debug/debug_tools.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/craft/recipes/research_bench.json",
+    "game/player/inventory_hotbar/items.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/world/frontier_islands/test_dock_choices.gd",
+    "game/tests/world/frontier_islands/test_island_key.gd",
+    "game/tests/world/frontier_islands/test_voyage.gd",
+    "spec/03_world/dwarf-island.md",
+    "spec/03_world/frontier-islands.md",
+    "spec/04_life/mining.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "섬마다 sails_to 가 여럿일 수 있다(islands.json — home 은 sulfur · dwarf) · 선착장 창(dock_window)에 갈 섬을 고른다 · 연 섬만 고를 수 있고 안 연 섬은 「연구로 연다」 풀이와 잠김 · 옛 저장본(sails_to 하나)도 그대로 읽힌다 (테스트)",
+     "evidence": "test_dock_choices.gd — test_my_island_sails_to_two_islands(home → [sulfur, dwarf]) · test_the_old_single_sails_to_still_reads(글자 하나 · 목록 · 틀린 꼴 · 없음을 임시 json 으로) · test_an_old_save_keeps_sulfur_open_and_dwarf_locked · test_only_opened_islands_can_be_chosen(실제 GameRoot.open_dock_window → 잠긴 단추 disabled · 글 「유황 섬 · 연구로 연다」 · choose(SULFUR) false · 잠긴 섬으로 GO 해도 안 떠남) · test_choosing_dwarf_in_the_window_sails_there(단추 눌러 고르고 참가 · 출발 → dwarf 도착) · test_a_single_destination_shows_no_choices. test_voyage 에 맵 선착장 destinations 단언 추가. 일부러 깨 봄: DockWindow.choose 의 open 검사를 지우자 test_dock_choices 가 떨어졌다(되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "드워프 섬 해금 아이템 dwarf_dock_key — 연구대 레시피(sulfur_dock_key 와 같은 길, 재료 임시 — 화산섬 재료가 들게: 강철 · 유황 언저리) · 만들어 선착장에서 쓰면 dwarf 가 열린다 · 열기 전엔 배가 안 간다 · 저장된다 · F8 개발용 길은 그대로 · spec dwarf-island.md 「섬 여는 길」 미정을 지운다 (테스트)",
+     "evidence": "research_bench.json 에 강철괴10 · 유황10(임시 표시 _temporary 에) · items.json · ko/en.po 이름. test_the_dwarf_key_is_made_at_the_research_bench_from_volcano_things(연구대 · sulfur · steel_ingot · 한/영 이름) · test_inserting_the_dwarf_key_at_my_dock_opens_only_dwarf(열기 전 sail_to 거부 · 진짜 우클릭으로 넣음 → dwarf 만 열림 · 열쇠 소모 · 그 뒤 배가 감) · test_the_sulfur_key_does_not_open_dwarf · test_an_opened_dwarf_island_is_saved(디스크 저장 → 다시 읽어 opened_islands) · test_f8_still_hops_to_the_locked_dwarf_island(잠긴 채 건너가고 열지 않음). 일부러 깨 봄: sail_to 의 잠김 검사를 끄자 「열기 전엔 드워프 섬으로 배가 안 간다」가 떨어졌다(되돌림). dwarf-island.md 미정 줄에서 「섬 여는 길(해금)」이 지워지고 본문에 정한 내용. 전체 749 파일 5308 테스트 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "_spec_lines.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/core/input/test_input_spec_table.gd\nok      3s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      3s  res://tests/core/net/test_steam_api.gd\nok      3s  res://tests/core/net/test_steam_room.gd\nok      3s  res://tests/core/test_grid.gd\nok      2s  res://tests/core/test_guard.gd\nok      2s  res://tests/core/test_lava_perf_spec_loop_line.gd\nok      2s  res://tests/core/test_mine_perf_spec_split.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/recipes/test_sawmill_recipes.gd\nok      3s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      3s  res://tests/life/farming/test_crop_kinds.gd\nok      3s  res://tests/life/hunting/test_captive_names.gd\nok      3s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      3s  res://tests/life/hunting/test_summon.gd\nok      3s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_bond.gd\nok      2s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/player/equipment/test_armor_health.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/player/equipment/test_gun_modules.gd\nok      4s  res://tests/player/equipment/test_armor.gd\nok      3s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      3s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_old_vehicle_blade.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      3s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      3s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      3s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/terrain/test_resource_view_redraw.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     33s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           749\nTests            5308\nPassing Tests    5308\nFailing Tests       0\nRisky/Pending       0\nAsserts        272570\nTime           1152s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "6ff6a286"
  }
 ]
