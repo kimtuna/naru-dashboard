@@ -1,65 +1,5 @@
 [
  {
-  "time": "2026-10-21 16:25:02",
-  "epoch": 1792567502,
-  "type": "pass",
-  "title": "통과 — G-275 단계 3 (배고픔은 체력 — 바닥이면 깎이고 · 초록이면 아주 천천히 찬다)",
-  "group": "G-275",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "배고픔 게이지가 초록(GREEN_ABOVE 위)이면 체력이 1분에 1 찬다(임시) — 최대 체력까지 · 서버 사본도 같은 틱. 속도 배율 문서에서 배고픔을 걷고, 무게 낱말 검사를 파일마다 허락한 낱말로 좁혔다",
-   "approach": "HungerThirst.tick 에 _regen 을 더했다 — 배고픔이 NeedGauge.GREEN_ABOVE 보다 많고 살아 있고 가득이 아니면 흐른 초를 쌓아 REGEN_SECONDS(60초)마다 Health.heal(1). heal 이 max_health(갑옷이 set_max 로 바꾼 값)에서 자르므로 넘지 않는다. 같이 하는 판은 서버의 Vitals 가 같은 tick 을 부르고 참가자 기계는 틱을 끄고 hp 를 받아 쓰므로 서버가 센다. 새 자투리 _regen_carry 는 저장 왕복 검사(test_round_trip)가 잡아 「안 담는다」에 까닭과 함께 적었다(save.md · DONT_SAVE). OTHER_SENSE 는 파일 → 허락 식별자 목록(정규식으로 그 말이 든 식별자 통째, 함수면 「(」까지)으로 바꿨고, 허락한 낱말이 실제로 그 파일에 있는지도 본다. damage-death.md:4 는 git log -L 로 보니 151dd029 「사람 결정 반영」 커밋에서 온 줄이라 꼬리 「(G-275.2 — 아이템 무게와 헷갈려 낱말만 바꿨다)」를 달았고, 그 꼬리만 한국어 무게 검사에서 빼 준다(KO_HISTORY). 바뀐 곳 그물(changed_tests.py, 386 파일) 한 번: 3136/3139 — test_round_trip 3개가 _regen_carry 로 떨어져 고친 뒤 그 파일만 다시 돌려 23/23 통과.",
-   "why": "HungerThirst.REGEN_SECONDS = 60초에 체력 1 — 사람 말 「엄청 천천히」, Claude 가 정했다 (체력 100 이면 1 에서 가득까지 1시간 반 남짓)",
-   "files": [
-    "game/player/hunger_thirst/hunger_thirst.gd",
-    "game/player/movement_controls/player.gd",
-    "game/tests/player/hunger_thirst/test_fed_heals.gd",
-    "game/tests/player/inventory_hotbar/test_no_item_load.gd",
-    "game/tests/player/inventory_hotbar/test_items.gd",
-    "game/tests/settings/save/test_round_trip.gd",
-    "spec/02_player/hunger-thirst.md",
-    "spec/02_player/inventory-hotbar.md",
-    "spec/02_player/equipment-modules.md",
-    "spec/01_settings/save.md",
-    "spec/08_combat/damage-death.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "배고픔 게이지가 초록(GREEN_ABOVE 위) 인 동안 체력이 아주 천천히 오른다 — 빠르기 임시(예: 1분에 1). 최대 체력(ArmorModules.max_health)을 넘지 않는다 · 멀티 — 서버가 셈한다 (테스트)",
-     "evidence": "hunger_thirst.gd _regen · is_fed(hunger > NeedGauge.GREEN_ABOVE) · REGEN_SECONDS 60 에 「임시」. test_fed_heals.gd 7개: 59초엔 그대로 · 60초에 +1 · 0.5초씩 2분에 +2, 경계(GREEN_ABOVE 그 자리)·빨강은 안 참, 초록 벗어나면 자투리 버림, 죽은 몸, set_max 로 늘린 가득까지만, 가득일 때 시간 안 쌓음, NetVitals._tick 이 서버 사본을 채우고 state_of 의 hp 에 실림. net_vitals.gd:138 참가자 기계는 hunger_thirst set_process(false). 일부러 깨 봄: is_fed 를 hunger > 0.0 으로 바꾸면 test_fed_heals 2개가 떨어졌다(되돌림 확인). 전체 549 파일 4138 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "속도 배율에서 배고픔을 지운다 — inventory-hotbar.md:37 · equipment-modules.md:39 · player.gd:366 주석 (속도는 목마름만, 2026-10-14). spec/02_player/hunger-thirst.md 에 3단계 결정을 원문과 함께",
-     "evidence": "세 곳 모두 배고픔을 걷었고 grep 으로 「배고픔 · 목마름 배율/웅크림」 남은 곳 없음. hunger-thirst.md 에 사람 결정 2026-10-21 원문 그대로 + 초록 규칙 · 수용 기준 · 임시 수치 줄. test_items.gd 의 층 단언 문구도 맞춤"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) OTHER_SENSE 가 파일 통째로 허락한다 — … 파일마다 허락할 낱말을 적어 그 밖의 weight 가 나오면 실패하게 좁혀라",
-     "evidence": "OTHER_SENSE 를 파일 → 허락 식별자 목록 사전으로 바꿨고 test_english_word_only_where_it_means_something_else 가 목록 밖 식별자를 「파일 — 낱말」로 실패시킨다. test_other_sense_words_are_narrow 가 허락 낱말이 실제로 있는지와 item_weight 같은 식별자가 따로 갈리는지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 죽음 목적 문장이 바뀌었다 — … git log -L 로 출처를 보고, 사람이 쓴 것이면 줄 끝에 「(G-275.2 — 아이템 무게와 헷갈려 낱말만 바꿨다)」를 달아 둬라",
-     "evidence": "git log -L4,4 로 151dd029 「사람 결정 반영」에서 온 줄임을 확인. damage-death.md:4 끝에 꼬리가 붙었고 test_death_purpose_line_tells_why_the_word_changed 가 확인. 한국어 낱말 검사는 KO_HISTORY 로 그 꼬리만 뺀다"
-    }
-   ],
-   "issues": [
-    "갑옷 가득 테스트가 실제 갑옷을 안 입힌다 — test_fed_heals.gd test_never_above_max_even_with_armor 는 health.set_max(DEFAULT_MAX+10) 를 손으로 부르고 ArmorModules.max_health({}) 는 맨몸만 본다. 막는 것은 아니다(heal 이 max_health 에서 자른다). 사슴 2세트처럼 가득을 늘리는 장비를 실제로 입혀 Player 의 Health.max_health 가 바뀐 뒤 초록 회복이 그 값에서 멈추는지 보는 단언으로 바꾸면 좋다",
-    "테스트 함수 이름이 낡았다 — game/tests/player/inventory_hotbar/test_items.gd 의 test_speed_layers_are_only_needs_crouch_slope_and_buffs 는 이제 목마름만 속도 층이다. test_speed_layers_are_only_thirst_crouch_slope_and_buffs 처럼 이름을 바꿔라"
-   ],
-   "good": []
-  },
-  "test": "   2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/automation/villagers/test_villager_door_threading.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/build/test_build_piece_shared_shapes.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/core/test_grid.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           549\nTests            4138\nPassing Tests    4138\nFailing Tests       0\nRisky/Pending       0\nAsserts        197543\nTime           784s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "84d79f30"
- },
- {
   "time": "2026-10-21 16:53:53",
   "epoch": 1792569233,
   "type": "pass",
@@ -8246,6 +8186,41 @@
   "epoch": 1793465966,
   "type": "fail",
   "title": "차선 합치기 실패 — 3d-lane3(12197b17) → 3d-lane2",
+  "group": "G-351",
+  "step": "4",
+  "attempt": "1",
+  "report": {
+   "problem": "영어 찍기에서 말 고르기가 English 로 선다 — 설정 화면이 열 때 · 탭을 열 때 · 말이 바뀔 때 고르기 칸을 UserPrefs.language 에 다시 맞추고, 찍기는 말마다 UserPrefs.language 를 메모리에만 놓는다. 바뀐 곳에 걸리는 41개 파일 348개 통과",
+   "approach": "고르기 칸은 창을 처음 만들 때 한 번만 UserPrefs.language 로 맞췄고, 찍기는 로캘만 en 으로 바꿔 칸이 「한국어」로 남았다. 기준이 준 두 길을 다 했다 — settings_screen.gd 에 sync_language() 를 두어 show_tab · visibility_changed · NOTIFICATION_TRANSLATION_CHANGED(기존 _notification 에 덧붙임)에서 칸을 다시 맞추고, ui_shots.gd 의 _shoot 이 말마다 UserPrefs.language 를 그 말로 놓고(set_language 를 안 거쳐 파일엔 안 씀) 다 찍으면 되돌린다. 화면 쪽만 고치면 찍기에서 UserPrefs.language 가 여전히 ko 라 칸이 안 바뀌므로 둘 다 필요했다. 다시 찍은 .loop/out/shots_g351_4/settings_language_en.png 에서 칸이 English, _ko.png 에서 한국어임을 그림으로 확인했다",
+   "why": "",
+   "files": [
+    "game/ui/menu/settings_screen.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/tests/settings/test_language_settings.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "영어 찍기에서 말 고르기가 「한국어」로 선다",
+     "evidence": "settings_screen.gd 에 sync_language() 를 두어 show_tab · visibility_changed · NOTIFICATION_TRANSLATION_CHANGED 에서 고르기 칸을 UserPrefs.language 로 다시 맞추고, ui_shots.gd _shoot 이 말마다 UserPrefs.language 를 메모리에만 놓았다가 되돌린다(set_language 를 안 거쳐 파일에 안 씀). test_pick_follows_language_changed_after_the_screen_was_built 가 탭 열기 · 다시 열기 · 로캘 바뀜 세 길을 모두 보고 파일에 안 쓰는지까지 본다 — sync_language 몸을 비워 돌리니 이 테스트가 깨졌다(되돌림 확인). test_ui_shots_sets_the_language_with_the_locale 는 찍기 소스의 놓기 · 되돌리기 줄을 본다. 다시 찍은 .loop/out/shots_g351_4/settings_language_en.png 에서 칸이 English 로 선 것을 눈으로 확인했다. 전체 5307개 통과 · guard 통과"
+    }
+   ],
+   "issues": [
+    "찍기 테스트가 소스 글자만 본다 — test_language_settings.gd 의 test_ui_shots_sets_the_language_with_the_locale 는 ui_shots.gd 에 줄이 있는지만 본다. 동작은 그림과 화면 쪽 테스트가 받치니 막는 것은 아니지만, 가능하면 _shoot 을 짧은 출력 폴더로 실제 불러 UserPrefs.language 가 말마다 바뀌고 끝나면 되돌아오는지 보는 테스트로 바꿔라"
+   ],
+   "good": []
+  },
+  "test": "/test_item_names_title_case.gd\nok      3s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      3s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      2s  res://tests/life/hunting/test_captive_names.gd\nok      3s  res://tests/life/hunting/test_captive_fed.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_food_shown.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      3s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/multiplayer/test_islands_afar.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/player/equipment/test_equipment.gd\nok      3s  res://tests/player/equipment/test_future_wear_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      3s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/ui/theme/test_korean_font.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      3s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      3s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      3s  res://tests/world/terrain/test_deprecated_call_source.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     33s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           748\nTests            5307\nPassing Tests    5307\nFailing Tests       0\nRisky/Pending       0\nAsserts        271172\nTime           1127s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-11-01 02:19:12",
+  "epoch": 1793467152,
+  "type": "fail",
+  "title": "차선 합치기 실패 — 3d-start(2f949854) → 3d-lane2",
   "group": "G-351",
   "step": "4",
   "attempt": "1",
