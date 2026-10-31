@@ -6170,7 +6170,7 @@
   - 기준: 설정에 언어(한국어 · English) · 고르면 곧바로 바뀐다 · 담고 켤 때 되살린다 · 처음 켤 때는 OS 언어(한국어가 아니면 English) · language.md 에 적는다 (테스트)
 
 ## [ ] G-352 출시 준비 — 내보낸 판 정리 · 첫 켜기
-- 차선: 3d-lane3
+- 차선: 3d-lane3 · 시작 2026-10-31 23:13
 - spec: spec/00_core/performance-island.md · spec/01_settings/save.md · spec/12_ui/menu.md
 - **사람 2026-10-31** (원문 그대로): 「전체적으로 이제 게임을 완성하고 싶은데」
 - Steam App ID(지금 시험 480)는 사람이 Steamworks 에 등록한 뒤에 바꾼다 — 이 묶음에서 건드리지 않는다
