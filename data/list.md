@@ -6266,7 +6266,7 @@
 - [x] 2. 스킬이 저절로
   - 기준: 갈래마다 레벨 몇에 스킬이 저절로 열린다(임시 — 5 레벨마다 하나: 캐는 빠르기 +% · 드롭 덤 · 기력 덜 씀 같은 작은 것) · 열리면 알림 · 숙련도 창에 열린 · 다음 스킬 · 지금 덤 0 이던 곳(harvest · 낚시 · 농사 씨앗 확률)에 사람 숙련도가 붙는다 · spec level-skills.md 에 적는다 (테스트)
   - 기준: (앞 단계 QA) 없는 테스트 파일을 또 가리킨다 — game/tests/player/skills/test_player_skills.gd 머리말 9째 줄 '참가자의 손(서버가 대신 한 일)은 tests/multiplayer/test_skills_for_guest.gd 가 본다' 의 test_skills_for_guest.gd 는 없다. 실제로는 tests/multiplayer 의 test_harvest_on_server · test_farm_on_server · test_fish_on_server · test_station_on_server · test_bag_on_server 에 붙은 'G-358.1' 단언이다 — 그 이름들로 고쳐라
-- [ ] 3. (앞 단계 QA) 참가자 손에는 스킬 덤이 없다
+- [x] 3. (앞 단계 QA) 참가자 손에는 스킬 덤이 없다
   - 기준: 참가자 손에는 스킬 덤이 없다 — spec 에 「서버는 참가자의 숙련도를 모른다 — 지금은 덤 없이 굴린다」로 적혀 있다(막는 것은 아니다). 멀티에서 참가자도 덤을 받게 하려면 참가자가 제 숙련 단 수(또는 덤)를 서버에 알리고 NetActs 의 서버 길(harvest strike bonus · seed_back · fishing land · butcher_for · station collect)이 그 값을 쓰게 하는 단계를 두고, tests/multiplayer 에 참가자 끝 레벨로 덤이 붙는 단언을 넣어라
   - 기준: (앞 단계 QA) 기준의 예시 갈래(캐는 빠르기 · 기력 덜 씀)는 안 만들었다 — 지금 스킬은 모두 '확률 덤' 한 종류다. 기준은 예시라 통과지만, 단마다 다른 종류(예: 5단마다 캐는 빠르기 +%)를 섞으려면 PERK_STEP 를 갈래×단 표로 넓히고 spec 수치 줄에 임시로 적어라
 
@@ -6340,6 +6340,18 @@
   - 기준: 찍기 테스트가 소스 글자만 본다 — test_language_settings.gd 의 test_ui_shots_sets_the_language_with_the_locale 는 ui_shots.gd 에 줄이 있는지만 본다. 동작은 그림과 화면 쪽 테스트가 받치니 막는 것은 아니지만, 가능하면 _shoot 을 짧은 출력 폴더로 실제 불러 UserPrefs.language 가 말마다 바뀌고 끝나면 되돌아오는지 보는 테스트로 바꿔라
 - [ ] 2. 설정 화면 탭 줄 맞춤 (G-351 — 지휘 세션 QA 가 그림으로 찾음)
   - 기준: ESC → 설정 → 화면 탭에서 「나침반 보이기」 줄이 다른 줄(창 모드 · 해상도 · 수직 동기화 · 그래픽 품질)보다 글자가 한 칸 들여 있고 켜기 단추 자리도 다르다 — 모든 줄의 이름 왼쪽 끝 · 단추 자리를 같게 (그림 settings_display ko · en 로 확인) (테스트)
+
+## [ ] G-951 루프가 찾은 것 — 스스로 갚는다
+- 차선: 3d-lane3
+- QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
+  루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
+- 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
+- [ ] 1. save.md 안 담는다 목록에 참가자 단 수가 없다 (G-358 단계 3)
+  - 기준: save.md 안 담는다 목록에 참가자 단 수가 없다 — NetActs._tiers(서버가 쥔 참가자 스킬 단 수, G-358.3)를 저장하지 않는 까닭이 spec/02_player/level-skills.md 에만 있고 spec/01_settings/save.md 「안 담는다」 목록에는 없다. Fishing._lines 줄 곁에 '서버가 쥔 참가자 스킬 단 수(NetActs._tiers)도 담지 않는다 — 참가자가 들어올 때 · 단이 바뀔 때 다시 알린다 · 레벨은 참가자 캐릭터 저장본에 있다' 한 줄을 더하라
+- [ ] 2. 벌목 쪽 참가자 덤 테스트가 없다 (G-358 단계 3)
+  - 기준: 벌목 쪽 참가자 덤 테스트가 없다 — test_harvest_on_server 는 채광(바위)만 본다. _strike 가 Harvest.skill_of(kind) 로 갈래를 고르므로 나무를 친 참가자에게 벌목 단 수 덤이 붙는지(채광 단만 알렸을 때 나무에는 안 붙는지) 단언을 하나 더하라
+- [ ] 3. butchery.gd 주석 자리가 어긋났다 (G-358 단계 3)
+  - 기준: butchery.gd 주석 자리가 어긋났다 — game/life/hunting/butchery.gd 의 '## 가방에 못 넣은 몫 — 주검 자리에 떨어뜨린다.' 줄이 새 extra_for 문서 주석 맨 위에 붙어 extra_for 설명이 되었다. 그 줄을 _drop 바로 위로 옮겨라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
