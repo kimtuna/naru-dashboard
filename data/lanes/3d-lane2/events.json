@@ -1,84 +1,5 @@
 [
  {
-  "time": "2026-10-21 16:53:53",
-  "epoch": 1792569233,
-  "type": "pass",
-  "title": "통과 — G-275 단계 4 (시설 목록 · 선착장 · 새장 · 숙련도 · 로드맵)",
-  "group": "G-275",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "G-275.4 문서를 지금 게임에 맞췄다 — 시설 열다섯 표 · 선착장(탄 사람만 건넘) · 새장(스스로 안 나감) · 숙련도는 있다 · 로드맵 세 단계. 갑옷 가득 테스트는 진짜 사슴 2세트로, 속도 층 테스트 이름 고침. 바뀐 곳만 277개 파일 · 2224개 테스트 통과",
-   "approach": "문서가 코드보다 뒤처져 있었다. 시설: stations.json 에서 표 밖 설치물(연구대 · 통 · 말뚝 · 새장 · 경비 우리 · 벌집)을 빼면 열다섯(열둘 − 축사 + 착유기 · 피처펌프 · 무기 · 장비 제작대)이라 facilities.md 표에서 축사 줄을 빼고 열다섯이라 적고, crafting-stations.md 에 열다섯 표를, _twelve 주석에 열다섯 key 를 적었다. 결과 칸 기본값 주석은 CraftingStation.BUFFER_SLOTS(5)에 맞췄다. 선착장은 game_root._sail_crew · _fit_islands 대로 「탄 사람만 건너가고 남은 사람은 제 섬에」로. 새장은 _sit 이 스스로 나가지 않으므로 bird-cage.md 18·22줄과 caged_bird.gd 머리 · call_back 주석, bird_cage.gd CALL_REST · RESTED 주석을 「앉아 있다 · 사냥 명령 때만 난다」로(사람 원문 인용은 그대로). 숙련도는 Villager.practice · pace 로 이미 있어 세 spec 을 「있다 — 덤에는 아직 안 쓴다」로 고치고 test_seed_back 이 붙잡은 옛 글을 새 글로 바꿨다(게임 동작 그대로). 로드맵 표는 1단계에서 (싱글)을 빼고 co-op 을 넣고 · 2단계 옆섬 무역 · 3단계 원정(맨 마지막)으로, 도구 줄을 지금 도구로, 빼는 것에서 목장 · 자동화를 뺐다. 리슨 서버 「1·2단계(생활 · PvE)」와 중앙 관문 「3단계」가 서로 어긋나 있어 같은 표의 번호로 맞췄다. QA: 갑옷 테스트는 진짜 Player 에 사슴 2세트를 입혀 Health.max_health 가 늘어난 뒤 초록 회복이 그 값에서 멈추는지 본다. 처음엔 늘어난 가득에서 셋 모자라게 깎으려 했는데 가득이 늘어도 남은 체력은 100 그대로라 깎기가 아무 일도 안 했다. 그래서 가득까지 채운 뒤 셋을 깎게 고쳤다.",
-   "why": "",
-   "files": [
-    "spec/05_craft/facilities.md",
-    "spec/05_craft/crafting-stations.md",
-    "game/craft/stations/stations.json",
-    "spec/03_world/frontier-islands.md",
-    "spec/04_life/bird-cage.md",
-    "game/life/ranching/caged_bird.gd",
-    "game/life/ranching/bird_cage.gd",
-    "spec/04_life/logging.md",
-    "spec/04_life/farming.md",
-    "spec/04_life/mining.md",
-    "game/life/farming/crops.gd",
-    "game/tests/life/farming/test_seed_back.gd",
-    "spec/00_core/roadmap.md",
-    "spec/11_multiplayer/listen-server.md",
-    "spec/11_multiplayer/central-gateway.md",
-    "game/tests/player/hunger_thirst/test_fed_heals.gd",
-    "game/tests/player/inventory_hotbar/test_items.gd",
-    "game/tests/core/test_docs_match_code_g275.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "「시설 열둘」 → 지금 시설 15종 표로(축사는 빼고 · 피처펌프 · 착유기 · 무기 제작대 · 장비 제작대를 넣는다. 조리용 화로는 G-270.2 로 뺐다) — crafting-stations.md:52-54 · facilities.md · stations.json `_twelve` 주석 · 결과 칸 기본값 주석 3 → 실제 5",
-     "evidence": "test_docs_match_code_g275.gd 의 test_the_station_file_has_the_fifteen(stations.json 에서 표 밖 설치물을 뺀 key 가 열다섯과 같다) · test_facilities_table_is_the_fifteen(facilities.md 첫 표의 이름을 뽑아 열다섯과 맞춘다 — 축사 줄은 표에서 빠지고 표 밑 「축사는 없다」로 옮겨졌다, 사람 답은 남아 있다) · test_crafting_stations_lists_the_fifteen · test_twelve_note_names_the_fifteen_and_the_default_slots(_fields 의 기본값을 CraftingStation.BUFFER_SLOTS=5 와 맞춘다). facilities.md 149줄"
-    },
-    {
-     "ok": true,
-     "criterion": "frontier-islands.md:11 「남을 사람이 있으면 배가 안 떠난다」 → 지금 코드(game_root.gd:569 — 섬 여럿을 같이 돌리고 탄 사람만 건너간다, G-225)",
-     "evidence": "test_dock_spec_says_only_the_crew_sails — 낡은 글이 없고 「탄 사람만 건너가고 안 탄 사람은 제 섬에 남는다」가 있고, game_root.gd 에 _sail_crew 가 있다 (573줄, _fit_islands 364줄 확인). 사람 결정 줄은 그대로"
-    },
-    {
-     "ok": true,
-     "criterion": "bird-cage.md:18,22 · caged_bird.gd:195 주석 「새가 스스로 나간다」 → 횃대에 앉아 있고 사냥 명령 때만 난다(G-266.5)",
-     "evidence": "test_birds_do_not_leave_on_their_own_in_words — bird-cage.md 의 「머물고 나간다」 · 「0 이 되면 스스로 나간다」가 없고 새 글이 있다. caged_bird.gd 머리 · call_back 주석, bird_cage.gd RESTED 주석도 본다. grep 으로 남은 「나간다」 주석이 없음을 확인. 사람 원문 인용(「쉬었다가 나감」 · 「0이 되면 나가도록」)은 남겼다"
-    },
-    {
-     "ok": true,
-     "criterion": "logging.md:37 · farming.md:55 · mining.md:80 「숙련도는 아직 없다」 → 「숙련도는 있다(G-232) — 나무꾼 덤 · 씨앗이 돌아올 확률에는 아직 안 쓴다」. test_seed_back.gd:138 이 붙잡은 옛 글을 같이 고친다 (게임 동작은 그대로)",
-     "evidence": "test_skill_lines_say_skills_exist 가 세 spec 에 「**숙련도는 있다(G-232)**」가 있고 「G-232 뒤」 · 「이 줄기에 없」이 없음을 본다. test_seed_back.gd 의 단언이 새 글을 붙잡고 옛 글이 없음을 assert_false 로 본다. crops.gd 는 주석만 바뀌었다(동작 그대로)"
-    },
-    {
-     "ok": true,
-     "criterion": "roadmap.md 표 — 1단계의 「(싱글)」을 빼고(멀티 2026-10-14) · 옆섬 무역 단계를 넣고(메인섬 → 옆섬 무역 → 원정섬, 원정은 맨 마지막) · 도구를 지금 것으로 · 「빼는 것」에서 목장 · 자동화를 뺀다. listen-server.md · central-gateway.md 의 단계 번호를 같은 표에 맞춘다",
-     "evidence": "test_roadmap_table_is_the_three_stages — (싱글) 없음, 1 메인섬 → 2 옆섬 무역 → 3 원정 순서 · 「맨 마지막」, 도구 줄 단어, 빼는 것 줄에 목장 · 자동화 없음. test_net_specs_use_the_same_stage_numbers 가 두 망 문서의 번호를 본다. 도구 줄의 도구(망치 · 톱 · 칼 · 가위 · 낚싯대 · 물뿌리개 · 망원경 · 활 · 검/창 · 총)가 items.json 에 다 있음을 확인"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 갑옷 가득 테스트가 실제 갑옷을 안 입힌다 — test_fed_heals.gd test_never_above_max_even_with_armor 는 health.set_max(DEFAULT_MAX+10) 를 손으로 부르고 ArmorModules.max_health({}) 는 맨몸만 본다. …",
-     "evidence": "test_real_armor_raises_the_cap_and_healing_stops_there — 진짜 player.tscn 에 사슴 세트 모듈을 단 상의 · 모자를 입히고 Player 의 Health.max_health 가 ArmorModules.max_health(equipment) 로 늘었는지(>DEFAULT_MAX) 본 뒤, 늘어난 가득에서 셋 깎고 초록 틱 10분 뒤 정확히 cap 에서 멈추고 DEFAULT_MAX 보다 큰지 단언한다. 손으로 set_max 하던 옛 부분은 지웠다. after_each 에서 Pointer.set_captured(false)"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 테스트 함수 이름이 낡았다 — game/tests/player/inventory_hotbar/test_items.gd 의 test_speed_layers_are_only_needs_crouch_slope_and_buffs 는 이제 목마름만 속도 층이다. test_speed_layers_are_only_thirst_crouch_slope_and_buffs 처럼 이름을 바꿔라",
-     "evidence": "diff 에서 함수 이름이 test_speed_layers_are_only_thirst_crouch_slope_and_buffs 로 바뀌었다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "d/test_ammo_label_by_gun.gd\nok      3s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      3s  res://tests/ui/hud/test_bag_move_slots.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      3s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      1s  res://tests/ui/hud/test_station_window_reads.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/ui/menu/test_character_model.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      1s  res://tests/automation/villagers/test_job_work_shared.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      2s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/core/test_guard.gd\nok      2s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           550\nTests            4148\nPassing Tests    4148\nFailing Tests       0\nRisky/Pending       0\nAsserts        197638\nTime           784s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "dabbce57"
- },
- {
   "time": "2026-10-21 17:21:57",
   "epoch": 1792570917,
   "type": "pass",
@@ -8221,6 +8142,41 @@
   "epoch": 1793467152,
   "type": "fail",
   "title": "차선 합치기 실패 — 3d-start(2f949854) → 3d-lane2",
+  "group": "G-351",
+  "step": "4",
+  "attempt": "1",
+  "report": {
+   "problem": "영어 찍기에서 말 고르기가 English 로 선다 — 설정 화면이 열 때 · 탭을 열 때 · 말이 바뀔 때 고르기 칸을 UserPrefs.language 에 다시 맞추고, 찍기는 말마다 UserPrefs.language 를 메모리에만 놓는다. 바뀐 곳에 걸리는 41개 파일 348개 통과",
+   "approach": "고르기 칸은 창을 처음 만들 때 한 번만 UserPrefs.language 로 맞췄고, 찍기는 로캘만 en 으로 바꿔 칸이 「한국어」로 남았다. 기준이 준 두 길을 다 했다 — settings_screen.gd 에 sync_language() 를 두어 show_tab · visibility_changed · NOTIFICATION_TRANSLATION_CHANGED(기존 _notification 에 덧붙임)에서 칸을 다시 맞추고, ui_shots.gd 의 _shoot 이 말마다 UserPrefs.language 를 그 말로 놓고(set_language 를 안 거쳐 파일엔 안 씀) 다 찍으면 되돌린다. 화면 쪽만 고치면 찍기에서 UserPrefs.language 가 여전히 ko 라 칸이 안 바뀌므로 둘 다 필요했다. 다시 찍은 .loop/out/shots_g351_4/settings_language_en.png 에서 칸이 English, _ko.png 에서 한국어임을 그림으로 확인했다",
+   "why": "",
+   "files": [
+    "game/ui/menu/settings_screen.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/tests/settings/test_language_settings.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "영어 찍기에서 말 고르기가 「한국어」로 선다",
+     "evidence": "settings_screen.gd 에 sync_language() 를 두어 show_tab · visibility_changed · NOTIFICATION_TRANSLATION_CHANGED 에서 고르기 칸을 UserPrefs.language 로 다시 맞추고, ui_shots.gd _shoot 이 말마다 UserPrefs.language 를 메모리에만 놓았다가 되돌린다(set_language 를 안 거쳐 파일에 안 씀). test_pick_follows_language_changed_after_the_screen_was_built 가 탭 열기 · 다시 열기 · 로캘 바뀜 세 길을 모두 보고 파일에 안 쓰는지까지 본다 — sync_language 몸을 비워 돌리니 이 테스트가 깨졌다(되돌림 확인). test_ui_shots_sets_the_language_with_the_locale 는 찍기 소스의 놓기 · 되돌리기 줄을 본다. 다시 찍은 .loop/out/shots_g351_4/settings_language_en.png 에서 칸이 English 로 선 것을 눈으로 확인했다. 전체 5307개 통과 · guard 통과"
+    }
+   ],
+   "issues": [
+    "찍기 테스트가 소스 글자만 본다 — test_language_settings.gd 의 test_ui_shots_sets_the_language_with_the_locale 는 ui_shots.gd 에 줄이 있는지만 본다. 동작은 그림과 화면 쪽 테스트가 받치니 막는 것은 아니지만, 가능하면 _shoot 을 짧은 출력 폴더로 실제 불러 UserPrefs.language 가 말마다 바뀌고 끝나면 되돌아오는지 보는 테스트로 바꿔라"
+   ],
+   "good": []
+  },
+  "test": "/test_item_names_title_case.gd\nok      3s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_seed_back.gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      3s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      2s  res://tests/life/hunting/test_captive_names.gd\nok      3s  res://tests/life/hunting/test_captive_fed.gd\nok      2s  res://tests/life/hunting/test_food_chain.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_food_shown.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      3s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/multiplayer/test_islands_afar.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/player/equipment/test_equipment.gd\nok      3s  res://tests/player/equipment/test_future_wear_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      3s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/ui/theme/test_korean_font.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      3s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      3s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      3s  res://tests/world/terrain/test_deprecated_call_source.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     33s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           748\nTests            5307\nPassing Tests    5307\nFailing Tests       0\nRisky/Pending       0\nAsserts        271172\nTime           1127s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-11-01 02:38:59",
+  "epoch": 1793468339,
+  "type": "fail",
+  "title": "차선 합치기 실패 — 3d-lane3(12197b17) → 3d-lane2",
   "group": "G-351",
   "step": "4",
   "attempt": "1",
