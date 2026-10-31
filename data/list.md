@@ -6171,7 +6171,7 @@
 - [x] 3. 언어 고르기
   - 기준: 설정에 언어(한국어 · English) · 고르면 곧바로 바뀐다 · 담고 켤 때 되살린다 · 처음 켤 때는 OS 언어(한국어가 아니면 English) · language.md 에 적는다 (테스트)
   - 기준: (앞 단계 QA) 해 그림자 · vsync 반영은 기록으로만 본다 — UserPrefs.applied 는 RenderingServer.directional_shadow_atlas_set_size · DisplayServer.window_set_vsync_mode 를 부른 바로 다음 줄에서 적힌다. 그래서 그 API 호출만 지우면 테스트가 못 잡는다(headless 에는 다시 읽는 길이 없다 — 앞 QA 가 허락한 길이다, 막는 것은 아니다). 윈도우 빌드 찍기(shots)나 창이 있는 테스트에서 DisplayServer.window_get_vsync_mode(id) 로 실제 값을 단언하는 것을 하나 더하면 끝까지 지켜진다
-- [ ] 4. (앞 단계 QA) 영어 찍기에서 말 고르기가 「한국어」로 선다
+- [x] 4. (앞 단계 QA) 영어 찍기에서 말 고르기가 「한국어」로 선다
   - 기준: 영어 찍기에서 말 고르기가 「한국어」로 선다 — .loop/out/shots_g351_3/settings_language_en.png 는 글자가 다 English 인데 고르기 칸만 「한국어」다. 찍기가 UserPrefs.language 는 그대로 두고 로캘만 en 으로 바꾸기 때문이다(사람 게임에서는 둘이 같이 움직여 생기지 않는다). settings_screen.gd 가 화면을 열 때(show_tab · visibility_changed) _language.select(LANGUAGES.find(UserPrefs.language)) 를 다시 맞추게 하거나, ui_shots.gd 의 settings_language 찍기가 lang 에 맞는 UserPrefs.language 를 임시로 놓게(파일엔 안 쓰게) 고쳐라
 
 ## [ ] G-352 출시 준비 — 내보낸 판 정리 · 첫 켜기
@@ -6269,6 +6269,14 @@
   - 기준: 지금 있는 동물 모두에 이로치(색이 다른 몸 · 반짝임) · 종마다 **나오는 조건** 표 한 곳 — 조건 갈래: 교배에서 낮은 확률 · 밤에만 · 특정 섬 · 비 오는 날(날씨가 생기면 — 지금은 표에만) · 조건이 맞아도 확률로만 · 이로치는 잡아 목장 · 새장에 넣으면 그대로 · 저장 · 번식하면 새끼에게 이어질 확률(임시) (테스트)
 - [ ] 2. 도감
   - 기준: 캐릭터에 붙는 도감(캐릭터 저장) — 동물(이로치 칸 따로) · 물고기 · 작물 · 약초 · 광물(범위는 Claude 가 정한 임시) · 처음 잡거나 · 거두거나 · 캐면 칸이 찬다 · 보상 없음(codex.md) · 창(키 임시)에 찬 칸 · 빈 칸(이름 ? ) · 이로치 조건은 빈 칸에 힌트 한 줄 · spec codex.md 범위 미정 · spawn-conditions.md 를 적는다 (테스트)
+
+## [ ] G-949 루프가 찾은 것 — 스스로 갚는다
+- 차선: 3d-lane2
+- QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
+  루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
+- 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
+- [ ] 1. 찍기 테스트가 소스 글자만 본다 (G-351 단계 4)
+  - 기준: 찍기 테스트가 소스 글자만 본다 — test_language_settings.gd 의 test_ui_shots_sets_the_language_with_the_locale 는 ui_shots.gd 에 줄이 있는지만 본다. 동작은 그림과 화면 쪽 테스트가 받치니 막는 것은 아니지만, 가능하면 _shoot 을 짧은 출력 폴더로 실제 불러 UserPrefs.language 가 말마다 바뀌고 끝나면 되돌아오는지 보는 테스트로 바꿔라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
