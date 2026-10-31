@@ -6211,7 +6211,7 @@
   - 기준: 섬마다 sails_to 가 여럿일 수 있다(islands.json — home 은 sulfur · dwarf) · 선착장 창(dock_window)에 갈 섬을 고른다 · 연 섬만 고를 수 있고 안 연 섬은 「연구로 연다」 풀이와 잠김 · 옛 저장본(sails_to 하나)도 그대로 읽힌다 (테스트)
   - 기준: 드워프 섬 해금 아이템 dwarf_dock_key — 연구대 레시피(sulfur_dock_key 와 같은 길, 재료 임시 — 화산섬 재료가 들게: 강철 · 유황 언저리) · 만들어 선착장에서 쓰면 dwarf 가 열린다 · 열기 전엔 배가 안 간다 · 저장된다 · F8 개발용 길은 그대로 · spec dwarf-island.md 「섬 여는 길」 미정을 지운다 (테스트)
 
-## [ ] G-355 원유는 차 연료
+## [x] G-355 원유는 차 연료
 - 차선: 3d-start · 시작 2026-11-01 02:27
 - 순서: G-354 뒤
 - spec: spec/04_life/vehicles.md · spec/03_world/dwarf-island.md
