@@ -6132,7 +6132,7 @@
   - 기준: 홀로그램 반경 · 겉땅 거르기는 셰이더에만 있고 테스트는 같은 셈을 따로 적은 shows() 를 본다 — POINT_SHADER 의 radius/roof 와 shows() 가 어긋나도 테스트가 모른다. 셰이더 uniform 값(_points.get_shader_parameter(&"radius") == RADIUS · &"roof" == _roof() · &"center" == 내 판 좌표)을 단언하는 줄을 test_hologram_shows_tunnels_within_radius 에 더해라
 
 ## [ ] G-948 루프가 찾은 것 — 스스로 갚는다
-- 차선: 3d-start
+- 차선: 3d-start · 시작 2026-10-31 13:38
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
