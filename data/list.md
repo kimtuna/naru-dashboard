@@ -6164,10 +6164,11 @@
 - 게임 내용(레시피 · 수치 · 섬)은 건드리지 않는다. 값은 **임시** (Claude 가 정함)
 - [x] 1. 소리 버스 · 음량
   - 기준: 오디오 버스 셋(전체 Master · 음악 Music · 효과음 SFX — default_bus_layout.tres) · 지금 나는 소리(HitSound 등)는 SFX 로 · 설정에 「소리」 탭 — 버스마다 음량 막대(0~100 %) · 음소거 · user_prefs 에 담고 켤 때 되살린다 · audio.md 「음량 채널」 미정을 이 셋으로 적는다 (테스트)
-- [ ] 2. 화면 옵션
+- [x] 2. 화면 옵션
   - 기준: 「화면」 탭에 창 모드(창 · 전체 화면 · 테두리 없는 전체 화면) · 해상도(16:9 몇 가지 · 창 모드일 때만) · 수직 동기화 · 그래픽 품질(낮음 · 보통 · 높음 — 그림자 · 안티에일리어싱 · 렌더 배율) · user_prefs 에 담고 켤 때 되살린다 · 바꾸면 곧바로 든다 (테스트)
 - [ ] 3. 언어 고르기
   - 기준: 설정에 언어(한국어 · English) · 고르면 곧바로 바뀐다 · 담고 켤 때 되살린다 · 처음 켤 때는 OS 언어(한국어가 아니면 English) · language.md 에 적는다 (테스트)
+  - 기준: (앞 단계 QA) 해 그림자 · vsync 반영은 기록으로만 본다 — UserPrefs.applied 는 RenderingServer.directional_shadow_atlas_set_size · DisplayServer.window_set_vsync_mode 를 부른 바로 다음 줄에서 적힌다. 그래서 그 API 호출만 지우면 테스트가 못 잡는다(headless 에는 다시 읽는 길이 없다 — 앞 QA 가 허락한 길이다, 막는 것은 아니다). 윈도우 빌드 찍기(shots)나 창이 있는 테스트에서 DisplayServer.window_get_vsync_mode(id) 로 실제 값을 단언하는 것을 하나 더하면 끝까지 지켜진다
 
 ## [ ] G-352 출시 준비 — 내보낸 판 정리 · 첫 켜기
 - 차선: 3d-lane3 · 시작 2026-10-31 23:13

@@ -1,45 +1,5 @@
 [
  {
-  "time": "2026-10-21 09:24:02",
-  "epoch": 1792542242,
-  "type": "pass",
-  "title": "통과 — G-274 단계 1 (죽은 자리를 지도에)",
-  "group": "G-274",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "죽은 자리(내 데스 상자 자리)가 지도(M)에 ✕ 표로 뜬다 — 여럿이면 다, 상자가 없어지면 표도 없어지고, 같이 하는 판에서는 제 것만. 바뀐 곳만 돌린 테스트 264개 파일 · 1996개 통과",
-   "approach": "지도가 표를 따로 기억하지 않고 이 섬의 Death 아래 떨어져 있는 데스 상자를 그때그때 읽는다(MapWindow.watch_death — GameRoot._join_death 가 섬마다 갈아 낀다). 그래서 상자가 사라지면 표도 사라지고, 상자가 섬마다 저장되므로(Death.standing · restore) 저장도 따로 할 것이 없다. 참가자 기계의 그림 상자도 주인 id 를 들고 오므로 DeathChest.can_open(내 캐릭터 id) 인 것만 세어 기계마다 제 것만 뜬다(Claude 가 정함 — 남의 상자는 어차피 못 연다). 지도가 떠 있는 동안 상자 목록이 바뀌면 다시 그린다. 표는 ✕ 로 내 자리(찬 동그라미) · 좌표 표(고리+십자)와 구분했다. 테스트는 진짜로 죽어서 상자를 떨어뜨린다. 멀티 테스트는 서버장 · 참가자 둘을 실제 ENet 으로 붙여 본다.",
-   "why": "지도의 죽은 자리 표 크기 DEATH_RADIUS 6px · 굵기 3px, 색 map_death (0.95, 0.3, 0.3) — 지도의 다른 표들처럼 임시. 아이콘이 나오면 바꾼다",
-   "files": [
-    "game/ui/hud/map_window.gd",
-    "game/core/game_root.gd",
-    "game/ui/theme/naru_theme.tres",
-    "spec/12_ui/hud.md",
-    "spec/08_combat/damage-death.md",
-    "game/tests/ui/hud/test_map_death_marks.gd",
-    "game/tests/multiplayer/test_death_on_server.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "죽으면 그 자리(데스 상자 자리)가 지도(M)에 표시된다 — 상자가 없어지면 표시도 없어진다. 여러 번 죽어 상자가 여럿이면 다 보인다. 저장 · 멀티(참가자는 제 것만 — Claude 가 정함) (테스트)",
-     "evidence": "tests/ui/hud/test_map_death_marks.gd 는 진짜 GameRoot 에서 체력을 다 깎아 죽는다: 표 하나가 상자 자리·지도 네모 안에 뜨고(test_a_death_puts_a_mark_where_the_chest_fell), 세 번 죽으면 셋 다 뜨고(test_every_chest_gets_its_own_mark), LIFETIME 이 다 된 상자의 표는 지도를 연 채로도 사라진다(test_the_mark_goes_away_with_the_chest, _drawn_deaths 로 다시 그렸는지까지 확인), 남의 상자는 안 뜬다(test_someone_elses_chest_is_not_marked), Death.standing→restore 로 돌아온 상자에 표가 돌아온다(test_the_mark_comes_back_with_the_saved_chest — 상자는 island_state 의 death_chests 칸으로 이미 저장본에 담긴다). 멀티는 tests/multiplayer/test_death_on_server.gd::test_each_map_marks_only_its_own_death 가 서버장·참가자 둘을 ENet 으로 붙여 기계마다 제 것만 뜨고 서버에서 상자가 사라지면 참가자 지도에서도 사라지는 것을 본다. 일부러 깨 봤다: can_open 거르기를 빼니 test_map_death_marks 가 떨어졌고, _process 의 다시 그리기를 막으니 또 떨어졌다(둘 다 되돌렸다). test.log 에서 두 파일 모두 ok, 전체 1996 통과 · guard 통과"
-    }
-   ],
-   "issues": [
-    "죽은 자리 표에 쓸데없는 거르기가 있다 — game/ui/hud/map_window.gd death_marks() 의 `or chest.is_queued_for_deletion()` 은 DeathChest.vanish() 가 이미 remove_from_group 하므로 아무것도 거르지 않는다(빼도 테스트가 다 통과했다). 지워도 되고, 남기려면 「vanish 가 무리에서 빼므로 덧붙인 받침」이라고 주석을 달아라"
-   ],
-   "good": []
-  },
-  "test": "e.gd\nok      3s  res://tests/ui/hud/test_guard_pen_window.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      2s  res://tests/ui/hud/test_hive_window.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      4s  res://tests/ui/hud/test_map_death_marks.gd\nok      3s  res://tests/ui/hud/test_search_field_shared.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      3s  res://tests/ui/hud/test_station_doing_line.gd\nok      4s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      3s  res://tests/ui/hud/test_villager_hands_window.gd\nok      3s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      3s  res://tests/world/map/test_map_memory.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      4s  res://tests/world/frontier_islands/test_island_key.gd\nok      3s  res://tests/world/storage/test_chest_slots.gd\nok      2s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      4s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/automation/villagers/test_villager_door.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      2s  res://tests/automation/villagers/test_villager_pen_room.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/test_grid.gd\nok      2s  res://tests/core/net/test_acts_alone.gd\nok      2s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_path_walk_turn.gd\nok      2s  res://tests/core/test_project_setup.gd\nok      3s  res://tests/core/test_window_fit.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      3s  res://tests/multiplayer/test_visitor_interp.gd\nok      3s  res://tests/multiplayer/test_wild_kinds_on_server.gd\nok      2s  res://tests/player/equipment/test_armor_health.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/ui/hud/test_alert_log_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           264\nTests            1996\nPassing Tests    1996\nFailing Tests       0\nRisky/Pending       0\nAsserts         63842\nTime           501s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "477b0ef2"
- },
- {
   "time": "2026-10-21 09:51:18",
   "epoch": 1792543878,
   "type": "fail",
@@ -8447,5 +8407,49 @@
    "good": []
   },
   "test": "gd\nok      4s  res://tests/ui/hud/test_kept_window.gd\nok      4s  res://tests/ui/hud/test_room_window.gd\nok      4s  res://tests/ui/menu/test_pause_menu_kill.gd\nok      4s  res://tests/ui/hud/test_villager_gear_window.gd\nok      4s  res://tests/world/frontier_islands/test_pit_dwarves.gd\nok      5s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/core/debug/test_play_island_pick.gd\nok      3s  res://tests/core/debug/test_orc_shot.gd\nok      2s  res://tests/core/test_spec_stale_lines_g310.gd\nok      3s  res://tests/core/test_open_chest_window.gd\nok      4s  res://tests/world/terrain/test_drill_view.gd\nok      3s  res://tests/craft/stations/test_oil_press.gd\nok      3s  res://tests/life/harvest/test_rock_cracks.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      3s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/settings/test_audio_settings.gd\nok      4s  res://tests/life/harvest/test_shore_limestone.gd\nok      3s  res://tests/settings/test_display_settings.gd\nok      3s  res://tests/settings/test_item_key_groups.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dir.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/hud/test_compass.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      4s  res://tests/ui/menu/test_enter_game.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      3s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      3s  res://tests/ui/menu/test_world_settings_screen.gd\nok      3s  res://tests/ui/theme/test_korean_font.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      3s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      3s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      3s  res://tests/life/hunting/test_burrows.gd\nok      3s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      3s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      3s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      3s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      3s  res://tests/world/frontier_islands/test_pit_sound.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     34s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           100\nTests             871\nPassing Tests     871\nFailing Tests       0\nRisky/Pending       0\nAsserts         48121\nTime           155s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-10-31 23:43:59",
+  "epoch": 1793457839,
+  "type": "pass",
+  "title": "통과 — G-351 단계 2 (화면 옵션)",
+  "group": "G-351",
+  "step": "2",
+  "attempt": "2",
+  "report": {
+   "problem": "설정 「화면」 탭에 창 모드 · 해상도(창 모드일 때만) · 수직 동기화 · 그래픽 품질(그림자 · MSAA · 렌더 배율) — 고르면 곧바로 들고 user_prefs [display] 에 담겨 켤 때 되살아난다. QA 지적 셋(수직 동기화 · 해 그림자 반영 단언, 켤 때 창 맡는 길 테스트)을 메웠다. 바뀐 곳만: 58 파일 513개 통과",
+   "approach": "앞 시도는 수직 동기화와 해 그림자 · 거르기를 RenderingServer/DisplayServer 에 얹기만 하고 아무도 확인하지 않았다 (다시 읽는 길이 없고 headless 에선 남지도 않는다). 얹는 일을 _apply_vsync · _apply_shadow 로 묶어 얹는 그 자리에서 UserPrefs.applied 에 적게 하고(담지 않음 — 값에서 다시 나온다), 수직 동기화는 창 id 로 window_set_vsync_mode(mode, id) 를 부른다. 테스트는 단추를 끄고 켤 때 · 품질 단계마다 · 껐다 켤 때 applied 의 vsync · shadow · soft 가 바뀌는지 본다. 켤 때 창을 맡는 길은 claim_window_for(scene) 로 떼어 메인 장면이면 drives_window 가 켜지고 담긴 전체 화면이 곧바로 들며, 다른 장면 · 장면 없음이면 꺼진 채 창이 그대로인지 본다.",
+   "why": "해상도 목록 1280×720 · 1600×900 · 1920×1080 · 2560×1440, 처음 1280×720 — 흔한 16:9; 처음 창 모드 · 수직 동기화 켬 · 품질 보통; 품질 단계 값(QUALITY_PRESETS): 낮음 해 그림자 2048/점 1024/거르기 없음/MSAA 끔/배율 0.75 · 보통 4096/2048/SOFT_LOW/2x/1.0 · 높음 8192/4096/SOFT_MEDIUM/4x/1.0 — 사람이 윈도우 빌드에서 돌려 보고 정한다",
+   "files": [
+    "game/settings/user/user_prefs.gd",
+    "game/ui/menu/settings_screen.gd",
+    "game/ui/menu/settings_screen.tscn",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/core/debug/ui_shots.gd",
+    "game/tests/ui/menu/test_main_menu.gd",
+    "game/tests/settings/test_display_settings.gd",
+    "spec/01_settings/display.md",
+    "spec/01_settings/save.md",
+    "spec/12_ui/menu.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "「화면」 탭에 창 모드(창 · 전체 화면 · 테두리 없는 전체 화면) · 해상도(16:9 몇 가지 · 창 모드일 때만) · 수직 동기화 · 그래픽 품질(낮음 · 보통 · 높음 — 그림자 · 안티에일리어싱 · 렌더 배율) · user_prefs 에 담고 켤 때 되살린다 · 바꾸면 곧바로 든다 (테스트)",
+     "evidence": "tests/settings/test_display_settings.gd 8개(test.log 에서 통과). test_display_tab_has_four_options 가 창 모드 3 · 16:9 해상도 4 · 품질 3 · 다섯 칸이 보이는지 본다. test_resolution_only_in_windowed_mode 가 전체 화면 · 테두리 없는 전체 화면에서 해상도 칸이 꺼지는지 본다. test_choices_apply_right_away 는 창 모드 · 크기 · vsync(applied) · 품질 단계마다 msaa · 렌더 배율 · 점 그림자 · 해 그림자 · 거르기를 본다. test_saved_and_restored_on_start 는 다시 읽은 뒤 값 · 창 · vsync · 해 그림자가 다시 드는지 본다. test_claims_window_only_for_main_scene 은 메인 장면일 때만 창을 맡는지 본다. 앞 QA 지적 셋도 다 메웠다. 일부러 깨 본 넷 — claim 조건을 늘 참으로 · _save 에서 vsync 빼기 · 해상도 disabled 줄 빼기 · vsync 를 늘 ENABLED 로 — 모두 테스트가 걸렸고 원래대로 되돌렸다. ko/en 번역 키 11개가 둘 다 있다. spec display · save · menu 를 고쳤고 사람 결정 줄은 그대로다. 임시 값에는 「임시」 표시가 있다. 화면 값은 drives_window 일 때만 얹으니 테스트 · 찍기가 사람의 창을 건드리지 않는다. guard 통과"
+    }
+   ],
+   "issues": [
+    "해 그림자 · vsync 반영은 기록으로만 본다 — UserPrefs.applied 는 RenderingServer.directional_shadow_atlas_set_size · DisplayServer.window_set_vsync_mode 를 부른 바로 다음 줄에서 적힌다. 그래서 그 API 호출만 지우면 테스트가 못 잡는다(headless 에는 다시 읽는 길이 없다 — 앞 QA 가 허락한 길이다, 막는 것은 아니다). 윈도우 빌드 찍기(shots)나 창이 있는 테스트에서 DisplayServer.window_get_vsync_mode(id) 로 실제 값을 단언하는 것을 하나 더하면 끝까지 지켜진다"
+   ],
+   "good": []
+  },
+  "test": "ds/test_locked_island.gd\nok      4s  res://tests/ui/hud/test_kept_window.gd\nok      3s  res://tests/ui/menu/test_pause_menu_kill.gd\nok      4s  res://tests/ui/hud/test_room_names.gd\nok      5s  res://tests/ui/hud/test_villager_gear_window.gd\nok      5s  res://tests/ui/hud/test_room_window.gd\nok      4s  res://tests/world/frontier_islands/test_pit_dwarves.gd\nok      3s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      3s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/debug/test_play_island_pick.gd\nok      4s  res://tests/world/terrain/test_drill_view.gd\nok      3s  res://tests/core/debug/test_orc_shot.gd\nok      2s  res://tests/core/test_spec_stale_lines_g310.gd\nok      3s  res://tests/craft/stations/test_oil_press.gd\nok      3s  res://tests/life/harvest/test_rock_cracks.gd\nok      3s  res://tests/core/test_open_chest_window.gd\nok      3s  res://tests/life/hunting/test_burrows.gd\nok      3s  res://tests/life/vehicles/test_car_modules.gd\nok      3s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/test_audio_settings.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      3s  res://tests/ui/hud/test_compass.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      4s  res://tests/ui/menu/test_key_rebind.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      3s  res://tests/ui/theme/test_korean_font.gd\nok      4s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      3s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      3s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      3s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/settings/save/test_old_tea_coffee.gd\nok      3s  res://tests/settings/save/test_world_data_keys_note.gd\nok      4s  res://tests/settings/test_display_settings.gd\nok      3s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     34s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           100\nTests             872\nPassing Tests     872\nFailing Tests       0\nRisky/Pending       0\nAsserts         48136\nTime           154s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "166e1d4e"
  }
 ]
