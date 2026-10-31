@@ -1,64 +1,5 @@
 [
  {
-  "time": "2026-10-23 16:06:05",
-  "epoch": 1792739165,
-  "type": "pass",
-  "title": "통과 — G-297 단계 1 (속도 배율)",
-  "group": "G-297",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "기본 이동 배율 1.25 · 배고픔과 목마름이 둘 다 90% 이상이면 1.5 · 목마름 바닥 0.875 — 빨라져 계단 · 비탈 내리막에서 뜨던 것을 붙어 가는 길이로 고쳤다. 바뀐 곳 + 등반 · 배 · 차 · 계단 · 이동 테스트 397개 파일 3169개 통과 (전체는 아니다)",
-   "approach": "HungerThirst.speed_factor 가 둘 다 FED_AT(0.9) 이상이면 FED_FACTOR 1.5, 목마름 바닥이면 BASE_FACTOR 1.25 × 0.7, 아니면 1.25 를 준다. 서버 사본(NetVitals.Vitals)과 참가자 몸(서버가 보낸 값을 _vitals 로 덮어쓴다)이 같은 함수를 쓴다. 서버에 따로 속도 상한 검사는 없다(VisitorBody.SNAP 6m 는 0.1초 소식에 넉넉하다). 빨라지자 계단 · 땅 비탈 내리막에서 몸이 떴다(test_stairs_speed 가 잡음 — floor_snap_length 기본 0.1m 는 45° 에서 6 m/s 쯤까지만 붙는다). Player._snap_to_slopes 가 걸음마다 이 걸음의 내려갈 높이 × 1.5 로 붙어 가는 길이를 잡는다. 이걸 끄면 새 테스트가 떨어지는 것까지 확인했다. 달리기 속도(move_speed)를 기대값으로 적던 테스트들은 base_speed() 로 바꿨다 — 측정 시간 눈금 오차가 속도에 비례해(약 3%) 허용 오차를 0.5 로 넓혔다. 바뀐 곳 그물(changed_tests)에 등반 · 배 · 차 · 계단 · 이동 테스트를 더해 397개 파일 3169개 통과. 전체 테스트는 루프가 돌린다",
-   "why": "HungerThirst.FED_AT 0.9 — 속도에서 「가득」의 기준. 꼭 1.0 이면 먹자마자 틱에 내려가 깜빡인다 (Claude 가 정함); Player.FLOOR_SNAP_SLACK 1.5 — 내리막에서 한 걸음에 내려가는 높이의 1.5배를 붙어 가는 길이로 잡는다 (Claude 가 정함)",
-   "files": [
-    "game/player/hunger_thirst/hunger_thirst.gd",
-    "game/player/movement_controls/player.gd",
-    "game/player/player_stats.gd",
-    "game/tests/player/hunger_thirst/test_speed_levels.gd",
-    "game/tests/player/hunger_thirst/test_hunger_thirst.gd",
-    "game/tests/player/inventory_hotbar/test_items.gd",
-    "game/tests/player/movement_controls/test_crouch.gd",
-    "game/tests/player/movement_controls/test_player.gd",
-    "game/tests/player/movement_controls/test_stairs_speed.gd",
-    "game/tests/ui/hud/test_bag_player_stats.gd",
-    "spec/02_player/hunger-thirst.md",
-    "spec/02_player/movement-controls.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "기본 배율 **1.25** · 배고픔 **과** 목마름이 둘 다 가득이면 **1.5** — 「가득」은 둘 다 최대의 **90% 이상 (임시 · Claude 가 정함 — 꼭 최대에서만이면 먹자마자 내려가 깜빡인다)**. 목마름이 바닥이면 기본에 ×0.7 그대로(0.875). 버프 · 사슴 세트는 그 위에 곱한다 (테스트)",
-     "evidence": "HungerThirst.speed_factor 가 hunger·thirst 둘 다 FED_AT(0.9, 「임시, Claude 가 정함」 주석) 이상이면 1.5, 목마름 바닥이면 1.25×0.7, 아니면 1.25. test_hunger_thirst.gd test_base_is_125_and_both_full_is_150 이 0.9/0.89 경계·한쪽만 모자랄 때·목마름 바닥 0.875 를 보고, test_full_speed_does_not_blink_right_after_eating 이 틱 후에도 150% 유지를 본다. 실제로 걸어 재는 속력 테스트도 150%/125%/87.5% 로 바뀌었다. test_speed_levels.gd 의 test_buff_and_deer_set_multiply_on_top · test_deer_set_rides_on_the_fed_speed 가 버프 1.2 · 사슴 세트 1.2 가 150% 위에 곱해지는 것을 base_speed · speed_multiplier · 가방 창 % · 실측 속력으로 본다. 깨 보기: and→or 로 바꾸자 두 파일 5개 테스트가 떨어졌다(되돌림)"
-    },
-    {
-     "ok": true,
-     "criterion": "같이 하는 판 — 참가자 속도도 서버가 같은 규칙으로 본다 (서버 속도 검사가 있으면 상한을 맞춘다) · 웅크림 · 비탈 · 계단 배율은 그대로 (테스트)",
-     "evidence": "test_server_copy_uses_the_same_rule 가 NetVitals.Vitals 서버 사본의 speed_factor 1.5/1.25/0.875 를, test_guest_body_follows_the_levels_the_server_sends 가 NetVitals._vitals 로 받은 값에 참가자 몸 base_speed 가 따르는 것을 본다. 서버 속도 상한 검사는 코드에 없다(VisitorBody.SNAP 6m 는 순간이동 판정뿐 — grep 으로 확인). test_crouch_and_slope_factors_do_not_change_with_needs 가 배고픔·목마름 세 상태에서 웅크림·평지 비탈 배율이 config 그대로이고 실측 150%×웅크림임을, test_stairs_rule_is_untouched · test_stairs_speed.gd 기존 테스트가 계단 배율 1 · 비탈 오르내림 배율을 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "빨라져도 건축 · 등반 · 배 타기 · 차 타기가 깨지지 않는다 — 전체 테스트",
-     "evidence": "test.log 는 「바뀐 곳만 352 개」 2909개 통과 · guard 통과. 그 안에 tests/build/* · tests/life/climbing/* · tests/life/vehicles/test_driving · test_driving_slopes · test_car_* · tests/multiplayer/test_speed_after_sailing · world/frontier_islands/test_sail_to_volcano 가 들어 모두 ok. 빨라져 계단·비탈 내리막에서 뜨던 것은 Player._snap_to_slopes 로 고치고 test_fast_walk_stays_on_stairs_and_slopes_going_down(9 m/s 넘게)으로 지켰다. 이 묶음은 2단계가 남아 루프가 전체 테스트를 거기서 돌린다(harness/step.py 352줄) — 합치기 전 전체는 그때 반드시 한 번 돈다"
-    }
-   ],
-   "issues": [
-    "spec 「기본 이동이 달리기 속도다」 줄이 낡았다 — spec/02_player/hunger-thirst.md 규칙 첫 줄 「기본 이동이 달리기 속도다」와 movement-controls.md 17줄 「기본 이동이 달리기 속도고」가 바로 아래 125% 줄과 어긋난다. 2단계(spec)에서 「달리기 키는 없다 — 기본 이동은 달리기(move_speed)의 125%」처럼 고쳐라 (사람 결정 원문 줄은 지우지 말 것)",
-    "테스트 이름이 낡았다 — game/tests/player/inventory_hotbar/test_items.gd test_speed_layers_are_only_thirst_crouch_slope_and_buffs, test_hunger_thirst.gd test_hunger_leaves_speed_alone_thirst_empty_is_thirty_percent_slower 는 이제 배고픔이 150%→125% 로 속도를 바꾸니 이름이 틀렸다. 이름을 고쳐라"
-   ],
-   "good": [
-    "2단계 몫인 spec 줄(hunger-thirst.md · movement-controls.md 의 125%/150% · 90% 임시 · 수용 기준)을 이번에 미리 적었다 — 사람 원문 그대로 들어갔고 두 파일 합 150줄(81+69)로 넘지 않는다. 2단계는 위 낡은 줄 정리로 쓰면 된다",
-    "Player._snap_to_slopes · FLOOR_SNAP_SLACK 1.5(임시 표시 있음) — 기준 3을 지키려고 넣은 것이라 범위 안으로 본다"
-   ]
-  },
-  "test": "indow.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      4s  res://tests/ui/hud/test_villager_hands_window.gd\nok      4s  res://tests/ui/hud/test_villager_window_release.gd\nok      4s  res://tests/world/lighting/test_torch.gd\nok      4s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/build/test_placer.gd\nok      3s  res://tests/automation/villagers/test_villager_door.gd\nok      3s  res://tests/world/terrain/test_drill_pitch.gd\nok      4s  res://tests/world/storage/test_throw_out.gd\nok      2s  res://tests/build/test_take_spec_lines.gd\nok      2s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      3s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/core/test_spec_small_drifts.gd\nok      2s  res://tests/core/test_window_fit.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/stations/test_cook_table.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      3s  res://tests/craft/stations/test_pitcher_pump_g273.gd\nok      3s  res://tests/craft/stations/test_pitcher_pump.gd\nok      3s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      3s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/craft/stations/test_still_alcohol.gd\nok      3s  res://tests/life/ranching/test_animal_stats.gd\nok      3s  res://tests/life/hunting/test_captive_age.gd\nok      2s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      3s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      3s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_shearing.gd\nok      3s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/multiplayer/test_looks_seen.gd\nok      2s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_armor_health.gd\nok      3s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      3s  res://tests/settings/save/test_old_liquor.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      3s  res://tests/ui/hud/test_stress_badge.gd\nok      2s  res://tests/ui/test_scene_roots_survive_export.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      3s  res://tests/world/frontier_islands/test_fixed_dock.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/terrain/test_shovel_home.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           352\nTests            2909\nPassing Tests    2909\nFailing Tests       0\nRisky/Pending       0\nAsserts        149867\nTime           618s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "85939bc2"
- },
- {
   "time": "2026-10-23 16:22:12",
   "epoch": 1792740132,
   "type": "pass",
@@ -8308,5 +8249,64 @@
   },
   "test": "\nok      4s  res://tests/multiplayer/test_kept_names_on_server.gd\nok      4s  res://tests/player/equipment/test_drill_effect_modules.gd\nok      4s  res://tests/world/frontier_islands/test_pit_dwarves.gd\nok      4s  res://tests/ui/hud/test_room_window.gd\nok      4s  res://tests/ui/hud/test_room_names.gd\nok      5s  res://tests/world/mine/test_mine_dirt_path.gd\nok      3s  res://tests/automation/power/test_gates.gd\nok      4s  res://tests/world/mine/test_mine_drill_compass.gd\nok      3s  res://tests/automation/power/test_generators.gd\nok      4s  res://tests/world/mine/test_mine_entry.gd\nok      4s  res://tests/world/mine/test_orc_boss.gd\nok      2s  res://tests/automation/power/test_power_monitor.gd\nok      2s  res://tests/build/test_take_not_hit_wording.gd\nok      2s  res://tests/build/test_take_into_bag.gd\nok      3s  res://tests/core/debug/test_play_island_pick.gd\nok      3s  res://tests/core/debug/test_orc_shot.gd\nok      2s  res://tests/core/net/test_net_session.gd\nok      3s  res://tests/core/net/test_steam_game.gd\nok      3s  res://tests/core/net/test_steam_server_gone.gd\nok      2s  res://tests/life/harvest/test_rock_cracks.gd\nok      3s  res://tests/core/net/test_steam_quit.gd\nok      3s  res://tests/life/ranching/test_cage_take_keeps_birds.gd\nok      3s  res://tests/multiplayer/test_guard_pen_on_server.gd\nok      4s  res://tests/multiplayer/test_cement_on_server.gd\nok      3s  res://tests/automation/power/test_sensors.gd\nok      3s  res://tests/multiplayer/test_progress_on_server.gd\nok      3s  res://tests/multiplayer/test_invasion_on_server.gd\nok      3s  res://tests/automation/villagers/test_villager_gear.gd\nok      2s  res://tests/automation/water/test_water_pump.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/debug/test_dev_gate.gd\nok      3s  res://tests/core/debug/test_perf_probe.gd\nok      2s  res://tests/core/net/test_net_interp.gd\nok      2s  res://tests/core/net/test_acts_alone.gd\nok      3s  res://tests/core/net/test_net_link_one_place.gd\nok      2s  res://tests/core/net/test_net_sides_orphans.gd\nok      2s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      3s  res://tests/life/vehicles/test_car_modules.gd\nok      3s  res://tests/multiplayer/test_raider_welcome_on_server.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      3s  res://tests/multiplayer/test_smith_orders_on_server.gd\nok      3s  res://tests/multiplayer/test_traces_on_server.gd\nok      3s  res://tests/multiplayer/test_wild_kinds_on_server.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_save_migration.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      3s  res://tests/world/mine/test_mine_drill_reach.gd\nok      2s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      3s  res://tests/core/net/test_guild.gd\nok      2s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\ntest.sh: 시간을 재는 파일 1 개는 혼자 돌린다\nok     33s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           133\nTests             982\nPassing Tests     982\nFailing Tests       0\nRisky/Pending       0\nAsserts         30696\nTime           214s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "0b2d8411"
+ },
+ {
+  "time": "2026-11-01 08:25:07",
+  "epoch": 1793489107,
+  "type": "pass",
+  "title": "통과 — G-361 단계 2 (보스가 모듈을)",
+  "group": "G-361",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "보스 사냥은 늘 상급 모듈 하나 · 채굴 · 시추는 15 % 로 모듈 하나 · spec 「얻는 길」 넷 · 서버가 상자 바람을 (내려가 있나 · 번호 범위) 가린다 · 상자는 흙만 파면 닿는 방에만. 바뀐 곳 그물 126 파일 821 테스트 통과",
+   "approach": "모듈 보상은 MineMissions.reward_module(kind, chance, pick) 한 곳 — 보스면 늘 SmithOrders.ADVANCED 쪽 표, 채굴 · 시추면 chance < MODULE_CHANCE(0.15)일 때만 상급 아닌 표에서 고른다. MineShaft.ascend 가 깼을 때 _pay_module 을 부른다(시추 보상처럼 깬 사람 기계에서 · 굴림은 module_roll — 테스트가 갈아 끼운다 · 가방이 차면 발치에 · 「감독이 모듈 하나를 내줬다」). 상자 QA 둘: ① 서버장이 위에 있으면 chests 가 없어 상자 수를 몰랐다 — MineBoard 의 짜임 세우기를 정적 plan_of(시드, 보스 방)로 빼(보스 방 가운데도 boss_center_of) 판 없이 같은 짜임을 세우고, MineShaft.chest_count 가 판이 있으면 그 수 · 없으면 서버 시드로 MineChests.pick 수를 센다(시드마다 한 번). claim_chest 는 i >= chest_count() 를 거른다. NetWorld._mine_chest_ask 는 서버가 쥔 그 사람 몸(where)이 갱도 머리 밑인지(MineShaft.is_down_at)를 본다. ② MineChests.candidates 가 reach_from(0) 밖이면서 reach_from(0, {}, true) 안인 방만 고른다(곁방 · 막다른 굴 둘 다). spec equipment-modules.md 에 「얻는 길」 절(대장장이 의뢰 · 땅굴 보물 · 보스 · 임무 보상), dwarf-mine-missions.md 에 임무 보상 모듈 줄과 서버 검사를 적었다. 처음 테스트는 메시지의 「15 %」가 형식 문자로 읽혀 떨어져 %% 로 고쳤다.",
+   "why": "MineMissions.MODULE_CHANCE = 0.15 — 채굴 · 시추를 깨면 모듈을 받을 몫 (기준이 준 임시 값); 보스 사냥 보상 모듈은 대장장이 상급 넷 가운데 고르게 하나 — 상급 쪽 표 (Claude 가 정함); 채굴 · 시추 보상 모듈은 상급 아닌 모듈 가운데 고르게 하나 (Claude 가 정함)",
+   "files": [
+    "game/world/mine/mine_missions.gd",
+    "game/world/mine/mine_shaft.gd",
+    "game/world/mine/mine_chests.gd",
+    "game/world/terrain/mine_board.gd",
+    "game/core/net/net_world.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/world/mine/test_mine_module_rewards.gd",
+    "game/tests/world/mine/test_mine_boss_hunt.gd",
+    "game/tests/world/mine/test_mine_chests.gd",
+    "game/tests/multiplayer/test_mine_mission_on_server.gd",
+    "spec/02_player/equipment-modules.md",
+    "spec/03_world/dwarf-mine-missions.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "보스 사냥(G-346)을 깨면 보상에 모듈 하나(상급 쪽 표 · 임시)를 더한다 · 채굴 · 시추 임무를 깨면 낮은 확률(임시 15 %)로 모듈 하나 · spec equipment-modules.md 「얻는 길」에 대장장이 의뢰 · 땅굴 보물 · 보스 · 임무 보상을 적는다 (테스트)",
+     "evidence": "MineMissions.reward_module(kind, chance, pick) — 보스는 늘 SmithOrders.ADVANCED 쪽, 채굴 · 시추는 chance < MODULE_CHANCE(0.15, 임시 표시)일 때만 상급 아닌 쪽. MineShaft.ascend 가 깼을 때 _pay_module 을 부른다(가방 차면 발치). test_mine_module_rewards 가 보스 9 조합 모두 상급 · 표 처음/끝 고름, 채굴 · 시추 0.1499 는 주고 0.15 경계 · 0.9 는 안 줌, 임무 없음은 빈 것을 단언하고, 실제 섬에서 채굴을 깨 굴림 0.0 이면 상급 아닌 모듈 하나 + 알림, 0.5 면 없음을 본다. test_mine_boss_hunt 가 실제 보스 사냥을 깨 상급 모듈 정확히 1 개 · MODULE_PAID 알림을 단언. 번역 키 MISSION_MODULE_PAID 가 ko · en 둘 다. spec equipment-modules.md 에 「얻는 길」 절(대장장이 의뢰 · 땅굴 보물 상자 · 보스 · 임무 보상, 값 임시)이 섰고 dwarf-mine-missions.md 에도 임무 보상 모듈 줄. 전체 테스트(761 파일) 실패 0 · guard 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 서버가 상자 바람을 덜 가린다 — NetWorld._mine_chest_ask 는 섬에 있는지(_here)만 보고, 그 참가자가 땅굴에 내려가 있는지 · 번호 i 가 판 상자 수 안인지는 안 본다. MineShaft.claim_chest 도 i < 0 만 거른다(서버장이 위에 있으면 chests 가 null 이라 수를 모른다). 잘못된 번호면 opened_chests 에 없는 번호가 쌓인다. claim_chest 에서 chests 가 있으면 i >= chests.spots.size() 를 거르고(없으면 MineChests.pick(stamp 시드, 짜임) 수로), _mine_chest_ask 에서 내려가 있는 사람인지 보게 하고 test_mine_mission_on_server 에 범위 밖 번호를 바라면 false 인 단언을 더해라",
+     "evidence": "claim_chest 가 i >= chest_count() 를 거른다 — chest_count 는 판이 있으면 chests.spots.size(), 없으면 MineBoard.plan_of(서버 시드, 보스 방)로 짜임만 세워 MineChests.pick 수(_ready 와 같은 rng 시드 · reserve 로 세운다 — 확인함). _mine_chest_ask 가 서버가 쥔 그 사람 자리(where)로 MineShaft.is_down_at 을 본다. test_the_server_lets_only_one_open_a_chest 가 위에서 상자 0 을 바라면 안 열림, 서버장 chests 가 null 인 채 hm.chest_count()==참가자 판 상자 수, n · n+7 · -1 을 바라도 opened_chests 가 비어 있음, claim_chest(n) · claim_chest(-1) false 를 단언. 일부러 깨 봄: _mine_chest_ask 의 내려감 검사를 if false 로 바꾸니 이 파일이 떨어졌다(되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 상자 방이 파도 못 닿는 곳일 수 있다 — MineChests.candidates 는 reach_from(0) 밖만 보고 reach_from(0, {}, true)(흙만 파면 닿는 곳) 안인지는 안 본다. 흙 마개 너머이되 흙을 파면 닿는 방만 후보로 하고, test_chests_sit_beyond_dirt_plugs… 에 assert_true(l.reach_from(0, {}, true).has(i)) 를 더해라",
+     "evidence": "candidates 가 곁방 · 막다른 굴 둘 다 dig := reach_from(0, {}, true) 안만 고르고, 테스트에 시킨 단언 그대로가 들어갔다. 일부러 깨 봄: dig 거름을 빼도 test_mine_chests 가 통과했다 — 시드 0~399 를 따로 세어 보니 흙을 파도 못 닿는 방(reach_from(0,{},true) 밖)이 하나도 없다(짜임 그래프가 늘 이어져 있다). 기준이 시킨 거름과 단언은 그대로 있고, 막는 것이 늘 생기지 않을 뿐이라 통과로 본다 — 아래 지적 참고"
+    }
+   ],
+   "issues": [
+    "상자 바위 너머 거름을 깨도 테스트가 통과 — MineChests.candidates 의 `not dig.has(i)` 거름을 빼도 test_mine_chests 가 다 통과한다. MineLayout.plan 이 시드 0~399 에서 흙을 파도 못 닿는 방을 한 번도 안 만들기 때문(링크 그래프가 늘 이어져 있다). test_mine_chests 에 손으로 짠 MineLayout(방 0 · 마개로 이은 곁방 1 · 아무 링크 없는 곁방 2)을 넣어 MineChests.candidates 가 방 1 은 내고 방 2 는 안 내는지 단언하는 테스트를 더해라 — 그래야 이 거름이 정말 지켜진다",
+    "spec 「만들지 않는 것」의 낡은 줄 — spec/02_player/equipment-modules.md 129 줄 「이번 묶음에서 만들지 않는 것」에 아직 「얻는 길 (사람이 정한다)」이 남아 있는데 같은 파일에 「얻는 길」 절(넷)이 섰다. 그 줄에서 「얻는 길 (사람이 정한다)」을 빼거나 「얻는 길의 다섯째 갈래(사막 유물 등)」처럼 남은 것만 적어라"
+   ],
+   "good": [
+    "MineBoard.plan_of · boss_center_of 정적 함수로 짜임 세우기를 빼냈다 — 앞 단계 QA 기준(서버장이 위에 있을 때 상자 수)을 풀려고 필요한 것이라 덤은 아니다"
+   ]
+  },
+  "test": ".gd\nok      2s  res://tests/life/farming/test_seed_sources.gd\nok      3s  res://tests/life/fishing/test_bait_grades.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      3s  res://tests/life/harvest/test_rock_cracks.gd\nok      3s  res://tests/life/hunting/test_captive_fed.gd\nok      3s  res://tests/life/hunting/test_captive_names.gd\nok      3s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      3s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      3s  res://tests/life/hunting/test_nav_weld.gd\nok      2s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      3s  res://tests/life/ranching/test_cage_pack_home.gd\nok      3s  res://tests/life/ranching/test_hive_raid.gd\nok      3s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      3s  res://tests/life/ranching/test_troughs.gd\nok      4s  res://tests/life/ranching/test_wild_stand_ins.gd\nok      3s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      3s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      3s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/movement_controls/test_shared_config.gd\nok      3s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/settings/save/test_broken_stays_broken.gd\nok      3s  res://tests/settings/save/test_old_barn.gd\nok      3s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      3s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/settings/save/test_save_migration.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_audio_settings.gd\nok      3s  res://tests/settings/test_display_settings.gd\nok      3s  res://tests/test_temp_dir.gd\nok      3s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      3s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      2s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      3s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      3s  res://tests/world/terrain/test_same_seed_same_island.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     34s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     11s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           761\nTests            5395\nPassing Tests    5395\nFailing Tests       0\nRisky/Pending       0\nAsserts        278047\nTime           1174s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "dc757378"
  }
 ]
