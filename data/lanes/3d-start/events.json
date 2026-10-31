@@ -1,96 +1,5 @@
 [
  {
-  "time": "2026-10-23 15:01:34",
-  "epoch": 1792735294,
-  "type": "pass",
-  "title": "통과 — G-295 단계 1 (술을 뺀다)",
-  "group": "G-295",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "술 열하나 · 양조통을 아이템 · 번역 · 레시피 · @liquor · drinks.json(DrinkCatalog) · 주민 마시기 · 찍는 자리 · 설명서 목차에서 뺐고, 증류기는 곡물 3 → 알코올 1 만 내며 의료키트는 알코올로 만든다 · 옛 저장본의 술은 사라지고(술이 든 컵은 빈 컵) 놓인 양조통도 사라진다",
-   "approach": "술은 drinks.json(DrinkCatalog) · 양조통 레시피 · 증류기 독주 · tags.json 의 liquor 갈래 · items.json · 두 po 에 흩어져 있었다. 술 열하나와 양조통을 이 모두에서 지우고 drinks.json · DrinkCatalog 는 통째로 지웠다 — 이제 음료는 조리대 음료(foods.json 의 drink)뿐이라 Cup.is_beverage · Villager.drink 는 FoodCatalog 만 본다. 증류기는 술 대신 양조통이 받던 원재료로 바로 알코올을 낸다(@grain 3 → 1, 임시). 의료키트의 「아무 술(@liquor)」 칸은 갈래가 사라져 레시피가 멎으므로 알코올 1 로 바꿨다(사람 결정 2026-10-19 의 술 자리를 남은 술 기운인 알코올이 잇는다 — 주석에 적음). 옛 저장본은 OldItems.DROPPED 에 술 열하나 · 양조통을 더하고, entry_of 가 뺀 술이 든 컵을 빈 컵으로 읽게 했다 — 가방 · 상자 · 죽은 자리 상자 · 바닥 · 시설 버퍼(restore_work 가 entry_of 를 먼저 거치게 고침) · 주민 손(load_list)이 같은 길을 탄다. 놓인 양조통은 시설 목록에 없는 이름이라 Stations.restore 가 건너뛰고, 독주를 만들던 일 · 대기열 줄도 기존 길로 버려진다 — SaveStore 로 디스크에 썼다 읽는 테스트로 확인. 시설이 열다섯 → 열넷이 되어 stations.json _twelve · facilities.md · crafting-stations.md 와 G-275 문서 테스트를 같이 고쳤다. 찍는 자리 drinks 는 맥주 대신 데운 우유를 담고 그림을 찍어 확인했다(.loop/out/shots_g295/drinks_ko.png). 맥주 등으로 음료를 시험하던 테스트(조리대 · 컵 · 주민 배고픔 · 피처펌프 · 태그)는 조리대 음료로 바꿨고, test_brewing · test_drinks 는 지우고 위 둘로 갈음했다.",
-   "why": "증류기 알코올 = 아무 곡물(@grain) 3 → 1 (current.md 에 Claude 가 정함 · still.json _temporary); 의료키트의 술 칸을 알코올 1 로 — 술을 다 빼며 Claude 가 정함 (apothecary_bench.json _temporary)",
-   "files": [
-    "game/automation/villagers/hands.gd",
-    "game/automation/villagers/jobs.gd",
-    "game/automation/villagers/persona.gd",
-    "game/automation/villagers/villager.gd",
-    "game/core/debug/ui_shots.gd",
-    "game/craft/recipes/apothecary_bench.json",
-    "game/craft/recipes/brewing_barrel.json",
-    "game/craft/recipes/still.json",
-    "game/craft/recipes/tags.json",
-    "game/craft/recipes/workbench.json",
-    "game/craft/stations/crafting_station.gd",
-    "game/craft/stations/stations.json",
-    "game/i18n/en.po",
-    "game/i18n/ko.po",
-    "game/life/food/drink_catalog.gd",
-    "game/life/food/drinks.json",
-    "game/life/food/food_catalog.gd",
-    "game/life/medicine/medicine_catalog.gd",
-    "game/player/hunger_thirst/cup.gd",
-    "game/player/hunger_thirst/drinking.gd",
-    "game/player/inventory_hotbar/items.json",
-    "game/settings/save/old_items.gd",
-    "game/tests/automation/villagers/test_villager_hunger.gd",
-    "game/tests/automation/villagers/test_villager_skills.gd",
-    "game/tests/core/test_docs_match_code_g275.gd",
-    "game/tests/craft/recipes/test_tag_new_materials.gd",
-    "game/tests/craft/stations/test_apothecary_bench.gd",
-    "game/tests/craft/stations/test_brewing.gd",
-    "game/tests/craft/stations/test_cook_table.gd",
-    "game/tests/craft/stations/test_drink_cups.gd",
-    "game/tests/craft/stations/test_pitcher_pump.gd",
-    "game/tests/craft/stations/test_twelve_facilities.gd",
-    "game/tests/life/food/test_drinks.gd",
-    "game/tests/player/hunger_thirst/test_cup_drinks.gd",
-    "game/tests/ui/hud/test_drink_cup_names.gd",
-    "game/ui/manual/manual_toc.json",
-    "spec/02_player/hunger-thirst.md",
-    "spec/05_craft/crafting-stations.md",
-    "spec/05_craft/facilities.md",
-    "spec/07_automation/villager-persona.md",
-    "game/tests/craft/stations/test_still_alcohol.gd",
-    "game/tests/settings/save/test_old_liquor.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "술 열하나의 아이템 · 번역 · 레시피 · 태그(`@liquor`) · drinks.json · 주민이 마시는 길 · 찍는 자리 · 설명서에서 뺀다 · 옛 저장본에 든 술은 조용히 사라지고 읽기가 터지지 않는다 (테스트)",
-     "evidence": "tests/settings/save/test_old_liquor.gd — test_no_liquor_or_barrel_in_the_data 가 ItemCatalog · ko/en.po ITEM_ · TAG_liquor · 모든 레시피 입출력 · @liquor 갈래 · drinks.json/drink_catalog.gd 파일 없음을 보고, test_no_barrel_in_jobs_shots_or_manual 이 ui_shots · manual_toc 를, test_a_villager_cannot_drink_a_liquor_cup 이 주민 마시기를 본다. 옛 저장본은 SaveStore 로 디스크에 쓰고 다시 읽어 가방 · 상자 · 시설 버퍼 · 하던 일 · 대기열 · 주민 손을 확인한다. OldItems.entry_of 의 「술이 든 컵 → 빈 컵」 줄을 지우고 돌리니 3개가 떨어졌다(되돌림 확인)"
-    },
-    {
-     "ok": true,
-     "criterion": "**양조통은 만들 것이 없어지니 시설째 뺀다** (도면 · 레시피 · 놓인 것은 옛 저장본에서 조용히 사라진다) (테스트)",
-     "evidence": "test_still_alcohol.gd test_the_still_stays_and_the_barrel_is_gone — stations.catalog · 양조통을 만드는 레시피 · brewing_barrel.json · ItemCatalog 에 없음. test_old_liquor.gd test_an_old_island_loses_the_barrel_and_the_liquor — 놓인 양조통이 든 옛 섬을 읽으면 증류기 하나만 서고, 상자 속 양조통 아이템은 빈 칸"
-    },
-    {
-     "ok": true,
-     "criterion": "**알코올은 남긴다** (약 재료다) — 증류기에서 술 대신 양조통이 받던 원재료로 만든다: 곡물(`@grain`) 3 → 알코올 1 (임시 · Claude 가 정함). 알코올을 쓰는 약 레시피는 그대로 돈다 (테스트)",
-     "evidence": "test_still_alcohol.gd — 증류기 출력이 alcohol 하나 · inputs {@grain:3} · count 1, 곡물 갈래 전부로 타이머를 끝까지 돌려 알코올 1 을 받고, 그 알코올로 약제대에서 의료키트를 실제로 만든다. still.json · apothecary_bench.json _temporary 에 임시 · Claude 가 정함 적힘"
-    },
-    {
-     "ok": true,
-     "criterion": "조리대 음료처럼 **사람이 마실 수 있는 것**(목마름을 채우는 것)은 그대로다",
-     "evidence": "test_old_liquor.gd test_cooked_drinks_still_quench_thirst — 조리대 음료가 fruit_juice · warm_milk 둘 그대로, Cup.is_beverage 참, 한 모금이 HungerThirst.SIP, 주민이 마셔 목마름이 찬다. 옛 가방의 주스 컵 · 주민 손의 데운 우유도 그대로 읽힌다. 바뀐 곳 323 파일 2553 테스트 통과"
-    }
-   ],
-   "issues": [
-    "술을 예로 든 낡은 주석이 남았다 — game/craft/stations/crafting_station.gd:626 「맥주 N개 유지」, game/craft/stations/stations.gd:1540 「맥주는 맥주가 든 컵으로 센다」, game/player/inventory_hotbar/inventory.gd:241 「「맥주」는 맥주가 가득 든 컵」을 과일 주스 · 데운 우유 예로 바꿔라",
-    "workbench.json 임시 설명에 양조통이 남았다 — game/craft/recipes/workbench.json _temporary 의 「시설 열하나(제재소 · 맷돌 · 방직기 · 염전 · 양조통 · 증류기 · 축사 …)」에서 양조통을 빼고 걷었다(G-295.1)고 적어라 (축사도 이미 G-238.5 에 걷혔다)"
-   ],
-   "good": []
-  },
-  "test": "ations/test_apothecary_spec_line.gd\nok      2s  res://tests/craft/recipes/test_tag_new_materials.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_geothermal_spec.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      3s  res://tests/craft/stations/test_pitcher_pump_g273.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_smoker.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      2s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/medicine/test_medicine.gd\nok      3s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_bird_cage_five.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_food_shown.gd\nok      2s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      3s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/player/inventory_hotbar/test_no_item_load.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      3s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_vehicle_drill.gd\nok      2s  res://tests/settings/save/test_old_vehicle_module.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      3s  res://tests/ui/hud/test_station_queue_side.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           323\nTests            2553\nPassing Tests    2553\nFailing Tests       0\nRisky/Pending       0\nAsserts        162757\nTime           550s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "c767bc04"
- },
- {
   "time": "2026-10-23 15:28:05",
   "epoch": 1792736885,
   "type": "pass",
@@ -8349,5 +8258,46 @@
   },
   "test": "ft/stations/test_weapon_armor_bench.gd\nok      3s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      3s  res://tests/items/test_item_names_title_case.gd\nok      3s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      3s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      3s  res://tests/life/farming/test_crop_kinds.gd\nok      3s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      4s  res://tests/life/harvest/test_rare_drops.gd\nok      4s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      3s  res://tests/life/hunting/test_captive_names.gd\nok      4s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      3s  res://tests/life/hunting/test_food_chain.gd\nok      3s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_nav_weld.gd\nok      3s  res://tests/life/ranching/test_animal_stats.gd\nok      3s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      4s  res://tests/life/ranching/test_bird_cage_five.gd\nok      3s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      3s  res://tests/life/ranching/test_cage_pack_home.gd\nok      3s  res://tests/life/ranching/test_food_shown.gd\nok      3s  res://tests/life/ranching/test_hive_raid.gd\nok      3s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      3s  res://tests/life/ranching/test_wild_stand_ins.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_wears_modules.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      4s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      3s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      4s  res://tests/player/movement_controls/test_shared_config.gd\nok      3s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/test_display_settings.gd\nok      2s  res://tests/settings/test_translation.gd\nok      4s  res://tests/settings/test_language_settings.gd\nok      3s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      4s  res://tests/test_po_is_in_one_place.gd\nok      4s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      4s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/day_night/test_game_clock.gd\nok      4s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      3s  res://tests/world/invasion/test_island_progress.gd\nok      3s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      4s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      4s  res://tests/world/mine/test_mine_drill_reach.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      3s  res://tests/world/terrain/test_dig_save.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     34s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           759\nTests            5385\nPassing Tests    5385\nFailing Tests       0\nRisky/Pending       0\nAsserts        275507\nTime           1189s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "3d489ca8"
+ },
+ {
+  "time": "2026-11-01 07:22:53",
+  "epoch": 1793485373,
+  "type": "pass",
+  "title": "차선 합치기 — 3d-lane2(dcf0dbb5) → 3d-start",
+  "group": "G-360",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "주민 체력이 찬다(침대에서 자면 빨리 · 맨바닥에서 자면 덜 · 깨어 있으면 천천히) · 0 이면 쓰러져 침대(없으면 그 자리)에서 쉬다 반쯤 차면 일어난다 · 죽지 않는다 · 주민 창 체력 막대가 따라간다 — 바뀐 곳 그물 182개 파일 1329개 중 1개(test_villager_fight) 실패 → 고친 뒤 그 파일 · 새 파일 · 용암 3개 파일 36개 + 침략 · 습격자 · 의약 · 표류자 13개 파일 78개 통과",
+   "approach": "주민 체력은 맞을 때 깎이기만 하고 차는 길이 없었다. Persona.hp_step(체력, 최대, 초, 자나, 침대인가)을 만들어 주민이 물리 틱마다 부른다(_hp_tick) — 침대에서 자면 게임 1시간(실제 100초)에 20, 침대 없이 자면 그 절반(수면과 같은 SLEEP_FLOOR_RATE), 깨어 있으면 1시간에 2. 체력이 0 이 되면 Villager.downed 가 켜지고 기존 go_to_bed 길로 하던 일 · 먹으러 · 탄 · 욕탕 가던 길을 버리고 제 침대(없으면 그 자리)에 눕는다. 멈춘(paused) 주민도 쓰러져 눕는다. 쓰러진 동안 _mind_night 가 아침에 깨우지 않고 싸움에도 나서지 않는다. 체력이 최대의 반이 차면 일어난다 — 낮이면 깨어 일로, 밤이면 그대로 잔다. 주민 창 까닭 줄에 「쓰러졌다」(VILLAGERS_DOWNED_WHY — 서버가 잰 why 로 참가자 화면에도 간다). 저장본에 downed 를 담는다(옛 저장본은 서 있고, 체력 0 이면 첫 틱에 쓰러진다). 체력 막대는 G-232.3 에 이미 있었고 차는 값을 따라가는지 테스트로 봤다. 바뀐 곳 그물에서 test_villager_fight 의 「체력 0 이면 짐승이 더 쫓지 않는다」가 깨졌다 — 차기 시작하면 몸(Health)이 다시 살아나 짐승이 쫓았다. 그래서 쓰러진 동안은 몸을 죽은 것으로 보이게 하고(_sync_body) 더 맞지도 타지도 않게 했다(take_hit · burn). 일어나면 몸도 다시 산다.",
+   "why": "Persona.HP_REGEN_BED_PER_HOUR = 20 — 침대에서 자면 게임 1시간에 20 (0 → 반은 2.5시간). 「빨리」만 정해져 크기는 이 세션이 정했다; Persona.HP_REGEN_AWAKE_PER_HOUR = 2 — 깨어 있으면 게임 1시간에 2 (「천천히」만 정해졌다); 침대 없이 자면 침대의 절반 — 수면의 SLEEP_FLOOR_RATE(0.5)를 그대로 썼다; 쓰러진 주민도 제 침대까지 걸어가 눕는다 — 업어 나르는 길이 없어 걸음으로 정했다; 쓰러진 동안은 더 맞지 않고 짐승이 쫓지 않는다 — 죽음이 사람 결정이라 쓰러진 주민을 계속 때리는 길을 막았다",
+   "files": [
+    "game/automation/villagers/persona.gd",
+    "game/automation/villagers/villager.gd",
+    "game/automation/villagers/villagers.gd",
+    "game/ui/hud/villager_window.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/automation/villagers/test_villager_hp_regen.gd",
+    "spec/07_automation/villager-persona.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "주민 체력이 잠자는 동안 · 침대에서 빨리(임시 시간당 몇) 차고 깨어 있을 때는 천천히 · 0 이면 「쓰러졌다」로 일을 멈추고 침대(없으면 그 자리)에서 쉬다 반쯤 차면 일어난다 — 죽지는 않는다(죽음은 사람이 정한다) · 주민 창에 체력 막대 (테스트)",
+     "evidence": "test_villager_hp_regen.gd 6개 — test_hp_fills_fast_in_bed_less_on_the_floor_and_slowly_awake 가 Persona.hp_step 의 침대 20/시 · 바닥 절반 · 깨어 2/시 · 끝에서 멈춤을 수치로 단언, test_a_hurt_villager_heals_slowly… 가 실제 주민이 깨어 있는 빠르기로 차는 것과 VillagerWindow hp_bar 값 · 숫자 · 끝이 따라가는 것을 단언, test_at_zero_the_villager_collapses… 가 0 → downed · why_still=WHY_DOWNED · 낮에도 제 침대 곁에 눕고 일(Stride.ticks)을 부르지 않음 · 낮에 안 깸 · hp>0 으로 참(안 죽음) · 반 차면 일어나 일로 돌아감을 단언, test_without_a_bed… 가 침대 없으면 그 자리 · 바닥 빠르기, test_a_villager_that_gets_up_at_night… 가 밤에 일어나면 계속 잠, test_downed_survives_a_save_round_trip 이 저장 왕복. 일부러 깨 봄 — _mind_night 의 `and not downed` 를 지우면 6개 중 2개가 떨어졌다(되돌림 확인). 전체 759 파일 5385 테스트 통과 · guard 통과. 수치는 persona.gd 와 spec 에 「임시」로 적혀 있고, 「쓰러졌다」 키 VILLAGERS_DOWNED_WHY 는 ko · en 둘 다 있다. downed 는 저장본에 담긴다"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "쓰러진 동안 맞지도 타지도 않고(take_hit · burn) 몸(Health)이 죽은 것으로 보여 짐승이 쫓지 않는다 — 기준 밖이지만 test_villager_fight 회귀를 막으려 넣은 것이고 report temporary 에 까닭이 적혀 있다"
+   ]
+  },
+  "test": "ft/stations/test_weapon_armor_bench.gd\nok      3s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      3s  res://tests/items/test_item_names_title_case.gd\nok      3s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      3s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      3s  res://tests/life/farming/test_crop_kinds.gd\nok      3s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      4s  res://tests/life/harvest/test_rare_drops.gd\nok      4s  res://tests/life/harvest/test_tree_rare_drops.gd\nok      3s  res://tests/life/hunting/test_captive_names.gd\nok      4s  res://tests/life/hunting/test_animal_spawn_spec.gd\nok      3s  res://tests/life/hunting/test_food_chain.gd\nok      3s  res://tests/life/hunting/test_hunting_spec_gut.gd\nok      2s  res://tests/life/hunting/test_nav_weld.gd\nok      3s  res://tests/life/ranching/test_animal_stats.gd\nok      3s  res://tests/life/ranching/test_bird_cage_call_five.gd\nok      4s  res://tests/life/ranching/test_bird_cage_five.gd\nok      3s  res://tests/life/ranching/test_cage_bond.gd\nok      3s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      3s  res://tests/life/ranching/test_cage_pack_home.gd\nok      3s  res://tests/life/ranching/test_food_shown.gd\nok      3s  res://tests/life/ranching/test_hive_raid.gd\nok      3s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      3s  res://tests/life/ranching/test_wild_stand_ins.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_wears_modules.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      4s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      3s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      4s  res://tests/player/movement_controls/test_shared_config.gd\nok      3s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/test_display_settings.gd\nok      2s  res://tests/settings/test_translation.gd\nok      4s  res://tests/settings/test_language_settings.gd\nok      3s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      4s  res://tests/test_po_is_in_one_place.gd\nok      4s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      4s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      3s  res://tests/world/day_night/test_game_clock.gd\nok      4s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      3s  res://tests/world/invasion/test_island_progress.gd\nok      3s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      4s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      4s  res://tests/world/mine/test_mine_drill_reach.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      3s  res://tests/world/terrain/test_dig_save.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     34s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           759\nTests            5385\nPassing Tests    5385\nFailing Tests       0\nRisky/Pending       0\nAsserts        275507\nTime           1189s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "5edac882"
  }
 ]
