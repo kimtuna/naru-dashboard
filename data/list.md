@@ -6174,7 +6174,7 @@
 - [x] 4. (앞 단계 QA) 영어 찍기에서 말 고르기가 「한국어」로 선다
   - 기준: 영어 찍기에서 말 고르기가 「한국어」로 선다 — .loop/out/shots_g351_3/settings_language_en.png 는 글자가 다 English 인데 고르기 칸만 「한국어」다. 찍기가 UserPrefs.language 는 그대로 두고 로캘만 en 으로 바꾸기 때문이다(사람 게임에서는 둘이 같이 움직여 생기지 않는다). settings_screen.gd 가 화면을 열 때(show_tab · visibility_changed) _language.select(LANGUAGES.find(UserPrefs.language)) 를 다시 맞추게 하거나, ui_shots.gd 의 settings_language 찍기가 lang 에 맞는 UserPrefs.language 를 임시로 놓게(파일엔 안 쓰게) 고쳐라
 
-## [ ] G-352 출시 준비 — 내보낸 판 정리 · 첫 켜기
+## [x] G-352 출시 준비 — 내보낸 판 정리 · 첫 켜기
 - 차선: 3d-lane3 · 시작 2026-10-31 23:13
 - spec: spec/00_core/performance-island.md · spec/01_settings/save.md · spec/12_ui/menu.md
 - **사람 2026-10-31** (원문 그대로): 「전체적으로 이제 게임을 완성하고 싶은데」
