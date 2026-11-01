@@ -6271,7 +6271,7 @@
   - 기준: 참가자 손에는 스킬 덤이 없다 — spec 에 「서버는 참가자의 숙련도를 모른다 — 지금은 덤 없이 굴린다」로 적혀 있다(막는 것은 아니다). 멀티에서 참가자도 덤을 받게 하려면 참가자가 제 숙련 단 수(또는 덤)를 서버에 알리고 NetActs 의 서버 길(harvest strike bonus · seed_back · fishing land · butcher_for · station collect)이 그 값을 쓰게 하는 단계를 두고, tests/multiplayer 에 참가자 끝 레벨로 덤이 붙는 단언을 넣어라
   - 기준: (앞 단계 QA) 기준의 예시 갈래(캐는 빠르기 · 기력 덜 씀)는 안 만들었다 — 지금 스킬은 모두 '확률 덤' 한 종류다. 기준은 예시라 통과지만, 단마다 다른 종류(예: 5단마다 캐는 빠르기 +%)를 섞으려면 PERK_STEP 를 갈래×단 표로 넓히고 spec 수치 줄에 임시로 적어라
 
-## [ ] G-359 이로치 · 도감
+## [x] G-359 이로치 · 도감
 - 차선: 3d-lane3 · 시작 2026-11-01 10:21
 - 순서: G-358 뒤
 - spec: spec/03_world/spawn-conditions.md · spec/04_life/ranching-breeding.md · codex.md
