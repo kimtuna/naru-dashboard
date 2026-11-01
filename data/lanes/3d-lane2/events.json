@@ -1,64 +1,5 @@
 [
  {
-  "time": "2026-10-23 05:18:01",
-  "epoch": 1792700281,
-  "type": "pass",
-  "title": "통과 — G-290 단계 1 (온천 자리 · 온천 설치물)",
-  "group": "G-290",
-  "step": "1",
-  "attempt": "2",
-  "report": {
-   "problem": "본섬에 온천 자리 1곳(김이 오르는 물웅덩이, islands.json hot_spring 표)과 온천 자리 위에만 놓이는 개발용 「온천 욕탕」 설치물 — 바뀐 곳 그물(316개 파일 · 2596개 테스트) 모두 통과",
-   "approach": "앞 회차 구현은 이미 다 되어 있었다: G-289 지열 자리 표를 _spots_of 로 묶어 hot_spring 칸을 같이 읽고(HotSpring — 물웅덩이 · 돌 테두리 · Geothermal.steam 김), 시설 규칙에 near=hot_spring(아니면 STATION_PLACE_NEEDS_HOT_SPRING, 서버도 같은 _why_not_at)을 더했다. 기계 검사가 떨어진 까닭은 tests/multiplayer/test_chest_on_server.gd 의 참가자 접속 대기(5초)가 godot 6개 부하 아래 넘친 것 — 따로 돌리면 8초에 7/7 통과, 이번 그물(changed_tests 316개 파일)에서도 통과했다. 온천과 닿는 곳이 없다(상자 · 접속 자리는 섬 가운데, 온천은 (-372, 216)). shots_g290 의 hot_spring · hot_spring_bath 두 장을 열어 웅덩이 · 김 · 욕탕이 보이는 것을 확인했다.",
-   "why": "본섬 온천 자리 (-372, 216) 반지름 3.5m 한 곳 — 사람이 자리 · 수를 안 정했다; 물낯 높이 0.2m · 깊이 0.6m · 테두리 0.5m · 물/돌 빛깔 (HotSpring 상수); 온천 욕탕 크기 2.0×0.6×1.4 · 색 — 레시피 없이 개발용 상자에서만",
-   "files": [
-    "game/core/debug/shots.gd",
-    "game/craft/stations/station_catalog.gd",
-    "game/craft/stations/stations.gd",
-    "game/craft/stations/stations.json",
-    "game/i18n/en.po",
-    "game/i18n/ko.po",
-    "game/player/inventory_hotbar/items.json",
-    "game/tests/build/test_placeable_previews.gd",
-    "game/tests/core/test_docs_match_code_g275.gd",
-    "game/tests/craft/stations/test_geothermal_stations.gd",
-    "game/tests/craft/stations/test_stations.gd",
-    "game/ui/manual/manual_toc.json",
-    "game/world/frontier_islands/islands.gd",
-    "game/world/frontier_islands/islands.json",
-    "game/world/terrain/geothermal.gd",
-    "game/world/terrain/test_island.gd",
-    "game/tests/craft/stations/test_hot_spring_bath.gd",
-    "game/tests/world/terrain/test_hot_spring.gd",
-    "game/world/terrain/hot_spring.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "주민이 사는 **본섬**에 온천 자리 1곳 (임시 · 자리는 지휘 세션 · 사람이 옮긴다) — 김이 오르는 물웅덩이 · G-289 의 자리 표를 같이 쓴다 (테스트 + 찍는 자리)",
-     "evidence": "islands.json home 에 hot_spring [[-372,216,3.5]] (_temporary_hot_spring 에 임시 · 지휘 세션이 옮긴다 적힘), Islands._spots_of 로 geothermal 과 같은 표 읽기. tests/world/terrain/test_hot_spring.gd 가 본섬 1곳 · sulfur 없음 · 다른 칸과 안 섞임 · 뭍·민물 밖 땅 높이 · 물웅덩이 반지름/물낯 위/물빛 · 김 emitting·위로 · 다시 세운 섬 같은 자리 · 저장본에 안 담김(고정 맵 자료)을 단언. shots.gd 에 hot_spring · hot_spring_bath 두 장. test.log 바뀐 곳 316파일 전부 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "「온천 욕탕」 설치물 — 온천 자리 위에서만 놓인다(아니면 빨강 · 까닭) · 서버도 같은 검사 · 개발용 상자에만 · 망치로 해체 (테스트)",
-     "evidence": "tests/craft/stations/test_hot_spring_bath.gd: test_only_on_a_hot_spring(밖 WHY_HOT_SPRING · 안 '' · 지열 자리는 온천 아님), test_the_server_checks_the_same_rule(place_for 밖 null·가방 그대로 / 안 놓임·하나 빠짐), test_the_bath_has_no_recipe_and_comes_only_from_the_dev_box(dev_only · 레시피 없음 · DevBox 에 듦), test_dismantling_returns_it_to_the_bag(take_thing → 가방 1), test_off_the_spring_the_preview_is_red_and_the_reason_shows(실제 조준·좌클릭으로 BAD_COLOR · 안 놓임 · notice 문구, 자리 안이면 OK_COLOR · 놓임). test_home_hands_its_spring_to_the_stations 가 진짜 본섬 연결도 본다. 번역 ko/en 둘 다 테스트"
-    }
-   ],
-   "issues": [
-    "spec 에 온천이 한 줄도 없다 — spec 전체에 「온천 · hot_spring」이 없다. G-289 처럼 spec/03_world/frontier-islands.md 에 「온천 자리」 항목(사람 요청 원문 · 자리 (-372,216) 반지름 3.5m 임시 · hot_spring.gd · 온천 욕탕 near=hot_spring · STATION_PLACE_NEEDS_HOT_SPRING · dev_only · 미정: 자리·수·레시피·내려가는 양·언제 가나)을 적고, spec/05_craft/facilities.md 36줄 곁에 「온천 욕탕은 온천 자리 위에만 — 표 밖」 한 줄(8줄 표 밖 목록에도 온천 욕탕), spec/01_settings/save.md 15줄 「지열 자리도」 옆에 온천 자리(islands.json 의 hot_spring)도 고정 맵 자료라 안 담는다고 더하라. facilities.md 는 142줄이라 150줄 한도에 주의"
-   ],
-   "good": [
-    "manual_toc.json 에 hot_spring · hot_spring_bath 목차 줄과 MANUAL_hot_spring 번역 — 지열과 같은 꼴이라 무리는 아니다"
-   ]
-  },
-  "test": "raft/stations/test_geothermal_spec.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      2s  res://tests/craft/stations/test_hot_spring_bath.gd\nok      2s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      3s  res://tests/craft/stations/test_loom.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_pitcher_pump_g273.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/harvest/test_rare_drops.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      3s  res://tests/life/hunting/test_cage_reuse.gd\nok      3s  res://tests/life/hunting/test_bird_hunt.gd\nok      2s  res://tests/life/hunting/test_captive_age.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/ranching/test_bird_cage_place_held.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/multiplayer/test_lava_on_server.gd\nok      1s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      3s  res://tests/player/inventory_hotbar/test_no_item_load.gd\nok      3s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      1s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/settings/test_item_key_groups.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/hud/test_station_tag_inputs.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           316\nTests            2596\nPassing Tests    2596\nFailing Tests       0\nRisky/Pending       0\nAsserts         90609\nTime           481s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "4f2c57af"
- },
- {
   "time": "2026-10-23 05:56:49",
   "epoch": 1792702609,
   "type": "pass",
@@ -8284,5 +8225,44 @@
   },
   "test": "--- 바뀐 곳만: 44 개 ---\ntest.sh: 파일 44 개를 6 개씩 한꺼번에 돌린다\nok      7s  res://tests/core/debug/test_dev_box_open.gd\nok      7s  res://tests/ui/menu/test_pause_menu.gd\nok      7s  res://tests/world/mine/test_mine_drill_guide.gd\nok      8s  res://tests/core/debug/test_dev_box.gd\nok      9s  res://tests/core/debug/test_ui_shots.gd\nok      3s  res://tests/settings/test_audio_settings.gd\nok      5s  res://tests/core/debug/test_dev_animals.gd\nok      4s  res://tests/world/terrain/test_drill_view.gd\nok     12s  res://tests/ui/layout/test_window_layout.gd\nok      6s  res://tests/ui/hud/test_station_g230_look.gd\nok      7s  res://tests/core/debug/test_dev_invasion_window.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/settings/test_item_key_groups.gd\nok      3s  res://tests/settings/test_language_settings.gd\nok      4s  res://tests/ui/menu/test_key_rebind.gd\nok      4s  res://tests/ui/menu/test_pause_menu_kill.gd\nok      3s  res://tests/ui/menu/test_world_settings_screen.gd\nok      3s  res://tests/core/debug/test_orc_shot.gd\nok      3s  res://tests/core/test_open_chest_window.gd\nok      3s  res://tests/life/vehicles/test_car_modules.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      3s  res://tests/settings/test_display_settings.gd\nok      3s  res://tests/ui/hud/test_compass.gd\nok      3s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/menu/test_character_preview.gd\nok      3s  res://tests/ui/menu/test_character_select.gd\nok      4s  res://tests/ui/hud/test_villager_gear_window.gd\nok      3s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      3s  res://tests/ui/menu/test_settings_display_rows.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_settings_screen.gd\nok      3s  res://tests/core/debug/test_dev_gate.gd\nok      3s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      3s  res://tests/core/debug/test_perf_probe.gd\nok      3s  res://tests/core/debug/test_play_island_pick.gd\nok      4s  res://tests/craft/stations/test_oil_press.gd\nok      3s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            44\nTests             364\nPassing Tests     364\nFailing Tests       0\nRisky/Pending       0\nAsserts         17969\nTime           29s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "a5d30476"
+ },
+ {
+  "time": "2026-11-01 13:53:20",
+  "epoch": 1793508800,
+  "type": "pass",
+  "title": "통과 — G-949 단계 3 (코드 주석에 포인트 예산제가 남았다 (G-356 단계 3))",
+  "group": "G-949",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "armor.gd 주석 · test_armor.gd 단언 메시지의 「포인트 예산제」를 「단계마다 기본 스펙 (임시 값)」으로 고치고 돌아오지 않게 지킴 — 바뀐 곳만: 20개 파일 194개 통과",
+   "approach": "G-356 이 spec 네 파일에서 포인트 예산제를 뺐지만 armor.gd:10 주석과 test_armor.gd:200 단언 메시지가 여전히 뺀 규칙을 spec 근거로 가리켰다. 둘을 equipment.md:23 의 새 규칙(단계마다 기본 스펙, 같은 단계면 같은 기본 스펙 · 값 임시)으로 고쳤다. 지키는 것: test_spec_growth_axis_g356 에 두 파일이 「포인트 예산제」를 담지 않고 「단계마다 기본 스펙 (임시 값」을 담는지 보는 테스트를 더했다 (검사 문자열을 test_armor.gd 가 아니라 이 파일에 둔 것은 test_armor.gd 안에 낡은 말을 다시 적지 않으려고). 이번 단계는 그림을 찍지 않았다 — 화면이 바뀌지 않았으므로 그림 경로도 없다 (앞 단계 QA 의 「그림 경로를 남겨라」는 그림으로 확인했다고 적을 때의 일이라 이번엔 해당 없음). 바뀐 곳만: 20개 파일 194개 통과.",
+   "why": "",
+   "files": [
+    "game/player/equipment/armor.gd",
+    "game/tests/player/equipment/test_armor.gd",
+    "game/tests/core/test_spec_growth_axis_g356.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "코드 주석에 포인트 예산제가 남았다 — game/player/equipment/armor.gd:10 주석 「같은 등급의 스탯 총합이 같다 (포인트 예산제, spec/02_player/equipment.md)」와 game/tests/player/equipment/test_armor.gd:200 단언 메시지가 뺀 규칙을 spec 근거로 가리킨다. 「단계마다 기본 스펙 (임시 값)」 꼴로 고쳐라 (기준 밖 — 이번 기준은 spec 네 파일)",
+     "evidence": "armor.gd:10 · test_armor.gd:200 둘 다 「단계마다 기본 스펙 (임시 값…)」로 바뀌었고 spec/02_player/equipment.md 의 「단계마다 모듈 칸 · 기본 스펙 … 같은 단계면 같은 기본 스펙」과 맞는다. game/ 전체에 「예산제」는 지키는 테스트 말고 없다. test_spec_growth_axis_g356::test_no_point_budget_in_armor_code 가 두 파일에 「포인트 예산제」가 없고 새 말이 있는지 본다 — test_armor.gd:200 을 「같은 등급 (포인트 예산제)」로 일부러 되돌리자 이 테스트가 떨어졌다(FAIL 1). 본 뒤 되돌렸다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) settings_display 그림 확인 흔적이 없다 — report 는 ko · en 그림으로 확인했다고 하나 user://ui_shots 나 저장소에서 settings_display 그림을 찾지 못했다. 테스트가 자리를 직접 재니 막는 것은 아니다. 다음에 그림으로 확인했다고 적을 때는 그림 경로를 report.json 에 남겨라",
+     "evidence": "이번 단계는 화면을 바꾸지 않아 그림으로 확인했다고 적지 않았고, report.json how 에 그 사정을 밝혔다 — 그림을 말하면서 경로를 빠뜨린 일이 되풀이되지 않았다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "/core/debug/test_ui_shots.gd\nok      4s  res://tests/player/equipment/test_drill_effect_modules.gd\nok     13s  res://tests/ui/layout/test_window_layout.gd\nok      7s  res://tests/core/debug/test_dev_invasion_window.gd\nok      7s  res://tests/world/mine/test_mine_drill_guide.gd\nok      5s  res://tests/ui/hud/test_bag_player_stats.gd\nok     17s  res://tests/multiplayer/test_body_on_server.gd\nok      3s  res://tests/core/debug/test_perf_probe.gd\nok      3s  res://tests/player/equipment/test_armor.gd\nok      3s  res://tests/core/debug/test_orc_shot.gd\nok      5s  res://tests/core/debug/test_dev_animals.gd\nok      6s  res://tests/ui/hud/test_station_g230_look.gd\nok      3s  res://tests/craft/recipes/test_dev_only_recipes_g315.gd\nok      3s  res://tests/craft/stations/test_oil_press.gd\nok      3s  res://tests/core/test_open_chest_window.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      5s  res://tests/ui/hud/test_villager_gear_window.gd\nok      4s  res://tests/ui/menu/test_pause_menu_kill.gd\nok      3s  res://tests/automation/villagers/test_villager_gear.gd\nok      3s  res://tests/core/debug/test_dev_gate.gd\nok      3s  res://tests/core/debug/test_play_island_pick.gd\nok      4s  res://tests/world/terrain/test_drill_view.gd\nok      2s  res://tests/core/test_spec_growth_axis_g356.gd\nok      3s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      3s  res://tests/player/equipment/test_armor_effect_modules.gd\nok      3s  res://tests/life/vehicles/test_car_modules.gd\nok      3s  res://tests/player/equipment/test_armor_modules.gd\nok      3s  res://tests/player/equipment/test_armor_health.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/player/equipment/test_future_wear.gd\nok      3s  res://tests/player/equipment/test_equipment.gd\nok      3s  res://tests/player/equipment/test_gun_modules.gd\nok      3s  res://tests/player/equipment/test_future_wear_modules.gd\nok      3s  res://tests/player/equipment/test_gun_effect_modules.gd\nok      3s  res://tests/player/equipment/test_jewelry.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      3s  res://tests/settings/test_audio_settings.gd\nok      3s  res://tests/settings/test_display_settings.gd\nok      4s  res://tests/settings/test_language_settings.gd\nok      4s  res://tests/settings/test_item_key_groups.gd\nok      3s  res://tests/ui/hud/test_compass.gd\nok      3s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      3s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_settings_display_rows.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      4s  res://tests/ui/menu/test_world_settings_screen.gd\nok      3s  res://tests/settings/save/test_old_liquor.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            64\nTests             558\nPassing Tests     558\nFailing Tests       0\nRisky/Pending       0\nAsserts         21946\nTime           43s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "54732eaf"
  }
 ]

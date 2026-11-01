@@ -6394,7 +6394,7 @@
   - 기준: 찍기 테스트가 소스 글자만 본다 — test_language_settings.gd 의 test_ui_shots_sets_the_language_with_the_locale 는 ui_shots.gd 에 줄이 있는지만 본다. 동작은 그림과 화면 쪽 테스트가 받치니 막는 것은 아니지만, 가능하면 _shoot 을 짧은 출력 폴더로 실제 불러 UserPrefs.language 가 말마다 바뀌고 끝나면 되돌아오는지 보는 테스트로 바꿔라
 - [x] 2. 설정 화면 탭 줄 맞춤 (G-351 — 지휘 세션 QA 가 그림으로 찾음)
   - 기준: ESC → 설정 → 화면 탭에서 「나침반 보이기」 줄이 다른 줄(창 모드 · 해상도 · 수직 동기화 · 그래픽 품질)보다 글자가 한 칸 들여 있고 켜기 단추 자리도 다르다 — 모든 줄의 이름 왼쪽 끝 · 단추 자리를 같게 (그림 settings_display ko · en 로 확인) (테스트)
-- [ ] 3. 코드 주석에 포인트 예산제가 남았다 (G-356 단계 3)
+- [x] 3. 코드 주석에 포인트 예산제가 남았다 (G-356 단계 3)
   - 기준: 코드 주석에 포인트 예산제가 남았다 — game/player/equipment/armor.gd:10 주석 「같은 등급의 스탯 총합이 같다 (포인트 예산제, spec/02_player/equipment.md)」와 game/tests/player/equipment/test_armor.gd:200 단언 메시지가 뺀 규칙을 spec 근거로 가리킨다. 「단계마다 기본 스펙 (임시 값)」 꼴로 고쳐라 (기준 밖 — 이번 기준은 spec 네 파일)
   - 기준: (앞 단계 QA) settings_display 그림 확인 흔적이 없다 — report 는 ko · en 그림으로 확인했다고 하나 user://ui_shots 나 저장소에서 settings_display 그림을 찾지 못했다. 테스트가 자리를 직접 재니 막는 것은 아니다. 다음에 그림으로 확인했다고 적을 때는 그림 경로를 report.json 에 남겨라
 - [ ] 4. glossary 에 뺀 강화 · 직업 용어가 남았다 (G-356 단계 3)
