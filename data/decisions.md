@@ -14,14 +14,14 @@
 ---
 
 
-## 물음 — 차선 3d-start(5edac882) 을 3d-lane3 에 합치지 못했다
-- 물은 때: 2026-11-01 09:17:11
-- 어디서: 차선 합치기 (3d-lane3)
-- 무엇: 부딪힌다: game/core/debug/ui_shots_kit.gd game/i18n/en.po game/i18n/ko.po spec/01_settings/save.md — 루프의 푸는 세션도 못 풀었다. 이 줄기(3d-lane3)에서 `git merge 3d-start` 을 손으로 풀어 커밋해 달라. 풀릴 때까지 이 차선은 3d-start 없이 돈다
-- **사람이 답할 것**: 
-
 ## 물음 — 차선 3d-lane2(2500163a) 을 3d-start 에 합치지 못했다
 - 물은 때: 2026-11-01 09:51:39
 - 어디서: 차선 합치기 (3d-start)
 - 무엇: 부딪힌다: game/i18n/en.po game/i18n/ko.po — 루프의 푸는 세션도 못 풀었다. 이 줄기(3d-start)에서 `git merge 3d-lane2` 을 손으로 풀어 커밋해 달라. 풀릴 때까지 이 차선은 3d-lane2 없이 돈다
+- **사람이 답할 것**: 
+
+## 물음 — 차선 3d-start(2c771ec1) 을 3d-lane3 에 합치지 못했다
+- 물은 때: 2026-11-01 11:22:34
+- 어디서: 차선 합치기 (3d-lane3)
+- 무엇: 부딪힌다: game/i18n/en.po game/i18n/ko.po — 루프의 푸는 세션도 못 풀었다. 이 줄기(3d-lane3)에서 `git merge 3d-start` 을 손으로 풀어 커밋해 달라. 풀릴 때까지 이 차선은 3d-start 없이 돈다
 - **사람이 답할 것**: 
