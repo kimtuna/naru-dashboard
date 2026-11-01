@@ -1,42 +1,5 @@
 [
  {
-  "time": "2026-10-23 14:38:37",
-  "epoch": 1792733917,
-  "type": "fail",
-  "title": "기계 검사 실패 — G-293 단계 2 (시도 1)",
-  "group": "G-293",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "화산(유황) 섬에서 본섬과 같은 규칙으로 짓는다 — 토대 비탈 한도를 두 섬 같이 3m 로 넓히고, 선착장 둘레 · 흐르는 용암 위는 까닭과 함께 막고, 굳은 판 위 토대는 판 밑 땅까지 내려가게 했다 (바뀐 곳만: 249파일 1865테스트 중 1864 통과 · 떨어진 1개(plan_at 50줄 한도)는 고친 뒤 5파일 23테스트 다시 통과)",
-   "approach": "단계 1 에서 잰 까닭은 「섬이 가파르다」였다 — 옆 토대 없는 첫 장은 한 장(4m) 안 땅이 MAX_DROP(임시 1m, 약 14°) 안이어야 했는데 유황 섬은 스폰 둘레 60m 판의 7% 만 그 안이었다. 판은 가장 낮은 땅까지 내려가 메우므로 비탈에서도 윗면은 평평하다 — MAX_DROP 을 두 섬 같은 값 3m(약 37°)로 넓혔다(유황 섬 70% · 본섬 94%, 유황 섬 스폰 둘레 26판 전부 초록). 일부러 막는 곳은 섬이 물음 하나(TestIsland.build_block_at)로 넣는다: 화산섬의 선착장 둘레(파기를 막는 10m 와 같다) · 흐르는 용암 위(새 Volcano.lava_at — 앞머리가 닿은 칸). 토대 · 시설 다섯(Placer.blocked) · 밭이 같은 물음을 쓰고, 좌클릭이 막히면 까닭 한 줄이 뜬다(Buildings.say_blocked, 번역 키 BUILD_BLOCKED_DOCK · _LAVA). 서버의 place_for 도 같은 검사라 참가자도 같다. 굳은 판은 잠깐 있는 땅이라(6시간이면 사라진다) 토대는 판 윗면에 맞추되 판 밑 진짜 땅까지 내려간다(Buildings.passing_ground) — 판을 깨도 · 사라져도 땅에 닿은 토대(받침 0)로 선다. 판 위 맨땅에 놓은 시설은 판이 깨지거나 줄거나 걷히면(새 신호 Volcano.rock_moved) 밑 땅을 다시 재어 0.3m 넘게 꺼졌으면 무너짐 규칙 그대로 바닥에 떨어진다(Buildings.settle_ground, 서버만). 그 과정에서 판 몸통 칸을 queue_free 로만 지워 곧이어 재는 광선이 사라진 판을 짚던 흠도 고쳤다(몸에서 먼저 뗀다). 새 상태는 없다 — 막는 곳 · 잠깐 있는 땅은 섬 · 시계에서 나오고, 지은 것은 원래 저장되던 그대로다. 찍는 자리 volcano_build(harness/shot.sh <폴더> island=sulfur volcano_build) — 스폰 옆 비탈에 토대 두 장(깊이 2.7 · 4.1m) · 오르막 쪽 벽 셋, 그림으로 윗면 수평 · 판이 내리막 땅까지 메움 · 뜬 틈 없음을 봤다. 앞 단계 QA 둘: 짝 없는 .uid 둘을 지웠고, 본섬 테스트 주석을 실제 단언(구역마다 초록 판 · 처음 나는 자리 전부 초록 · 빨강은 비탈/물)으로 고쳤다. 변수 green_everywhere 는 이제 두 섬 다 같은 단언이라 뜻이 없어져 없애고, 남은 차이인 dock_guarded(선착장 둘레를 막나 — 유황 섬만)로 바꿨다.",
-   "why": "Buildings.MAX_DROP 3m (전 1m) — spec 에 수치 없음. 유황 섬 스폰 · 선착장 둘레에 놓일 판이 생기고 본섬과 초록 비율이 비슷해지는 값으로 잼; Buildings.SINK_GAP 0.3m — 맨땅에 놓은 것 밑 땅이 이만큼 넘게 꺼지면 받침을 잃는다. 판이 줄기 시작하자마자 떨어지지 않게 계단 한 단보다 조금 크게; 선착장 둘레를 막는 거리 = VolcanoDig.DOCK_GUARD(10m, 파기와 같은 값) — 화산섬(복셀 땅)만, 본섬은 안 막는다",
-   "files": [
-    "game/build/buildings.gd",
-    "game/build/placer.gd",
-    "game/life/farming/farmland.gd",
-    "game/world/terrain/test_island.gd",
-    "game/world/terrain/volcano.gd",
-    "game/core/debug/shots.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "spec/03_world/frontier-islands.md",
-    "spec/06_build/building.md",
-    "game/tests/build/test_build_on_volcano_island.gd",
-    "game/tests/build/test_build_on_home_island.gd",
-    "game/tests/build/test_building_preview.gd",
-    "game/tests/build/test_volcano_build_rules.gd",
-    "game/tests/build/test_build_blocked_click.gd",
-    "game/tests/multiplayer/test_build_on_voxel_server.gd",
-    "game/tests/multiplayer/voxel_build_island.gd",
-    "game/tests/build/test_volcano_build_probe.gd.uid (지움)",
-    "game/tests/build/test_volcano_build_probe_home.gd.uid (지움)"
-   ],
-   "decision": null
-  },
-  "test": "    1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\n\n================ 떨어진 파일: res://tests/automation/villagers/test_villager_watering.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/automation/villagers/test_villager_watering.gd\n* test_the_hand_over_path_is_gone\n* test_the_farmer_takes_the_can_from_the_room_chest_waters_only_inside_and_puts_it_back\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n* test_fertilizer_comes_from_the_chest_and_without_a_can_watering_is_skipped\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n* test_the_farmer_calls_the_same_crops_path_as_a_person\n* test_an_empty_can_is_filled_at_fresh_water_then_the_fields_get_it\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n* test_with_nothing_to_do_the_farmer_stands_still_empty_handed\n* test_without_a_chest_in_the_room_they_do_not_start_and_the_window_says_why\n    --- Awaiting 1.5 seconds  ---\n    --- Awaiting 3.5 seconds  ---\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n* test_when_the_room_chest_is_full_the_farmer_stops_holding_everything_and_says_so\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n* test_when_only_part_fits_at_the_chest_the_farmer_stops_there_and_drops_nothing\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n* test_two_farmers_in_one_room_never_hold_the_same_field_and_nothing_doubles_or_vanishes\n    --- Awaiting callable to return TRUE or 120.0s.   ---\n    [Failed]:  둘이 방 안의 밭에 물 · 비료를 다 주고 든 것을 내려놓았다\n      at line 399\n    [Failed]:  [0] expected to equal [1]:  물뿌리개 하나가 상자로 돌아왔다\n      at line 403\n    [Failed]:  [3] expected to equal [4]:  비료는 준 만큼만 줄었다\n      at line 404\n    [Failed]:  [0] expected to equal [2]:  물은 준 만큼만 줄었다\n      at line 405\n* test_what_the_farmer_holds_is_saved_and_the_work_goes_on_after_loading\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n* test_an_old_save_with_a_handed_can_keeps_the_can_in_hand\n* test_each_watering_gives_farming_experience_and_fetching_the_can_does_not\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n    --- Awaiting callable to return TRUE or 60.0s.   ---\n12/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/automation/villagers/test_villager_watering.gd\n- test_two_farmers_in_one_room_never_hold_the_same_field_and_nothing_doubles_or_vanishes\n    [Failed]:  둘이 방 안의 밭에 물 · 비료를 다 주고 든 것을 내려놓았다\n          at line 399\n    [Failed]:  [0] expected to equal [1]:  물뿌리개 하나가 상자로 돌아왔다\n          at line 403\n    [Failed]:  [3] expected to equal [4]:  비료는 준 만큼만 줄었다\n          at line 404\n    [Failed]:  [0] expected to equal [2]:  물은 준 만큼만 줄었다\n          at line 405\n\nTotals\n------\nScripts               1\nTests                13\nPassing Tests        12\nFailing Tests         1\nAsserts           462/466\nTime              65.327s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           601\nTests            4403\nPassing Tests    4402\nFailing Tests       1\nRisky/Pending       0\nAsserts        213737\nTime           864s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/automation/villagers/test_villager_watering.gd\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
- },
- {
   "time": "2026-10-23 15:07:09",
   "epoch": 1792735629,
   "type": "pass",
@@ -8303,5 +8266,45 @@
   },
   "test": "/tests/multiplayer/test_guard_pen_on_server.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/multiplayer/test_lava_on_server.gd\nok      3s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      3s  res://tests/multiplayer/test_visitor_interp.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_wears_modules.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_armor_effect_modules.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      3s  res://tests/player/equipment/test_jewelry.gd\nok      3s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      3s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/save/test_old_vehicle_module.gd\nok      3s  res://tests/settings/test_translation.gd\nok      3s  res://tests/settings/test_audio_settings.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      3s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      3s  res://tests/ui/hud/test_compass_top.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/menu/test_character_preview.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_settings_display_rows.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      2s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      3s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      3s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      3s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     35s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           771\nTests            5498\nPassing Tests    5498\nFailing Tests       0\nRisky/Pending       0\nAsserts        283552\nTime           1196s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "9de55f1d"
+ },
+ {
+  "time": "2026-11-01 16:11:00",
+  "epoch": 1793517060,
+  "type": "pass",
+  "title": "차선 합치기 — 3d-start(1fc11e45) → 3d-lane2",
+  "group": "G-949",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "level-skills.md 목적 줄 · save.md · frontier-islands.md 의 낡은 직업 참조를 고치고 test_no_stale_profession_refs 에 단언을 더했다 (바뀐 곳 30개 파일 · 246개 통과)",
+   "approach": "level-skills.md:4 「직업(…)과 별개」를 「직업은 지금 없다(사람 2026-10-31) — 성장은 이 축 하나다」로 바꿨다. save.md:13 은 직업 진행도를 「직업은 지금 없다(사람 2026-10-31) — 담을 것이 없다」로, 도감 · 탐험 기록만 생길 때 담는다로 남겼다. frontier-islands.md:34 는 연구를 다루는 문서가 따로 없어 professions.md 참조를 지우고 「아직 정한 문서가 없다」로 바꿨다. 같은 테스트에 옛 문구가 없고 새 문구가 있는지 단언을 더했다.",
+   "why": "",
+   "files": [
+    "spec/02_player/level-skills.md",
+    "spec/01_settings/save.md",
+    "spec/03_world/frontier-islands.md",
+    "game/tests/core/test_spec_growth_axis_g356.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "level-skills.md:4 도 없는 직업을 가리킨다 — spec/02_player/level-skills.md:4 「직업(「무엇을 만들 수 있나」)과 별개.」가 8줄과 같은 결로 낡았다. 「직업은 지금 없다」 쪽으로 고치거나 지우고, test_no_stale_profession_refs 에 assert_false(\"직업(「무엇을 만들 수 있나」)과 별개\" in skills) 를 더하라",
+     "evidence": "level-skills.md:4 가 「직업은 지금 없다(사람 2026-10-31) — 성장은 이 축 하나다.」로 바뀌었다. test_spec_growth_axis_g356.gd test_no_stale_profession_refs 에 요구된 assert_false 가 그대로 들어갔다. 옛 문구를 되돌리면 이 단언이 깨지는 직접 문자열 검사다. 전체 실행(5498개 통과)에서 이 파일 ok"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) save.md · frontier-islands.md 의 직업 참조가 낡았다 — save.md 는 「직업은 지금 없다(사람 2026-10-31)」로 고치고, frontier-islands.md 는 연구가 professions.md 에 없으니 참조를 지우거나 맞는 곳으로 바꿔라. 같은 테스트 파일에 단언을 더하라",
+     "evidence": "save.md:13 이 「직업은 지금 없다(사람 2026-10-31) — 담을 것이 없다. 도감 · 탐험 기록은 … 04_life/codex.md」로, frontier-islands.md:34 가 professions.md 참조를 지우고 「아직 정한 문서가 없다」로 바뀌었다. 같은 테스트에 옛 문구 부재(assert_false — 옛 문자열의 부분 문자열이라 되돌리면 깨진다) · 새 문구 존재(assert_true) 단언이 둘씩 들어갔다. 남은 professions.md 참조(README · level-skills:8 · character-world:15 · roadmap)는 모두 「직업은 없다/빠졌다」 결이라 맞다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "/tests/multiplayer/test_guard_pen_on_server.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/multiplayer/test_lava_on_server.gd\nok      3s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      3s  res://tests/multiplayer/test_visitor_interp.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_wears_modules.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_armor_effect_modules.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      3s  res://tests/player/equipment/test_jewelry.gd\nok      3s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      3s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/save/test_old_vehicle_module.gd\nok      3s  res://tests/settings/test_translation.gd\nok      3s  res://tests/settings/test_audio_settings.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      3s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      3s  res://tests/ui/hud/test_compass_top.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/menu/test_character_preview.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_settings_display_rows.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      2s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      3s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      3s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      3s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     35s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           771\nTests            5498\nPassing Tests    5498\nFailing Tests       0\nRisky/Pending       0\nAsserts        283552\nTime           1196s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "7274cb14"
  }
 ]
