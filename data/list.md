@@ -6422,7 +6422,7 @@
   - 기준: professions.md 안에 전설 직업 설명이 남았다 — spec/05_craft/professions.md:12 「**전설 직업**: 퀘스트가 어렵고 노가다성이 심하다」가 같은 파일 4줄 「직업 사다리 · 전설 직업을 만들지 않는다」와 어긋난다. 옛 설계를 남기는 줄이면 「(뺐다, 사람 2026-10-31)」을 붙이고 아니면 지워라. test_spec_growth_axis_g356.gd 의 test_no_legend_profession_elsewhere 경로 목록에 professions.md 를 더하되 4줄의 「만들지 않는다」 줄은 허용하라
   - 기준: (앞 단계 QA) enhancement.md 에 전설 직업이 남았다 — spec/05_craft/enhancement.md:14 「전설 직업이 올리는 것은 운이 아니라 절약」. 이 파일은 「뺐다(모듈이 대신)」인데 이 줄에 뺐다 표시가 없다. 표시를 붙이거나 지우고 같은 단언 목록에 더하라
   - 기준: (앞 단계 QA) level-skills.md 가 없는 직업 레벨을 가리킨다 — spec/02_player/level-skills.md:8 「직업 레벨(05_craft/professions.md)과 별개의 축」은 직업이 없어진 지금 낡았다. 줄을 지우거나 「직업은 지금 없다」로 고쳐라. character-world.md:15 「부캐 허용 (05_craft/professions.md)」의 참조도 professions.md 에 부캐 근거가 남았는지 보고 맞춰라
-- [ ] 1. level-skills.md:4 도 없는 직업을 가리킨다 (G-949 단계 1)
+- [x] 1. level-skills.md:4 도 없는 직업을 가리킨다 (G-949 단계 1)
   - 기준: level-skills.md:4 도 없는 직업을 가리킨다 — spec/02_player/level-skills.md:4 「직업(「무엇을 만들 수 있나」)과 별개.」가 8줄과 같은 결로 낡았다. 「직업은 지금 없다」 쪽으로 고치거나 지우고, test_no_stale_profession_refs 에 assert_false("직업(「무엇을 만들 수 있나」)과 별개" in skills) 를 더하라
   - 기준: (앞 단계 QA) save.md · frontier-islands.md 의 직업 참조가 낡았다 — spec/01_settings/save.md:13 「직업 진행도 … 시스템이 생길 때 같이 담는다 (05_craft/professions.md)」와 spec/03_world/frontier-islands.md:34 「진짜 연구 … (05_craft/professions.md)」가 직업이 빠진 뒤에도 professions.md 를 앞으로 생길 것처럼 가리킨다. save.md 는 「직업은 지금 없다(사람 2026-10-31)」로 고치고, frontier-islands.md 는 연구가 professions.md 에 없으니 참조를 지우거나 맞는 곳으로 바꿔라. 같은 테스트 파일에 단언을 더하라
 

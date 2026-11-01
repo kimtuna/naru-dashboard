@@ -1,41 +1,5 @@
 [
  {
-  "time": "2026-10-23 13:56:27",
-  "epoch": 1792731387,
-  "type": "pass",
-  "title": "통과 — G-293 단계 1 (재현 · 까닭)",
-  "group": "G-293",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "유황 섬에서 건물이 안 지어지는 까닭을 재현하는 테스트 — 땅은 찾지만 섬이 가팔라 토대가 거의 다 「비탈」로 빨강이다 (바뀐 곳만: 2파일 4테스트 통과)",
-   "approach": "진짜 유황 섬을 세우고 선착장 둘레 · 처음 나는 자리 · 평평한 곳 · 지열 자리 곁 · 굳은 판 위의 4m 판마다 Buildings.plan_at 을 쟀다. 결과 — 선착장 둘레 25판 · 스폰 둘레 26판 전부 \"steep\"(기울기 가운데값 29° · 20°), 평평한 곳 · 지열 자리 곁 14판은 전부 초록이고 거기선 토대 → 벽 → 바닥(윗층 지붕)이 다 선다. 굳은 판 위(첫 분출 식은 뒤) 642판 중 초록 48 · 나머지 steep(기울기 21.6°, 그중 1판은 ±6m 밖 낭떠러지라 땅을 못 찾음). 제작대 · 상자는 어느 자리든 놓인다(칸 규칙에 비탈 검사가 없다). 까닭: 땅 못 찾음이 아니다 — 복셀 땅도 칸마다 높이 맵 몸통이 있어 _ground_height 광선이 맞는다. 복셀 땅이 잘게 울퉁불퉁한 것도 아니다(기울기를 빼면 남는 턱 가운데값 2~4cm). 섬 자체가 가파르다: 옆 토대 없는 첫 토대는 한 장(4m) 안 땅 높낮이가 MAX_DROP 1m(약 14°) 안이어야 하는데, 유황 섬은 스폰 · 선착장 둘레 60m 판의 약 7% 만 그 안이다(본섬 63~71%, 둘레 기울기 가운데값 6~9°). 그래서 사람이 처음 닿는 선착장 · 스폰에서는 어디를 겨눠도 빨강이다. 휠로 올려도 steep 검사는 그대로라 풀리지 않는다. 본섬은 같은 테스트로 선착장 둘레(30판 중 6) · 스폰(32판 전부) · 평평한 곳이 초록.",
-   "why": "",
-   "files": [
-    "game/tests/build/test_build_on_volcano_island.gd",
-    "game/tests/build/test_build_on_home_island.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "유황 섬(VoxelLodTerrain)에서 도면으로 토대 · 벽 · 바닥을, 그리고 놓는 것(제작대 · 상자 같은 시설)을 선착장 둘레 · 평평한 곳 · 굳은 판 위 · 지열 자리 곁 몇 곳에 놓아 보는 테스트 — 지금 무엇이 왜 빨강인지(땅 못 찾음 · 비탈 · 금지 구역 · 섬 규칙 …) 이 단계 기록에 적는다. 본섬은 같은 테스트가 초록 (테스트)",
-     "evidence": "game/tests/build/test_build_on_volcano_island.gd 가 진짜 test_island(sulfur)를 세워 선착장 둘레 · 처음 나는 자리 · 평평한 곳 · 지열 자리 곁(test_foundations_walls_floors_and_stations_around_the_island)과 첫 분출 뒤 굳은 판 위(test_on_the_cooled_rock_sheet)의 4m 판마다 Buildings.plan_at 을 잰다. 땅 못 찾음이 아님을 _span missing=false 로, 빨강이 전부 \"steep\" 임을 assert_eq 로, 선착장 · 스폰 둘레 기울기 가운데값이 MAX_DROP/side(≈14°)보다 큼을 assert_gt 로 단언한다. 초록 판에서는 place_at 으로 토대를 실제로 세우고 plan_for 로 벽 · 지붕(윗층 바닥)이 ok 인지 보고 놓는다. 제작대 · 상자는 Placeable.plan_cell + Placer._why_not_at(실제 규칙 길)로 빈 까닭을 단언한다. 로그 숫자: sulfur 선착장 25판 전부 steep(29.2°) · 스폰 26판 전부 steep(19.6°) · 지열 곁 14판 초록 · 굳은 판 642 중 초록 48. 까닭은 테스트 머리 주석과 report.json how(대시보드 approach 로 남는다)에 적혔다. test_build_on_home_island.gd 가 같은 몸통을 본섬으로 돌려 초록(스폰 32판 전부 초록, 각 구역 초록 판 있음 단언). test.log 바뀐 곳만 4테스트 1710 단언 통과 · guard 통과."
-    }
-   ],
-   "issues": [
-    "짝 없는 .uid 쓰레기가 남았다 — game/tests/build/test_volcano_build_probe.gd.uid 와 test_volcano_build_probe_home.gd.uid 는 .gd 없이 남은 탐색용 찌꺼기다. rm 으로 지워라",
-    "본섬 테스트 주석이 실제와 다르다 — test_build_on_volcano_island.gd:7 「거기선 모든 곳이 초록이다」와 green_everywhere 변수 설명 「어디서나 초록이어야 하나」가 틀렸다. 로그로 본섬 선착장 둘레는 30판 중 24판이 steep(기울기 15.2°)이다. 「본섬은 구역마다 초록 판이 있고 처음 나는 자리는 전부 초록」처럼 실제 단언에 맞게 고치고 변수 이름도 그 뜻(예: green_in_every_zone)으로 바꿔라"
-   ],
-   "good": []
-  },
-  "test": "--- 바뀐 곳만: 2 개 ---\ntest.sh: 파일 2 개를 6 개씩 한꺼번에 돌린다\nok      4s  res://tests/build/test_build_on_home_island.gd\nok      5s  res://tests/build/test_build_on_volcano_island.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             2\nTests               4\nPassing Tests       4\nFailing Tests       0\nRisky/Pending       0\nAsserts          1710\nTime           5s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "99f58398"
- },
- {
   "time": "2026-10-23 14:38:37",
   "epoch": 1792733917,
   "type": "fail",
@@ -8299,5 +8263,45 @@
   },
   "test": "      3s  res://tests/player/equipment/test_future_wear_modules.gd\nok      3s  res://tests/player/equipment/test_gun_effect_modules.gd\nok      2s  res://tests/player/equipment/test_jewelry.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      3s  res://tests/player/skills/test_skill_perks.gd\nok      3s  res://tests/player/movement_controls/test_shared_config.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      3s  res://tests/settings/save/test_old_barn.gd\nok      3s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_save_migration.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_audio_settings.gd\nok      3s  res://tests/settings/test_display_settings.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      3s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_compass_top.gd\nok      2s  res://tests/ui/hud/test_station_window_reads.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      3s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_key_group_fold.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      2s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      3s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      2s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      3s  res://tests/world/invasion/test_island_invasion.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      3s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      3s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     33s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     11s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           771\nTests            5498\nPassing Tests    5498\nFailing Tests       0\nRisky/Pending       0\nAsserts        283535\nTime           1173s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "0493aed9"
+ },
+ {
+  "time": "2026-11-01 15:50:24",
+  "epoch": 1793515824,
+  "type": "pass",
+  "title": "통과 — G-949 단계 1 (level-skills.md:4 도 없는 직업을 가리킨다 (G-949 단계 1))",
+  "group": "G-949",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "level-skills.md 목적 줄 · save.md · frontier-islands.md 의 낡은 직업 참조를 고치고 test_no_stale_profession_refs 에 단언을 더했다 (바뀐 곳 30개 파일 · 246개 통과)",
+   "approach": "level-skills.md:4 「직업(…)과 별개」를 「직업은 지금 없다(사람 2026-10-31) — 성장은 이 축 하나다」로 바꿨다. save.md:13 은 직업 진행도를 「직업은 지금 없다(사람 2026-10-31) — 담을 것이 없다」로, 도감 · 탐험 기록만 생길 때 담는다로 남겼다. frontier-islands.md:34 는 연구를 다루는 문서가 따로 없어 professions.md 참조를 지우고 「아직 정한 문서가 없다」로 바꿨다. 같은 테스트에 옛 문구가 없고 새 문구가 있는지 단언을 더했다.",
+   "why": "",
+   "files": [
+    "spec/02_player/level-skills.md",
+    "spec/01_settings/save.md",
+    "spec/03_world/frontier-islands.md",
+    "game/tests/core/test_spec_growth_axis_g356.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "level-skills.md:4 도 없는 직업을 가리킨다 — spec/02_player/level-skills.md:4 「직업(「무엇을 만들 수 있나」)과 별개.」가 8줄과 같은 결로 낡았다. 「직업은 지금 없다」 쪽으로 고치거나 지우고, test_no_stale_profession_refs 에 assert_false(\"직업(「무엇을 만들 수 있나」)과 별개\" in skills) 를 더하라",
+     "evidence": "level-skills.md:4 가 「직업은 지금 없다(사람 2026-10-31) — 성장은 이 축 하나다.」로 바뀌었다. test_spec_growth_axis_g356.gd test_no_stale_profession_refs 에 요구된 assert_false 가 그대로 들어갔다. 옛 문구를 되돌리면 이 단언이 깨지는 직접 문자열 검사다. 전체 실행(5498개 통과)에서 이 파일 ok"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) save.md · frontier-islands.md 의 직업 참조가 낡았다 — save.md 는 「직업은 지금 없다(사람 2026-10-31)」로 고치고, frontier-islands.md 는 연구가 professions.md 에 없으니 참조를 지우거나 맞는 곳으로 바꿔라. 같은 테스트 파일에 단언을 더하라",
+     "evidence": "save.md:13 이 「직업은 지금 없다(사람 2026-10-31) — 담을 것이 없다. 도감 · 탐험 기록은 … 04_life/codex.md」로, frontier-islands.md:34 가 professions.md 참조를 지우고 「아직 정한 문서가 없다」로 바뀌었다. 같은 테스트에 옛 문구 부재(assert_false — 옛 문자열의 부분 문자열이라 되돌리면 깨진다) · 새 문구 존재(assert_true) 단언이 둘씩 들어갔다. 남은 professions.md 참조(README · level-skills:8 · character-world:15 · roadmap)는 모두 「직업은 없다/빠졌다」 결이라 맞다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "/tests/multiplayer/test_guard_pen_on_server.gd\nok      2s  res://tests/multiplayer/test_visitor_hand_at.gd\nok      3s  res://tests/multiplayer/test_lava_on_server.gd\nok      3s  res://tests/multiplayer/test_visitor_input_guard.gd\nok      3s  res://tests/multiplayer/test_visitor_interp.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_wears_modules.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_armor_effect_modules.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      3s  res://tests/player/equipment/test_jewelry.gd\nok      3s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      3s  res://tests/player/movement_controls/test_player_notes.gd\nok      3s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_old_cups.gd\nok      3s  res://tests/settings/save/test_old_vehicle_module.gd\nok      3s  res://tests/settings/test_translation.gd\nok      3s  res://tests/settings/test_audio_settings.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      3s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      3s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_clock_label.gd\nok      3s  res://tests/ui/hud/test_compass_top.gd\nok      2s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_item_keys_hint_spec.gd\nok      3s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/menu/test_character_preview.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_settings_display_rows.gd\nok      3s  res://tests/ui/menu/test_world_create.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/ui/test_scene_roots_survive_export.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      2s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      3s  res://tests/world/invasion/test_invade_now_and_clear.gd\nok      2s  res://tests/world/invasion/test_island_progress.gd\nok      3s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      3s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     35s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           771\nTests            5498\nPassing Tests    5498\nFailing Tests       0\nRisky/Pending       0\nAsserts        283552\nTime           1196s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "9de55f1d"
  }
 ]
