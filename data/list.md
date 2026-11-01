@@ -6242,7 +6242,7 @@
 - [x] 3. (앞 단계 QA) 다른 곳에 포인트 예산제가 남았다
   - 기준: 다른 곳에 포인트 예산제가 남았다 — equipment.md 에서는 「단계마다 모듈 칸 · 기본 스펙」으로 바꿨지만 spec/README.md:18 「equipment.md — 장비 스탯 · 포인트 예산제 · 세트」, spec/08_combat/tools-as-weapons.md:20 「도구 등급 사다리 · 포인트 예산제 · 세트 효과」, spec/10_economy/item-lineage.md:10 「(포인트 예산제, 02_player/equipment.md)」, spec/00_core/glossary.md:29 용어 줄이 아직 옛 규칙을 가리킨다. README · tools-as-weapons 는 「단계마다 모듈 칸 · 기본 스펙」으로 고치고, item-lineage 는 「단계 · 재료로 기본 스펙을 다시 계산」 꼴로, glossary 줄은 지우거나 「(뺐다 — 단계마다 기본 스펙)」으로. test_spec_growth_axis_g356.gd 에 이 네 파일에 「포인트 예산제」가 없음을 보는 단언을 더하라
 
-## [ ] G-357 장신구 — 금 · 은으로 귀걸이 · 목걸이 · 반지
+## [x] G-357 장신구 — 금 · 은으로 귀걸이 · 목걸이 · 반지
 - 차선: 3d-lane2 · 시작 2026-11-01 10:28
 - 순서: G-356 뒤
 - spec: spec/02_player/equipment.md
