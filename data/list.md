@@ -6405,8 +6405,12 @@
   - 기준: (앞 단계 QA) settings_display 그림 확인 흔적이 없다 — report 는 ko · en 그림으로 확인했다고 하나 user://ui_shots 나 저장소에서 settings_display 그림을 찾지 못했다. 테스트가 자리를 직접 재니 막는 것은 아니다. 다음에 그림으로 확인했다고 적을 때는 그림 경로를 report.json 에 남겨라
 - [x] 4. glossary 에 뺀 강화 · 직업 용어가 남았다 (G-356 단계 3)
   - 기준: glossary 에 뺀 강화 · 직업 용어가 남았다 — spec/00_core/glossary.md:30 「천장 — 강화가 일정 횟수 실패하면…」, :32 「전설 직업」, :24 도감 「전설 직업 승급 조건」이 사람 2026-10-31 「강화는 빼고 · 직업은 일단 없다」와 어긋난다. 지우거나 「(뺐다 — 모듈이 그 자리)」로 고치고, glossary 에 「천장」「전설 직업」이 없음을 보는 단언을 더하라
-- [ ] 5. (앞 단계 QA) 다른 spec 에 전설 직업이 남았다
+- [x] 5. (앞 단계 QA) 다른 spec 에 전설 직업이 남았다
   - 기준: 다른 spec 에 전설 직업이 남았다 — glossary 는 고쳤지만 spec/04_life/codex.md:8 「전설 직업 승급 퀘스트가 도감을 요구한다」, spec/README.md:30 「codex.md — 도감 (보상 없음, 전설 직업 조건)」, spec/00_core/vision.md:32 「전설 직업으로 대리 제작·강화」, spec/10_economy/commissions.md:14 「전설 직업이 대리 제작·강화를 맡는다」가 사람 2026-10-31 「강화는 빼고 · 직업은 일단 없다」와 어긋난다. 사람 결정 줄이면 지우지 말고 「(뺐다, 사람 2026-10-31)」을 붙이고, 아니면 지워라. test_spec_growth_axis_g356.gd 에 이 네 파일에 「전설 직업」이 뺐다 표시 없이 남지 않음을 보는 단언을 더하라 (equipment.md · equipment-modules.md 의 「천장」은 방어 상한 뜻이라 대상 아니다)
+- [ ] 1. professions.md 안에 전설 직업 설명이 남았다 (G-949 단계 5)
+  - 기준: professions.md 안에 전설 직업 설명이 남았다 — spec/05_craft/professions.md:12 「**전설 직업**: 퀘스트가 어렵고 노가다성이 심하다」가 같은 파일 4줄 「직업 사다리 · 전설 직업을 만들지 않는다」와 어긋난다. 옛 설계를 남기는 줄이면 「(뺐다, 사람 2026-10-31)」을 붙이고 아니면 지워라. test_spec_growth_axis_g356.gd 의 test_no_legend_profession_elsewhere 경로 목록에 professions.md 를 더하되 4줄의 「만들지 않는다」 줄은 허용하라
+  - 기준: (앞 단계 QA) enhancement.md 에 전설 직업이 남았다 — spec/05_craft/enhancement.md:14 「전설 직업이 올리는 것은 운이 아니라 절약」. 이 파일은 「뺐다(모듈이 대신)」인데 이 줄에 뺐다 표시가 없다. 표시를 붙이거나 지우고 같은 단언 목록에 더하라
+  - 기준: (앞 단계 QA) level-skills.md 가 없는 직업 레벨을 가리킨다 — spec/02_player/level-skills.md:8 「직업 레벨(05_craft/professions.md)과 별개의 축」은 직업이 없어진 지금 낡았다. 줄을 지우거나 「직업은 지금 없다」로 고쳐라. character-world.md:15 「부캐 허용 (05_craft/professions.md)」의 참조도 professions.md 에 부캐 근거가 남았는지 보고 맞춰라
 
 ## [ ] G-951 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-lane3
