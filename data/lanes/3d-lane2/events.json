@@ -1,58 +1,5 @@
 [
  {
-  "time": "2026-10-23 05:56:49",
-  "epoch": 1792702609,
-  "type": "pass",
-  "title": "통과 — G-290 단계 2 (주민이 쓴다)",
-  "group": "G-290",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "스트레스 50 이상인 주민이 쉬는 때에 온천 욕탕으로 걸어가 들어가 스트레스를 푼다(한 욕탕 2명 · 참가자 화면에도 앉아 보인다) + spec 세 곳에 온천을 적었다 — 바뀐 곳 그물 124개 파일 · 968개 테스트에서 967 통과, 떨어진 1개(test_geothermal_spec — 표 밖 목록 문구)는 고친 뒤 따로 돌려 4/4 통과",
-   "approach": "먹으러 · 탄 가지러 가기와 같은 꼴로 Villager._mind_bath 를 더했다 — 스트레스가 BATH_STRESS(50) 이상이고 하던 일을 마쳤으면(doing == 0) Villagers.free_bath 로 빈자리(BATH_SEATS 2)가 있는 가장 가까운 욕탕을 고르고, PathWalk.plan 의 accept(길 끝이 욕탕 BATH_NEAR 안인가)로 갈 길을 먼저 재서 없으면 가지 않는다. 닿으면 침대처럼 그림만 떼어 욕탕 안 제 자리에 앉히고(_bath_at — snapshot 의 bath_at 으로 참가자 그림도 같은 자리에 앉는다) 1초에 2씩 내려 10 에서 나온다. 밤 · 멈춤 · 싸움 · 먹으러 가기가 오면 욕탕을 놓는다. 처음엔 둘째가 첫째 뒤에 막혀 못 들어갔다 — 자리마다 욕탕 다른 끝으로 다가가게(bath_side · 가까운 빈 끝을 고른다) 하고, 이 욕탕에 먼저 든 주민과 맞닿았으면 몸 하나만큼 밖이어도 들어간 것으로 쳐서 풀었다. 플레이어에게는 스트레스가 없어 아무 일 없다(테스트로 확인). spec: frontier-islands.md 「온천 자리」 항목 · facilities.md 표 밖 줄과 열다섯 줄 표 밖 목록 · save.md 의 온천 자리(고정 맵) · 욕탕 가는 길(안 담는다) · villager-persona.md 한 줄. 표 밖 목록 문구가 바뀌어 G-289 문서 테스트의 문자열을 새 문구로 맞췄다.",
-   "why": "Villager.BATH_STRESS 50 — 첫 경고 문턱과 같게(언제 가나는 사람이 안 정했다); Villager.BATH_RELIEF 1초에 2 · BATH_DONE 10 — 내려가는 양은 사람이 안 정했다; Villagers.BATH_SEATS 2 — current.md 의 임시 2; Villager.BATH_NEAR 2.2m — 욕탕 반폭+깎인 띠+몸 반지름에 여유; Villager.BATH_RETRY 30초 — 먹으러 가기와 같다; BATH_SPREAD 0.5m · BATH_SINK 0.1m — 욕탕 안 앉는 자리 그림",
-   "files": [
-    "game/automation/villagers/villager.gd",
-    "game/automation/villagers/villagers.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/automation/villagers/test_villager_bath.gd",
-    "game/tests/craft/stations/test_geothermal_spec.gd",
-    "spec/03_world/frontier-islands.md",
-    "spec/05_craft/facilities.md",
-    "spec/01_settings/save.md",
-    "spec/07_automation/villager-persona.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "스트레스가 높은 주민(임시 기준)이 쉬는 때에 욕탕으로 걸어가 들어가 있는 동안 스트레스가 내려간다 (임시 값) · 한 번에 쓰는 수(임시 2) · 같이 하는 판에서 참가자 화면에도 들어가 있는 주민이 보인다 (테스트)",
-     "evidence": "test_villager_bath.gd — test_a_stressed_villager_at_rest_walks_to_the_bath_and_unwinds_there(걸어간 거리 · 욕탕 곁 · 그림이 욕탕 안 · 30틱 동안 스트레스 하락 · BATH_DONE 에서 나와 일로 복귀), test_busy_it_finishes_the_work_first · test_low_stress_does_not_go(쉬는 때 · 문턱), test_two_at_a_time_the_third_does_not_go(둘만 · 셋째 안 감 · 다른 자리), test_a_guest_machine_shows_the_villager_in_the_bath(snapshot→mirror 로 그림이 욕탕 안 · 나오면 다시 섬). QA 가 일부러 깨 봤다 — _relieve 호출을 빼고 · BATH_SEATS 검사를 99 로 · snapshot 의 bath_at 을 null 로 바꾸자 세 테스트가 모두 떨어졌다(되돌렸다). 임시 값은 test_the_numbers_are_temporary_and_noted 가 상수 곁 「임시」를 본다. test.log 바뀐 곳 375파일 2974 테스트 전부 통과 · guard 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "욕탕이 없거나 갈 길이 없으면 가지 않는다 · 사람(플레이어)에게는 스트레스가 아직 없다 — 들어가도 아무 일 없다 (facilities.md:90)",
-     "evidence": "test_without_a_bath_nobody_goes(free_bath null · 안 감), test_with_no_way_there_it_does_not_go(떨어진 두 걸을 땅 조각이면 안 가고 제자리, 이어 붙이면 간다 — 늘 막는 검사가 아님을 함께 본다), test_the_player_has_no_stress_and_the_bath_does_nothing_to_them(플레이어 스크립트에 stress 속성 없음 · 곁에 서도 bath_users 0 · 주민 빈자리 그대로)"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) spec 에 온천이 한 줄도 없다 — frontier-islands.md 「온천 자리」 항목 · facilities.md 표 밖 줄과 표 밖 목록 · save.md 온천 자리 고정 맵 자료",
-     "evidence": "git diff 로 확인 — frontier-islands.md 에 사람 요청 원문 · (-372,216) 반지름 3.5m 임시 · hot_spring.gd · near=hot_spring · STATION_PLACE_NEEDS_HOT_SPRING · dev_only · 미정(자리·수·레시피·내려가는 양·언제 가나) 다 있다. facilities.md 표 밖 목록에 「· 온천 욕탕」, 지열 줄 곁에 온천 욕탕 줄. save.md 15줄에 hot_spring 고정 맵, 주민 쪽에 욕탕 가는 길 · 들어가 있나 안 담는다(까닭 함께). test_the_spec_writes_down_the_hot_spring 이 문구와 150줄 한도를 본다. 줄 수: facilities 143 · frontier-islands 131 · save 100 · villager-persona 96. 사람 결정 줄 지워진 것 없음"
-    }
-   ],
-   "issues": [
-    "villager-persona.md 문장이 끊겼다 — spec/07_automation/villager-persona.md 27~29줄: 「음식 · 술은 스트레스를 내린다 (G-205.1 …)」 뒤에 온천 줄을 끼워 넣어, 원래 그 문장에 이어지던 「— 이제 주민이 배고프거나 목마를 때 먹고 마시며 실제로 쓰인다」가 온천 줄 뒤에 붙어 온천 이야기처럼 읽힌다. 온천 줄을 「— 이제 주민이 …」 줄 아래로 옮겨라 (막는 것은 아니다)"
-   ],
-   "good": []
-  },
-  "test": "s/life/ranching/test_bird_cage_place_held.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      2s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/life/ranching/test_ranching_spec_room.gd\nok      2s  res://tests/life/ranching/test_shearing.gd\nok      2s  res://tests/life/ranching/test_troughs.gd\nok      2s  res://tests/life/ranching/test_taming.gd\nok      3s  res://tests/multiplayer/test_islands_afar.gd\nok      2s  res://tests/multiplayer/test_lava_on_server.gd\nok      2s  res://tests/multiplayer/test_join_spot.gd\nok      3s  res://tests/multiplayer/test_modules_on_server.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      3s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      3s  res://tests/player/equipment/test_future_wear_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_barn.gd\nok      1s  res://tests/settings/save/test_old_cups.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      3s  res://tests/ui/hud/test_drink_cup_names.gd\nok      3s  res://tests/ui/hud/test_guild_window.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/ui/hud/test_hive_window.gd\nok      2s  res://tests/ui/hud/test_station_queue_side.gd\nok      3s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/hud/test_station_window_scroll.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/hud/test_trough_window.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_dig_save.gd\nok      1s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/build/test_placer.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/build/test_placers_file_end.gd\nok      2s  res://tests/core/test_docs_match_code_g275.gd\nok      2s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           375\nTests            2974\nPassing Tests    2974\nFailing Tests       0\nRisky/Pending       0\nAsserts        101746\nTime           680s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "9bc96916"
- },
- {
   "time": "2026-10-23 06:12:07",
   "epoch": 1792703527,
   "type": "pass",
@@ -8264,5 +8211,40 @@
   },
   "test": "/core/debug/test_ui_shots.gd\nok      4s  res://tests/player/equipment/test_drill_effect_modules.gd\nok     13s  res://tests/ui/layout/test_window_layout.gd\nok      7s  res://tests/core/debug/test_dev_invasion_window.gd\nok      7s  res://tests/world/mine/test_mine_drill_guide.gd\nok      5s  res://tests/ui/hud/test_bag_player_stats.gd\nok     17s  res://tests/multiplayer/test_body_on_server.gd\nok      3s  res://tests/core/debug/test_perf_probe.gd\nok      3s  res://tests/player/equipment/test_armor.gd\nok      3s  res://tests/core/debug/test_orc_shot.gd\nok      5s  res://tests/core/debug/test_dev_animals.gd\nok      6s  res://tests/ui/hud/test_station_g230_look.gd\nok      3s  res://tests/craft/recipes/test_dev_only_recipes_g315.gd\nok      3s  res://tests/craft/stations/test_oil_press.gd\nok      3s  res://tests/core/test_open_chest_window.gd\nok      3s  res://tests/ui/menu/test_key_rebind.gd\nok      5s  res://tests/ui/hud/test_villager_gear_window.gd\nok      4s  res://tests/ui/menu/test_pause_menu_kill.gd\nok      3s  res://tests/automation/villagers/test_villager_gear.gd\nok      3s  res://tests/core/debug/test_dev_gate.gd\nok      3s  res://tests/core/debug/test_play_island_pick.gd\nok      4s  res://tests/world/terrain/test_drill_view.gd\nok      2s  res://tests/core/test_spec_growth_axis_g356.gd\nok      3s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      3s  res://tests/player/equipment/test_armor_effect_modules.gd\nok      3s  res://tests/life/vehicles/test_car_modules.gd\nok      3s  res://tests/player/equipment/test_armor_modules.gd\nok      3s  res://tests/player/equipment/test_armor_health.gd\nok      3s  res://tests/player/equipment/test_armor_sets.gd\nok      3s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/player/equipment/test_future_wear.gd\nok      3s  res://tests/player/equipment/test_equipment.gd\nok      3s  res://tests/player/equipment/test_gun_modules.gd\nok      3s  res://tests/player/equipment/test_future_wear_modules.gd\nok      3s  res://tests/player/equipment/test_gun_effect_modules.gd\nok      3s  res://tests/player/equipment/test_jewelry.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      3s  res://tests/settings/test_audio_settings.gd\nok      3s  res://tests/settings/test_display_settings.gd\nok      4s  res://tests/settings/test_language_settings.gd\nok      4s  res://tests/settings/test_item_key_groups.gd\nok      3s  res://tests/ui/hud/test_compass.gd\nok      3s  res://tests/ui/menu/test_character_create.gd\nok      3s  res://tests/ui/menu/test_character_model.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_key_group_fold.gd\nok      3s  res://tests/ui/menu/test_manual_screen.gd\nok      3s  res://tests/ui/menu/test_enter_game.gd\nok      3s  res://tests/ui/menu/test_menu_text.gd\nok      3s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      3s  res://tests/ui/menu/test_settings_display_rows.gd\nok      3s  res://tests/ui/menu/test_world_select.gd\nok      3s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/core/debug/test_erupt_refusal_key.gd\nok      4s  res://tests/ui/menu/test_world_settings_screen.gd\nok      3s  res://tests/settings/save/test_old_liquor.gd\nok      3s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      3s  res://tests/ui/menu/test_settings_screen.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            64\nTests             558\nPassing Tests     558\nFailing Tests       0\nRisky/Pending       0\nAsserts         21946\nTime           43s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "54732eaf"
+ },
+ {
+  "time": "2026-11-01 14:16:25",
+  "epoch": 1793510185,
+  "type": "pass",
+  "title": "통과 — G-949 단계 4 (glossary 에 뺀 강화 · 직업 용어가 남았다 (G-356 단계 3))",
+  "group": "G-949",
+  "step": "4",
+  "attempt": "1",
+  "report": {
+   "problem": "용어집에서 뺀 강화 · 직업 용어(천장 · 전설 직업 · 도감의 전설 직업 승급 조건)를 지우고 없음을 보는 단언을 더했다",
+   "approach": "spec/00_core/glossary.md 에 사람 2026-10-31 「강화는 빼고 · 직업은 일단 없다」와 어긋나는 줄이 셋 남아 있었다. 「천장」「전설 직업」 줄은 지웠다. 도감 줄은 「보상 없음 (승급 조건으로 쓰던 직업은 뺐다, 사람 2026-10-31)」로 고쳤다 — 「전설 직업」이라는 말이 남으면 없음 단언과 부딪치기 때문이다. 단언은 test_spec_growth_axis_g356.gd 에 더했다. 바뀐 곳 그물(changed_tests.py: 2 파일 19 테스트)이 다 통과했고, tests/core 폴더(59 파일 325 테스트)도 다 통과했다.",
+   "why": "",
+   "files": [
+    "spec/00_core/glossary.md",
+    "game/tests/core/test_spec_growth_axis_g356.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "glossary 에 뺀 강화 · 직업 용어가 남았다 — spec/00_core/glossary.md:30 「천장 — 강화가 일정 횟수 실패하면…」, :32 「전설 직업」, :24 도감 「전설 직업 승급 조건」이 사람 2026-10-31 「강화는 빼고 · 직업은 일단 없다」와 어긋난다. 지우거나 「(뺐다 — 모듈이 그 자리)」로 고치고, glossary 에 「천장」「전설 직업」이 없음을 보는 단언을 더하라",
+     "evidence": "git diff: glossary.md 의 「천장」「전설 직업」 줄을 지우고 도감 줄을 「보상 없음 (승급 조건으로 쓰던 직업은 뺐다, 사람 2026-10-31)」로 고쳤다. grep 으로 glossary 에 천장 · 전설 직업 · 강화 · 직업 승급이 더 없음을 확인했다. test_spec_growth_axis_g356.gd::test_glossary_no_enhancement_or_profession_terms 가 실제 파일을 읽고(빈 파일 전제 단언 포함) 「천장」「전설 직업」이 없음을 assert_false 로 본다 — 지운 줄이 돌아오면 깨진다. 전체 771 파일 5496 테스트 통과, guard 통과 (test.log). glossary 52줄"
+    }
+   ],
+   "issues": [
+    "다른 spec 에 전설 직업이 남았다 — glossary 는 고쳤지만 spec/04_life/codex.md:8 「전설 직업 승급 퀘스트가 도감을 요구한다」, spec/README.md:30 「codex.md — 도감 (보상 없음, 전설 직업 조건)」, spec/00_core/vision.md:32 「전설 직업으로 대리 제작·강화」, spec/10_economy/commissions.md:14 「전설 직업이 대리 제작·강화를 맡는다」가 사람 2026-10-31 「강화는 빼고 · 직업은 일단 없다」와 어긋난다. 사람 결정 줄이면 지우지 말고 「(뺐다, 사람 2026-10-31)」을 붙이고, 아니면 지워라. test_spec_growth_axis_g356.gd 에 이 네 파일에 「전설 직업」이 뺐다 표시 없이 남지 않음을 보는 단언을 더하라 (equipment.md · equipment-modules.md 의 「천장」은 방어 상한 뜻이라 대상 아니다)"
+   ],
+   "good": []
+  },
+  "test": "wears_modules.gd\nok      3s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/player/hunger_thirst/test_cup_stacking.gd\nok      3s  res://tests/player/hunger_thirst/test_starving.gd\nok      3s  res://tests/player/hunger_thirst/test_stone_cup.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      3s  res://tests/player/inventory_hotbar/test_items_captive_order.gd\nok      3s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/skills/test_skill_perks.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      3s  res://tests/settings/save/test_old_barn.gd\nok      3s  res://tests/settings/save/test_old_stove.gd\nok      3s  res://tests/settings/save/test_old_tea_coffee.gd\nok      3s  res://tests/settings/save/test_save_migration.gd\nok      3s  res://tests/settings/save/test_save_store.gd\nok      3s  res://tests/settings/save/test_world_data_keys_note.gd\nok      3s  res://tests/settings/test_world_settings.gd\nok      3s  res://tests/test_po_is_in_one_place.gd\nok      3s  res://tests/test_temp_dir.gd\nok      3s  res://tests/ui/hud/test_alert_log_place.gd\nok      3s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      3s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      4s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      3s  res://tests/ui/hud/test_hud_label_readable.gd\nok      3s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      3s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      3s  res://tests/ui/hud/test_station_window_reads.gd\nok      3s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      3s  res://tests/ui/menu/test_character_select.gd\nok      3s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      3s  res://tests/ui/theme/test_korean_font.gd\nok      3s  res://tests/ui/theme/test_ui_theme.gd\nok      4s  res://tests/world/day_night/test_day_length.gd\nok      3s  res://tests/world/day_night/test_game_clock.gd\nok      3s  res://tests/world/frontier_islands/test_dwarf_island.gd\nok      3s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      3s  res://tests/world/frontier_islands/test_mine_forge.gd\nok      2s  res://tests/world/frontier_islands/test_mine_gate.gd\nok      3s  res://tests/world/frontier_islands/test_mine_headframe.gd\nok      3s  res://tests/world/invasion/test_island_progress.gd\nok      3s  res://tests/world/frontier_islands/test_pit_sound.gd\nok      3s  res://tests/world/map/test_map_memory.gd\nok      3s  res://tests/world/mine/test_mine_net_gaps_note.gd\nok      3s  res://tests/world/storage/test_chest_save.gd\nok      3s  res://tests/world/storage/test_chest.gd\nok      3s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/terrain/test_mine_horde_cap.gd\nok      3s  res://tests/world/terrain/test_sand_values_marked_temporary.gd\nok      3s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      3s  res://tests/world/terrain/test_volcano_carve.gd\ntest.sh: 시간을 재는 파일 2 개는 혼자 돌린다\nok     34s  res://tests/automation/villagers/test_villager_g218_folk_ground_saved.gd\nok     10s  res://tests/perf/test_lava_melt_load.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           771\nTests            5496\nPassing Tests    5496\nFailing Tests       0\nRisky/Pending       0\nAsserts        283443\nTime           1223s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "583886c0"
  }
 ]

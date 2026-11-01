@@ -6397,8 +6397,10 @@
 - [x] 3. 코드 주석에 포인트 예산제가 남았다 (G-356 단계 3)
   - 기준: 코드 주석에 포인트 예산제가 남았다 — game/player/equipment/armor.gd:10 주석 「같은 등급의 스탯 총합이 같다 (포인트 예산제, spec/02_player/equipment.md)」와 game/tests/player/equipment/test_armor.gd:200 단언 메시지가 뺀 규칙을 spec 근거로 가리킨다. 「단계마다 기본 스펙 (임시 값)」 꼴로 고쳐라 (기준 밖 — 이번 기준은 spec 네 파일)
   - 기준: (앞 단계 QA) settings_display 그림 확인 흔적이 없다 — report 는 ko · en 그림으로 확인했다고 하나 user://ui_shots 나 저장소에서 settings_display 그림을 찾지 못했다. 테스트가 자리를 직접 재니 막는 것은 아니다. 다음에 그림으로 확인했다고 적을 때는 그림 경로를 report.json 에 남겨라
-- [ ] 4. glossary 에 뺀 강화 · 직업 용어가 남았다 (G-356 단계 3)
+- [x] 4. glossary 에 뺀 강화 · 직업 용어가 남았다 (G-356 단계 3)
   - 기준: glossary 에 뺀 강화 · 직업 용어가 남았다 — spec/00_core/glossary.md:30 「천장 — 강화가 일정 횟수 실패하면…」, :32 「전설 직업」, :24 도감 「전설 직업 승급 조건」이 사람 2026-10-31 「강화는 빼고 · 직업은 일단 없다」와 어긋난다. 지우거나 「(뺐다 — 모듈이 그 자리)」로 고치고, glossary 에 「천장」「전설 직업」이 없음을 보는 단언을 더하라
+- [ ] 5. (앞 단계 QA) 다른 spec 에 전설 직업이 남았다
+  - 기준: 다른 spec 에 전설 직업이 남았다 — glossary 는 고쳤지만 spec/04_life/codex.md:8 「전설 직업 승급 퀘스트가 도감을 요구한다」, spec/README.md:30 「codex.md — 도감 (보상 없음, 전설 직업 조건)」, spec/00_core/vision.md:32 「전설 직업으로 대리 제작·강화」, spec/10_economy/commissions.md:14 「전설 직업이 대리 제작·강화를 맡는다」가 사람 2026-10-31 「강화는 빼고 · 직업은 일단 없다」와 어긋난다. 사람 결정 줄이면 지우지 말고 「(뺐다, 사람 2026-10-31)」을 붙이고, 아니면 지워라. test_spec_growth_axis_g356.gd 에 이 네 파일에 「전설 직업」이 뺐다 표시 없이 남지 않음을 보는 단언을 더하라 (equipment.md · equipment-modules.md 의 「천장」은 방어 상한 뜻이라 대상 아니다)
 
 ## [ ] G-951 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-lane3
