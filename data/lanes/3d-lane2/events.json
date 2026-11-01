@@ -1,73 +1,5 @@
 [
  {
-  "time": "2026-10-23 03:21:23",
-  "epoch": 1792693283,
-  "type": "pass",
-  "title": "통과 — G-289 단계 2 (높은 등급 용광로 · 대장간 — 지열 자리 위에만 놓인다)",
-  "group": "G-289",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "지열 용광로 · 대장간 — 지열 자리 위에서만 놓이고(서버도 같은 검사) 자리 하나에 하나, 개발용 상자에서만 나오며, 창은 「아직 만드는 것이 없다」",
-   "approach": "stations.json 에 geothermal_smelter(지열 용광로) · forge(대장간) 두 줄을 기본 상자 모양으로 더하고 near=geothermal · dev_only=true 를 달았다. 자리 규칙은 피처펌프와 같은 길(Stations._why_not_at)에 지열 갈래를 더했다 — 섬이 넘겨 준 geothermal_spot(Geothermal.spot_at)으로 지열 자리 번호를 묻고, 밖이면 WHY_GEOTHERMAL(빨강 + STATION_PLACE_NEEDS_GEOTHERMAL 한 줄), 그 자리에 이미 지열 시설이 섰으면 WHY_GEOTHERMAL_TAKEN(자리 하나에 하나). 서버의 참가자 대신 놓기(Placer.place_for)도 같은 _why_not_at 을 거쳐 같은 검사다. 레시피가 없으니 개발용 상자가 StationCatalog.dev_only_keys 로 담는다. 만드는 목록은 craft/recipes/ 에 빈 표 두 개 — 창이 이미 「아직 만드는 것이 없다」(STATION_NO_RECIPES)를 띄운다. 망치 해체는 놓은 것 공통 길(take_thing)로 가방에 돌아오고 자리가 다시 빈다. 「시설마다 레시피가 있다」류 기존 검사 넷(test_station_recipes · test_placeable · test_recipes_by_station · 문서 열다섯 표)은 dev_only 를 빼고 보게 고쳤고, 둘이 정말 레시피가 없고 상자에만 든다는 것은 새 테스트가 지킨다(dev_only 시설은 이 둘뿐이라는 단언까지). 찍는 자리 geothermal_smelter · geothermal_forge 를 더해 봤더니 붉은 바닥 Decal(위아래 8m)이 시설 몸까지 주황으로 물들였다 — 시설 몸을 그림 층 20(Geothermal.SPARED_LAYER)에 두고 Decal 의 cull_mask 에서 그 층을 빼 다시 찍어 제 빛깔을 확인했다. ESC 목차(시설)에 두 줄. 바뀐 곳 테스트(test.sh: 파일 273 개 · 2244 개) 전부 통과.",
-   "why": "자리 하나에 지열 시설 하나 — Claude 가 정함 2026-10-23 (지열 자리 2곳이라 용광로 하나 · 대장간 하나가 선다); 지열 용광로 크기 1.4×1.8×1.4 · 색 8a3a22, 대장간 1.6×1.0×1.2 · 색 3a3a42 — 기본 도형, Claude 가 정함; 개발용 상자에 한 칸 가득(다른 시설과 같이)",
-   "files": [
-    "game/craft/stations/stations.json",
-    "game/craft/stations/station_catalog.gd",
-    "game/craft/stations/stations.gd",
-    "game/craft/stations/crafting_station.gd",
-    "game/world/terrain/geothermal.gd",
-    "game/world/terrain/test_island.gd",
-    "game/core/debug/dev_box.gd",
-    "game/core/debug/shots.gd",
-    "game/craft/recipes/geothermal_smelter.json",
-    "game/craft/recipes/forge.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/ui/manual/manual_toc.json",
-    "spec/03_world/frontier-islands.md",
-    "spec/05_craft/facilities.md",
-    "game/tests/craft/stations/test_geothermal_stations.gd",
-    "game/tests/craft/stations/test_station_recipes.gd",
-    "game/tests/craft/stations/test_stations.gd",
-    "game/tests/build/test_placeable_previews.gd",
-    "game/tests/build/test_placeable.gd",
-    "game/tests/core/test_docs_match_code_g275.gd",
-    "game/tests/craft/recipes/test_recipes_by_station.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "두 시설 「지열 용광로」 · 「대장간」(번역 · 기본 도형 모양) — **지열 자리 위에서만** 도면 놓기가 초록 · 밖이면 빨강과 까닭 한 줄 · 서버도 같은 검사 (테스트)",
-     "evidence": "test_geothermal_stations.gd — test_names_and_reasons_are_in_korean_and_english(ko/en.po 에 ITEM_geothermal_smelter · ITEM_forge · 까닭 키 둘, tr 값 확인) · test_the_red_ground_does_not_paint_the_station(BoxMesh) · test_off_the_spot_the_preview_is_red_and_the_reason_shows(진짜 GameRoot+Player+Pointer 로 밖이면 BAD_COLOR · 좌클릭해도 안 놓이고 notice 가 STATION_PLACE_NEEDS_GEOTHERMAL, 자리 안이면 OK_COLOR · 놓임) · test_the_server_checks_the_same_spot_rule(place_for 가 밖 · 찬 자리에서 null, 가방 개수 그대로) · test_the_volcano_island_hands_its_spots_to_the_stations(진짜 sulfur 섬의 geothermal 이 Stations 에 넘어감). test.log 에서 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "얻는 길은 개발용 상자에만 (레시피 없음) · 망치로 해체하면 가방으로 · 자리 하나에 하나",
-     "evidence": "test_two_geothermal_stations_with_no_recipe_only_in_the_dev_box — 어느 레시피도 output 으로 내지 않음 · DevBox.contents 에 듦 · dev_only_keys 가 정확히 이 둘. test_dismantling_returns_it_to_the_bag_and_frees_the_spot — take_thing 뒤 가방 1개 · 자리 다시 빔. test_only_on_a_geothermal_spot_and_one_per_spot — 찬 자리 WHY_GEOTHERMAL_TAKEN, 다른 자리는 빔. QA 가 _why_not_at 의 WHY_GEOTHERMAL_TAKEN 반환을 pass 로 깨 보니 해당 단언 3개가 떨어졌다(되돌림 확인)"
-    },
-    {
-     "ok": true,
-     "criterion": "만드는 목록은 **사람이 정할 때까지 비워 둔다** — 창을 열면 「아직 만드는 것이 없다」(번역). 목록 표만 만들어 둔다 (지어내지 않는다)",
-     "evidence": "craft/recipes/geothermal_smelter.json · forge.json 이 recipes: [] 로 새로 섬. test_the_window_says_nothing_to_make_yet — 두 시설을 놓고 open 하면 empty_label 이 보이고 STATION_NO_RECIPES. 데이터 테스트가 목록 파일 존재 · 줄 0 개 확인"
-    }
-   ],
-   "issues": [
-    "붉은 바닥 cull_mask 가 숫자로 박혔다 — game/world/terrain/geothermal.gd _glow 의 d.cull_mask = 0xFFFFF & ~SPARED_LAYER 에서 0xFFFFF(20층 전부)를 그대로 적었다. Decal 기본 cull_mask 를 읽어(d.cull_mask & ~SPARED_LAYER) 빼는 꼴로 바꾸면 층 수 가정이 사라진다 (막는 것은 아니다)"
-   ],
-   "good": [
-    "지열 자리 붉은 바닥 Decal 이 시설 몸을 물들이지 않게 CraftingStation 메시를 그림 층 20(Geothermal.SPARED_LAYER)으로 옮겼다 — 모든 시설에 걸리는 변경이지만 기준의 「기본 도형 모양」을 제대로 보이게 하는 몫이고 테스트(test_the_red_ground_does_not_paint_the_station)가 지킨다",
-    "찍는 자리 geothermal_smelter · geothermal_forge (shots.gd) · ESC 목차 두 줄"
-   ]
-  },
-  "test": "sts/craft/recipes/test_recipes_temporary_note.gd\nok      2s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_unobtainable_raws_named.gd\nok      2s  res://tests/craft/stations/test_buffer_five_slots.gd\nok      2s  res://tests/craft/stations/test_apothecary_spec_line.gd\nok      2s  res://tests/craft/recipes/test_workbench_gear.gd\nok      2s  res://tests/craft/stations/test_apothecary_bench.gd\nok      2s  res://tests/craft/stations/test_kitchen.gd\nok      3s  res://tests/craft/stations/test_no_old_smelter_name.gd\nok      2s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/stations/test_station_doing_keeps.gd\nok      2s  res://tests/craft/stations/test_oil_press.gd\nok      2s  res://tests/craft/stations/test_station_keep.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/craft/stations/test_stations_aim_one_path.gd\nok      2s  res://tests/craft/stations/test_weapon_armor_bench.gd\nok      2s  res://tests/life/farming/test_crop_kinds.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/fishing/test_fish_kinds.gd\nok      3s  res://tests/life/fishing/test_bobbers.gd\nok      3s  res://tests/life/hunting/test_cage_reuse.gd\nok      2s  res://tests/life/ranching/test_cage_bond.gd\nok      2s  res://tests/life/hunting/test_wild_yield_uses.gd\nok      2s  res://tests/life/ranching/test_cage_keep_rest.gd\nok      1s  res://tests/life/ranching/test_cage_pack_home.gd\nok      2s  res://tests/life/ranching/test_hive_raid.gd\nok      2s  res://tests/life/ranching/test_shear_goods.gd\nok      2s  res://tests/player/equipment/test_armor_modules.gd\nok      2s  res://tests/multiplayer/test_lava_on_server.gd\nok      2s  res://tests/player/equipment/test_drill_modules.gd\nok      3s  res://tests/multiplayer/test_lava_rock_on_server.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_gun_modules.gd\nok      2s  res://tests/player/equipment/test_future_wear_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_stove.gd\nok      2s  res://tests/settings/save/test_old_ladder_and_beam.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      3s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/settings/test_world_settings_in_game.gd\nok      3s  res://tests/ui/hud/test_station_queue_line_shape.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/terrain/test_resource_view_redraw.gd\nok      2s  res://tests/world/terrain/test_same_seed_same_island.gd\nok      2s  res://tests/world/terrain/test_shovel_home.gd\nok      2s  res://tests/world/terrain/test_volcano_carve.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           292\nTests            2331\nPassing Tests    2331\nFailing Tests       0\nRisky/Pending       0\nAsserts         86044\nTime           463s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "9329cc7f"
- },
- {
   "time": "2026-10-23 03:40:08",
   "epoch": 1792694408,
   "type": "fail",
@@ -8240,5 +8172,49 @@
    ]
   },
   "test": "breath.gd\nok      5s  res://tests/automation/water/test_pipe_junctions.gd\nok      6s  res://tests/combat/tools_as_weapons/test_aiming.gd\nok      4s  res://tests/combat/tools_as_weapons/test_bullet_speed.gd\nok      4s  res://tests/combat/tools_as_weapons/test_tranq_arrows.gd\nok      4s  res://tests/life/hunting/test_body_parts.gd\nok      4s  res://tests/life/climbing/test_grapple_ammo.gd\nok      4s  res://tests/multiplayer/test_bow_on_server.gd\nok      5s  res://tests/player/movement_controls/test_shoulder_camera.gd\nok      4s  res://tests/ui/hud/test_bag_player_stats.gd\nok      4s  res://tests/ui/hud/test_hotbar_wheel.gd\nok      3s  res://tests/core/net/test_net_session.gd\nok      5s  res://tests/world/terrain/test_heat.gd\nok      4s  res://tests/combat/tools_as_weapons/test_iron_sight.gd\nok      3s  res://tests/core/net/test_steam_game.gd\nok      3s  res://tests/core/net/test_steam_quit.gd\nok      3s  res://tests/core/net/test_steam_server_gone.gd\nok      3s  res://tests/life/hunting/test_summon_weak.gd\nok      4s  res://tests/life/ranching/test_cage_take_keeps_birds.gd\nok      3s  res://tests/multiplayer/test_kill_command_net.gd\nok      2s  res://tests/player/equipment/test_armor_effect_modules.gd\nok      3s  res://tests/player/equipment/test_armor.gd\nok      3s  res://tests/player/equipment/test_gun_effect_modules.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      3s  res://tests/automation/power/test_gates.gd\nok      3s  res://tests/automation/power/test_sensors.gd\nok      3s  res://tests/automation/power/test_power_monitor.gd\nok      3s  res://tests/automation/power/test_generators.gd\nok      4s  res://tests/ui/hud/test_kept_window.gd\nok      2s  res://tests/automation/water/test_water_pump.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tool_tiers.gd\nok      3s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      3s  res://tests/combat/tools_as_weapons/test_scope.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      3s  res://tests/core/net/test_acts_alone.gd\nok      2s  res://tests/core/net/test_net_interp.gd\nok      3s  res://tests/core/net/test_net_link_one_place.gd\nok      3s  res://tests/core/net/test_net_sides_orphans.gd\nok      3s  res://tests/core/net/test_room_code.gd\nok      2s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/core/test_spec_growth_axis_g356.gd\nok      2s  res://tests/life/ranching/test_animal_stats.gd\nok      2s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      2s  res://tests/multiplayer/test_vitals_copy_wears_modules.gd\nok      3s  res://tests/player/equipment/test_armor_health.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      3s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      4s  res://tests/ui/hud/test_ammo_label.gd\nok      3s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok    391s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           107\nTests             930\nPassing Tests     930\nFailing Tests       0\nRisky/Pending       0\nAsserts         28056\nTime           391s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-11-01 12:21:20",
+  "epoch": 1793503280,
+  "type": "fail",
+  "title": "QA 불합격 — G-357 단계 1 (시도 2)",
+  "group": "G-357",
+  "step": "1",
+  "attempt": "2",
+  "report": {
+   "problem": "치명타(기본 5 % · 150 %) — 근접 · 총 · 활, 치명타 숫자는 다른 색 · 크게, 장비가 확률 · 배수를 더함. 같이 하는 판에서 서버가 넣은 피해 · 치명타를 참가자에게 RPC 로 돌려 참가자 화면에도 숫자가 뜬다. 바뀐 곳만 108 파일 933개 통과",
+   "approach": "QA 지적 셋을 풀었다. (1) 참가자 공격의 피해 숫자 — 서버가 _swing 에서 친 피해와 _shoot 로 날린 알의 hit 신호(_on_pellet_hit)를 _tell_hit 으로 모아 그 참가자에게 _hit_seen.rpc_id(맞은 자리 · 피해 · crit) 로 보낸다. 참가자 기계는 제 섬에 DamageNumber.pop 한다(서버장 제 것이면 곧바로). 기계 둘을 진짜 ENet 으로 붙인 테스트로, Crit.roll 을 0 으로 끼우고 미르가 도끼로 휘두르고 총을 쏘면 미르 트리에 crit=true · CRIT_SIZE 숫자가 하나 뜨고 서버장 트리에는 안 뜨는 것을 단언했다. (2) 서버 굴림 테스트 — _swing(ME, …, \"axe\", {}) 과 SWING 바람으로 몹 체력이 roundi(hit_of(axe)*1.5) 깎이는 것, SHOOT 로 나간 알의 crit_chance 가 Crit.chance(kit.equipment)(반지 보탬 표 → 25 % · 배수 2.0)인 것을 본다. 보탬 표를 끼울 수 있게 Crit.bonus(static var, 기본 BONUS)를 두었다. (3) attack.gd 의 last_crit 를 signal 묶음에서 var 묶음으로 옮겼다. 바뀐 곳에 걸리는 테스트(changed_tests.py, 108 파일 933개) 모두 통과.",
+   "why": "치명타 기본 확률 5 % · 피해 150 % (crit.gd CHANCE · DAMAGE) — Claude 가 정함, 밸런싱 때 다시; 치명타 확률 천장 100 % (crit.gd MAX_CHANCE); 피해 숫자 색 · 크기 · 떠 있는 시간 (damage_number.gd — 흰색 48 / 주황 80 · 0.8초)",
+   "files": [
+    "game/combat/tools_as_weapons/crit.gd",
+    "game/combat/tools_as_weapons/damage_number.gd",
+    "game/combat/tools_as_weapons/attack.gd",
+    "game/combat/tools_as_weapons/projectile.gd",
+    "game/core/net/net_vitals.gd",
+    "game/i18n/en.po",
+    "game/i18n/ko.po",
+    "game/ui/manual/manual_toc.json",
+    "spec/02_player/equipment.md",
+    "game/tests/combat/tools_as_weapons/test_crit.gd",
+    "game/tests/core/net/test_crit_net.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "ok": false,
+     "criterion": "사람의 공격(근접 · 총 · 활)에 치명타 확률 · 치명타 피해 — 기본 임시 5 % · 150 % · 치명타면 피해 숫자가 다른 색 · 크게 · 장비가 더하는 길(아래 장신구) (테스트)",
+     "evidence": "기본값 5 % · 150 %(test_base_chance…), 근접 · 총 · 활 치명타 150 %(test_a_melee_crit…, test_a_gun_crit…, test_a_bow_crit…), 숫자 색 · 크기(test_a_melee_crit… · test_crit_and_normal_numbers…), 참가자 기계의 숫자(test_a_guests_crit_swing_and_shot… — _hit_seen 의 pop 을 지우니 떨어졌다, 진짜 테스트다), 서버 총알이 장비 값을 싣는 것(test_the_server_shot_carries…)은 확인된다. 그러나 **근접의 장비 길**은 아무 테스트도 지키지 않는다 — net_vitals._swing 의 Crit.chance(gear) · Crit.multiplier(gear) 를 Crit.chance({}) · Crit.multiplier({}) 로 바꿔도 test_crit_net 의 서버 휘두르기 테스트가 그대로 통과했다(roll=0 · 빈 장비라 기본값만 본다). attack.gd strike() 의 player.equipment 도 같다 — 장비 보탬 표를 끼운 근접 테스트가 없다. 근접 · 총 · 활 셋 다에 「장비가 더하는 길」이 걸린 기준이라 불합격"
+    }
+   ],
+   "issues": [
+    "근접 치명타의 장비 길에 테스트가 없다 — net_vitals._swing 이 gear 대신 {} 로 굴려도 test_crit_net 이 통과했다(이번 QA 가 깨 보았다). attack.gd strike() 의 Crit.chance(player.equipment) · Crit.multiplier(player.equipment) 도 지키는 테스트가 없다. 고칠 길: (1) tests/core/net/test_crit_net.gd 의 test_the_server_swing… 에 Crit.bonus = TABLE · _server([axe], {Equipment.RING: {item=\"test_ring\"}}) 로 반지를 끼우고, nv.run(Acts.ME, SWING, …, nv.gate.mine) 로 친 피해가 roundi(base * 2.0)(150 %+50 %) 인지 단언하라 — 빈 장비의 1.5 와 갈리게. 확률 쪽도 Crit.roll 을 0.1(기본 5 % 위 · 25 % 아래)로 끼워 반지를 끼면 치명타 · 안 끼면 아님을 단언하라. (2) tests/combat/tools_as_weapons/test_crit.gd 에 같은 꼴로 Crit.bonus 를 끼우고 player.equipment 에 반지를 넣은 뒤 도끼로 쳐 피해가 roundi(base*2.0) 인지, 그리고 이 기계의 총 · 활 알(pellet_for 의 by is Player 길)도 roll=0.1 로 장비가 확률을 올리는지 단언하라. after_each 에서 Crit.bonus 를 되돌려라",
+    "test_crit.gd 가 Crit.bonus 를 되돌리지 않는다 — 지금은 안 바꾸니 괜찮지만 위 테스트를 더하면 before_each 에서 _bonus = Crit.bonus 를 잡고 after_each 에서 되돌려라 (test_crit_net.gd 처럼)"
+   ],
+   "good": []
+  },
+  "test": "s/core/net/test_net_version.gd\nok      5s  res://tests/combat/tools_as_weapons/test_bow_draw.gd\nok      4s  res://tests/life/harvest/test_tree_weak_spot.gd\nok      4s  res://tests/multiplayer/test_bow_on_server.gd\nok      4s  res://tests/player/movement_controls/test_shoulder_camera.gd\nok      4s  res://tests/ui/hud/test_bag_player_stats.gd\nok      4s  res://tests/ui/hud/test_hotbar_wheel.gd\nok      5s  res://tests/ui/hud/test_kept_window.gd\nok      4s  res://tests/combat/tools_as_weapons/test_scope.gd\nok      4s  res://tests/combat/tools_as_weapons/test_iron_sight.gd\nok      5s  res://tests/combat/tools_as_weapons/test_tranq_arrows.gd\nok      3s  res://tests/core/net/test_net_session.gd\nok      5s  res://tests/world/terrain/test_heat.gd\nok      3s  res://tests/core/net/test_steam_game.gd\nok      3s  res://tests/core/net/test_steam_server_gone.gd\nok      3s  res://tests/life/hunting/test_summon_weak.gd\nok      4s  res://tests/life/hunting/test_body_parts.gd\nok      4s  res://tests/life/climbing/test_grapple_ammo.gd\nok      2s  res://tests/player/equipment/test_armor_health.gd\nok      3s  res://tests/life/ranching/test_cage_take_keeps_birds.gd\nok      2s  res://tests/automation/power/test_gates.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      3s  res://tests/ui/hud/test_ammo_label.gd\nok      3s  res://tests/automation/power/test_generators.gd\nok      3s  res://tests/automation/power/test_power_monitor.gd\nok      2s  res://tests/automation/power/test_sensors.gd\nok      3s  res://tests/combat/tools_as_weapons/test_gun_module_recoil.gd\nok      3s  res://tests/automation/water/test_water_pump.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tool_tiers.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/net/test_acts_alone.gd\nok      2s  res://tests/core/net/test_guild.gd\nok      2s  res://tests/core/net/test_crit_net.gd\nok      2s  res://tests/core/net/test_steam_api.gd\nok      2s  res://tests/core/net/test_steam_room.gd\nok      2s  res://tests/core/test_spec_growth_axis_g356.gd\nok      4s  res://tests/core/net/test_steam_quit.gd\nok      3s  res://tests/life/ranching/test_animal_stats_roll.gd\nok      3s  res://tests/multiplayer/test_kill_command_net.gd\nok      2s  res://tests/player/equipment/test_future_wear.gd\nok      3s  res://tests/player/equipment/test_armor_effect_modules.gd\nok      3s  res://tests/player/equipment/test_armor.gd\nok      2s  res://tests/player/equipment/test_gun_effect_modules.gd\nok      2s  res://tests/player/equipment/test_top_bottoms_names.gd\nok      2s  res://tests/player/hunger_thirst/test_fed_heals.gd\nok      2s  res://tests/player/hunger_thirst/test_starving.gd\nok      2s  res://tests/settings/save/test_old_liquor.gd\nok      2s  res://tests/settings/save/test_old_tea_coffee.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/menu/test_manual_screen.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/core/net/test_net_interp.gd\nok      3s  res://tests/core/net/test_net_link_one_place.gd\nok      3s  res://tests/core/net/test_net_sides_orphans.gd\nok      2s  res://tests/core/net/test_room_code.gd\nok      3s  res://tests/life/ranching/test_animal_stats.gd\nok      3s  res://tests/multiplayer/test_vitals_copy_shoots_with_modules.gd\nok      2s  res://tests/multiplayer/test_vitals_copy_wears_modules.gd\nok    391s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           108\nTests             933\nPassing Tests     933\nFailing Tests       0\nRisky/Pending       0\nAsserts         28082\nTime           391s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
